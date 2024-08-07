@@ -12,6 +12,8 @@ RUN npm install -g pnpm
 # 安装依赖
 RUN pnpm install
 
+COPY . .
+
 # 构建项目
 RUN pnpm run build
 
