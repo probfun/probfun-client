@@ -7,8 +7,15 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Button: typeof import('primevue/button')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     InputText: typeof import('primevue/inputtext')['default']
+    Main: typeof import('./src/components/Main.vue')['default']
+    Panel: typeof import('primevue/panel')['default']
+    PanelMenu: typeof import('primevue/panelmenu')['default']
     Slider: typeof import('primevue/slider')['default']
+    Splitter: typeof import('primevue/splitter')['default']
+    SplitterPanel: typeof import('primevue/splitterpanel')['default']
+    ToggleSwitch: typeof import('primevue/toggleswitch')['default']
   }
 }
