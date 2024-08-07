@@ -3,7 +3,7 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - master  # 或者指定其他分支
+      - master
 
 jobs:
   build-and-push:
@@ -13,25 +13,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '18'
-
-      - name: Install pnpm
-        run: npm install -g pnpm
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Build project
-        run: pnpm run build
-
       - name: Log in to Alibaba Cloud Docker Registry
         run: echo ${{ secrets.ALIYUN_PASSWORD }} | docker login --username=${{ secrets.ALIYUN_USERNAME }} --password-stdin registry.cn-hangzhou.aliyuncs.com
 
       - name: Build Docker image
-        run: docker build -t registry.cn-hangzhou.aliyuncs.com/probfun/probfun_hub:frontend-1 .
+        run: docker build -t registry.cn-hangzhou.aliyuncs.com/probfun/probfun_hub:${{ github.sha }} .
 
       - name: Push Docker image
-        run: docker push registry.cn-hangzhou.aliyuncs.com/probfun/probfun_hub:frontend-1
+        run: docker push registry.cn-hangzhou.aliyuncs.com/probfun/probfun_hub:${{ github.sha }}
