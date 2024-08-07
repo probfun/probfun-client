@@ -6,13 +6,13 @@
     <div class="flex w-full">
       <div class="flex flex-col flex-1 items-center justify-center space-y-5">
         <p> mean </p>
-        <InputText v-model.number="mean" />
+        <InputNumber v-model.number="mean" />
         <Slider :min="-5" :max="5" :step="0.1" v-model="mean" class="w-48" />
       </div>
 
       <div class="flex flex-col flex-1 items-center justify-center space-y-5">
         <p> var </p>
-        <InputText v-model.number="stdDev" />
+        <InputNumber v-model.number="stdDev" />
         <Slider :min="0.1" :max="5" :step="0.1" v-model="stdDev" class="w-48" />
       </div>
     </div>
