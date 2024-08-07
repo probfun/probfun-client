@@ -17,7 +17,7 @@ jobs:
         run: echo ${{ secrets.ALIYUN_PASSWORD }} | docker login --username=${{ secrets.ALIYUN_USERNAME }} --password-stdin registry.cn-hangzhou.aliyuncs.com
 
       - name: Build Docker image
-        run: docker build -t registry.cn-hangzhou.aliyuncs.com/probfun/probfun_hub:${{ github.sha }} .
+        run: docker build -t registry.cn-hangzhou.aliyuncs.com/probfun/frontend:latest .
 
       - name: Push Docker image
-        run: docker push registry.cn-hangzhou.aliyuncs.com/probfun/probfun_hub:${{ github.sha }}
+        run: docker push registry.cn-hangzhou.aliyuncs.com/probfun/frontend:latest
