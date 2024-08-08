@@ -33,7 +33,7 @@
           </SplitterPanel>
         </Splitter>
       </SplitterPanel>
-      <SplitterPanel size="30">
+      <SplitterPanel class="sum" :size="25">
         <div class="summary">
           <Panel header="提示区">
             <p class="m-0">一些提示信息或总结</p>
