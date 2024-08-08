@@ -1,25 +1,48 @@
 <template>
-  <div class="flex flex-col items-center justify-center">
-    <div class="mb-2 w-full max-w-screen-lg">
-      <Line :data="data" :options="options"/>
-    </div>
-    <div class="flex w-full">
-      <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-        <p> mean </p>
-        <InputNumber v-model.number="mean" />
-        <Slider :min="-5" :max="5" :step="0.1" v-model="mean" class="w-48" />
-      </div>
+  <div class="flex flex-col items-center justify-center w-full">
+    <Splitter style="height: 750px; width: 1000px;" class="mb-8 h-full p-0">
+      <SplitterPanel>
+        <Splitter style="height: 750px;" layout="vertical">
+          <SplitterPanel>
+            <Panel header="图形化结果展示区">
+              <div class="mb-2 max-w-screen-lg" style="width: 550px;">
+                <Line :data="data" :options="options" />
+              </div>
+            </Panel>
+          </SplitterPanel>
+          <SplitterPanel>
+            <div class="input">
+              <Panel header="输入区">
+                <div class="flex w-full">
+                  <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+                    <p> mean </p>
+                    <InputNumber v-model.number="mean" />
+                    <Slider :min="-5" :max="5" :step="0.1" v-model="mean" class="w-48" />
+                  </div>
+                  <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+                    <p> var </p>
+                    <InputNumber v-model.number="stdDev" />
+                    <Slider :min="0.1" :max="5" :step="0.1" v-model="stdDev" class="w-48" />
+                  </div>
+                </div>
+                <div class="w-full flex items-center justify-center h-36">
+                  <div ref="katexContainer" class="text-3xl"></div>
+                </div>
+              </Panel>
+            </div>
+          </SplitterPanel>
+        </Splitter>
+      </SplitterPanel>
+      <SplitterPanel size="30">
+        <div class="summary">
+          <Panel header="提示区">
+            <p class="m-0">随便什么吧</p>
+          </Panel>
+        </div>
+      </SplitterPanel>
+    </Splitter>
 
-      <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-        <p> var </p>
-        <InputNumber v-model.number="stdDev" />
-        <Slider :min="0.1" :max="5" :step="0.1" v-model="stdDev" class="w-48" />
-      </div>
-    </div>
 
-    <div class="w-full flex items-center justify-center h-36">
-      <div ref="katexContainer" class="text-3xl"></div>
-    </div>
 
   </div>
 </template>
@@ -35,8 +58,8 @@ import {
   CategoryScale,
   LinearScale
 } from 'chart.js'
-import {Line} from 'vue-chartjs'
-import {computed, onMounted, ref, watch} from 'vue'
+import { Line } from 'vue-chartjs'
+import { computed, onMounted, ref, watch } from 'vue'
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
 

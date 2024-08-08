@@ -1,57 +1,33 @@
 <template>
-  <div class="w-full h-full flex flex-col">
+  <div class="w-full h-full flex flex-col overflow-hidden">
     <div class="top">
       <div class="icon">
         <img src="@/components/32.png" alt="">
       </div>
       <div class="search">
-        <InputText class="searchA" v-model="value1" placeholder="搜索"/>
+        <InputText class="searchA" v-model="value1" placeholder="搜索" />
         <Button class="searchB" icon="pi pi-search" severity="contrast"></Button>
       </div>
       <div class="user">
         <p>请点击此处
-          <Button class="log" label="登录" severity="secondary"/>
+          <Button class="log" label="登录" severity="secondary" />
           ，以获得更好的用户体验
         </p>
       </div>
     </div>
     <div class="flex flex-1">
-      <div class="left">
+      <div class="left h-full">
         <div class="content">
           <PanelMenu :model="items" multiple/>
         </div>
         <div class="themes">
           <i class="pi pi-sun" style="color: #8C9CB2; font-size: 1.3rem"></i>
-          <ToggleSwitch class="switch custom-toggle" v-model="checked"/>
+          <ToggleSwitch class="switch custom-toggle" v-model="checked" />
         </div>
       </div>
       <div class="right">
-        <div class="display h-full">
-          <Splitter class="mb-8 h-full">
-            <SplitterPanel>
-              <Splitter layout="vertical">
-                <SplitterPanel>
-                    <Panel header="图形化结果展示区">
-                      <HelloWorld />
-                    </Panel>
-                </SplitterPanel>
-                <SplitterPanel>
-                  <div class="input">
-                    <Panel header="输入区">
-                      <p class="m-0">随便什么吧</p>
-                    </Panel>
-                  </div>
-                </SplitterPanel>
-              </Splitter>
-            </SplitterPanel>
-            <SplitterPanel>
-              <div class="summary">
-                <Panel header="提示区">
-                  <p class="m-0">随便什么吧</p>
-                </Panel>
-              </div>
-            </SplitterPanel>
-          </Splitter>
+        <div class="display flex h-full w-full">
+          <HelloWorld/>
         </div>
       </div>
     </div>
@@ -59,11 +35,13 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue';
+import { ref } from 'vue';
 import HelloWorld from '@/components/HelloWorld.vue';
 
 const value1 = ref('');
 const checked = ref(true);
+const selectedItem = ref<string | null>(null); // 状态来跟踪当前选中的菜单项
+
 const items = ref([
   {
     label: "目录",
@@ -71,11 +49,14 @@ const items = ref([
       {
         label: "第一章",
         items: [
-          {label: "Buffon投针"}
+          { label: "Buffon投针" }
         ]
       },
       {
         label: "第二章",
+        items: [
+          { label: "正态分布" }
+        ]
       },
       {
         label: "第三章",
