@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col items-center justify-center w-full">
-    <Splitter style="height: 750px; width: 1000px;" class="mb-8 h-full p-0">
+    <Splitter style="height: 750px; width: 1100px;" class="mb-8 h-full p-0">
       <SplitterPanel>
         <Splitter style="height: 750px;" layout="vertical">
           <SplitterPanel>
@@ -36,14 +36,11 @@
       <SplitterPanel size="30">
         <div class="summary">
           <Panel header="提示区">
-            <p class="m-0">随便什么吧</p>
+            <p class="m-0">一些提示信息或总结</p>
           </Panel>
         </div>
       </SplitterPanel>
     </Splitter>
-
-
-
   </div>
 </template>
 
@@ -58,8 +55,8 @@ import {
   CategoryScale,
   LinearScale
 } from 'chart.js'
-import { Line } from 'vue-chartjs'
-import { computed, onMounted, ref, watch } from 'vue'
+import {Line} from 'vue-chartjs'
+import {computed, onMounted, ref, watch} from 'vue'
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
 

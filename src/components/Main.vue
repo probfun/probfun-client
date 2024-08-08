@@ -35,13 +35,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import {ref} from 'vue';
 import HelloWorld from '@/components/HelloWorld.vue';
 
 const value1 = ref('');
 const checked = ref(true);
-const selectedItem = ref<string | null>(null); // 状态来跟踪当前选中的菜单项
-
 const items = ref([
   {
     label: "目录",
@@ -49,13 +47,13 @@ const items = ref([
       {
         label: "第一章",
         items: [
-          { label: "Buffon投针" }
+          {label: "Buffon投针"}
         ]
       },
       {
         label: "第二章",
         items: [
-          { label: "正态分布" }
+          {label: "正态分布"}
         ]
       },
       {
@@ -126,7 +124,7 @@ img {
 }
 
 .right {
-  flex: 3;
+  flex: 4;
   padding: 10px;
 }
 
