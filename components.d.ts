@@ -7,16 +7,36 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Avatar: typeof import('primevue/avatar')['default']
+    Badge: typeof import('primevue/badge')['default']
+    BuffonNeedle: typeof import('./src/components/experiment/chapter1/BuffonNeedle.vue')['default']
     Button: typeof import('primevue/button')['default']
+    Chart: typeof import('primevue/chart')['default']
+    DashBoard: typeof import('./src/pages/DashBoard.vue')['default']
+    DistributionBoard: typeof import('./src/components/experiment/distribution/DistributionBoard.vue')['default']
+    DistributionDiagram: typeof import('./src/components/experiment/distribution/DistributionDiagram.vue')['default']
+    ExpBoard: typeof import('./src/components/experiment/ExperimentBoard.vue')['default']
+    ExperimentBoard: typeof import('./src/components/experiment/ExperimentBoard.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
+    IconField: typeof import('primevue/iconfield')['default']
+    InputIcon: typeof import('primevue/inputicon')['default']
     InputNumber: typeof import('primevue/inputnumber')['default']
     InputText: typeof import('primevue/inputtext')['default']
-    Main: typeof import('./src/components/Main.vue')['default']
+    Main: typeof import('./src/pages/DashBoard.vue')['default']
     Panel: typeof import('primevue/panel')['default']
     PanelMenu: typeof import('primevue/panelmenu')['default']
+    RouterLink: typeof import('vue-router')['RouterLink']
+    RouterView: typeof import('vue-router')['RouterView']
     Slider: typeof import('primevue/slider')['default']
+    SpeedDial: typeof import('primevue/speeddial')['default']
+    SplitButton: typeof import('primevue/splitbutton')['default']
     Splitter: typeof import('primevue/splitter')['default']
     SplitterPanel: typeof import('primevue/splitterpanel')['default']
     ToggleSwitch: typeof import('primevue/toggleswitch')['default']
+    Toolbar: typeof import('primevue/toolbar')['default']
+  }
+  export interface ComponentCustomProperties {
+    Ripple: typeof import('primevue/ripple')['default']
+    StyleClass: typeof import('primevue/styleclass')['default']
   }
 }

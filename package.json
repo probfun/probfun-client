@@ -10,18 +10,21 @@
   },
   "dependencies": {
     "@primevue/themes": "^4.0.4",
-    "chart.js": "^4.4.3",
-    "katex": "^0.16.11",
-    "vue-chartjs": "^5.3.1",
     "axios": "^1.7.2",
+    "gsap": "^3.12.5",
+    "katex": "^0.16.11",
+    "oimo": "^1.0.9",
     "primeicons": "^7.0.0",
     "primevue": "^4.0.4",
-    "vue": "^3.4.31"
+    "three": "^0.167.1",
+    "vue": "^3.4.35",
+    "vue-router": "^4.4.3"
   },
   "devDependencies": {
     "@primevue/auto-import-resolver": "^4.0.4",
     "@types/katex": "^0.16.7",
     "@types/node": "^22.1.0",
+    "@types/three": "^0.167.1",
     "@vitejs/plugin-vue": "^5.0.5",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.41",
