@@ -1,8 +1,7 @@
 <template>
-    <Main />
+    <router-view></router-view>
 </template>
 
 <script setup lang="ts">
-import Main from '@/pages/DashBoard.vue';
 
 </script>
