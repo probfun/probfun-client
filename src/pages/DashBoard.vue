@@ -1,12 +1,12 @@
 <template>
-  <div class="w-full h-full flex flex-col overflow-hidden">
+  <div class="w-full h-full flex flex-col">
     <div class="sticky top-0 w-full flex justify-center items-center p-4 border-b">
       <div class="absolute left-6">
         <img class="h-8" src="../assets/logo.svg" alt="">
       </div>
 
       <div>
-        <IconField >
+        <IconField>
           <InputIcon>
             <i class="pi pi-search" />
           </InputIcon>
@@ -16,11 +16,11 @@
 
       <div class="absolute right-6">
         <div>
-          请点击此处<a class="font-medium text-indigo-600 hover:text-indigo-500 transition-colors"> 登录 </a>
+          请点击此处<Button as="router-link" to="/login" label="登录" severity="secondary"/>
         </div>
       </div>
 
-<!--      <template #end> <SplitButton label="Save" :model="items"></SplitButton></template>-->
+      <!--      <template #end> <SplitButton label="Save" :model="items"></SplitButton></template>-->
     </div>
     <div class="flex flex-1">
       <div class="w-1/4 max-w-lg h-full sticky p-3">
@@ -28,17 +28,20 @@
           <template #item="{ item }">
             <a v-ripple class="flex items-center px-4 py-2 cursor-pointer group">
               <span :class="[item.icon, 'text-primary group-hover:text-inherit']" />
-              <span :class="['ml-2', { 'font-semibold': item.items }]">{{ item.label }}</span>
+              <span :class="['ml-2', { 'font-semibold': item.bold}]">{{ item.label }}</span>
               <Badge v-if="item.badge" class="ml-auto" :value="item.badge" />
-              <span v-if="item.shortcut" class="ml-auto border border-surface rounded bg-emphasis text-muted-color text-xs p-1">{{ item.shortcut }}</span>
+              <span v-if="item.shortcut"
+                class="ml-auto border border-surface rounded bg-emphasis text-muted-color text-xs p-1">{{ item.shortcut
+                }}</span>
             </a>
           </template>
         </PanelMenu>
 
-        <SpeedDial :model="speedDialItems" :radius="80" type="linear" direction="up" style="position: absolute; left: calc(50% - 2rem); bottom: 2rem" />
+        <SpeedDial :model="speedDialItems" :radius="80" type="linear" direction="up"
+          style="position: absolute; left: calc(50% - 2rem); bottom: 2rem" />
       </div>
       <div class="flex-1 pl-0 py-3">
-          <router-view />
+        <router-view />
       </div>
     </div>
   </div>
@@ -51,6 +54,7 @@ const router = useRouter();
 const sideBarItems = ref([
   {
     label: "目录",
+    bold: true,
     items: [
       {
         label: "第一章",
@@ -58,7 +62,7 @@ const sideBarItems = ref([
           {
             label: "Buffon投针",
             icon: 'pi pi-chart-bar',
-            command: () => router.push('/experiment/chapter1/buffon')
+            command: () => router.push('/dashboard/experiment/chapter1/buffon')
           }
         ],
         icon: 'pi pi-bookmark'
@@ -69,7 +73,7 @@ const sideBarItems = ref([
           {
             label: "分布",
             icon: 'pi pi-chart-bar',
-            command: () => router.push('/experiment/distribution'),
+            command: () => router.push('/dashboard/experiment/distribution'),
           }
         ],
         icon: 'pi pi-bookmark'
@@ -91,18 +95,21 @@ const sideBarItems = ref([
   },
   {
     label: "聊天",
+    bold: true,
     icon: 'pi pi-comment',
-    command: () => router.push('/chat'),
+    command: () => router.push('/dashboard/chat'),
   },
   {
     label: "设置",
+    bold: true,
     icon: 'pi pi-cog',
-    command: () => router.push('/setting'),
+    command: () => router.push('/dashboard/setting'),
   },
   {
     label: "我的收藏",
+    bold: true,
     icon: 'pi pi-star',
-    command: () => router.push('/favorite'),
+    command: () => router.push('/dashboard/favorite'),
   },
 ]);
 
@@ -126,5 +133,4 @@ const speedDialItems = ref([
 ]);
 </script>
 
-<style>
-</style>
+<style></style>
