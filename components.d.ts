@@ -21,6 +21,7 @@ declare module 'vue' {
     PanelMenu: typeof import('primevue/panelmenu')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Select: typeof import('primevue/select')['default']
     Slider: typeof import('primevue/slider')['default']
     SpeedDial: typeof import('primevue/speeddial')['default']
     Splitter: typeof import('primevue/splitter')['default']
