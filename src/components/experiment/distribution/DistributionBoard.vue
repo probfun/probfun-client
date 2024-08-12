@@ -6,6 +6,10 @@ import DistributionDiagram from "@/components/experiment/distribution/Distributi
 
 const mean = ref(0);
 const stdDev = ref(1);
+const selectedCity = ref();
+const cities = ref([
+    { name: '正态分布'},
+]);
 
 const latexFormula = computed(() => `f(x) = \\frac{1}{\\sqrt{2\\pi\\times${stdDev.value}^2}} e^{-\\frac{(x-${mean.value})^2}{2\\times${stdDev.value}^2}}`);
 const katexContainer = ref<HTMLElement | null>(null);
@@ -33,6 +37,7 @@ watch(latexFormula, () => {
       <distribution-diagram class="flex-1 h-full" :mean="mean" :std-dev="stdDev"/>
     </div>
     <div class="w-full flex items-center justify-center mb-5">
+      <Select v-model="selectedCity" :options="cities" optionLabel="name" placeholder="选择一个分布" class="w-full md:w-56 mr-5" />
       <div ref="katexContainer" class="text-2xl"></div>
     </div>
     <div class="flex w-full mb-5">

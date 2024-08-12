@@ -3,23 +3,49 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
+      path: '/',
+      redirect: '/dashboard',
+    },
+    {
+      path: '/dashboard',
+      component: () => import('@/pages/DashBoard.vue'),
+      children: [
+        {
+          path: '/dashboard/experiment',
+          component: () => import('@/components/experiment/ExperimentBoard.vue'),
+          children: [
+            {
+              path: '/dashboard/experimentchapter1/buffon',
+              component: () => import('@/components/experiment/chapter1/BuffonNeedle.vue'),
+            },
+            {
+              path: '/dashboard/experiment/distribution',
+              component: () => import('@/components/experiment/distribution/DistributionBoard.vue'),
+            },
+            {
+              path: '/dashboard/setting',
+              component: () => import('@/components/experiment/distribution/DistributionBoard.vue'),
+            },
+            {
+              path: '/dashboard/chat',
+              component: () => import('@/components/experiment/distribution/DistributionBoard.vue'),
+            },
+            {
+              path: '/dashboard/favorite',
+              component: () => import('@/components/experiment/distribution/DistributionBoard.vue'),
+            },
+          ],
+        }
+      ]
+    },
+    {
       path: '/login',
       component: () => import('@/pages/DashBoard.vue')
     },
     {
-      path: '/experiment',
-      component: () => import('@/components/experiment/ExperimentBoard.vue'),
-      children: [
-        {
-          path: 'chapter1/buffon',
-          component: () => import('@/components/experiment/chapter1/BuffonNeedle.vue'),
-        },
-        {
-          path: 'distribution',
-          component: () => import('@/components/experiment/distribution/DistributionBoard.vue'),
-        }
-      ],
-    }
+      path: '/register',
+      component: () => import('@/pages/DashBoard.vue')
+    },
     // {
     //   path: '/terms',
     //   component: () => import('@/pages/TermsPage.vue')
