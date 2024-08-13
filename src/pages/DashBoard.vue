@@ -16,7 +16,7 @@
 
       <div class="absolute right-6">
         <div>
-          请点击此处<Button as="router-link" to="/login" label="登录" severity="secondary"/>
+          请点击此处<Button as="router-link" to="/login" label="登录" severity="secondary" class="ml-2"/>
         </div>
       </div>
 
