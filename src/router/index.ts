@@ -40,11 +40,11 @@ const router = createRouter({
     },
     {
       path: '/login',
-      component: () => import('@/pages/DashBoard.vue')
+      component: () => import('@/pages/Login.vue')
     },
     {
       path: '/register',
-      component: () => import('@/pages/DashBoard.vue')
+      component: () => import('@/pages/Register.vue')
     },
     // {
     //   path: '/terms',
