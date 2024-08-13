@@ -28,10 +28,10 @@ const handleRegister = async () => {
             registerError.value = '';
         }
     } catch (error) {
-        if (error.response && error.response.status === 400) {
-            registerError.value = '注册失败，请检查输入信息。';
+        if (error instanceof Error) {
+            console.error('An error occurred:', error.message);
         } else {
-            registerError.value = '网络错误，请稍后再试。';
+            console.error('An unknown error occurred');
         }
     }
 };
