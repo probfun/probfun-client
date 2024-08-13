@@ -15,7 +15,7 @@ const router = createRouter({
           component: () => import('@/components/experiment/ExperimentBoard.vue'),
           children: [
             {
-              path: '/dashboard/experimentchapter1/buffon',
+              path: '/dashboard/experiment/chapter1/buffon',
               component: () => import('@/components/experiment/chapter1/BuffonNeedle.vue'),
             },
             {
