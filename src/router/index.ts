@@ -1,4 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import DashBoard from "@/pages/DashBoard.vue";
+import BuffonNeedle from "@/components/experiment/chapter1/BuffonNeedle.vue";
+import DistributionBoard from "@/components/experiment/distribution/DistributionBoard.vue";
+import Login from "@/pages/Login.vue";
+import Register from "@/pages/Register.vue";
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -8,37 +14,37 @@ const router = createRouter({
     },
     {
       path: '/dashboard',
-      component: () => import('@/pages/DashBoard.vue'),
+      component: DashBoard,
       children: [
         {
           path: '/dashboard/experiment/chapter1/buffon',
-          component: () => import('@/components/experiment/chapter1/BuffonNeedle.vue'),
+          component: BuffonNeedle,
         },
         {
           path: '/dashboard/experiment/distribution',
-          component: () => import('@/components/experiment/distribution/DistributionBoard.vue'),
+          component: DistributionBoard,
         },
         {
           path: '/dashboard/setting',
-          component: () => import('@/components/experiment/distribution/DistributionBoard.vue'),
+          component: DistributionBoard,
         },
         {
           path: '/dashboard/chat',
-          component: () => import('@/components/experiment/distribution/DistributionBoard.vue'),
+          component: DistributionBoard,
         },
         {
           path: '/dashboard/favorite',
-          component: () => import('@/components/experiment/distribution/DistributionBoard.vue'),
+          component: DistributionBoard,
         },
       ],
     },
     {
       path: '/login',
-      component: () => import('@/pages/Login.vue')
+      component: Login
     },
     {
       path: '/register',
-      component: () => import('@/pages/Register.vue')
+      component: Register
     },
     // {
     //   path: '/terms',
