@@ -85,7 +85,7 @@
           if (error.response && error.response.status === 400) {
             this.message = '注册失败';
           } else {
-            this.message = '注册请求失败';
+            this.message = '注册请求失败,肯定是后端的问题';
           }
         }
       }
