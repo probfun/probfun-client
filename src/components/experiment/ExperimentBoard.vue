@@ -1,6 +1,5 @@
 <script setup lang="ts">
 
-import DistributionDiagram from "@/components/experiment/distribution/DistributionDiagram.vue";
 </script>
 
 <template>
