@@ -1,25 +1,57 @@
 <template>
-  <div ref="container" class="h-full w-full relative flex flex-col">
-    <div ref="threeContainer"></div>
-    <div class="flex-1 w-full flex flex-col justify-center items-center p-3">
-      <div class="flex w-full justify-center space-x-3">
-        <Button label="decrease" icon="pi pi-minus" iconPos="top" @click="decreaseNeedle" />
-        <div class="flex flex-col justify-center space-y-2">
-          <InputNumber v-model.number="needleAmount" :max="5000" />
-          <Button label="ROLL" @click="addNeedles" />
+  <Splitter class="mb-8 h-full !border-0">
+    <SplitterPanel class="pr-1.5">
+      <div class="flex-1 p-3.5 border rounded-lg flex flex-col h-full">
+        <div class="bg-blue-700 text-white pl-2 rounded-2xl mb-2 w-max">Buffon投针:
+          <Chip label="辛钦大数定律" class="h-8 ml-2 my-2" />
+          <Chip label="蒙特卡罗方法" class="h-8 mx-2 my-2" />
         </div>
-        <Button label="increase" icon="pi pi-plus" iconPos="top" @click="increaseNeedle" />
+        <div class="mb-2 font-bold"> 实验区 </div>
+        <div ref="container" class="h-full w-full relative flex flex-col">
+          <div ref="threeContainer"></div>
+          <div class="flex-1 w-full flex flex-col justify-center items-center p-3">
+            <div class="flex w-full justify-center space-x-3">
+              <Button label="decrease" icon="pi pi-minus" iconPos="top" @click="decreaseNeedle" />
+              <div class="flex flex-col justify-center space-y-2">
+                <InputNumber v-model.number="needleAmount" :max="5000" />
+                <Button label="ROLL" @click="addNeedles" />
+              </div>
+              <Button label="increase" icon="pi pi-plus" iconPos="top" @click="increaseNeedle" />
+            </div>
+            <div> 和线相交的针的数量：{{ hits }} </div>
+            <div> 估算的 Pi 值：{{ estimatedPi }} </div>
+            <div> 历史估算 Pi 值的平均值：{{ getAverageEstimatedPi() }}</div>
+            <Button label="复原视角" @click="resetCameraPosition"></Button>
+          </div>
+        </div>
       </div>
-      <div> 和线相交的针的数量：{{ hits }} </div>
-      <div> 估算的 Pi 值：{{ estimatedPi }} </div>
-      <div> 历史估算 Pi 值的平均值：{{ getAverageEstimatedPi() }}</div>
-      <Button label="复原视角" @click="resetCameraPosition"></Button>
-    </div>
-  </div>
+    </SplitterPanel>
+    <SplitterPanel class="pr-3 pl-1.5" :size="25">
+      <Panel header="提示区" class="h-full">
+        <h1 class="my-2 font-semibold">实验思路</h1>
+        <p class="m-0">在平面上有彼此相距为 d 的平行线,向此平面任意投一长度为 l 的针, 假定 l <= d（本实验中l=d/2），则所投的针至多可与一条直线相交。</p><br />
+            <p class="m-0">在每次实验中，随机投掷 N 根针。运用两组均匀分布，一组为 U ~ (0, d) 随机生成针中心到平行线的距离 y_center，
+              一组为 U ~ (0, π) 随机生成针与平行线的夹角 thera。
+              根据针的中心位置和角度，计算针两个端点的纵坐标 y1, y2。
+              通过检查针的端点是否与间距为 d 的平行线相交，统计相交事件的次数 n ,
+              通过 2lN / dn 来估计 π 的值。</p><br />
+            <p class="m-0">针与线相交的概率：P = 2l / πd ≈ n / N</p><br />
+            <p class="m-0"> π = 2l / Pd </p><br />
+            <p class="m-0">π估计值≈ 2 lN / dn</p>
+            <h1 class="my-2 font-semibold">结论</h1>
+            <p>当横线数目固定时, 随着投针次数增加, 针与横线相交的概率起初有较大波动;
+              但当投针次数达到一定值时平均相交概率 p1 逐渐趋近于 0.31831。
+              由辛钦大数定理可知, 当投针次数不断增加直至无穷时,
+              随机变量 p 的算术平均值 p¯ 不断趋向于其数学期望 E(p) ≈ 0.31831,
+              而 E(p) 的倒数, 即圆周率π估计值趋近于 3.14159 。
+            </p>
+      </Panel>
+    </SplitterPanel>
+  </Splitter>
 </template>
 
 <script setup lang="ts">
-import {ref, onMounted, onBeforeUnmount} from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import * as THREE from 'three';
 import * as OIMO from 'oimo';
 import gsap from 'gsap';
@@ -130,41 +162,41 @@ function createNeedle(x: number, y: number, z: number): Promise<{ model: THREE.O
   return new Promise((resolve, reject) => {
     const assetLoader = new GLTFLoader();
     assetLoader.load(
-        '/Chopstick.glb',
-        // "https://dl.dropboxusercontent.com/scl/fi/n0ogooke4kstdcwo7lryy/needle_highres_red.glb?rlkey=i15sotl674m294bporeumu5d3&st=fss6qosg",
-        (gltf) => {
-          const model = gltf.scene;
-          scene.add(model);
-          model.position.set(0, 5, 0);
-          model.castShadow = true;
-          model.scale.set(10, 10, 10);
+      '/Chopstick.glb',
+      // "https://dl.dropboxusercontent.com/scl/fi/n0ogooke4kstdcwo7lryy/needle_highres_red.glb?rlkey=i15sotl674m294bporeumu5d3&st=fss6qosg",
+      (gltf) => {
+        const model = gltf.scene;
+        scene.add(model);
+        model.position.set(0, 5, 0);
+        model.castShadow = true;
+        model.scale.set(10, 10, 10);
 
-          model.traverse((child) => {
-            if ((child as THREE.Mesh).isMesh) {
-              (child as THREE.Mesh).castShadow = true;
-            }
-          });
+        model.traverse((child) => {
+          if ((child as THREE.Mesh).isMesh) {
+            (child as THREE.Mesh).castShadow = true;
+          }
+        });
 
-          const body = world.add({
-            type: 'box',
-            size: [0.01, 2, 0.01],
-            pos: [x, y, z],
-            rot: [Math.floor(Math.random() * 360), Math.floor(Math.random() * 360), Math.floor(Math.random() * 360)],
-            move: true,
-            density: 2,
-            friction: 0.5,
-            restitution: 0.9,
-            belongsTo: 1,
-            collidesWith: 0xfffffffe,
-          });
+        const body = world.add({
+          type: 'box',
+          size: [0.01, 2, 0.01],
+          pos: [x, y, z],
+          rot: [Math.floor(Math.random() * 360), Math.floor(Math.random() * 360), Math.floor(Math.random() * 360)],
+          move: true,
+          density: 2,
+          friction: 0.5,
+          restitution: 0.9,
+          belongsTo: 1,
+          collidesWith: 0xfffffffe,
+        });
 
-          resolve({ model, body });
-        },
-        undefined,
-        (err) => {
-          console.error(err);
-          reject(err);
-        }
+        resolve({ model, body });
+      },
+      undefined,
+      (err) => {
+        console.error(err);
+        reject(err);
+      }
     );
   });
 }
@@ -322,5 +354,4 @@ function increaseNeedle() {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

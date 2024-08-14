@@ -10,6 +10,7 @@ declare module 'vue' {
     Badge: typeof import('primevue/badge')['default']
     BuffonNeedle: typeof import('./src/components/experiment/chapter1/BuffonNeedle.vue')['default']
     Button: typeof import('primevue/button')['default']
+    Chip: typeof import('primevue/chip')['default']
     DistributionBoard: typeof import('./src/components/experiment/distribution/DistributionBoard.vue')['default']
     DistributionDiagram: typeof import('./src/components/experiment/distribution/DistributionDiagram.vue')['default']
     ExperimentBoard: typeof import('./src/components/experiment/ExperimentBoard.vue')['default']

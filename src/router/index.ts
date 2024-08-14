@@ -11,32 +11,26 @@ const router = createRouter({
       component: () => import('@/pages/DashBoard.vue'),
       children: [
         {
-          path: '/dashboard/experiment',
-          component: () => import('@/components/experiment/ExperimentBoard.vue'),
-          children: [
-            {
-              path: '/dashboard/experiment/chapter1/buffon',
-              component: () => import('@/components/experiment/chapter1/BuffonNeedle.vue'),
-            },
-            {
-              path: '/dashboard/experiment/distribution',
-              component: () => import('@/components/experiment/distribution/DistributionBoard.vue'),
-            },
-            {
-              path: '/dashboard/setting',
-              component: () => import('@/components/experiment/distribution/DistributionBoard.vue'),
-            },
-            {
-              path: '/dashboard/chat',
-              component: () => import('@/components/experiment/distribution/DistributionBoard.vue'),
-            },
-            {
-              path: '/dashboard/favorite',
-              component: () => import('@/components/experiment/distribution/DistributionBoard.vue'),
-            },
-          ],
-        }
-      ]
+          path: '/dashboard/experiment/chapter1/buffon',
+          component: () => import('@/components/experiment/chapter1/BuffonNeedle.vue'),
+        },
+        {
+          path: '/dashboard/experiment/distribution',
+          component: () => import('@/components/experiment/distribution/DistributionBoard.vue'),
+        },
+        {
+          path: '/dashboard/setting',
+          component: () => import('@/components/experiment/distribution/DistributionBoard.vue'),
+        },
+        {
+          path: '/dashboard/chat',
+          component: () => import('@/components/experiment/distribution/DistributionBoard.vue'),
+        },
+        {
+          path: '/dashboard/favorite',
+          component: () => import('@/components/experiment/distribution/DistributionBoard.vue'),
+        },
+      ],
     },
     {
       path: '/login',
