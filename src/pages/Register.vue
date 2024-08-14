@@ -1,98 +1,94 @@
-<script setup lang="ts">
-import { ref } from 'vue';
-import axios from 'axios';
-
-const id = ref()
-const username = ref('')
-const number = ref('')
-const gender = ref('')
-const introduction = ref('')
-const password = ref('')
-const email = ref('')
-const registerError = ref('');
-
-const handleRegister = async () => {
-    try {
-        const response = await axios.post('/usermanager/register', {
-            id: id.value,
-            password: password.value,
-            username: username.value,
-            gender: gender.value,
-            number: number.value,
-            introduction: introduction.value,
-            email: email.value
-        });
-        if (response.status === 200) {
-            // 处理注册成功
-            console.log('注册成功', response.data);
-            registerError.value = '';
-        }
-    } catch (error) {
-        if (error instanceof Error) {
-            console.error('An error occurred:', error.message);
-        } else {
-            console.error('An unknown error occurred');
-        }
-    }
-};
-</script>
-
 <template>
-    <div class="min-h-screen flex ">
-        <div class="inset-0 z-10 w-1/3 flex items-center justify-center">
-            <img src="@\assets\33.png" alt="" class="h-full w-full object-cover shadow-2xl">
-        </div>
-        <div class="flex flex-col items-center justify-center w-2/3">
-            <div class="py-10 px-48 bg-gray-100 shadow-lg">
-                <div class="text-4xl text-center mb-10">
-                    <h1>注册</h1>
-                </div>
-                <div class="flex flex-col gap-2 mb-10">
-                    <FloatLabel>
-                        <InputNumber class="w-full" id="number-input" v-model="id" :useGrouping="false" />
-                        <label for="number-input">学号</label>
-                    </FloatLabel>
-                </div>
-                <div class="flex flex-col gap-2 mb-10">
-                    <FloatLabel>
-                        <InputText id="username" v-model="username" class="w-full" />
-                        <label for="username">用户名</label>
-                    </FloatLabel>
-                </div>
-                <div class="flex flex-col gap-2 mb-10">
-                    <FloatLabel>
-                        <Password v-model="password" inputId="password" toggleMask />
-                        <label for="password">密码</label>
-                    </FloatLabel>
-                </div>
-                <div class="flex flex-col gap-2 mb-10">
-                    <FloatLabel>
-                        <InputText id="gender" v-model="gender" class="w-full" />
-                        <label for="gender">性别</label>
-                    </FloatLabel>
-                </div>
-                <div class="flex flex-col gap-2 mb-10">
-                    <FloatLabel>
-                        <InputText id="number" v-model="number" class="w-full" />
-                        <label for="number">数字</label>
-                    </FloatLabel>
-                </div>
-                <div class="flex flex-col gap-2 mb-10">
-                    <FloatLabel>
-                        <InputText id="introduction" v-model="introduction" class="w-full" />
-                        <label for="introduction">介绍</label>
-                    </FloatLabel>
-                </div>
-                <div class="flex flex-col gap-2 mb-10">
-                    <FloatLabel>
-                        <InputText id="email" v-model="email" class="w-full" />
-                        <label for="email">邮箱</label>
-                    </FloatLabel>
-                </div>
-                <div class="flex flex-col gap-2 mb-5">
-                    <Button @click="handleRegister" class="register" label="注册" severity="help" />
-                </div>
-            </div>
-        </div>
+    <div class="flex items-center justify-center min-h-screen bg-gray-100">
+      <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
+        <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">用户注册</h2>
+        <form @submit.prevent="handleRegister" class="space-y-4">
+          <div class="flex flex-col">
+            <label for="id" class="text-sm font-medium text-gray-700">用户ID</label>
+            <input v-model="registerForm.id" id="id" type="text" required 
+                   class="mt-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          
+          <div class="flex flex-col">
+            <label for="password" class="text-sm font-medium text-gray-700">密码</label>
+            <input v-model="registerForm.password" id="password" type="password" required
+                   class="mt-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          
+          <div class="flex flex-col">
+            <label for="username" class="text-sm font-medium text-gray-700">用户名</label>
+            <input v-model="registerForm.username" id="username" type="text" required
+                   class="mt-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          
+          <div class="flex flex-col">
+            <label for="gender" class="text-sm font-medium text-gray-700">性别</label>
+            <input v-model="registerForm.gender" id="gender" type="text" required
+                   class="mt-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          
+          <div class="flex flex-col">
+            <label for="number" class="text-sm font-medium text-gray-700">随意</label>
+            <input v-model="registerForm.number" id="number" type="text" required
+                   class="mt-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          
+          <div class="flex flex-col">
+            <label for="introduction" class="text-sm font-medium text-gray-700">介绍</label>
+            <input v-model="registerForm.introduction" id="introduction" type="text" required
+                   class="mt-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          
+          <div class="flex flex-col">
+            <label for="email" class="text-sm font-medium text-gray-700">邮箱</label>
+            <input v-model="registerForm.email" id="email" type="email" required
+                   class="mt-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+  
+          <button type="submit" class="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            注册
+          </button>
+  
+          <p v-if="message" class="mt-4 text-center text-red-500">{{ message }}</p>
+        </form>
+      </div>
     </div>
-</template>
+  </template>
+  
+  <script>
+  import axios from 'axios';
+  
+  export default {
+    data() {
+      return {
+        registerForm: {
+          id: '',
+          password: '',
+          username: '',
+          gender: '',
+          number: '',
+          introduction: '',
+          email: ''
+        },
+        message: ''
+      };
+    },
+    methods: {
+      async handleRegister() {
+        try {
+          const response = await axios.post('/usermanager/register', this.registerForm);
+          if (response.status === 200) {
+            this.message = '注册成功!';
+            // 可以在这里处理注册成功后的操作
+          }
+        } catch (error) {
+          if (error.response && error.response.status === 400) {
+            this.message = '注册失败';
+          } else {
+            this.message = '注册请求失败';
+          }
+        }
+      }
+    }
+  };
+  </script>
