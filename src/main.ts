@@ -1,11 +1,15 @@
 import { createApp } from 'vue'
-import './input.css'
-import App from './App.vue'
+import '@/input.css'
+import App from '@/App.vue'
 import PrimeVue from 'primevue/config';
+import router from '@/router'
 import Aura from '@primevue/themes/aura';
 import 'primeicons/primeicons.css'
 
-createApp(App).use(PrimeVue, {
+const app = createApp(App);
+
+app.use(PrimeVue, {
+    ripple: true,
     theme: {
         preset: Aura,
         options: {
@@ -14,4 +18,6 @@ createApp(App).use(PrimeVue, {
             cssLayer: false
         }
     }
-}).mount('#app')
+});
+app.use(router);
+app.mount('#app');
