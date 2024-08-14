@@ -1,84 +1,59 @@
 <template>
-  <div id="app">
-    <div class="container">
-      <!-- Sidebar Component -->
-      <div class="sidebar">
-        <div class="logo-container">
-          <img src="/src/assets/Frame 8.svg" alt="Logo" class="logo-icon" />
-          <span class="logo-text">ProbFUN</span>
+  <div class="sidebar">
+    <div class="logo-container">
+      <img src="/src/assets/Frame%208.svg" alt="Logo" class="logo-icon" />
+      <span class="logo-text">ProbFUN</span>
+    </div>
+  </div>
+  <div class="login-container">
+    <div class="flex flex-col px-16 py-8 bg-white border-2 shadow-lg items-center rounded-lg">
+      <h1 class="text-2xl font-bold mb-8">登录</h1>
+      <div v-focustrap class="w-full sm:w-80 flex flex-col gap-6">
+        <IconField>
+          <InputIcon>
+            <i class="pi pi-user" />
+          </InputIcon>
+          <InputText id="input" v-model="username" type="text" placeholder="用户名" autofocus fluid  />
+        </IconField>
+
+        <IconField>
+          <InputIcon>
+            <i class="pi pi-key" />
+          </InputIcon>
+          <InputText id="password" v-model="password" type="password" placeholder="密码" fluid />
+        </IconField>
+
+        <div class="flex items-center gap-2">
+          <Checkbox id="accept" v-model="accept" name="accept" value="Accept" />
+          <label for="accept">我同意隐私政策</label>
         </div>
+
+        <Button type="submit" label="登录" class="mt-2" @click="login" />
       </div>
 
-      <!-- Content Area -->
-      <div class="content">
-        <!-- Login Component -->
-        <div class="login-container">
-          <h1 class="login-title">登录</h1>
-          <div class="input-wrapper">
-            <div class="input-container">
-              <div class="input-box">
-                <div class="input-header">密码</div>
-                <input type="password" placeholder="请输入密码" class="input-field" />
-              </div>
-              <div class="input-box">
-                <div class="input-header">用户名</div>
-                <input type="text" placeholder="请输入用户名" class="input-field" />
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="w-full flex justify-center mt-5">
+        没有账号？请先<a href="/register" class="text-blue-700"> 注册 </a>
       </div>
     </div>
+
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+const username = ref('');
+const password = ref('');
+const accept = ref(false);
+const router = useRouter();
+
+function login() {
+  console.log('Login with username:', username.value, 'password:', password.value);
+  router.push('/dashboard');
+}
 </script>
 
 <style scoped>
-/* 全局样式 */
-.container {
-  display: flex;
-}
-
-/* Sidebar 样式 */
-.sidebar {
-  position: fixed; /* 固定在页面的左侧 */
-  top: 0; /* 从页面顶部开始 */
-  left: 0; /* 从页面左侧开始 */
-  width: 33.33%; /* 占据整个屏幕的 1/3 */
-  height: 100vh; /* 高度占满整个视口 */
-  background-color: hsla(0, 0%, 97%, 0.987); /* 浅灰色背景 */
-  border: 2px solid #dcdcdc; /* 深灰色边框 */
-  border-radius: 10px; /* 边缘圆角 10px */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 可选：阴影效果 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px; /* 内边距 */
-  box-sizing: border-box; /* 包含边框和内边距在宽度和高度计算中 */
-}
-
-.logo-container {
-  text-align: center;
-}
-
-.logo-icon {
-  width: 100px; /* 图标宽度 */
-  height: auto;
-  display: block;
-  margin: 0 auto;
-}
-
-.logo-text {
-  display: block;
-  margin-top: 10px;
-  font-size: 36px; /* 字体大小 */
-  font-weight: bold; /* 字体加粗 */
-  color: rgba(34, 13, 224, 0.921); /* 文字颜色 */
-}
-
-/* Login 样式 */
 .login-container {
   position: fixed; /* 固定在页面的右侧 */
   top: 0;
@@ -144,14 +119,62 @@
 
 /* 媒体查询: 对于较小的屏幕 */
 @media (max-width: 768px) {
-  .container {
-    flex-direction: column; /* 垂直排列侧边栏和内容 */
-  }
-
-  .content {
+  .login-container {
     padding: 20px; /* 减少内边距 */
   }
 
+  .input-box {
+    margin-bottom: 10px; /* 缩小方框之间的间距 */
+  }
+
+  .input-header {
+    font-size: 16px; /* 缩小字体 */
+  }
+
+  .input-field {
+    font-size: 14px; /* 缩小字体 */
+  }
+}
+
+.sidebar {
+  position: fixed; /* 固定在页面的左侧 */
+  top: 0; /* 从页面顶部开始 */
+  left: 0; /* 从页面左侧开始 */
+  width: 33.33%; /* 占据整个屏幕的 1/3 */
+  height: 100vh; /* 高度占满整个视口 */
+  background-color: hsla(0, 0%, 97%, 0.987); /* 浅灰色背景 */
+  border: 2px solid #dcdcdc; /* 深灰色边框 */
+  border-radius: 10px; /* 边缘圆角 10px */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 可选：阴影效果 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px; /* 内边距 */
+  box-sizing: border-box; /* 包含边框和内边距在宽度和高度计算中 */
+}
+
+/* 调整 Logo 和文字的样式 */
+.logo-container {
+  text-align: center;
+}
+
+.logo-icon {
+  width: 100px; /* 图标宽度 */
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.logo-text {
+  display: block;
+  margin-top: 10px;
+  font-size: 36px; /* 字体大小 */
+  font-weight: bold; /* 字体加粗 */
+  color: rgba(34, 13, 224, 0.921); /* 文字颜色 */
+}
+
+/* 媒体查询: 对于较小的屏幕 */
+@media (max-width: 768px) {
   .sidebar {
     width: 100%; /* 在小屏幕上全宽 */
     height: auto; /* 高度自适应 */
@@ -167,22 +190,6 @@
 
   .logo-text {
     font-size: 24px; /* 缩小文字 */
-  }
-
-  .login-container {
-    padding: 20px; /* 减少内边距 */
-  }
-
-  .input-box {
-    margin-bottom: 10px; /* 缩小方框之间的间距 */
-  }
-
-  .input-header {
-    font-size: 16px; /* 缩小字体 */
-  }
-
-  .input-field {
-    font-size: 14px; /* 缩小字体 */
   }
 }
 </style>

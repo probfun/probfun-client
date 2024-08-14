@@ -22,7 +22,7 @@
 
       <!--      <template #end> <SplitButton label="Save" :model="items"></SplitButton></template>-->
     </div>
-    <div class="flex flex-1">
+    <div class="flex flex-1 overflow-y-hidden">
       <div class="w-1/4 max-w-lg h-full sticky p-3">
         <PanelMenu :model="sideBarItems" class="w-full">
           <template #item="{ item }">
@@ -63,6 +63,11 @@ const sideBarItems = ref([
             label: "Buffon投针",
             icon: 'pi pi-chart-bar',
             command: () => router.push('/dashboard/experiment/chapter1/buffon')
+          },
+          {
+            label: "三门问题",
+            icon: 'pi pi-chart-bar',
+            command: () => router.push('/dashboard/experiment/chapter1/three-doors')
           }
         ],
         icon: 'pi pi-bookmark'

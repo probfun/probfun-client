@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import DashBoard from "@/pages/DashBoard.vue";
 import BuffonNeedle from "@/components/experiment/chapter1/BuffonNeedle.vue";
 import DistributionBoard from "@/components/experiment/distribution/DistributionBoard.vue";
+import ThreeDoors from "@/components/experiment/chapter1/ThreeDoors.vue";
 import Login from "@/pages/Login.vue";
 import Register from "@/pages/Register.vue";
 
@@ -19,6 +20,10 @@ const router = createRouter({
         {
           path: '/dashboard/experiment/chapter1/buffon',
           component: BuffonNeedle,
+        },
+        {
+          path: '/dashboard/experiment/chapter1/three-doors',
+          component: ThreeDoors,
         },
         {
           path: '/dashboard/experiment/distribution',

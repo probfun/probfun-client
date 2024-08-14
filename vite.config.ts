@@ -1,4 +1,3 @@
-import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import Components from 'unplugin-vue-components/vite';
@@ -19,7 +18,7 @@ export default defineConfig(({ mode }) => {
     ],
     resolve: {
       alias: {
-        '@': fileURLToPath(new URL('./src', import.meta.url))
+        '@': '/src'
       }
     },
     server: {
@@ -29,13 +28,11 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           secure: false,
           ws: true
-          // rewrite: (path) => path.replace(/^\/api/, ''),
         },
         '/media': {
           target: 'http://127.0.0.1:8000',
           changeOrigin: true,
           secure: false
-          // rewrite: (path) => path.replace(/^\/api/, ''),
         }
       }
     }

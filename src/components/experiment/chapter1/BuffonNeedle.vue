@@ -1,5 +1,5 @@
 <template>
-  <Splitter class="mb-8 h-full !border-0">
+  <Splitter class="h-full !border-0 ">
     <SplitterPanel class="pr-1.5">
       <div class="flex-1 p-3.5 border rounded-lg flex flex-col h-full">
         <div class="bg-blue-700 text-white pl-2 rounded-2xl mb-2 w-max">Buffon投针:
@@ -26,25 +26,25 @@
         </div>
       </div>
     </SplitterPanel>
-    <SplitterPanel class="pr-3 pl-1.5" :size="25">
-      <Panel header="提示区" class="h-full">
+    <SplitterPanel class="pr-3 pl-1.5 h-full" :size="25">
+      <Panel header="提示区" class="h-full overflow-y-auto">
         <h1 class="my-2 font-semibold">实验思路</h1>
         <p class="m-0">在平面上有彼此相距为 d 的平行线,向此平面任意投一长度为 l 的针, 假定 l <= d（本实验中l=d/2），则所投的针至多可与一条直线相交。</p><br />
-            <p class="m-0">在每次实验中，随机投掷 N 根针。运用两组均匀分布，一组为 U ~ (0, d) 随机生成针中心到平行线的距离 y_center，
-              一组为 U ~ (0, π) 随机生成针与平行线的夹角 thera。
-              根据针的中心位置和角度，计算针两个端点的纵坐标 y1, y2。
-              通过检查针的端点是否与间距为 d 的平行线相交，统计相交事件的次数 n ,
-              通过 2lN / dn 来估计 π 的值。</p><br />
-            <p class="m-0">针与线相交的概率：P = 2l / πd ≈ n / N</p><br />
-            <p class="m-0"> π = 2l / Pd </p><br />
-            <p class="m-0">π估计值≈ 2 lN / dn</p>
-            <h1 class="my-2 font-semibold">结论</h1>
-            <p>当横线数目固定时, 随着投针次数增加, 针与横线相交的概率起初有较大波动;
-              但当投针次数达到一定值时平均相交概率 p1 逐渐趋近于 0.31831。
-              由辛钦大数定理可知, 当投针次数不断增加直至无穷时,
-              随机变量 p 的算术平均值 p¯ 不断趋向于其数学期望 E(p) ≈ 0.31831,
-              而 E(p) 的倒数, 即圆周率π估计值趋近于 3.14159 。
-            </p>
+        <p class="m-0">在每次实验中，随机投掷 N 根针。运用两组均匀分布，一组为 U ~ (0, d) 随机生成针中心到平行线的距离 y_center，
+          一组为 U ~ (0, π) 随机生成针与平行线的夹角 thera。
+          根据针的中心位置和角度，计算针两个端点的纵坐标 y1, y2。
+          通过检查针的端点是否与间距为 d 的平行线相交，统计相交事件的次数 n ,
+          通过 2lN / dn 来估计 π 的值。</p><br />
+        <p class="m-0">针与线相交的概率：P = 2l / πd ≈ n / N</p><br />
+        <p class="m-0"> π = 2l / Pd </p><br />
+        <p class="m-0">π估计值≈ 2 lN / dn</p>
+        <h1 class="my-2 font-semibold">结论</h1>
+        <p>当横线数目固定时, 随着投针次数增加, 针与横线相交的概率起初有较大波动;
+          但当投针次数达到一定值时平均相交概率 p1 逐渐趋近于 0.31831。
+          由辛钦大数定理可知, 当投针次数不断增加直至无穷时,
+          随机变量 p 的算术平均值 p¯ 不断趋向于其数学期望 E(p) ≈ 0.31831,
+          而 E(p) 的倒数, 即圆周率π估计值趋近于 3.14159 。
+        </p>
       </Panel>
     </SplitterPanel>
   </Splitter>
@@ -110,7 +110,6 @@ orbit.dampingFactor = 0.05;
 orbit.rotateSpeed = 0.5;
 orbit.enablePan = false;
 orbit.enableZoom = false;
-// orbit.addEventListener('end', resetCameraPosition);
 orbit.update();
 
 const planeGeometry = new THREE.PlaneGeometry(200, 200);
