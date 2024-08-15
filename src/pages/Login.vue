@@ -9,19 +9,19 @@
     <div class="flex flex-col px-16 py-8 bg-white border-2 shadow-lg items-center rounded-lg">
       <h1 class="text-2xl font-bold mb-8">登录</h1>
       <div v-focustrap class="w-full sm:w-80 flex flex-col gap-6">
-        <IconField>
-          <InputIcon>
+        <InputGroup>
+          <InputGroupAddon>
             <i class="pi pi-user" />
-          </InputIcon>
-          <InputText id="input" v-model="username" type="text" placeholder="用户名" autofocus fluid  />
-        </IconField>
+          </InputGroupAddon>
+          <InputText id="input" v-model="username" type="text" placeholder="用户名" fluid />
+        </InputGroup>
 
-        <IconField>
-          <InputIcon>
+        <InputGroup>
+          <InputGroupAddon>
             <i class="pi pi-key" />
-          </InputIcon>
-          <InputText id="password" v-model="password" type="password" placeholder="密码" fluid />
-        </IconField>
+          </InputGroupAddon>
+          <Password id="password" v-model="password" type="password" placeholder="密码" fluid toggleMask/>
+        </InputGroup>
 
         <div class="flex items-center gap-2">
           <Checkbox id="accept" v-model="accept" name="accept" value="Accept" />
