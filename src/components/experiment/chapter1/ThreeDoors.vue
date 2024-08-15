@@ -195,7 +195,7 @@ function resetData() {
             <div class="flex">
               <p class="mt-2"> 模拟轮数： </p>
               <div class="flex flex-col w-30 space-y-3 mr-3">
-                <InputText :min="1" :max="1000" v-model.number="autoGameRound" />
+                <InputNumber :min="1" :max="1000" v-model.number="autoGameRound" />
                 <Slider :min="1" :max="1000" v-model="autoGameRound" />
               </div>
               <Button @click="() => {
