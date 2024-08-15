@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, Ref, watch } from 'vue';
+import {toMarkDown} from "@/utils/markdown";
 
 class Door {
   id: number;
@@ -138,10 +139,70 @@ function resetData() {
   notChangeLoseNum.value = 0;
 }
 
+const content = `
+我们假设三扇门分别是 A、B、C，选手最初的选择是门 A，主持人打开的是门 B，那么问题就变成了求解：
+
+$$
+P(\\text{汽车在A门}∣\\text{最初选择A门，主持人打开B门})
+$$
+
+$$
+P(\\text{汽车在C门}∣\\text{最初选择A门，主持人打开B门})
+$$
+
+$$
+P(\\text{汽车在B门}∣\\text{最初选择A门，主持人打开B门})
+$$
+
+接下来，由贝叶斯公式可得：
+
+$$
+P(\\text{汽车在A门}∣\\text{最初选择A门，主持人打开B门}) =
+\\frac{P(\\text{最初选择A门，主持人打开B门}∣\\text{汽车在A门})P(\\text{汽车在A门})}{P(\\text{最初选择A门，主持人打开B门})}
+$$
+
+$$
+P(\\text{汽车在B门}∣\\text{最初选择A门，主持人打开B门}) =
+\\frac{P(\\text{最初选择A门，主持人打开B门}∣\\text{汽车在B门})P(\\text{汽车在B门})}{P(\\text{最初选择A门，主持人打开B门})}
+$$
+
+$$
+P(\\text{汽车在C门}∣\\text{最初选择A门，主持人打开B门}) =
+\\frac{P(\\text{最初选择A门，主持人打开B门}∣\\text{汽车在C门})P(\\text{汽车在C门})}{P(\\text{最初选择A门，主持人打开B门})}
+$$
+
+接下来让我们逐步求解，首先易得：
+
+$$
+P(\\text{汽车在A门}) = P(\\text{汽车在B门}) = P(\\text{汽车在C门}) = \\frac{1}{3}
+$$
+
+至此，我们计算一下最终结果：
+
+$$
+P(\\text{汽车在A门}∣\\text{最初选择A门，主持人打开B门}) =
+\\frac{\\frac{1}{2} \\cdot \\frac{1}{3}}{\\frac{1}{2}} = \\frac{1}{3}
+$$
+
+$$
+P(\\text{汽车在B门}∣\\text{最初选择A门，主持人打开B门}) =
+\\frac{0 \\cdot \\frac{1}{3}}{\\frac{1}{2}} = 0
+$$
+
+$$
+P(\\text{汽车在C门}∣\\text{最初选择A门，主持人打开B门}) =
+\\frac{1 \\cdot \\frac{1}{3}}{\\frac{1}{2}} = \\frac{2}{3}
+$$
+
+---
+
+这部分内容推导了在选择门 A 后，主持人打开门 B 时，汽车在各个门后的概率。最终结果显示，汽车在门 C 后的概率是最高的，即 \\(\\frac{2}{3}\\)，而在门 A 后的概率是 \\(\\frac{1}{3}\\)。
+`
+
 </script>
 
 <template>
-  <Splitter class="h-full !border-0 ">
+  <Splitter class="h-full !border-0">
     <SplitterPanel class="pr-1.5">
       <div class="flex-1 p-3.5 border rounded-lg flex flex-col h-full">
         <div class="bg-blue-700 text-white pl-2 rounded-2xl mb-2 w-max">三门问题:
@@ -150,7 +211,7 @@ function resetData() {
         </div>
         <div class="mb-2 font-bold"> 实验区 </div>
         <div ref="container" class="h-full w-full relative flex flex-col">
-          <div class="relative p-5 flex flex-col items-center rounded-lg overflow-y-auto border-2 mb-3">
+          <div class="relative p-5 flex flex-col items-center rounded-lg border-2 mb-3">
             <div
               class="h-full w-full absolute top-0 left-0 bg-black bg-opacity-70 flex justify-center items-center z-10"
               v-if="gameState === 'End'">
@@ -246,67 +307,9 @@ function resetData() {
     <SplitterPanel class="pr-3 pl-1.5 h-full" :size="25">
       <Panel header="提示区" class="h-full overflow-y-auto">
         <h1 class="my-2 font-semibold">实验思路</h1>
-        <p class="m-0">我们假设三扇门分别是A、B、C，选手最初的选择是门A，主持人打开的是门B，那么问题就变成了求解：
-$$
-P(汽车在A门∣最初选择A门，主持人打开B门)
-$$
-
-$$
-P(汽车在C门∣最初选择A门，主持人打开B门)
-$$
-
-$$
-P(汽车在B门∣最初选择A门，主持人打开B门)
-$$
-
-
-
-接下来，由贝叶斯公式可得：
-
-
-
-P(汽车在A门∣最初选择A门，主持人打开B门) = 
-$$
-\frac{P(最初选择A门，主持人打开B门∣汽车在A门)P(汽车在A门)}{P(最初选择A门，主持人打开B门)}
-$$
-
-P(汽车在B门∣最初选择A门，主持人打开B门) = 
-$$
-\frac{P(最初选择A门，主持人打开B门∣汽车在B门)P(汽车在B门)}{P(最初选择A门，主持人打开B门)}
-$$
-
-P(汽车在C门∣最初选择A门，主持人打开B门) = 
-$$
-\frac{P(最初选择A门，主持人打开B门∣汽车在C门)P(汽车在C门)}{P(最初选择A门，主持人打开B门)}
-$$
-
-
-接下来让我们逐步求解，首先易得：
-
-$$
-P(汽车在A门) = P(汽车在B门) = P(汽车在C门) =1/3
-$$
-至此,我们计算一下最终结果:
-
-
-
-P(汽车在A门∣最初选择A门，主持人打开B门) = 
-$$
-\frac{\frac{1}{2} \cdot \frac{1}{3}}{\frac{1}{2}} = \frac{1}{3}
-$$
-
-P(汽车在B门∣最初选择A门，主持人打开B门) = 
-$$
-\frac{0 \cdot \frac{1}{3}}{\frac{1}{2}} = 0
-$$
-
-P(汽车在C门∣最初选择A门，主持人打开B门) = 
-$$
-\frac{1 \cdot \frac{1}{3}}{\frac{1}{2}} = \frac{2}{3}
-$$</p><br />
+        <div class="markdown-format" v-html="toMarkDown(content)"></div>
         <h1 class="my-2 font-semibold">结论</h1>
-        <p class="m-0">综上所述,我们可以得到在假设最初选择A门,主持人打开B门的前提下,汽车在C门的概率最高,概率为2/3.故
-          此时参赛者应该选择换成C门.</p>
+        <div class="markdown-format" v-html="toMarkDown('综上所述,我们可以得到在假设最初选择A门,主持人打开B门的前提下,汽车在C门的概率最高,概率为2/3.故此时参赛者应该选择换成C门.')"></div>
       </Panel>
     </SplitterPanel>
   </Splitter>
