@@ -28,11 +28,11 @@
           <label for="accept">我同意隐私政策</label>
         </div>
 
-        <Button type="submit" label="登录" class="mt-2" @click="login" />
+        <Button type="submit" label="登录" class="mt-2" @click="login" severity="help"/>
       </div>
 
       <div class="w-full flex justify-center mt-5">
-        没有账号？请先<a href="/register" class="text-blue-700"> 注册 </a>
+        没有账号？请先<router-link to="/register" class="text-blue-700"> 注册 </router-link>
       </div>
     </div>
 

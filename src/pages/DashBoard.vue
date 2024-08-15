@@ -1,6 +1,6 @@
 <template>
   <div class="w-full h-full flex flex-col">
-    <div class="sticky top-0 w-full flex justify-center items-center p-4 border-b">
+    <div class="top-0 w-full flex justify-center items-center p-4 border-b">
       <div class="absolute left-6">
         <img class="h-8" src="../assets/logo.svg" alt="">
       </div>
@@ -22,7 +22,7 @@
 
       <!--      <template #end> <SplitButton label="Save" :model="items"></SplitButton></template>-->
     </div>
-    <div class="flex flex-1 overflow-y-hidden">
+    <div class="flex flex-1">
       <div class="w-1/4 max-w-lg h-full sticky p-3">
         <PanelMenu :model="sideBarItems" class="w-full">
           <template #item="{ item }">
@@ -40,7 +40,7 @@
         <SpeedDial :model="speedDialItems" :radius="80" type="linear" direction="up"
           style="position: absolute; left: calc(50% - 2rem); bottom: 2rem" />
       </div>
-      <div class="flex-1 pl-0 py-3">
+      <div class="flex-1 w-3/4 pl-0 py-3">
         <router-view />
       </div>
     </div>

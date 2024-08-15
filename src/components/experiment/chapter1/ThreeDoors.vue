@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, ref, Ref, watch} from 'vue';
+import { computed, ref, Ref, watch } from 'vue';
 
 class Door {
   id: number;
@@ -28,7 +28,7 @@ class Door {
 }
 
 let correctDoor = 0;
-const doors  = ref<Door[]>([
+const doors = ref<Door[]>([
   new Door(1, false, correctDoor === 1),
   new Door(2, false, correctDoor === 2),
   new Door(3, false, correctDoor === 3),
@@ -144,15 +144,17 @@ function resetData() {
   <Splitter class="h-full !border-0 ">
     <SplitterPanel class="pr-1.5">
       <div class="flex-1 p-3.5 border rounded-lg flex flex-col h-full">
-        <div class="bg-blue-700 text-white pl-2 rounded-2xl mb-2 w-max">生日问题:
-          <Chip label="辛钦大数定律" class="h-8 ml-2 my-2" />
-          <Chip label="蒙特卡罗方法" class="h-8 mx-2 my-2" />
+        <div class="bg-blue-700 text-white pl-2 rounded-2xl mb-2 w-max">三门问题:
+          <Chip label="条件概率" class="h-8 ml-2 my-2" />
+          <Chip label="贝叶斯定理" class="h-8 mx-2 my-2" />
         </div>
         <div class="mb-2 font-bold"> 实验区 </div>
         <div ref="container" class="h-full w-full relative flex flex-col">
           <div class="relative p-5 flex flex-col items-center rounded-lg overflow-y-auto border-2 mb-3">
-            <div class="h-full w-full absolute top-0 left-0 bg-black bg-opacity-70 flex justify-center items-center z-10" v-if="gameState === 'End'">
-              <Button @click="startGame" >开始游戏</Button>
+            <div
+              class="h-full w-full absolute top-0 left-0 bg-black bg-opacity-70 flex justify-center items-center z-10"
+              v-if="gameState === 'End'">
+              <Button @click="startGame">开始游戏</Button>
             </div>
             <div class="font-bold text-xl mb-6 h-8 text-center flex items-center">
               <p v-if="gameState === 'Select'">请选择一扇门！</p>
@@ -161,29 +163,38 @@ function resetData() {
                 你是否选择换一扇门？
               </p>
               <p v-if="gameState === 'Win'">
-                恭喜你，你赢了！
+                恭喜你，你赢得了汽车！
               </p>
               <p v-if="gameState === 'Lose'">
-                很遗憾，你输了！
+                很遗憾，你没有赢得汽车。
               </p>
             </div>
 
             <div class="w-full flex justify-rounded mb-3 max-w-lg">
-              <div v-for="door in doors" :key="door.id" class="relative cursor-pointer -mx-5" @click="door.toggleSelect">
-                <img :src="`/three-doors/door_${door.open ? 'open' : 'close_2'}.png`" alt="" class="hover:scale-[101%] hover:drop-shadow-[0_0_10px_rgba(155,155,138,1)] transition-all" />
-                <div class="absolute w-full h-full top-0 left-0 flex justify-center items-center pointer-events-none text-gray-200" v-if="door.selected">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-16">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              <div v-for="door in doors" :key="door.id" class="relative cursor-pointer -mx-5"
+                @click="door.toggleSelect">
+                <img :src="`/three-doors/door_${door.open ? 'open' : 'close_2'}.png`" alt=""
+                  class="hover:scale-[101%] hover:drop-shadow-[0_0_10px_rgba(155,155,138,1)] transition-all" />
+                <div
+                  class="absolute w-full h-full top-0 left-0 flex justify-center items-center pointer-events-none text-gray-200"
+                  v-if="door.selected">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-16">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                   </svg>
                 </div>
-                <div class="absolute w-full h-full top-0 left-0 flex justify-center items-center pointer-events-none z-10" v-if="door.open">
-                  <img src="/three-doors/car_kaizousya.png" alt="" v-if="door.correct"/>
-                  <img src="/three-doors/animal_markhor.png" alt="" v-else/>
+                <div
+                  class="absolute w-full h-full top-0 left-0 flex justify-center items-center pointer-events-none z-10"
+                  v-if="door.open">
+                  <img src="/three-doors/car_kaizousya.png" alt="" v-if="door.correct" />
+                  <img src="/three-doors/animal_markhor.png" alt="" v-else />
                 </div>
               </div>
             </div>
             <div class="h-8">
-              <Button :disabled="Door.selectedDoor.value == null" @click="selectDoor" v-if="gameState === 'Select'">选择</Button>
+              <Button :disabled="Door.selectedDoor.value == null" @click="selectDoor"
+                v-if="gameState === 'Select'">选择</Button>
               <div class="w-full flex space-x-5 justify-center" v-if="gameState === 'Reveal'">
                 <Button @click="gameResult(false)">不换门</Button>
                 <Button @click="gameResult(true)">换门</Button>
@@ -200,7 +211,7 @@ function resetData() {
               </div>
               <Button @click="() => {
                 autoGaming ? autoGaming = false : simulateGame();
-              }"> {{autoGaming ? '终止模拟' : '开始模拟'}}</Button>
+              }"> {{ autoGaming ? '终止模拟' : '开始模拟' }}</Button>
             </div>
 
             <div class="my-10">
@@ -235,14 +246,70 @@ function resetData() {
     <SplitterPanel class="pr-3 pl-1.5 h-full" :size="25">
       <Panel header="提示区" class="h-full overflow-y-auto">
         <h1 class="my-2 font-semibold">实验思路</h1>
-        <p class="m-0">啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊</p><br />
+        <p class="m-0">我们假设三扇门分别是A、B、C，选手最初的选择是门A，主持人打开的是门B，那么问题就变成了求解：
+$$
+P(汽车在A门∣最初选择A门，主持人打开B门)
+$$
+
+$$
+P(汽车在C门∣最初选择A门，主持人打开B门)
+$$
+
+$$
+P(汽车在B门∣最初选择A门，主持人打开B门)
+$$
+
+
+
+接下来，由贝叶斯公式可得：
+
+
+
+P(汽车在A门∣最初选择A门，主持人打开B门) = 
+$$
+\frac{P(最初选择A门，主持人打开B门∣汽车在A门)P(汽车在A门)}{P(最初选择A门，主持人打开B门)}
+$$
+
+P(汽车在B门∣最初选择A门，主持人打开B门) = 
+$$
+\frac{P(最初选择A门，主持人打开B门∣汽车在B门)P(汽车在B门)}{P(最初选择A门，主持人打开B门)}
+$$
+
+P(汽车在C门∣最初选择A门，主持人打开B门) = 
+$$
+\frac{P(最初选择A门，主持人打开B门∣汽车在C门)P(汽车在C门)}{P(最初选择A门，主持人打开B门)}
+$$
+
+
+接下来让我们逐步求解，首先易得：
+
+$$
+P(汽车在A门) = P(汽车在B门) = P(汽车在C门) =1/3
+$$
+至此,我们计算一下最终结果:
+
+
+
+P(汽车在A门∣最初选择A门，主持人打开B门) = 
+$$
+\frac{\frac{1}{2} \cdot \frac{1}{3}}{\frac{1}{2}} = \frac{1}{3}
+$$
+
+P(汽车在B门∣最初选择A门，主持人打开B门) = 
+$$
+\frac{0 \cdot \frac{1}{3}}{\frac{1}{2}} = 0
+$$
+
+P(汽车在C门∣最初选择A门，主持人打开B门) = 
+$$
+\frac{1 \cdot \frac{1}{3}}{\frac{1}{2}} = \frac{2}{3}
+$$</p><br />
         <h1 class="my-2 font-semibold">结论</h1>
-        <p>啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊</p>
+        <p class="m-0">综上所述,我们可以得到在假设最初选择A门,主持人打开B门的前提下,汽车在C门的概率最高,概率为2/3.故
+          此时参赛者应该选择换成C门.</p>
       </Panel>
     </SplitterPanel>
   </Splitter>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
