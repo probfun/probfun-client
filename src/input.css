@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.markdown-format {
+    @apply text-black prose prose-p:!text-base prose-h1:font-bold prose-h1:text-base prose-h2:!text-lg prose-h3:!text-lg prose-a:text-blue-600 prose-img:rounded-xl prose-p:leading-8 prose-code:!font-normal prose-code:!rounded-md prose-code:!px-1 prose-pre:rounded-lg prose-pre:!bg-gray-100 prose-pre:dark:!bg-gray-800 prose-pre:transition-colors prose-img:mx-auto prose-ol:!my-1 prose-ul:!my-1 prose-li:!m-0 prose-p:!m-0 h-full w-full !max-w-full;
+}

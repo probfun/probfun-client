@@ -1,25 +1,22 @@
-FROM node:18-alpine
+# 第一阶段：构建前端应用
+FROM node:18-alpine AS builder
 
 # 设置工作目录
 WORKDIR /app
 
-# 复制项目文件
+# 复制依赖文件
 COPY package.json pnpm-lock.yaml ./
 
-# 安装pnpm
-RUN npm install -g pnpm
-
-# 安装依赖
-RUN pnpm install
+# 安装 pnpm 并依赖
+RUN npm install -g pnpm && pnpm install --frozen-lockfile
 
 COPY . .
 
-# 构建项目
 RUN pnpm run build
-
-# 使用nginx来服务构建后的静态文件
 FROM nginx:alpine
-COPY --from=0 /app/dist /usr/share/nginx/html
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+COPY nginx.conf /etc/nginx/nginx.conf
 
 # 暴露nginx服务端口
 EXPOSE 80
