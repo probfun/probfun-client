@@ -61,7 +61,7 @@ function login() {
     password: password.value,
   };
 
-  fetch('http://localhost:8080/usermanager/login', {
+  fetch('/usermanager/login', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${localStorage.getItem('token')}`, // 附加令牌
