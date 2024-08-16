@@ -80,7 +80,7 @@ function register() {
     email: email.value,
   };
 
-  fetch('http://localhost:8080/usermanager/register', {
+  fetch('/usermanager/register', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
