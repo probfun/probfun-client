@@ -27,7 +27,7 @@
           <InputGroupAddon>
             <i class="pi pi-key" />
           </InputGroupAddon>
-          <Password id="password" v-model="password" type="password" placeholder="密码" fluid toggleMask/>
+          <Password id="password" v-model="password" type="password" placeholder="密码" fluid toggleMask />
         </InputGroup>
 
         <InputGroup>
@@ -42,7 +42,7 @@
           <label for="accept">我同意隐私政策</label>
         </div>
 
-        <Button type="submit" label="注册" class="mt-2" @click="login" severity="help" />
+        <Button type="submit" label="注册" class="mt-2" @click="register" severity="help" />
       </div>
 
       <div class="w-full flex justify-center mt-5">
@@ -64,9 +64,54 @@ const email = ref('');
 const accept = ref(false);
 const router = useRouter();
 
-function login() {
-  console.log('Login with username:', username.value, 'password:', password.value);
-  router.push('/dashboard');
+function register() {
+  if (!schoolID.value || !username.value || !password.value || !email.value || !accept.value) {
+    alert('请填写所有字段并接受隐私政策');
+    return;
+  }
+
+  const requestData = {
+    id: schoolID.value,
+    password: password.value,
+    username: username.value,
+    gender: '未知',
+    number: '随意',
+    introduction: '',
+    email: email.value,
+  };
+
+  fetch('http://localhost:8080/usermanager/register', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(requestData),
+  })
+    .then(response => {
+      // 检查响应状态码
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.text(); // 先以文本方式读取响应
+    })
+    .then(text => {
+      try {
+        const data = JSON.parse(text); // 尝试解析 JSON
+        if (data.status === 200) {
+          alert('注册成功');
+          router.push('/login');
+        } else {
+          alert('注册失败，请重试');
+        }
+      } catch (error) {
+        console.error('Failed to parse JSON:', error);
+        alert('注册失败，请重试');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('注册失败，请重试');
+    });
 }
 </script>
 

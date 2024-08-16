@@ -15,8 +15,12 @@
       </div>
 
       <div class="absolute right-6">
-        <div>
-          请点击此处<Button as="router-link" to="/login" label="登录" severity="secondary" class="ml-2"/>
+        <div v-if="!isAuthenticated">
+          请点击此处<Button as="router-link" to="/login" label="登录" severity="secondary" class="ml-2" />
+        </div>
+        <div v-else>
+          <span>欢迎，{{ userName }}</span>
+          <Button @click="logout" label="登出" severity="secondary" class="ml-2" />
         </div>
       </div>
 
@@ -28,7 +32,7 @@
           <template #item="{ item }">
             <a v-ripple class="flex items-center px-4 py-2 cursor-pointer group">
               <span :class="[item.icon, 'text-primary group-hover:text-inherit']" />
-              <span :class="['ml-2', { 'font-semibold': item.bold}]">{{ item.label }}</span>
+              <span :class="['ml-2', { 'font-semibold': item.bold }]">{{ item.label }}</span>
               <Badge v-if="item.badge" class="ml-auto" :value="item.badge" />
               <span v-if="item.shortcut"
                 class="ml-auto border border-surface rounded bg-emphasis text-muted-color text-xs p-1">{{ item.shortcut
@@ -50,6 +54,16 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+
+const store = useStore();
+
+const isAuthenticated = computed(() => store.getters.isAuthenticated);
+const userName = computed(() => store.getters.getUser?.username); // 根据实际存储的用户信息字段
+const logout = () => {
+  store.dispatch('logout');
+};
 const router = useRouter();
 const sideBarItems = ref([
   {
