@@ -7,6 +7,7 @@ WORKDIR /app
 # 复制依赖文件
 COPY package.json pnpm-lock.yaml ./
 
+RUN npm install -g pnpm && pnpm install
 # 安装 pnpm 并依赖
 RUN npm install -g pnpm && pnpm install --frozen-lockfile
 
