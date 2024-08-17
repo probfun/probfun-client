@@ -43,6 +43,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
+import axios from 'axios';
 
 const id = ref('');
 const password = ref('');
@@ -50,7 +51,7 @@ const accept = ref(false);
 const router = useRouter();
 const store = useStore();
 
-function login() {
+async function login() {
   if (!id.value || !password.value || !accept.value) {
     alert('请填写所有字段并接受隐私政策');
     return;
@@ -61,29 +62,28 @@ function login() {
     password: password.value,
   };
 
-  fetch('http://localhost:8080/usermanager/login', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`, // 附加令牌
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(requestData),
-  })
-    .then(response => response.json()) // 解析 JSON 响应
-    .then(data => {
-      if (data.status === 200) {
-        alert('登录成功');
-        localStorage.setItem('token', data.data.user.token); // 存储令牌
-        store.dispatch('login', data.data.user); // 更新 Vuex 状态
-        router.push('/dashboard'); // 跳转页面
-      } else {
-        alert(data.msg || '登录失败，请重试'); // 显示错误消息
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      alert('登录失败，请重试');
+  try {
+    const response = await axios.post('http://8.154.34.171:8000/usermanager/login', requestData, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`, // 附加令牌
+        'Content-Type': 'application/json',
+      },
     });
+
+    const data = response.data;
+
+    if (data.status === 200) {
+      alert('登录成功');
+      localStorage.setItem('token', data.data.user.token); // 存储令牌
+      store.dispatch('login', data.data.user); // 更新 Vuex 状态
+      router.push('/dashboard'); // 跳转页面
+    } else {
+      alert(data.msg || '登录失败，请重试'); // 显示错误消息
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('登录失败，请重试');
+  }
 }
 </script>
 

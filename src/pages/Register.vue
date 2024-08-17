@@ -57,6 +57,8 @@
 import { Pass } from 'three/examples/jsm/postprocessing/Pass';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
+
 const schoolID = ref('');
 const username = ref('');
 const password = ref('');
@@ -64,7 +66,7 @@ const email = ref('');
 const accept = ref(false);
 const router = useRouter();
 
-function register() {
+async function register() {
   if (!schoolID.value || !username.value || !password.value || !email.value || !accept.value) {
     alert('请填写所有字段并接受隐私政策');
     return;
@@ -80,38 +82,23 @@ function register() {
     email: email.value,
   };
 
-  fetch('http://localhost:8080/usermanager/register', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(requestData),
-  })
-    .then(response => {
-      // 检查响应状态码
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.text(); // 先以文本方式读取响应
-    })
-    .then(text => {
-      try {
-        const data = JSON.parse(text); // 尝试解析 JSON
-        if (data.status === 200) {
-          alert('注册成功');
-          router.push('/login');
-        } else {
-          alert('注册失败，请重试');
-        }
-      } catch (error) {
-        console.error('Failed to parse JSON:', error);
-        alert('注册失败，请重试');
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      alert('注册失败，请重试');
+  try {
+    const response = await axios.post('http://8.154.34.171:8000/usermanager/register', requestData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
+
+    if (response.data.status === 200) {
+      alert('注册成功');
+      router.push('/login');
+    } else {
+      alert('注册失败，请重试');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('注册失败，请重试');
+  }
 }
 </script>
 
