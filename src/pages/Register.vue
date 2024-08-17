@@ -83,7 +83,7 @@ async function register() {
   };
 
   try {
-    const response = await axios.post('http://8.154.34.171:8000/usermanager/register', requestData, {
+    const response = await axios.post('http://8.154.34.171:8080/usermanager/register', requestData, {
       headers: {
         'Content-Type': 'application/json',
       },
