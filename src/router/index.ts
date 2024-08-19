@@ -3,6 +3,8 @@ import DashBoard from "@/pages/DashBoard.vue";
 import BuffonNeedle from "@/components/experiment/chapter1/BuffonNeedle.vue";
 import DistributionBoard from "@/components/experiment/distribution/DistributionBoard.vue";
 import ThreeDoors from "@/components/experiment/chapter1/ThreeDoors.vue";
+import BinomialDistribution from '@/components/experiment/distribution/BinomialDistribution.vue';
+import PoissonDistribution from '@/components/experiment/distribution/PoissonDistribution.vue';
 import Login from "@/pages/Login.vue";
 import Register from "@/pages/Register.vue";
 
@@ -26,8 +28,16 @@ const router = createRouter({
           component: ThreeDoors,
         },
         {
-          path: '/dashboard/experiment/distribution',
+          path: '/dashboard/experiment/normalDistribution',
           component: DistributionBoard,
+        },
+        {
+          path: '/dashboard/experiment/binomialDistribution',
+          component: BinomialDistribution,
+        },
+        {
+          path: '/dashboard/experiment/poissonDistribution',
+          component: PoissonDistribution,
         },
         {
           path: '/dashboard/setting',

@@ -8,6 +8,9 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Badge: typeof import('primevue/badge')['default']
+    BinomialDistribution: typeof import('./src/components/experiment/distribution/BinomialDistribution.vue')['default']
+    BinomialDistributionBoard: typeof import('./src/components/experiment/distribution/BinomialDistributionBoard.vue')['default']
+    BinomialDistributionDiagram: typeof import('./src/components/experiment/distribution/BinomialDistributionDiagram.vue')['default']
     BuffonNeedle: typeof import('./src/components/experiment/chapter1/BuffonNeedle.vue')['default']
     Button: typeof import('primevue/button')['default']
     Chart: typeof import('primevue/chart')['default']
@@ -25,6 +28,7 @@ declare module 'vue' {
     Panel: typeof import('primevue/panel')['default']
     PanelMenu: typeof import('primevue/panelmenu')['default']
     Password: typeof import('primevue/password')['default']
+    PoissonDistribution: typeof import('./src/components/experiment/distribution/PoissonDistribution.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Select: typeof import('primevue/select')['default']

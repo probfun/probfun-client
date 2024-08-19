@@ -26,7 +26,7 @@
 
       <!--      <template #end> <SplitButton label="Save" :model="items"></SplitButton></template>-->
     </div>
-    <div class="flex flex-1 overflow-y-hidden">
+    <div class="flex flex-1">
       <div class="w-1/4 max-w-lg h-full sticky p-3">
         <PanelMenu :model="sideBarItems" class="w-full">
           <template #item="{ item }">
@@ -90,9 +90,19 @@ const sideBarItems = ref([
         label: "第二章",
         items: [
           {
-            label: "分布",
+            label: "二项分布",
             icon: 'pi pi-chart-bar',
-            command: () => router.push('/dashboard/experiment/distribution'),
+            command: () => router.push('/dashboard/experiment/binomialDistribution'),
+          },
+          {
+            label: "泊松分布",
+            icon: 'pi pi-chart-bar',
+            command: () => router.push('/dashboard/experiment/poissonDistribution'),
+          },
+          {
+            label: "正态分布",
+            icon: 'pi pi-chart-bar',
+            command: () => router.push('/dashboard/experiment/normalDistribution'),
           }
         ],
         icon: 'pi pi-bookmark'
