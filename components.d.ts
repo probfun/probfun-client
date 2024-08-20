@@ -16,7 +16,12 @@ declare module 'vue' {
     Chip: typeof import('primevue/chip')['default']
     DistributionBoard: typeof import('./src/components/experiment/distribution/DistributionBoard.vue')['default']
     DistributionDiagram: typeof import('./src/components/experiment/distribution/DistributionDiagram.vue')['default']
+    EvenDiagram: typeof import('./src/components/experiment/distribution/EvenDiagram.vue')['default']
+    EvenDistribution: typeof import('./src/components/experiment/distribution/EvenDistribution.vue')['default']
     ExperimentBoard: typeof import('./src/components/experiment/ExperimentBoard.vue')['default']
+    ExponentialDiagram: typeof import('./src/components/experiment/distribution/ExponentialDiagram.vue')['default']
+    ExponentialDistribution: typeof import('./src/components/experiment/distribution/ExponentialDistribution.vue')['default']
+    GeometricDistribution: typeof import('./src/components/experiment/distribution/GeometricDistribution.vue')['default']
     IconField: typeof import('primevue/iconfield')['default']
     InputGroup: typeof import('primevue/inputgroup')['default']
     InputGroupAddon: typeof import('primevue/inputgroupaddon')['default']
@@ -35,6 +40,8 @@ declare module 'vue' {
     Splitter: typeof import('primevue/splitter')['default']
     SplitterPanel: typeof import('primevue/splitterpanel')['default']
     ThreeDoors: typeof import('./src/components/experiment/chapter1/ThreeDoors.vue')['default']
+    UniformDiagram: typeof import('./src/components/experiment/distribution/UniformDiagram.vue')['default']
+    UniformDistribution: typeof import('./src/components/experiment/distribution/UniformDistribution.vue')['default']
   }
   export interface ComponentCustomProperties {
     FocusTrap: typeof import('primevue/focustrap')['default']

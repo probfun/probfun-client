@@ -5,6 +5,9 @@ import DistributionBoard from "@/components/experiment/distribution/Distribution
 import ThreeDoors from "@/components/experiment/chapter1/ThreeDoors.vue";
 import BinomialDistribution from '@/components/experiment/distribution/BinomialDistribution.vue';
 import PoissonDistribution from '@/components/experiment/distribution/PoissonDistribution.vue';
+import GeometricDistribution from '@/components/experiment/distribution/GeometricDistribution.vue';
+import EvenDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
+import ExponentialDistribution from '@/components/experiment/distribution/ExponentialDistribution.vue';
 import Login from "@/pages/Login.vue";
 import Register from "@/pages/Register.vue";
 
@@ -38,6 +41,18 @@ const router = createRouter({
         {
           path: '/dashboard/experiment/poissonDistribution',
           component: PoissonDistribution,
+        },
+        {
+          path: '/dashboard/experiment/geometricDistribution',
+          component: GeometricDistribution,
+        },
+        {
+          path: '/dashboard/experiment/evenDistribution',
+          component: EvenDistribution,
+        },
+        {
+          path: '/dashboard/experiment/exponentialDistribution',
+          component: ExponentialDistribution,
         },
         {
           path: '/dashboard/setting',

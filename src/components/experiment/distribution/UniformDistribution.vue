@@ -1,0 +1,115 @@
+<script setup lang="ts">
+import { computed, onMounted, ref, watch } from 'vue'
+import katex from 'katex';
+import 'katex/dist/katex.min.css';
+import UniformDiagram from './UniformDiagram.vue';
+
+const a = ref(0);
+const b = ref(1);
+const selectedCity = ref();
+const cities = ref([
+    { name: '正态分布' },
+]);
+
+const latexFormula = computed(() => `f(x) = 
+\\begin{cases} 
+\\frac{1}{${b.value} - ${a.value}}, & \\text{if } ${a.value} \\leq x \\leq ${b.value} \\\\
+0, & \\text{otherwise}
+\\end{cases}`);
+const katexContainer = ref<HTMLElement | null>(null);
+
+const renderFormula = () => {
+    if (katexContainer.value) {
+        katex.render(latexFormula.value, katexContainer.value, {
+            throwOnError: false
+        });
+    }
+};
+
+onMounted(() => {
+    renderFormula();
+});
+
+watch(latexFormula, () => {
+    renderFormula();
+});
+
+</script>
+
+<template>
+    <Splitter class="mb-8 h-full !border-0">
+        <SplitterPanel class="pr-1.5">
+            <div class="flex-1 p-3.5 border rounded-lg flex flex-col h-full">
+                <div class="mb-2 font-bold"> 实验区 </div>
+                <div class="h-full w-full flex flex-col">
+                    <div class="mb-5 w-full flex-1">
+                        <uniform-diagram class="flex-1 h-full" :a="a" :b="b" />
+                    </div>
+                    <div class="w-full flex items-center justify-center mb-5">
+                        <Select v-model="selectedCity" :options="cities" optionLabel="name" placeholder="选择一个分布"
+                            class="w-full md:w-56 mr-5" />
+                        <div ref="katexContainer" class="text-l"></div>
+                    </div>
+                    <div class="flex w-full mb-5">
+                        <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+                            <p> a </p>
+                            <InputNumber v-model.number="a" />
+                            <Slider :min="-10" :max="9.9" :step="0.1" v-model="a" class="w-48" />
+                        </div>
+                        <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+                            <p> b </p>
+                            <InputNumber v-model.number="b" />
+                            <Slider :min="a + 0.1" :max="10" :step="0.1" v-model="b" class="w-48" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </SplitterPanel>
+        <SplitterPanel class="pr-3 pl-1.5" :size="25">
+            <Panel header="提示区" class="h-full overflow-y-auto">
+                <p class="m-0">均匀分布（Uniform Distribution）是概率论中的一种分布类型，在指定的区间内，所有的数值出现的概率都相同。均匀分布可以分为离散型均匀分布和连续型均匀分布。</p>
+
+                <h1 class="font-semibold my-2">均匀分布的定义</h1>
+                <p class="m-0">
+                    对于连续型均匀分布，其概率密度函数（PDF）定义为：
+                    \[
+                    f(x) =
+                    \begin{cases}
+                    \frac{1}{b-a}, & \text{if } a \leq x \leq b \\
+                    0, & \text{otherwise}
+                    \end{cases}
+                    \]
+                    对于离散型均匀分布，其概率质量函数（PMF）定义为：
+                    \[
+                    P(X = x) = \frac{1}{n}, \quad x \in \{x_1, x_2, \dots, x_n\}
+                    \]
+                    其中：<br>
+                    - \( a \) 和 \( b \) 分别是区间的下限和上限；<br>
+                    - \( X \) 是均匀分布的随机变量；<br>
+                    - \( n \) 是可能取值的数量。
+                </p>
+
+                <h1 class="font-semibold my-2">期望值和方差</h1>
+                <p class="m-0">
+                    - 对于连续型均匀分布：<br>
+                    期望值：\( E(X) = \frac{a + b}{2} \)<br>
+                    方差：\( \text{Var}(X) = \frac{(b - a)^2}{12} \)<br>
+                    <br>
+                    - 对于离散型均匀分布：<br>
+                    期望值：\( E(X) = \frac{1}{n} \sum_{i=1}^{n} x_i \)<br>
+                    方差：\( \text{Var}(X) = \frac{1}{n} \sum_{i=1}^{n} (x_i - E(X))^2 \)
+                </p>
+
+                <h1 class="font-semibold my-2">特点</h1>
+                <p class="m-0">
+                    1. 均匀性：均匀分布中的每个数值或区间的每个子区间都有相同的概率。<br>
+                    2. 独立性：每个取值或区间是相互独立的，没有偏好。<br>
+                    3. 简单性：均匀分布是最简单的一种概率分布，特别是在没有任何其他信息时常被用作模型。
+                </p>
+
+            </Panel>
+        </SplitterPanel>
+    </Splitter>
+</template>
+
+<style scoped></style>

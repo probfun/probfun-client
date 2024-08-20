@@ -1,0 +1,171 @@
+<script setup lang="ts">
+import { computed, onMounted, ref, watch } from 'vue'
+import katex from 'katex';
+import 'katex/dist/katex.min.css';
+
+const probability = ref(0.5);  // Probability of success (p)
+const selectedCity = ref();
+const cities = ref([
+    { name: '几何分布' },
+]);
+
+const latexFormula = computed(() => `P(X = k) = (1 - ${probability.value})^{k-1} \\cdot ${probability.value}`);
+const katexContainer = ref<HTMLElement | null>(null);
+
+const renderFormula = () => {
+    if (katexContainer.value) {
+        katex.render(latexFormula.value, katexContainer.value, {
+            throwOnError: false
+        });
+    }
+};
+
+onMounted(() => {
+    chartData.value = setChartData();
+    chartOptions.value = setChartOptions();
+    renderFormula();
+});
+
+const chartData = ref();
+const chartOptions = ref();
+const setChartData = () => {
+    const documentStyle = getComputedStyle(document.documentElement);
+    const p = probability.value;
+
+    const kValues = Array.from({ length: 20 }, (_, i) => i + 1);  // 生成1到10的k值
+    const data = kValues.map(k => Math.pow(1 - p, k - 1) * p); // 计算几何分布的概率
+
+    return {
+        labels: kValues,
+        datasets: [
+            {
+                label: '几何分布',
+                data: data,
+                fill: false,
+                borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
+                tension: 0.4
+            },
+        ]
+    };
+};
+
+const setChartOptions = () => {
+    const documentStyle = getComputedStyle(document.documentElement);
+    const textColor = documentStyle.getPropertyValue('--p-text-color');
+    const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
+    const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+
+    return {
+        maintainAspectRatio: false,
+        aspectRatio: 0.6,
+        plugins: {
+            legend: {
+                labels: {
+                    color: textColor
+                }
+            }
+        },
+        scales: {
+            x: {
+                title: {
+                    display: true,
+                    text: '试验次数 (k)',
+                    color: textColor
+                },
+                ticks: {
+                    color: textColorSecondary
+                },
+                grid: {
+                    color: surfaceBorder
+                }
+            },
+            y: {
+                title: {
+                    display: true,
+                    text: '概率 (P(X = k))',
+                    color: textColor
+                },
+                ticks: {
+                    color: textColorSecondary
+                },
+                grid: {
+                    color: surfaceBorder
+                }
+            }
+        }
+    };
+}
+
+// 监听 probability 的变化以动态更新图像
+watch([probability], () => {
+    chartData.value = setChartData();
+    renderFormula();
+});
+</script>
+
+<template>
+    <Splitter class="mb-8 h-full !border-0">
+        <SplitterPanel class="pr-1.5">
+            <div class="flex-1 p-3.5 border rounded-lg flex flex-col h-full">
+                <div class="mb-2 font-bold"> 实验区 </div>
+                <div class="h-full w-full flex flex-col">
+                    <div class="card mb-2">
+                        <Chart type="line" :data="chartData" :options="chartOptions" class="h-[30rem]" />
+                    </div>
+                    <div class="w-full flex items-center justify-center mb-5">
+                        <Select v-model="selectedCity" :options="cities" optionLabel="name" placeholder="选择一个分布"
+                            class="w-full md:w-56 mr-5" />
+                        <div ref="katexContainer" class="text-xl"></div>
+                    </div>
+                    <div class="flex w-full mb-5">
+                        <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+                            <p> Probability of success </p>
+                            <InputNumber v-model.number="probability" />
+                            <Slider :min="0" :max="1" :step="0.1" v-model="probability" class="w-48" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </SplitterPanel>
+        <SplitterPanel class="pr-3 pl-1.5" :size="25">
+            <Panel header="提示区" class="h-full">
+                <p class="m-0">几何分布（Geometric
+                    Distribution）是统计学中的一种离散概率分布，用于描述在一系列独立的伯努利试验中，第一次成功发生之前的失败次数。几何分布可以用来表示成功之前进行的失败次数，或直到第一次成功所需的试验次数。
+                </p>
+
+                <h1 class="font-semibold my-2">几何分布的定义</h1>
+                <p class="m-0">
+                    几何分布的概率质量函数（PMF）定义为：<br>
+                    - 如果 \( X \) 表示第一次成功前的失败次数：
+                    \[
+                    P(X = k) = (1-p)^k p
+                    \]
+                    - 如果 \( Y \) 表示直到第一次成功所需的试验次数：
+                    \[
+                    P(Y = k) = (1-p)^{k-1} p
+                    \]
+                    其中：<br>
+                    - \( p \) 是每次试验成功的概率；<br>
+                    - \( k \) 是试验次数或失败次数（\( k \) 为非负整数）。
+                </p>
+
+                <h1 class="font-semibold my-2">期望值和方差</h1>
+                <p class="m-0">
+                    - 失败次数（X = k）的期望值：\( E(X) = \frac{1-p}{p} \)<br>
+                    - 失败次数（X = k）的方差：\( \text{Var}(X) = \frac{1-p}{p^2} \)<br>
+                    - 试验次数（Y = k）的期望值：\( E(Y) = \frac{1}{p} \)<br>
+                    - 试验次数（Y = k）的方差：\( \text{Var}(Y) = \frac{1-p}{p^2} \)
+                </p>
+
+                <h1 class="font-semibold my-2">特点</h1>
+                <p class="m-0">
+                    1. 无记忆性：几何分布具有无记忆性，即过去的试验结果不会影响未来的成功概率。<br>
+                    2. 离散分布：几何分布是一种定义在非负整数上的离散概率分布。
+                </p>
+
+            </Panel>
+        </SplitterPanel>
+    </Splitter>
+</template>
+
+<style scoped></style>

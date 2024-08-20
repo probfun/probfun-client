@@ -97,12 +97,12 @@ const setChartOptions = () => {
 
 // 计算阶乘
 const factorial = (n: number) => {
-  if (n === 0 || n === 1) return 1;
-  let result = 1;
-  for (let i = 2; i <= n; i++) {
-    result *= i;
-  }
-  return result;
+    if (n === 0 || n === 1) return 1;
+    let result = 1;
+    for (let i = 2; i <= n; i++) {
+        result *= i;
+    }
+    return result;
 };
 
 // 监听 lambda 的变化以动态更新图像
@@ -138,8 +138,30 @@ watch(lambda, () => {
         </SplitterPanel>
         <SplitterPanel class="pr-3 pl-1.5" :size="25">
             <Panel header="提示区" class="h-full">
-                <p class="m-0">
+                <p class="m-0">泊松分布（Poisson
+                    Distribution）是统计学中一种离散概率分布，用于描述在固定的时间间隔或空间区域内，事件发生的次数。它常用于建模某个事件的发生频率，特别是在平均事件发生率已知的情况下。泊松分布适用于事件发生概率相互独立的情境，并且事件发生是稀疏且随机的。
                 </p>
+                <h1 class="font-semibold my-2">泊松分布的定义</h1>
+                <p class="m-0">泊松分布的概率质量函数（PMF）定义为：
+
+                    \[
+                    P(X = k) = \frac{\lambda^k e^{-\lambda}}{k!}
+                    \]
+
+                    其中：<br>
+                    - \( X \) 是事件发生的次数；<br>
+                    - \( \lambda \) 是单位时间或单位区域内事件发生的平均次数（期望值）；<br>
+                    - \( e \) 是自然对数的底数（约等于 2.71828）；<br>
+                    - \( k \) 是事件发生的实际次数（\( k \) 为非负整数）。
+                </p>
+                <h1 class="font-semibold my-2">期望值和方差</h1>
+                <p class="m-0">- 期望值：\( E(X) = \lambda \)<br>
+                    - 方差：\( \text{Var}(X) = \lambda \)
+                </p>
+                <h1 class="font-semibold my-2">特点</h1>
+                <p class="m-0">1. 稀疏性：泊松分布通常用于建模稀疏事件，即事件发生的次数相对较少。<br>
+                    2. 独立性：事件发生的次数之间是独立的。<br>
+                    3. 无上限：理论上事件的发生次数可以是任意大的非负整数。</p>
             </Panel>
         </SplitterPanel>
     </Splitter>

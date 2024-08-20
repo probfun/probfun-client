@@ -100,6 +100,21 @@ const sideBarItems = ref([
             command: () => router.push('/dashboard/experiment/poissonDistribution'),
           },
           {
+            label: "几何分布",
+            icon: 'pi pi-chart-bar',
+            command: () => router.push('/dashboard/experiment/geometricDistribution'),
+          },
+          {
+            label: "均匀分布",
+            icon: 'pi pi-chart-bar',
+            command: () => router.push('/dashboard/experiment/evenDistribution'),
+          },
+          {
+            label: "指数分布",
+            icon: 'pi pi-chart-bar',
+            command: () => router.push('/dashboard/experiment/exponentialDistribution'),
+          },
+          {
             label: "正态分布",
             icon: 'pi pi-chart-bar',
             command: () => router.push('/dashboard/experiment/normalDistribution'),
