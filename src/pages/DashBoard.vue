@@ -18,13 +18,11 @@
         <div v-if="!isAuthenticated" class="flex items-center justify-center">
           请点击此处<Button as="router-link" to="/login" label="登录" severity="secondary" class="ml-2" />
         </div>
-        <div v-else>
+        <div v-else class="flex items-center justify-center">
           <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" class="mr-2" size="large"
             shape="circle" @click="toggle" aria-haspopup="true" aria-controls="overlay_tmenu" />
           <TieredMenu ref="menu" id="overlay_tmenu" :model="useritems" popup />
           <span class="text-xl ml-2">{{ userName }}</span>
-          <!-- <span>欢迎，{{ userName }}</span>
-          <Button @click="logout" label="登出" severity="secondary" class="ml-2" /> -->
         </div>
       </div>
 
@@ -65,9 +63,6 @@ const store = useStore();
 
 const isAuthenticated = computed(() => store.getters.isAuthenticated);
 const userName = computed(() => store.getters.getUser?.username); // 根据实际存储的用户信息字段
-const logout = () => {
-  store.dispatch('logout');
-};
 const router = useRouter();
 const sideBarItems = ref([
   {
