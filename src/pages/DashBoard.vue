@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full flex flex-col">
+  <div class="w-full h-full flex flex-col ">
     <div class="top-0 w-full flex justify-center items-center p-4 border-b">
       <div class="absolute left-6">
         <img class="h-8" src="../assets/logo.svg" alt="">
@@ -28,7 +28,7 @@
 
       <!--      <template #end> <SplitButton label="Save" :model="items"></SplitButton></template>-->
     </div>
-    <div class="flex flex-1">
+    <div class="flex flex-1 overflow-y-hidden">
       <div class="w-1/4 max-w-lg h-full sticky p-3">
         <PanelMenu :model="sideBarItems" class="w-full">
           <template #item="{ item }">

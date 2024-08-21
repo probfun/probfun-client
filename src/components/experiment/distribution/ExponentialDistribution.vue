@@ -3,6 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
 import ExponentialDiagram from './ExponentialDiagram.vue';
+import { toMarkDown } from '@/utils/markdown';
 
 const rate = ref(2);
 const selectedCity = ref();
@@ -29,6 +30,42 @@ watch(latexFormula, () => {
   renderFormula();
 });
 
+const content = `
+**指数分布（Exponential Distribution）** 是一种连续概率分布，用于描述在固定的时间间隔内，事件发生的时间间隔。它常用于建模事件发生的时间间隔，特别是当事件发生的速率已知且事件发生是独立的情况下。指数分布是泊松过程的连续时间模型，特别适用于描述无记忆性质的现象。
+
+#### 指数分布的定义
+
+指数分布的概率密度函数（PDF）定义为：
+
+$$
+f(x) = 
+\\begin{cases} 
+\\lambda e^{-\\lambda x}, & x \\geq 0 \\\\
+0, & x < 0 
+\\end{cases}
+$$
+
+其中：
+- $$ \\lambda $$ 是事件发生的速率参数（$$ \\lambda > 0 $$）；
+- $$ x $$ 是时间间隔或等待时间（$$ x \\geq 0 $$）。
+
+#### 期望值和方差
+
+- 期望值：$$ E(X) = \\frac{1}{\\lambda} $$
+- 方差：$$ \\text{Var}(X) = \\frac{1}{\\lambda^2} $$
+
+#### 特点
+
+1. **无记忆性**：指数分布具有无记忆性，即未来事件发生的概率不受过去时间的影响。数学上表示为：
+   $$
+   P(X > s + t \\mid X > s) = P(X > t)
+   $$
+   其中 $$ X $$ 是等待时间，$$ s $$ 和 $$ t $$ 是非负实数。
+
+2. **连续分布**：指数分布是一种定义在非负实数上的连续概率分布。
+
+3. **与泊松分布的关系**：指数分布是泊松过程的时间间隔分布，描述了在固定时间内发生事件的等待时间。
+`
 </script>
 
 <template>
@@ -56,33 +93,8 @@ watch(latexFormula, () => {
       </div>
     </SplitterPanel>
     <SplitterPanel class="pr-3 pl-1.5" :size="25">
-      <Panel header="提示区" class="h-full">
-        <p class="m-0">指数分布（Exponential
-          Distribution）是连续概率分布中的一种，用于描述独立事件之间的时间间隔。它通常与泊松分布相关联：泊松分布描述在固定时间段内发生的事件数量，而指数分布描述事件发生的时间间隔。 </p>
-        <h1 class="font-semibold my-2">指数分布的定义</h1>
-        <p class="m-0">如果事件的发生时间间隔 \( T \) 服从指数分布，那么其概率密度函数（PDF）为：
-
-          \[
-          f(t; \lambda) = \lambda e^{-\lambda t} \quad \text{for } t \geq 0
-          \]
-
-          其中：<br>
-          - \( t \) 是时间间隔（非负实数）<br>
-          - \( \lambda \) 是分布的参数，通常称为“速率参数”，它表示单位时间内事件发生的平均次数；<br>
-          - \( e \) 是自然对数的底数（约等于 2.71828）；<br>
-        </p>
-        <h1 class="font-semibold my-2">期望值和方差</h1>
-        <p class="m-0">- 期望值：\( E(T) = \frac{1}{\lambda} \)
-          <br>
-          - 方差：\( \text{Var}(T) = \frac{1}{\lambda^2} \)
-        </p>
-        <h1 class="font-semibold my-2">特点</h1>
-        <p class="m-0">1. 无记忆性：指数分布具有无记忆性（Memoryless Property），即过去的时间不会影响未来事件的发生。这意味着在时间 \( t \) 后再等 \( s \)
-          时间发生事件的概率，与一开始就等待 \( s \) 时间的概率是相同的。数学上表示为：
-          \[
-          P(T > t + s \mid T > t) = P(T > s)
-          \]
-          2. 关联泊松分布：指数分布和泊松分布密切相关，如果事件发生时间间隔服从指数分布，则在给定时间段内的事件发生次数服从泊松分布。</p>
+      <Panel header="提示区" class="h-full overflow-auto">
+        <div v-html="toMarkDown(content)" class="markdown-format"></div>
       </Panel>
     </SplitterPanel>
   </Splitter>
