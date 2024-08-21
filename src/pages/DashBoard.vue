@@ -15,12 +15,16 @@
       </div>
 
       <div class="absolute right-6">
-        <div v-if="!isAuthenticated">
+        <div v-if="!isAuthenticated" class="flex items-center justify-center">
           请点击此处<Button as="router-link" to="/login" label="登录" severity="secondary" class="ml-2" />
         </div>
         <div v-else>
-          <span>欢迎，{{ userName }}</span>
-          <Button @click="logout" label="登出" severity="secondary" class="ml-2" />
+          <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" class="mr-2" size="large"
+            shape="circle" @click="toggle" aria-haspopup="true" aria-controls="overlay_tmenu" />
+          <TieredMenu ref="menu" id="overlay_tmenu" :model="useritems" popup />
+          <span class="text-xl ml-2">{{ userName }}</span>
+          <!-- <span>欢迎，{{ userName }}</span>
+          <Button @click="logout" label="登出" severity="secondary" class="ml-2" /> -->
         </div>
       </div>
 
@@ -175,6 +179,22 @@ const speedDialItems = ref([
     label: '我的收藏'
   }
 ]);
+
+const menu = ref();
+const useritems = ref([
+  {
+    label: '修改个人信息',
+    icon: 'pi pi-server',
+  },
+  {
+    label: '登出',
+    icon: 'pi pi-sign-out',
+    command: () => { store.dispatch('logout'); }
+  },
+]);
+const toggle = (event: any) => {
+  menu.value.toggle(event);
+};
 </script>
 
 <style></style>

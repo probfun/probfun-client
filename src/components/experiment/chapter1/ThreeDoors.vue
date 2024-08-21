@@ -206,8 +206,8 @@ $$
     <SplitterPanel class="pr-1.5">
       <div class="flex-1 p-3.5 border rounded-lg flex flex-col h-full">
         <div class="bg-blue-700 text-white pl-2 rounded-2xl mb-2 w-max">三门问题:
-          <Chip label="条件概率" class="h-8 ml-2 my-2" />
-          <Chip label="贝叶斯定理" class="h-8 mx-2 my-2" />
+          <Tag value="条件概率" class="h-8 ml-2 my-2" severity="secondary"/>
+          <Tag value="贝叶斯定理" class="h-8 mx-2 my-2" severity="secondary"/>
         </div>
         <div class="mb-2 font-bold"> 实验区 </div>
         <div ref="container" class="h-full w-full relative flex flex-col">

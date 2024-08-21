@@ -3,8 +3,8 @@
     <SplitterPanel class="pr-1.5">
       <div class="flex-1 p-3.5 border rounded-lg flex flex-col h-full">
         <div class="bg-blue-700 text-white pl-2 rounded-2xl mb-2 w-max">Buffon投针:
-          <Chip label="辛钦大数定律" class="h-8 ml-2 my-2" />
-          <Chip label="蒙特卡罗方法" class="h-8 mx-2 my-2" />
+          <Tag value="辛钦大数定律" class="h-8 ml-2 my-2" severity="secondary"/>
+          <Tag value="蒙特卡罗方法" class="h-8 mx-2 my-2" severity="secondary"/>
         </div>
         <div class="mb-2 font-bold"> 实验区 </div>
         <div ref="container" class="h-full w-full relative flex flex-col">

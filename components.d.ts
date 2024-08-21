@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Avatar: typeof import('primevue/avatar')['default']
     Badge: typeof import('primevue/badge')['default']
     BinomialDistribution: typeof import('./src/components/experiment/distribution/BinomialDistribution.vue')['default']
     BuffonNeedle: typeof import('./src/components/experiment/chapter1/BuffonNeedle.vue')['default']
@@ -16,8 +17,6 @@ declare module 'vue' {
     Chip: typeof import('primevue/chip')['default']
     DistributionBoard: typeof import('./src/components/experiment/distribution/DistributionBoard.vue')['default']
     DistributionDiagram: typeof import('./src/components/experiment/distribution/DistributionDiagram.vue')['default']
-    EvenDiagram: typeof import('./src/components/experiment/distribution/EvenDiagram.vue')['default']
-    EvenDistribution: typeof import('./src/components/experiment/distribution/EvenDistribution.vue')['default']
     ExperimentBoard: typeof import('./src/components/experiment/ExperimentBoard.vue')['default']
     ExponentialDiagram: typeof import('./src/components/experiment/distribution/ExponentialDiagram.vue')['default']
     ExponentialDistribution: typeof import('./src/components/experiment/distribution/ExponentialDistribution.vue')['default']
@@ -39,7 +38,9 @@ declare module 'vue' {
     SpeedDial: typeof import('primevue/speeddial')['default']
     Splitter: typeof import('primevue/splitter')['default']
     SplitterPanel: typeof import('primevue/splitterpanel')['default']
+    Tag: typeof import('primevue/tag')['default']
     ThreeDoors: typeof import('./src/components/experiment/chapter1/ThreeDoors.vue')['default']
+    TieredMenu: typeof import('primevue/tieredmenu')['default']
     UniformDiagram: typeof import('./src/components/experiment/distribution/UniformDiagram.vue')['default']
     UniformDistribution: typeof import('./src/components/experiment/distribution/UniformDistribution.vue')['default']
   }
