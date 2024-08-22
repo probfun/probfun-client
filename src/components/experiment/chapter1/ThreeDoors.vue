@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, Ref, watch } from 'vue';
 import {toMarkDown} from "@/utils/markdown";
+import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
 class Door {
   id: number;
@@ -196,77 +197,72 @@ $$
 
 ---
 
-这部分内容推导了在选择门 A 后，主持人打开门 B 时，汽车在各个门后的概率。最终结果显示，汽车在门 C 后的概率是最高的，即 \\(\\frac{2}{3}\\)，而在门 A 后的概率是 \\(\\frac{1}{3}\\)。
+这部分内容推导了在选择门 A 后，主持人打开门 B 时，汽车在各个门后的概率。最终结果显示，汽车在门 C 后的概率是最高的，即 $\\frac{2}{3}$，而在门 A 后的概率是 $\\frac{1}{3}$。
 `
 
 </script>
 
 <template>
-  <Splitter class="h-full !border-0">
-    <SplitterPanel class="pr-1.5">
-      <div class="flex-1 p-3.5 border rounded-lg flex flex-col h-full">
-        <div class="bg-blue-700 text-white pl-2 rounded-2xl mb-2 w-max">三门问题:
-          <Tag value="条件概率" class="h-8 ml-2 my-2" severity="secondary"/>
-          <Tag value="贝叶斯定理" class="h-8 mx-2 my-2" severity="secondary"/>
-        </div>
-        <div class="mb-2 font-bold"> 实验区 </div>
-        <div ref="container" class="h-full w-full relative flex flex-col">
-          <div class="relative p-5 flex flex-col items-center rounded-lg border-2 mb-3">
-            <div
+  <experiment-board title="三门问题" :tags="['条件概率', '贝叶斯定理']">
+    <template #experiment>
+      <div ref="container" class="h-full w-full relative flex flex-col">
+        <div class="relative p-5 flex flex-col items-center rounded-lg border-2 mb-3">
+          <div
               class="h-full w-full absolute top-0 left-0 bg-black bg-opacity-70 flex justify-center items-center z-10"
               v-if="gameState === 'End'">
-              <Button @click="startGame">开始游戏</Button>
-            </div>
-            <div class="font-bold text-xl mb-6 h-8 text-center flex items-center">
-              <p v-if="gameState === 'Select'">请选择一扇门！</p>
-              <p v-if="gameState === 'Reveal'">
-                主持人打开了一扇错误的门！<br>
-                你是否选择换一扇门？
-              </p>
-              <p v-if="gameState === 'Win'">
-                恭喜你，你赢得了汽车！
-              </p>
-              <p v-if="gameState === 'Lose'">
-                很遗憾，你没有赢得汽车。
-              </p>
-            </div>
+            <Button @click="startGame">开始游戏</Button>
+          </div>
+          <div class="font-bold text-xl mb-6 h-8 text-center flex items-center">
+            <p v-if="gameState === 'Select'">请选择一扇门！</p>
+            <p v-if="gameState === 'Reveal'">
+              主持人打开了一扇错误的门！<br>
+              你是否选择换一扇门？
+            </p>
+            <p v-if="gameState === 'Win'">
+              恭喜你，你赢得了汽车！
+            </p>
+            <p v-if="gameState === 'Lose'">
+              很遗憾，你没有赢得汽车。
+            </p>
+          </div>
 
-            <div class="w-full flex justify-rounded mb-3 max-w-lg">
-              <div v-for="door in doors" :key="door.id" class="relative cursor-pointer -mx-5"
-                @click="door.toggleSelect">
-                <img :src="`/three-doors/door_${door.open ? 'open' : 'close_2'}.png`" alt=""
-                  class="hover:scale-[101%] hover:drop-shadow-[0_0_10px_rgba(155,155,138,1)] transition-all" />
-                <div
+          <div class="w-full flex justify-rounded mb-3 max-w-lg">
+            <div v-for="door in doors" :key="door.id" class="relative cursor-pointer -mx-5"
+                 @click="door.toggleSelect">
+              <img :src="`/three-doors/door_${door.open ? 'open' : 'close_2'}.png`" alt=""
+                   class="hover:scale-[101%] hover:drop-shadow-[0_0_10px_rgba(155,155,138,1)] transition-all" />
+              <div
                   class="absolute w-full h-full top-0 left-0 flex justify-center items-center pointer-events-none text-gray-200"
                   v-if="door.selected">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="size-16">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                      d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                  </svg>
-                </div>
-                <div
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                     stroke="currentColor" class="size-16">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+              </div>
+              <div
                   class="absolute w-full h-full top-0 left-0 flex justify-center items-center pointer-events-none z-10"
                   v-if="door.open">
-                  <img src="/three-doors/car_kaizousya.png" alt="" v-if="door.correct" />
-                  <img src="/three-doors/animal_markhor.png" alt="" v-else />
-                </div>
+                <img src="/three-doors/car_kaizousya.png" alt="" v-if="door.correct" />
+                <img src="/three-doors/animal_markhor.png" alt="" v-else />
               </div>
-            </div>
-            <div class="h-8">
-              <Button :disabled="Door.selectedDoor.value == null" @click="selectDoor"
-                v-if="gameState === 'Select'">选择</Button>
-              <div class="w-full flex space-x-5 justify-center" v-if="gameState === 'Reveal'">
-                <Button @click="gameResult(false)">不换门</Button>
-                <Button @click="gameResult(true)">换门</Button>
-              </div>
-              <Button @click="startGame" v-if="gameState === 'Win' || gameState === 'Lose'">重新开始</Button>
             </div>
           </div>
-          <div class="p-5 items-center flex flex-col flex-1 justify-center border-2 rounded-lg overflow-y-auto">
+          <div class="h-8">
+            <Button :disabled="Door.selectedDoor.value == null" @click="selectDoor"
+                    v-if="gameState === 'Select'">选择</Button>
+            <div class="w-full flex space-x-5 justify-center" v-if="gameState === 'Reveal'">
+              <Button @click="gameResult(false)">不换门</Button>
+              <Button @click="gameResult(true)">换门</Button>
+            </div>
+            <Button @click="startGame" v-if="gameState === 'Win' || gameState === 'Lose'">重新开始</Button>
+          </div>
+        </div>
+        <div class="p-5 items-center flex flex-1 justify-center border-2 rounded-lg space-x-3">
+          <div class="flex flex-col items-center justify-center">
             <div class="flex">
               <p class="mt-2"> 模拟轮数： </p>
-              <div class="flex flex-col w-30 space-y-3 mr-3">
+              <div class="flex flex-col w-24 space-y-3 mr-3">
                 <InputNumber :min="1" :max="1000" v-model.number="autoGameRound" />
                 <Slider :min="1" :max="1000" v-model="autoGameRound" />
               </div>
@@ -274,8 +270,7 @@ $$
                 autoGaming ? autoGaming = false : simulateGame();
               }"> {{ autoGaming ? '终止模拟' : '开始模拟' }}</Button>
             </div>
-
-            <div class="my-10">
+            <div class="mt-3">
               <div class="mb-2 text-lg font-bold">实验结果:</div>
               <div class="grid grid-cols-2 gap-4 justify-between">
                 <div class="flex items-center">
@@ -296,23 +291,21 @@ $$
                 </div>
               </div>
             </div>
-
+          </div>
+          <div class="flex flex-col items-center justify-center">
             <Chart type="bar" :data="data" :options="options" class="flex-1 w-full"></Chart>
             <Button @click="resetData" class="mt-3">重置数据</Button>
           </div>
         </div>
-
       </div>
-    </SplitterPanel>
-    <SplitterPanel class="pr-3 pl-1.5 h-full" :size="25">
-      <Panel header="提示区" class="h-full overflow-y-auto">
-        <h1 class="my-2 font-semibold">实验思路</h1>
-        <div class="markdown-format" v-html="toMarkDown(content)"></div>
-        <h1 class="my-2 font-semibold">结论</h1>
-        <div class="markdown-format" v-html="toMarkDown('综上所述,我们可以得到在假设最初选择A门,主持人打开B门的前提下,汽车在C门的概率最高,概率为2/3.故此时参赛者应该选择换成C门.')"></div>
-      </Panel>
-    </SplitterPanel>
-  </Splitter>
+    </template>
+    <template #hint>
+      <h1 class="my-2 font-semibold">实验思路</h1>
+      <div class="markdown-format w-full" v-html="toMarkDown(content)"></div>
+      <h1 class="my-2 font-semibold">结论</h1>
+      <div class="markdown-format" v-html="toMarkDown('综上所述,我们可以得到在假设最初选择A门,主持人打开B门的前提下,汽车在C门的概率最高,概率为2/3.故此时参赛者应该选择换成C门.')"></div>
+    </template>
+  </experiment-board>
 </template>
 
 <style scoped></style>
