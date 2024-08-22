@@ -8,12 +8,17 @@ import { useRouter } from 'vue-router';
 const probability = ref(0.5);  // Probability of success (p)
 const router = useRouter();
 const cities = ref([
-    {name: '第一次成功前的失败次数'},
-    {name: '直到第一次成功所需的试验次数'},
+    {
+        name: '第一次成功前的失败次数',
+        command: () => router.push('/dashboard/experiment/chapter1/three-doors')
+    },
+    {
+        name: '直到第一次成功所需的试验次数'
+    },
 ]);
-const selectedCity = ref(cities.value[1]);
+const selectedCity = ref(cities.value[0]);
 
-const latexFormula = computed(() => `P(X = k) = (1 - ${probability.value})^{k-1} \\cdot ${probability.value}`);
+const latexFormula = computed(() => `P(X = k) = (1 - ${probability.value})^{k} \\cdot ${probability.value}`);
 const katexContainer = ref<HTMLElement | null>(null);
 
 const renderFormula = () => {
@@ -31,8 +36,8 @@ onMounted(() => {
 });
 
 watch(selectedCity, (newValue) => {
-    if (newValue.name === '第一次成功前的失败次数') {
-        router.push('/dashboard/experiment/geometricDistribution1');
+    if (newValue.name === '直到第一次成功所需的试验次数') {
+        router.push('/dashboard/experiment/geometricDistribution');
     }
 });
 
@@ -43,7 +48,7 @@ const setChartData = () => {
     const p = probability.value;
 
     const kValues = Array.from({ length: 20 }, (_, i) => i + 1);  // 生成1到10的k值
-    const data = kValues.map(k => Math.pow(1 - p, k - 1) * p); // 计算几何分布的概率
+    const data = kValues.map(k => Math.pow(1 - p, k) * p); // 计算几何分布的概率
 
     return {
         labels: kValues,

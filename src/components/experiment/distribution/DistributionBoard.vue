@@ -7,17 +7,33 @@ import { toMarkDown } from '@/utils/markdown';
 
 const mean = ref(0);
 const stdDev = ref(1);
-const selectedCity = ref();
-const cities = ref([
-  { name: '正态分布' },
-]);
+const a = ref(1);
+const b = ref(0);
+const transformedMean = ref();
+const transformedVariance = ref();
 
-const latexFormula = computed(() => `f(x) = \\frac{1}{\\sqrt{2\\pi\\times${stdDev.value}^2}} e^{-\\frac{(x-${mean.value})^2}{2\\times${stdDev.value}^2}}`);
-const katexContainer = ref<HTMLElement | null>(null);
+
+const latexFormula = computed(() => {
+  transformedMean.value= a.value * mean.value + b.value;
+  transformedVariance.value = a.value ** 2 * stdDev.value ** 2;
+  const meanVal = transformedMean.value.toFixed(1); // 转换为字符串仅用于展示
+  const varianceVal = transformedVariance.value.toFixed(1); // 转换为字符串仅用于展示
+  return `f(x) = \\frac{1}{\\sqrt{2\\pi\\times${varianceVal}}} e^{-\\frac{(x-${meanVal})^2}{2\\times${varianceVal}}}`;
+});
+
+const transformedFormula = computed(() => `X \\sim N(${a.value}\\cdot${mean.value} + ${b.value}, ${a.value}^2\\cdot${stdDev.value}^2)`);
+
+const katexMainFormula = ref<HTMLElement | null>(null);
+const katexTransformedFormula = ref<HTMLElement | null>(null);
 
 const renderFormula = () => {
-  if (katexContainer.value) {
-    katex.render(latexFormula.value, katexContainer.value, {
+  if (katexMainFormula.value) {
+    katex.render(latexFormula.value, katexMainFormula.value, {
+      throwOnError: false
+    });
+  }
+  if (katexTransformedFormula.value) {
+    katex.render(transformedFormula.value, katexTransformedFormula.value, {
       throwOnError: false
     });
   }
@@ -27,28 +43,35 @@ onMounted(() => {
   renderFormula();
 });
 
-watch(latexFormula, () => {
+watch([latexFormula, transformedFormula], () => {
   renderFormula();
 });
 
 const content = `
-正态分布（Normal Distribution），又称高斯分布（Gaussian Distribution），是一种重要的连续概率分布，在统计学和自然科学中有广泛应用。其概率密度函数的公式为：
-$$ f(x|\\mu, \\sigma^2) = \\frac{1}{\\sqrt{2\\pi\\sigma^2}} \\exp \\left( -\\frac{(x - \\mu)^2}{2\\sigma^2} \\right) $$
+**正态分布（Normal Distribution）**，又称高斯分布（Gaussian Distribution），是一种在统计学和自然科学中广泛应用的重要连续概率分布。其概率密度函数的公式为：
+$$ f(x|\\mu, \\sigma^2) = \\frac{1}{\\sqrt{2\\pi\\sigma^2}} \\exp\\left(-\\frac{(x - \\mu)^2}{2\\sigma^2}\\right) $$
 
 其中：
-- $$\\mu$$ 是正态分布的均值，决定了分布的中心位置。
-- $$\\sigma^2$$ 是方差，决定了分布的宽度和形状。
-- 标准差 $$\\sigma$$ 是方差的平方根。
+- $$\\mu$$ 表示正态分布的均值，决定了分布的中心位置。
+- $$\\sigma^2$$ 表示方差，决定了分布的宽度和形状。
+- $$\\sigma$$ 是标准差，方差的平方根。
 
-正态分布的图形呈钟形，称为钟形曲线。它具有以下几个主要特点：
+正态分布的图形呈钟形曲线，具有以下特点：
 
-1. 对称性：正态分布关于均值 $$\\mu$$ 对称。
+1. **对称性**：正态分布关于均值 $$\\mu$$ 对称。
+2. **均值、中位数和众数相等**：正态分布中，均值、中位数和众数是相同的。
+3. **68-95-99.7 规则**：约68%的数据位于均值 $$\\mu$$ 加减一个标准差 $$\\sigma$$ 范围内，95%的数据位于均值加减两个标准差内，99.7%的数据位于均值加减三个标准差内。
+4. **渐近性**：曲线的两端渐近于水平线，但永远不会触及水平线。
 
-2. 均值、中位数和众数相等：在正态分布中，均值、中位数和众数是相同的。
+### 线性变换
+正态分布在进行线性变换时，新的分布仍然是正态分布。假设我们对随机变量 $$X \\sim N(\\mu, \\sigma^2)$$ 进行线性变换：$$Y = aX + b$$，其中 $$a$$ 和 $$b$$ 为常数。那么，新的随机变量 $$Y$$ 仍然服从正态分布，且其均值和方差变为：
+$$ Y \\sim N(a\\mu + b, a^2\\sigma^2) $$
 
-3. 68-95-99.7 规则：约68%的数据位于均值 $$\\mu$$ 加减一个标准差 $$\\sigma$$ 范围内，95% 的数据位于均值加减两个标准差内，99.7% 的数据位于均值加减三个标准差内。
+其中：
+- 新的均值 $$a\\mu + b$$ 代表原均值经过线性变换后的值。
+- 新的方差 $$a^2\\sigma^2$$ 是原方差乘以系数 $$a^2$$ 后的结果，表示分布的扩展或收缩。
 
-4. 渐近性：曲线的两端渐近于水平线，但永远不会触及水平线。
+线性变换保留了正态分布的钟形曲线形状，只是改变了其位置和尺度。
 `
 
 </script>
@@ -57,33 +80,44 @@ $$ f(x|\\mu, \\sigma^2) = \\frac{1}{\\sqrt{2\\pi\\sigma^2}} \\exp \\left( -\\fra
   <Splitter class="mb-8 h-full !border-0">
     <SplitterPanel class="pr-1.5">
       <div class="flex-1 p-3.5 border rounded-lg flex flex-col h-full">
-        <div class="mb-2 font-bold"> 实验区 </div>
+        <div class="mb-2 font-bold">实验区</div>
         <div class="h-full w-full flex flex-col">
           <div class="mb-5 w-full flex-1">
-            <distribution-diagram class="flex-1 h-full" :mean="mean" :std-dev="stdDev" />
+            <distribution-diagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance" :a="a" :b="b" />
           </div>
           <div class="w-full flex items-center justify-center mb-5">
-            <Select v-model="selectedCity" :options="cities" optionLabel="name" placeholder="选择一个分布"
-              class="w-full md:w-56 mr-5" />
-            <div ref="katexContainer" class="text-2xl"></div>
-          </div>
-          <div class="flex w-full mb-5">
-            <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-              <p> mean </p>
-              <InputNumber v-model.number="mean" />
-              <Slider :min="-5" :max="5" :step="0.1" v-model="mean" class="w-48" />
+            <div ref="katexContainer" class="flex items-center space-x-2">
+              <div ref="katexMainFormula" class="inline-block mr-5 text-xl"></div>
+              <div ref="katexTransformedFormula" class="inline-block text-xl"></div>
             </div>
-            <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-              <p> var </p>
-              <InputNumber v-model.number="stdDev" />
-              <Slider :min="0.1" :max="5" :step="0.1" v-model="stdDev" class="w-48" />
+          </div>
+          <div class="flex w-full mb-5 space-x-4">
+            <div class="flex flex-col flex-1 items-center justify-center space-y-3">
+              <p>Mean</p>
+              <InputNumber v-model.number="mean" fluid />
+              <Slider :min="-5" :max="5" :step="0.1" v-model="mean" class="w-full" />
+            </div>
+            <div class="flex flex-col flex-1 items-center justify-center space-y-3">
+              <p>Variance</p>
+              <InputNumber v-model.number="stdDev" fluid />
+              <Slider :min="0.1" :max="5" :step="0.1" v-model="stdDev" class="w-full" />
+            </div>
+            <div class="flex flex-col flex-1 items-center justify-center space-y-3">
+              <p> a </p>
+              <InputNumber v-model.number="a" fluid :invalid="a === 0"/>
+              <Slider :min="-2" :max="2" :step="0.1" v-model="a" class="w-full" />
+            </div>
+            <div class="flex flex-col flex-1 items-center justify-center space-y-3">
+              <p> b </p>
+              <InputNumber v-model.number="b" fluid />
+              <Slider :min="-5" :max="5" :step="0.1" v-model="b" class="w-5/6" />
             </div>
           </div>
         </div>
       </div>
     </SplitterPanel>
     <SplitterPanel class="pr-3 pl-1.5" :size="25">
-      <Panel header="提示区" class="h-full">
+      <Panel header="提示区" class="h-full overflow-auto">
         <div v-html="toMarkDown(content)" class="markdown-format">
         </div>
       </Panel>
