@@ -12,6 +12,7 @@ declare module 'vue' {
     BinomialDistribution: typeof import('./src/components/experiment/distribution/BinomialDistribution.vue')['default']
     BuffonNeedle: typeof import('./src/components/experiment/chapter1/BuffonNeedle.vue')['default']
     Button: typeof import('primevue/button')['default']
+    Card: typeof import('primevue/card')['default']
     Chart: typeof import('primevue/chart')['default']
     Checkbox: typeof import('primevue/checkbox')['default']
     DistributionBoard: typeof import('./src/components/experiment/distribution/DistributionBoard.vue')['default']
