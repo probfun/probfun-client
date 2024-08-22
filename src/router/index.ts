@@ -1,13 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import DashBoard from "@/pages/DashBoard.vue";
-import BuffonNeedle from "@/components/experiment/chapter1/BuffonNeedle.vue";
-import DistributionBoard from "@/components/experiment/distribution/DistributionBoard.vue";
-import ThreeDoors from "@/components/experiment/chapter1/ThreeDoors.vue";
-import BinomialDistribution from '@/components/experiment/distribution/BinomialDistribution.vue';
-import PoissonDistribution from '@/components/experiment/distribution/PoissonDistribution.vue';
-import GeometricDistribution from '@/components/experiment/distribution/GeometricDistribution.vue';
-import EvenDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
-import ExponentialDistribution from '@/components/experiment/distribution/ExponentialDistribution.vue';
+// import DistributionBoard from "@/components/experiment/distribution/DistributionBoard.vue";
 import Login from "@/pages/Login.vue";
 import Register from "@/pages/Register.vue";
 
@@ -24,48 +17,48 @@ const router = createRouter({
       children: [
         {
           path: '/dashboard/experiment/chapter1/buffon',
-          component: BuffonNeedle,
+          component: () => import('@/components/experiment/chapter1/BuffonNeedle.vue'),
         },
         {
           path: '/dashboard/experiment/chapter1/three-doors',
-          component: ThreeDoors,
+          component: () => import('@/components/experiment/chapter1/ThreeDoors.vue'),
         },
         {
           path: '/dashboard/experiment/normalDistribution',
-          component: DistributionBoard,
+          component: () => import('@/components/experiment/distribution/DistributionBoard.vue'),
         },
         {
           path: '/dashboard/experiment/binomialDistribution',
-          component: BinomialDistribution,
+          component: () => import('@/components/experiment/distribution/BinomialDistribution.vue'),
         },
         {
           path: '/dashboard/experiment/poissonDistribution',
-          component: PoissonDistribution,
+          component: () => import('@/components/experiment/distribution/PoissonDistribution.vue'),
         },
         {
           path: '/dashboard/experiment/geometricDistribution',
-          component: GeometricDistribution,
+          component: () => import('@/components/experiment/distribution/GeometricDistribution.vue'),
         },
         {
           path: '/dashboard/experiment/evenDistribution',
-          component: EvenDistribution,
+          component: () => import('@/components/experiment/distribution/UniformDistribution.vue'),
         },
         {
           path: '/dashboard/experiment/exponentialDistribution',
-          component: ExponentialDistribution,
+          component: () => import('@/components/experiment/distribution/ExponentialDistribution.vue'),
         },
-        {
-          path: '/dashboard/setting',
-          component: DistributionBoard,
-        },
-        {
-          path: '/dashboard/chat',
-          component: DistributionBoard,
-        },
-        {
-          path: '/dashboard/favorite',
-          component: DistributionBoard,
-        },
+        // {
+        //   path: '/dashboard/setting',
+        //   component: DistributionBoard,
+        // },
+        // {
+        //   path: '/dashboard/chat',
+        //   component: DistributionBoard,
+        // },
+        // {
+        //   path: '/dashboard/favorite',
+        //   component: DistributionBoard,
+        // },
       ],
     },
     {

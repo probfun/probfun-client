@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full flex flex-col ">
+  <div class="w-full h-full flex flex-col overflow-y-hidden max-h-full">
     <div class="top-0 w-full flex justify-center items-center p-4 border-b">
       <div class="absolute left-6">
         <img class="h-8" src="../assets/logo.svg" alt="">
@@ -16,7 +16,7 @@
 
       <div class="absolute right-6">
         <div v-if="!isAuthenticated" class="flex items-center justify-center">
-          请点击此处<Button as="router-link" to="/login" label="登录" severity="secondary" class="ml-2" />
+          请点击此处<Button as="router-link" to="/login" label="登录" class="ml-2" />
         </div>
         <div v-else class="flex items-center justify-center">
           <Avatar image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" class="mr-2" size="large"
@@ -29,7 +29,7 @@
       <!--      <template #end> <SplitButton label="Save" :model="items"></SplitButton></template>-->
     </div>
     <div class="flex flex-1 overflow-y-hidden">
-      <div class="w-1/4 max-w-lg h-full sticky p-3">
+      <div class="w-1/4 max-w-xs h-full sticky p-3">
         <PanelMenu :model="sideBarItems" class="w-full">
           <template #item="{ item }">
             <a v-ripple class="flex items-center px-4 py-2 cursor-pointer group">
@@ -46,7 +46,7 @@
         <SpeedDial :model="speedDialItems" :radius="80" type="linear" direction="up"
           style="position: absolute; left: calc(50% - 2rem); bottom: 2rem" />
       </div>
-      <div class="flex-1 w-3/4 pl-0 py-3">
+      <div class="flex-1 w-3/4 pl-0 py-3 overflow-y-hidden">
         <router-view />
       </div>
     </div>
