@@ -25,23 +25,23 @@ const router = createRouter({
       children: [
         {
           path: '/dashboard/experiment/chapter1/buffon',
-          component: BuffonNeedle,
+          component: () => import('@/components/experiment/chapter1/BuffonNeedle.vue'),
         },
         {
           path: '/dashboard/experiment/chapter1/three-doors',
-          component: ThreeDoors,
+          component: () => import('@/components/experiment/chapter1/ThreeDoors.vue'),
         },
         {
           path: '/dashboard/experiment/normalDistribution',
-          component: DistributionBoard,
+          component: () => import('@/components/experiment/distribution/DistributionBoard.vue'),
         },
         {
           path: '/dashboard/experiment/binomialDistribution',
-          component: BinomialDistribution,
+          component: () => import('@/components/experiment/distribution/BinomialDistribution.vue'),
         },
         {
           path: '/dashboard/experiment/poissonDistribution',
-          component: PoissonDistribution,
+          component: () => import('@/components/experiment/distribution/PoissonDistribution.vue'),
         },
         {
           path: '/dashboard/experiment/geometricDistribution',
@@ -53,24 +53,24 @@ const router = createRouter({
         },
         {
           path: '/dashboard/experiment/evenDistribution',
-          component: EvenDistribution,
+          component: () => import('@/components/experiment/distribution/UniformDistribution.vue'),
         },
         {
           path: '/dashboard/experiment/exponentialDistribution',
-          component: ExponentialDistribution,
+          component: () => import('@/components/experiment/distribution/ExponentialDistribution.vue'),
         },
-        {
-          path: '/dashboard/setting',
-          component: DistributionBoard,
-        },
-        {
-          path: '/dashboard/chat',
-          component: DistributionBoard,
-        },
-        {
-          path: '/dashboard/favorite',
-          component: DistributionBoard,
-        },
+        // {
+        //   path: '/dashboard/setting',
+        //   component: DistributionBoard,
+        // },
+        // {
+        //   path: '/dashboard/chat',
+        //   component: DistributionBoard,
+        // },
+        // {
+        //   path: '/dashboard/favorite',
+        //   component: DistributionBoard,
+        // },
       ],
     },
     {
