@@ -5,13 +5,9 @@
         <img class="h-8" src="../assets/logo.svg" alt="">
       </div>
 
-      <div>
-        <IconField>
-          <InputIcon>
-            <i class="pi pi-search" />
-          </InputIcon>
-          <InputText class="w-96" placeholder="搜索" />
-        </IconField>
+      <div class="flex gap-2">
+        <InputText class="w-96 !rounded-full" placeholder="搜索" />
+        <Button icon="pi pi-search" rounded />
       </div>
 
       <div class="absolute right-6">

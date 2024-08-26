@@ -1,8 +1,8 @@
 <template>
   <div class="sidebar">
     <div class="logo-container">
-      <img src="/src/assets/Frame%208.svg" alt="Logo" class="logo-icon" />
-      <span class="logo-text">ProbFUN</span>
+      <img src="/src/assets/Frame%208.svg" alt="Logo" class="w-36" />
+      <span class="logo-text tracking-wider">邮趣概率</span>
     </div>
   </div>
   <div class="login-container">
@@ -149,14 +149,6 @@ async function login() {
 /* 调整 Logo 和文字的样式 */
 .logo-container {
   text-align: center;
-}
-
-.logo-icon {
-  width: 100px;
-  /* 图标宽度 */
-  height: auto;
-  display: block;
-  margin: 0 auto;
 }
 
 .logo-text {
