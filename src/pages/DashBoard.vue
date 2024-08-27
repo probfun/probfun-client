@@ -77,7 +77,12 @@ const sideBarItems = ref([
             label: "三门问题",
             icon: 'pi pi-chart-bar',
             command: () => router.push('/dashboard/experiment/chapter1/three-doors')
-          }
+          },
+          {
+            label: "阳性检测",
+            icon: 'pi pi-chart-bar',
+            command: () => router.push('/dashboard/experiment/chapter1/positive-test')
+          },
         ],
         icon: 'pi pi-bookmark'
       },
