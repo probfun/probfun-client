@@ -40,11 +40,21 @@ const router = createRouter({
         },
         {
           path: '/dashboard/experiment/geometricDistribution',
-          component: () => import('@/components/experiment/distribution/GeometricDistribution.vue'),
-        },
-        {
-          path: '/dashboard/experiment/geometricDistribution1',
-          component: () => import('@/components/experiment/distribution/GeometricDistribution1.vue'),
+          component: () => import('@/components/experiment/distribution/GeometricBoard.vue'),
+          children: [
+            {
+              path: '/dashboard/experiment/geometric1',
+              component: () => import('@/components/experiment/distribution/Geometric1.vue'),
+            },
+            {
+              path: '/dashboard/experiment/geometric2',
+              component: () => import('@/components/experiment/distribution/Geometric2.vue'),
+            },
+            {
+              path: '/dashboard/experiment/geometric3',
+              component: () => import('@/components/experiment/distribution/Geometric3.vue'),
+            },
+          ],
         },
         {
           path: '/dashboard/experiment/evenDistribution',
