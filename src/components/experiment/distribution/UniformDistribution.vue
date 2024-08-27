@@ -12,11 +12,17 @@ const cities = ref([
     { name: '正态分布' },
 ]);
 
-const latexFormula = computed(() => `f(x) = 
+const latexFormula = computed(() => {
+    const aFormatted = a.value < 0 ? `(${a.value})` : a.value;
+    const bFormatted = b.value < 0 ? `(${b.value})` : b.value;
+
+    return `f(x) = 
 \\begin{cases} 
-\\frac{1}{${b.value} - ${a.value}}, & \\text{if } ${a.value} \\leq x \\leq ${b.value} \\\\
+\\frac{1}{${bFormatted} - ${aFormatted}}, & \\text{if } ${a.value} \\leq x \\leq ${bFormatted} \\\\
 0, & \\text{otherwise}
-\\end{cases}`);
+\\end{cases}`;
+});
+
 const katexContainer = ref<HTMLElement | null>(null);
 
 const renderFormula = () => {
@@ -96,12 +102,12 @@ $$
                     <div class="flex w-full mb-5">
                         <div class="flex flex-col flex-1 items-center justify-center space-y-5">
                             <p> a </p>
-                            <InputNumber v-model.number="a" />
+                            <InputNumber v-model.number="a" :minFractionDigits="1" />
                             <Slider :min="-10" :max="9.9" :step="0.1" v-model="a" class="w-48" />
                         </div>
                         <div class="flex flex-col flex-1 items-center justify-center space-y-5">
                             <p> b </p>
-                            <InputNumber v-model.number="b" />
+                            <InputNumber v-model.number="b" :minFractionDigits="1" />
                             <Slider :min="a + 0.1" :max="10" :step="0.1" v-model="b" class="w-48" />
                         </div>
                     </div>

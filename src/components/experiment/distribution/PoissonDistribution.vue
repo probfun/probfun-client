@@ -150,7 +150,7 @@ $$
                 <div class="mb-2 font-bold"> 实验区 </div>
                 <div class="h-full w-full flex flex-col">
                     <div class="card">
-                        <Chart type="bar" :data="chartData" :options="chartOptions" class="h-[30rem]" />
+                        <Chart type="line" :data="chartData" :options="chartOptions" class="h-[30rem]" />
                     </div>
                     <div class="w-full flex items-center justify-center mb-5">
                         <div ref="katexContainer" class="text-xl"></div>
@@ -158,7 +158,7 @@ $$
                     <div class="flex w-full mb-5">
                         <div class="flex flex-col flex-1 items-center justify-center space-y-5">
                             <p> Mean (λ) </p>
-                            <InputNumber v-model.number="lambda" />
+                            <InputNumber v-model.number="lambda" :minFractionDigits="1"/>
                             <Slider :min="0.1" :max="20" :step="0.1" v-model="lambda" class="w-48" />
                         </div>
                     </div>
