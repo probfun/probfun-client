@@ -1,10 +1,10 @@
 <template>
   <Splitter class="h-full !border-0">
     <SplitterPanel class="pr-1.5">
-      <div  class="h-full flex flex-col">
+      <div class="h-full flex flex-col overflow-auto">
         <div class="text-white px-2 rounded-xl mb-2 w-max bg-indigo-600">
           {{ title }}
-          <Tag v-for="tag in tags" :key="tag" :value="tag" class="h-6 ml-2 my-2" severity="secondary"/>
+          <Tag v-for="tag in tags" :key="tag" :value="tag" class="h-6 ml-2 my-2" severity="secondary" />
         </div>
         <div class="h-full w-full flex flex-col">
           <slot name="experiment"></slot>
@@ -26,6 +26,4 @@ defineProps<{
 }>();
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

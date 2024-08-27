@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
 import { toMarkDown } from '@/utils/markdown';
+import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 
@@ -147,81 +148,63 @@ $$
 </script>
 
 <template>
-    <Splitter class="mb-8 h-full !border-0">
-        <SplitterPanel class="pr-1.5">
-            <div class="flex-1 flex flex-col h-full px-4 overflow-auto">
-                <div class="text-white px-2 rounded-xl mb-2 w-max bg-indigo-600">
-                    阳性检测
-                    <Tag value="条件概率" class="h-6 ml-2 my-2" severity="secondary"></Tag>
-                    <Tag value="互斥事件" class="h-6 ml-2 my-2" severity="secondary"></Tag>
-                    <Tag value="独立事件" class="h-6 ml-2 my-2" severity="secondary"></Tag>
-                </div>
-                <div>
-                    <!-- 绘制矩形或圆形区域 -->
-                    <div class="flex-1 mt-2">
-                        <canvas ref="canvasRef" width="1000" height="400" class="border w-full"></canvas>
-                    </div>
-                    <div class="flex items-center">
-                        <!-- 提示内容 -->
-                        <div class="flex items-center text-gray-500">
-                            <span class="inline-block w-4 h-4 rounded-full bg-[#FF7F0E] mr-2"></span>
-                            橙色圆点代表检测结果为阳性的人
-                        </div>
-                    </div>
-                    <div class="flex justify-center items-center">
-                        <!-- 输入框区域 -->
-                        <div class="flex flex-col flex-1 space-y-4 justify-center items-center">
-                            <!-- 第一个输入框组 -->
-                            <div class="flex space-x-4 justify-center items-center">
-                                <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-                                    <p>特异度</p>
-                                    <InputNumber v-model.number="specificity" fluid :minFractionDigits="2" />
-                                    <Slider :min="0.1" :max="1.0" :step="0.01" v-model="specificity" class="w-full" />
-                                </div>
-                                <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-                                    <p>灵敏度</p>
-                                    <InputNumber v-model.number="sensitivity" fluid :minFractionDigits="2" />
-                                    <Slider :min="0.1" :max="1.0" :step="0.01" v-model="sensitivity" class="w-full" />
-                                </div>
-                            </div>
-                            <!-- 第二个输入框组 -->
-                            <div class="flex space-x-4 justify-center items-center">
-                                <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-                                    <p>感染率</p>
-                                    <InputNumber v-model.number="infectionRate" :minFractionDigits="2" fluid />
-                                    <Slider :min="0.0" :max="1.0" :step="0.001" v-model="infectionRate"
-                                        class="w-full" />
-                                </div>
-                                <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-                                    <p>总人数</p>
-                                    <InputNumber v-model.number="population" fluid />
-                                    <Slider :min="1000" :max="1000000" :step="1000" v-model="population"
-                                        class="w-full" />
-                                </div>
-                            </div>
-                        </div>
-                        <!-- 饼图区域 -->
-                        <div class="flex-column flex-1 ml-1 justify-center items-center">
-                            <Chart type="pie" :data="chartData" :options="chartOptions"
-                                class="justify-center items-center" />
-                            <div class="flex justify-center items-center text-gray-500">
-                                检测结果为阳性时实际患病的概率
-                            </div>
-                        </div>
-
+    <experiment-board title="阳性检测" :tags="['条件概率', '互斥事件', '独立事件']">
+        <template #experiment>
+            <div class="flex-1 flex flex-col h-full">
+                <!-- 绘制矩形或圆形区域 -->
+                <div class="flex-1">
+                    <canvas ref="canvasRef" width="1000" height="400" class="border w-full"></canvas>
+                    <div class="flex items-center text-gray-500">
+                        <span class="inline-block w-4 h-4 rounded-full bg-[#FF7F0E] mr-2"></span>
+                        橙色圆点代表检测结果为阳性的人
                     </div>
                 </div>
-
+                <div class="flex justify-center items-center border-2 rounded-lg pl-3">
+                    <!-- 输入框区域 -->
+                    <div class="flex flex-col flex-1 space-y-4 justify-center items-center">
+                        <!-- 第一个输入框组 -->
+                        <div class="flex space-x-4 justify-center items-center">
+                            <div class="flex flex-col flex-1 items-center justify-center space-y-3">
+                                <p>特异度</p>
+                                <InputNumber v-model.number="specificity" fluid :minFractionDigits="2" />
+                                <Slider :min="0.1" :max="1.0" :step="0.01" v-model="specificity" class="w-full" />
+                            </div>
+                            <div class="flex flex-col flex-1 items-center justify-center space-y-3">
+                                <p>灵敏度</p>
+                                <InputNumber v-model.number="sensitivity" fluid :minFractionDigits="2" />
+                                <Slider :min="0.1" :max="1.0" :step="0.01" v-model="sensitivity" class="w-full" />
+                            </div>
+                        </div>
+                        <!-- 第二个输入框组 -->
+                        <div class="flex space-x-4 justify-center items-center">
+                            <div class="flex flex-col flex-1 items-center justify-center space-y-3">
+                                <p>感染率</p>
+                                <InputNumber v-model.number="infectionRate" :minFractionDigits="2" fluid />
+                                <Slider :min="0.0" :max="1.0" :step="0.001" v-model="infectionRate" class="w-full" />
+                            </div>
+                            <div class="flex flex-col flex-1 items-center justify-center space-y-3">
+                                <p>总人数</p>
+                                <InputNumber v-model.number="population" fluid />
+                                <Slider :min="1000" :max="1000000" :step="1000" v-model="population" class="w-full" />
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 饼图区域 -->
+                    <div class="flex-column flex-1 ml-1 justify-center items-center">
+                        <Chart type="pie" :data="chartData" :options="chartOptions"
+                            class="justify-center items-center" />
+                        <div class="flex justify-center items-center text-gray-500">
+                            检测结果为阳性时实际患病的概率
+                        </div>
+                    </div>
+                </div>
             </div>
-        </SplitterPanel>
-        <SplitterPanel class="pr-3 pl-1.5" :size="25">
-            <Panel header="提示区" class="h-full overflow-auto">
-                <div v-html="toMarkDown(content)" class="markdown-format"></div>
-            </Panel>
-        </SplitterPanel>
-    </Splitter>
+        </template>
+        <template #hint>
+            <div v-html="toMarkDown(content)" class="markdown-format"></div>
+        </template>
+    </experiment-board>
 </template>
-
 
 <style scoped>
 /* Your custom styles if needed */
