@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, Ref, watch } from 'vue';
-import {toMarkDown} from "@/utils/markdown";
+import {toMarkdown} from "@/utils/markdown";
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
 class Door {
@@ -141,6 +141,7 @@ function resetData() {
 }
 
 const content = `
+### 实验思路
 我们假设三扇门分别是 A、B、C，选手最初的选择是门 A，主持人打开的是门 B，那么问题就变成了求解：
 
 $$
@@ -198,6 +199,9 @@ $$
 ---
 
 这部分内容推导了在选择门 A 后，主持人打开门 B 时，汽车在各个门后的概率。最终结果显示，汽车在门 C 后的概率是最高的，即 $\\frac{2}{3}$，而在门 A 后的概率是 $\\frac{1}{3}$。
+
+### 结论
+综上所述,我们可以得到在假设最初选择A门,主持人打开B门的前提下,汽车在C门的概率最高,概率为2/3.故此时参赛者应该选择换成C门.
 `
 
 </script>
@@ -205,8 +209,8 @@ $$
 <template>
   <experiment-board title="三门问题" :tags="['条件概率', '贝叶斯定理']">
     <template #experiment>
-      <div ref="container" class="h-full w-full relative flex flex-col">
-        <div class="relative p-5 flex flex-col items-center rounded-lg border-2 mb-3">
+      <div ref="container" class="h-full w-full relative flex flex-col items-center justify-center">
+<!--        <div class="relative p-5 flex flex-col items-center rounded-lg border-2 mb-3">-->
           <div
               class="h-full w-full absolute top-0 left-0 bg-black bg-opacity-70 flex justify-center items-center z-10"
               v-if="gameState === 'End'">
@@ -257,53 +261,56 @@ $$
             </div>
             <Button @click="startGame" v-if="gameState === 'Win' || gameState === 'Lose'">重新开始</Button>
           </div>
-        </div>
-        <div class="p-5 items-center flex flex-1 justify-center border-2 rounded-lg space-x-3">
-          <div class="flex flex-col items-center justify-center">
-            <div class="flex">
-              <p class="mt-2"> 模拟轮数： </p>
-              <div class="flex flex-col w-24 space-y-3 mr-3">
-                <InputNumber :min="1" :max="1000" v-model.number="autoGameRound" />
-                <Slider :min="1" :max="1000" v-model="autoGameRound" />
-              </div>
-              <Button @click="() => {
+<!--        </div>-->
+
+      </div>
+    </template>
+    <template #argument>
+      <div class="p-5 items-center flex w-full h-full justify-center gap-3">
+        <div class="flex flex-col items-center justify-center">
+          <div class="flex">
+            <p class="mt-2"> 模拟轮数： </p>
+            <div class="flex flex-col w-24 space-y-3 mr-3">
+              <InputNumber :min="1" :max="1000" v-model.number="autoGameRound" />
+              <Slider :min="1" :max="1000" v-model="autoGameRound" />
+            </div>
+            <Button @click="() => {
                 autoGaming ? autoGaming = false : simulateGame();
               }"> {{ autoGaming ? '终止模拟' : '开始模拟' }}</Button>
-            </div>
-            <div class="mt-3">
-              <div class="mb-2 text-lg font-bold">实验结果:</div>
-              <div class="grid grid-cols-2 gap-4 justify-between">
-                <div class="flex items-center">
-                  <p>换门胜利次数：</p>
-                  <p>{{ changeWinNum }}</p>
-                </div>
-                <div class="flex items-center">
-                  <p>换门失败次数：</p>
-                  <p>{{ changeLoseNum }}</p>
-                </div>
-                <div class="flex items-center">
-                  <p>不换门胜利次数：</p>
-                  <p>{{ notChangeWinNum }}</p>
-                </div>
-                <div class="flex items-center">
-                  <p>不换门失败次数：</p>
-                  <p>{{ notChangeLoseNum }}</p>
-                </div>
+          </div>
+          <div class="mt-3">
+            <div class="mb-2 text-lg font-bold">实验结果:</div>
+            <div class="grid grid-cols-2 gap-4 justify-between">
+              <div class="flex items-center">
+                <p>换门胜利次数：</p>
+                <p>{{ changeWinNum }}</p>
+              </div>
+              <div class="flex items-center">
+                <p>换门失败次数：</p>
+                <p>{{ changeLoseNum }}</p>
+              </div>
+              <div class="flex items-center">
+                <p>不换门胜利次数：</p>
+                <p>{{ notChangeWinNum }}</p>
+              </div>
+              <div class="flex items-center">
+                <p>不换门失败次数：</p>
+                <p>{{ notChangeLoseNum }}</p>
               </div>
             </div>
           </div>
-          <div class="flex flex-col items-center justify-center">
-            <Chart type="bar" :data="data" :options="options" class="flex-1 w-full"></Chart>
-            <Button @click="resetData" class="mt-3">重置数据</Button>
-          </div>
+        </div>
+        <div class="flex flex-col items-center justify-center">
+          <Chart type="bar" :data="data" :options="options" class="flex-1 w-full"></Chart>
+          <Button @click="resetData" class="mt-3">重置数据</Button>
         </div>
       </div>
     </template>
-    <template #hint>
-      <h1 class="my-2 font-semibold">实验思路</h1>
-      <div class="markdown-format w-full" v-html="toMarkDown(content)"></div>
-      <h1 class="my-2 font-semibold">结论</h1>
-      <div class="markdown-format" v-html="toMarkDown('综上所述,我们可以得到在假设最初选择A门,主持人打开B门的前提下,汽车在C门的概率最高,概率为2/3.故此时参赛者应该选择换成C门.')"></div>
+    <template #conclusion>
+
+      <div class="w-full h-full p-5">
+        <div class="prose max-w-full text-base-content" v-html="toMarkdown(content)"></div>
+      </div>
     </template>
   </experiment-board>
 </template>

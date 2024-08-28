@@ -2,7 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
-import { toMarkDown } from '@/utils/markdown';
+import { toMarkdown } from '@/utils/markdown';
 
 const number = ref(5);  // Number of experiments (n)
 const probability = ref(0.5);  // Probability of success (p)
@@ -185,7 +185,7 @@ $$
         </SplitterPanel>
         <SplitterPanel class="pr-3 pl-1.5" :size="25">
             <Panel header="提示区" class="h-full overflow-auto">
-                <div v-html="toMarkDown(content)" class="markdown-format">
+                <div v-html="toMarkdown(content)" class="markdown-format">
                 </div>
             </Panel>
         </SplitterPanel>

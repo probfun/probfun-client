@@ -6,7 +6,7 @@ import rehypeKatex from 'rehype-katex';
 import rehypeStringify from 'rehype-stringify';
 import 'katex/dist/katex.min.css';
 
-export function toMarkDown(content: string): string {
+export function toMarkdown(content: string): string {
     return unified()
         .use(remarkParse)
         .use(remarkMath)

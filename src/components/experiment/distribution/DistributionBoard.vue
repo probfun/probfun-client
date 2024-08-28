@@ -3,7 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
 import DistributionDiagram from "@/components/experiment/distribution/DistributionDiagram.vue";
-import { toMarkDown } from '@/utils/markdown';
+import { toMarkdown } from '@/utils/markdown';
 
 const mean = ref(0);
 const stdDev = ref(1);
@@ -118,7 +118,7 @@ $$ Y \\sim N(a\\mu + b, a^2\\sigma^2) $$
     </SplitterPanel>
     <SplitterPanel class="pr-3 pl-1.5" :size="25">
       <Panel header="提示区" class="h-full overflow-auto">
-        <div v-html="toMarkDown(content)" class="markdown-format">
+        <div v-html="toMarkdown(content)" class="markdown-format">
         </div>
       </Panel>
     </SplitterPanel>

@@ -3,7 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
 import ExponentialDiagram from './ExponentialDiagram.vue';
-import { toMarkDown } from '@/utils/markdown';
+import { toMarkdown } from '@/utils/markdown';
 
 const rate = ref(2);
 const selectedCity = ref();
@@ -94,7 +94,7 @@ $$
     </SplitterPanel>
     <SplitterPanel class="pr-3 pl-1.5" :size="25">
       <Panel header="提示区" class="h-full overflow-auto">
-        <div v-html="toMarkDown(content)" class="markdown-format"></div>
+        <div v-html="toMarkdown(content)" class="markdown-format"></div>
       </Panel>
     </SplitterPanel>
   </Splitter>
