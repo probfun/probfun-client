@@ -29,15 +29,24 @@ declare module 'vue' {
     InputNumber: typeof import('primevue/inputnumber')['default']
     NavBar: typeof import('./src/components/NavBar.vue')['default']
     NormalDistribution: typeof import('./src/components/experiment/distribution/NormalDistribution.vue')['default']
+    Panel: typeof import('primevue/panel')['default']
     PoissonDistribution: typeof import('./src/components/experiment/distribution/PoissonDistribution.vue')['default']
     PositiveTest: typeof import('./src/components/experiment/chapter1/PositiveTest.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Select: typeof import('primevue/select')['default']
     Slider: typeof import('primevue/slider')['default']
+    Splitter: typeof import('primevue/splitter')['default']
+    SplitterPanel: typeof import('primevue/splitterpanel')['default']
+    Tab: typeof import('primevue/tab')['default']
+    TabList: typeof import('primevue/tablist')['default']
+    Tabs: typeof import('primevue/tabs')['default']
     ThreeDoors: typeof import('./src/components/experiment/chapter1/ThreeDoors.vue')['default']
     Toast: typeof import('primevue/toast')['default']
     UniformDiagram: typeof import('./src/components/experiment/distribution/UniformDiagram.vue')['default']
     UniformDistribution: typeof import('./src/components/experiment/distribution/UniformDistribution.vue')['default']
+  }
+  export interface ComponentCustomProperties {
+    Ripple: typeof import('primevue/ripple')['default']
   }
 }

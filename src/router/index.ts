@@ -1,7 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import DashBoard from "@/pages/DashBoard.vue";
-import GeometricDistribution from '@/components/experiment/distribution/GeometricDistribution.vue';
-import GeometricDistribution1 from '@/components/experiment/distribution/GeometricDistribution1.vue';
 import Login from "@/pages/Login.vue";
 import Register from "@/pages/Register.vue";
 
@@ -49,12 +47,16 @@ const router = createRouter({
           component: () => import('@/components/experiment/distribution/PoissonDistribution.vue'),
         },
         {
-          path: '/dashboard/experiment/geometricDistribution',
-          component: GeometricDistribution,
+          path: '/dashboard/experiment/geometric1',
+          component: () => import('@/components/experiment/distribution/Geometric1.vue')
         },
         {
-          path: '/dashboard/experiment/geometricDistribution1',
-          component: GeometricDistribution1,
+          path: '/dashboard/experiment/geometric2',
+          component: () => import('@/components/experiment/distribution/Geometric2.vue')
+        },
+        {
+          path: '/dashboard/experiment/geometric3',
+          component: () => import('@/components/experiment/distribution/Geometric3.vue')
         },
         {
           path: '/dashboard/experiment/evenDistribution',
