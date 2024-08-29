@@ -95,12 +95,12 @@ $$
         <div class="flex w-full mb-5">
           <div class="flex flex-col flex-1 items-center justify-center space-y-5">
             <p> a </p>
-            <InputNumber v-model.number="a" :invalid="a > b"/>
+            <InputNumber v-model.number="a" :invalid="a > b" :min-fraction-digits="1"/>
             <Slider :min="-10" :max="9.9" :step="0.1" v-model="a" class="w-48" />
           </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-5">
             <p> b </p>
-            <InputNumber v-model.number="b" />
+            <InputNumber v-model.number="b" :min-fraction-digits="1"/>
             <Slider :min="a + 0.1" :max="10" :step="0.1" v-model="b" class="w-48" />
           </div>
         </div>

@@ -175,7 +175,7 @@ $$
           </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-5">
             <p> Probability of success </p>
-            <InputNumber v-model.number="probability" />
+            <InputNumber v-model.number="probability" :min-fraction-digits="1"/>
             <Slider :min="0" :max="1" :step="0.1" v-model="probability" class="w-48" />
           </div>
         </div>
