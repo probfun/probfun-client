@@ -4,21 +4,16 @@ import katex from 'katex';
 import 'katex/dist/katex.min.css';
 import UniformDiagram from './UniformDiagram.vue';
 import { toMarkdown } from '@/utils/markdown';
-import ExponentialDiagram from "@/components/experiment/distribution/ExponentialDiagram.vue";
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
 const a = ref(0);
 const b = ref(1);
-const selectedCity = ref();
-const cities = ref([
-    { name: '正态分布' },
-]);
 
 const latexFormula = computed(() => {
-    const aFormatted = a.value < 0 ? `(${a.value})` : a.value;
-    const bFormatted = b.value < 0 ? `(${b.value})` : b.value;
+  const aFormatted = a.value < 0 ? `(${a.value})` : a.value;
+  const bFormatted = b.value < 0 ? `(${b.value})` : b.value;
 
-    return `f(x) =
+  return `f(x) =
 \\begin{cases} 
 \\frac{1}{${bFormatted} - ${aFormatted}}, & \\text{if } ${a.value} \\leq x \\leq ${bFormatted} \\\\
 0, & \\text{otherwise}
@@ -28,19 +23,19 @@ const latexFormula = computed(() => {
 const katexContainer = ref<HTMLElement | null>(null);
 
 const renderFormula = () => {
-    if (katexContainer.value) {
-        katex.render(latexFormula.value, katexContainer.value, {
-            throwOnError: false
-        });
-    }
+  if (katexContainer.value) {
+    katex.render(latexFormula.value, katexContainer.value, {
+      throwOnError: false
+    });
+  }
 };
 
 onMounted(() => {
-    renderFormula();
+  renderFormula();
 });
 
 watch(latexFormula, () => {
-    renderFormula();
+  renderFormula();
 });
 
 const content = `
@@ -95,14 +90,12 @@ $$
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
         <div class="w-full flex items-center justify-center mb-5">
-          <Select v-model="selectedCity" :options="cities" optionLabel="name" placeholder="选择一个分布"
-                  class="w-full md:w-56 mr-5" />
-          <div ref="katexContainer" class="text-l"></div>
+          <div ref="katexContainer" class="text-xl"></div>
         </div>
         <div class="flex w-full mb-5">
           <div class="flex flex-col flex-1 items-center justify-center space-y-5">
             <p> a </p>
-            <InputNumber v-model.number="a" />
+            <InputNumber v-model.number="a" :invalid="a > b"/>
             <Slider :min="-10" :max="9.9" :step="0.1" v-model="a" class="w-48" />
           </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-5">

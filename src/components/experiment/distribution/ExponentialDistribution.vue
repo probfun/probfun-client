@@ -7,10 +7,6 @@ import { toMarkdown } from '@/utils/markdown';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
 const rate = ref(2);
-const selectedCity = ref();
-const cities = ref([
-  { name: '正态分布' },
-]);
 
 const latexFormula = computed(() => `f(x) = ${rate.value} e^{-${rate.value} x}, \\quad x \\geq 0`);
 const katexContainer = ref<HTMLElement | null>(null);
@@ -77,8 +73,6 @@ $$
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
         <div class="w-full flex items-center justify-center mb-5">
-          <Select v-model="selectedCity" :options="cities" optionLabel="name" placeholder="选择一个分布"
-                  class="w-full md:w-56 mr-5" />
           <div ref="katexContainer" class="text-2xl"></div>
         </div>
         <div class="flex w-full mb-5">

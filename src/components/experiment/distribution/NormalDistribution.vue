@@ -4,7 +4,6 @@ import katex from 'katex';
 import 'katex/dist/katex.min.css';
 import DistributionDiagram from "@/components/experiment/distribution/DistributionDiagram.vue";
 import { toMarkdown } from '@/utils/markdown';
-import UniformDiagram from "@/components/experiment/distribution/UniformDiagram.vue";
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
 const mean = ref(0);
@@ -16,7 +15,7 @@ const transformedVariance = ref();
 
 
 const latexFormula = computed(() => {
-  transformedMean.value= a.value * mean.value + b.value;
+  transformedMean.value = a.value * mean.value + b.value;
   transformedVariance.value = a.value ** 2 * stdDev.value ** 2;
   const meanVal = transformedMean.value.toFixed(1); // 转换为字符串仅用于展示
   const varianceVal = transformedVariance.value.toFixed(1); // 转换为字符串仅用于展示
@@ -82,10 +81,15 @@ $$ Y \\sim N(a\\mu + b, a^2\\sigma^2) $$
 
   <experiment-board title="二项分布" :tags="[]">
     <template #experiment>
-      <distribution-diagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance" :a="a" :b="b" />
+      <distribution-diagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance" :a="a"
+        :b="b" />
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
+        <div class="w-full flex items-center justify-center">
+          <div ref="katexMainFormula" class="text-xl mr-5"></div>
+          <div ref="katexTransformedFormula" class="text-xl ml-5"></div>
+        </div>
         <div class="grid grid-cols-2 gap-5 p-5">
           <div class="flex flex-col flex-1 items-center justify-center space-y-3">
             <p>Mean</p>
@@ -99,7 +103,7 @@ $$ Y \\sim N(a\\mu + b, a^2\\sigma^2) $$
           </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-3">
             <p> a </p>
-            <InputNumber v-model.number="a" fluid :invalid="a === 0"/>
+            <InputNumber v-model.number="a" fluid :invalid="a === 0" />
             <Slider :min="-2" :max="2" :step="0.1" v-model="a" class="w-full" />
           </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-3">
@@ -117,52 +121,52 @@ $$ Y \\sim N(a\\mu + b, a^2\\sigma^2) $$
     </template>
   </experiment-board>
 
-<!--  <Splitter class="mb-8 h-full !border-0">-->
-<!--    <SplitterPanel class="pr-1.5">-->
-<!--      <div class="flex-1 p-3.5 border rounded-lg flex flex-col h-full">-->
-<!--        <div class="mb-2 font-bold">实验区</div>-->
-<!--        <div class="h-full w-full flex flex-col">-->
-<!--          <div class="mb-5 w-full flex-1">-->
-<!--            <distribution-diagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance" :a="a" :b="b" />-->
-<!--          </div>-->
-<!--          <div class="w-full flex items-center justify-center mb-5">-->
-<!--            <div ref="katexContainer" class="flex items-center space-x-2">-->
-<!--              <div ref="katexMainFormula" class="inline-block mr-5 text-xl"></div>-->
-<!--              <div ref="katexTransformedFormula" class="inline-block text-xl"></div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div class="flex w-full mb-5 space-x-4">-->
-<!--            <div class="flex flex-col flex-1 items-center justify-center space-y-3">-->
-<!--              <p>Mean</p>-->
-<!--              <InputNumber v-model.number="mean" fluid />-->
-<!--              <Slider :min="-5" :max="5" :step="0.1" v-model="mean" class="w-full" />-->
-<!--            </div>-->
-<!--            <div class="flex flex-col flex-1 items-center justify-center space-y-3">-->
-<!--              <p>Variance</p>-->
-<!--              <InputNumber v-model.number="stdDev" fluid />-->
-<!--              <Slider :min="0.1" :max="5" :step="0.1" v-model="stdDev" class="w-full" />-->
-<!--            </div>-->
-<!--            <div class="flex flex-col flex-1 items-center justify-center space-y-3">-->
-<!--              <p> a </p>-->
-<!--              <InputNumber v-model.number="a" fluid :invalid="a === 0"/>-->
-<!--              <Slider :min="-2" :max="2" :step="0.1" v-model="a" class="w-full" />-->
-<!--            </div>-->
-<!--            <div class="flex flex-col flex-1 items-center justify-center space-y-3">-->
-<!--              <p> b </p>-->
-<!--              <InputNumber v-model.number="b" fluid />-->
-<!--              <Slider :min="-5" :max="5" :step="0.1" v-model="b" class="w-5/6" />-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </SplitterPanel>-->
-<!--    <SplitterPanel class="pr-3 pl-1.5" :size="25">-->
-<!--      <Panel header="提示区" class="h-full overflow-auto">-->
-<!--        <div v-html="toMarkdown(content)" class="markdown-format">-->
-<!--        </div>-->
-<!--      </Panel>-->
-<!--    </SplitterPanel>-->
-<!--  </Splitter>-->
+  <!--  <Splitter class="mb-8 h-full !border-0">-->
+  <!--    <SplitterPanel class="pr-1.5">-->
+  <!--      <div class="flex-1 p-3.5 border rounded-lg flex flex-col h-full">-->
+  <!--        <div class="mb-2 font-bold">实验区</div>-->
+  <!--        <div class="h-full w-full flex flex-col">-->
+  <!--          <div class="mb-5 w-full flex-1">-->
+  <!--            <distribution-diagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance" :a="a" :b="b" />-->
+  <!--          </div>-->
+  <!--          <div class="w-full flex items-center justify-center mb-5">-->
+  <!--            <div ref="katexContainer" class="flex items-center space-x-2">-->
+  <!--              <div ref="katexMainFormula" class="inline-block mr-5 text-xl"></div>-->
+  <!--              <div ref="katexTransformedFormula" class="inline-block text-xl"></div>-->
+  <!--            </div>-->
+  <!--          </div>-->
+  <!--          <div class="flex w-full mb-5 space-x-4">-->
+  <!--            <div class="flex flex-col flex-1 items-center justify-center space-y-3">-->
+  <!--              <p>Mean</p>-->
+  <!--              <InputNumber v-model.number="mean" fluid />-->
+  <!--              <Slider :min="-5" :max="5" :step="0.1" v-model="mean" class="w-full" />-->
+  <!--            </div>-->
+  <!--            <div class="flex flex-col flex-1 items-center justify-center space-y-3">-->
+  <!--              <p>Variance</p>-->
+  <!--              <InputNumber v-model.number="stdDev" fluid />-->
+  <!--              <Slider :min="0.1" :max="5" :step="0.1" v-model="stdDev" class="w-full" />-->
+  <!--            </div>-->
+  <!--            <div class="flex flex-col flex-1 items-center justify-center space-y-3">-->
+  <!--              <p> a </p>-->
+  <!--              <InputNumber v-model.number="a" fluid :invalid="a === 0"/>-->
+  <!--              <Slider :min="-2" :max="2" :step="0.1" v-model="a" class="w-full" />-->
+  <!--            </div>-->
+  <!--            <div class="flex flex-col flex-1 items-center justify-center space-y-3">-->
+  <!--              <p> b </p>-->
+  <!--              <InputNumber v-model.number="b" fluid />-->
+  <!--              <Slider :min="-5" :max="5" :step="0.1" v-model="b" class="w-5/6" />-->
+  <!--            </div>-->
+  <!--          </div>-->
+  <!--        </div>-->
+  <!--      </div>-->
+  <!--    </SplitterPanel>-->
+  <!--    <SplitterPanel class="pr-3 pl-1.5" :size="25">-->
+  <!--      <Panel header="提示区" class="h-full overflow-auto">-->
+  <!--        <div v-html="toMarkdown(content)" class="markdown-format">-->
+  <!--        </div>-->
+  <!--      </Panel>-->
+  <!--    </SplitterPanel>-->
+  <!--  </Splitter>-->
 </template>
 
 <style scoped></style>

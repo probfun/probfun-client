@@ -1,7 +1,7 @@
 <template>
   <div class="w-full flex px-2 pb-2 gap-1">
     <div class="flex flex-col gap-1 w-1/2">
-        <container class="h-3/5" :tabs="displayTabList">
+        <container class="h-1/2" :tabs="displayTabList">
           <slot name="experiment"></slot>
         </container>
         <div class="h-1 hover:bg-blue-600 cursor-row-resize transition-all" @mousedown="startResizeRow"></div>
