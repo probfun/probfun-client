@@ -15,12 +15,6 @@ import Container from "@/components/Container.vue";
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
 const store = useStore();
-
-const isAuthenticated = computed(() => store.getters.isAuthenticated);
-const userName = computed(() => store.getters.getUser?.username); // 根据实际存储的用户信息字段
-const router = useRouter();
-
-const menu = ref();
 const useritems = ref([
   {
     label: '修改个人信息',
@@ -32,9 +26,6 @@ const useritems = ref([
     command: () => { store.dispatch('logout'); }
   },
 ]);
-const toggle = (event: any) => {
-  menu.value.toggle(event);
-};
 </script>
 
 <style></style>

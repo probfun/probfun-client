@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import DashBoard from "@/pages/DashBoard.vue";
 import BuffonNeedle from "@/components/experiment/chapter1/BuffonNeedle.vue";
-import DistributionBoard from "@/components/experiment/distribution/DistributionBoard.vue";
+import DistributionBoard from "@/components/experiment/distribution/NormalDistribution.vue";
 import ThreeDoors from "@/components/experiment/chapter1/ThreeDoors.vue";
 import BinomialDistribution from '@/components/experiment/distribution/BinomialDistribution.vue';
 import PoissonDistribution from '@/components/experiment/distribution/PoissonDistribution.vue';
@@ -33,7 +33,7 @@ const router = createRouter({
         },
         {
           path: '/dashboard/experiment/normalDistribution',
-          component: () => import('@/components/experiment/distribution/DistributionBoard.vue'),
+          component: () => import('@/components/experiment/distribution/NormalDistribution.vue'),
         },
         {
           path: '/dashboard/experiment/binomialDistribution',

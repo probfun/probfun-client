@@ -2,27 +2,29 @@
   <experiment-board title="Buffon投针" :tags="['辛钦大数定律', '蒙特卡罗方法']">
     <template #experiment>
       <div ref="container" class="h-full">
-        <div class="bg-blue-900">
+        <div class="bg-primary">
           <canvas ref="canvas" class="w-full" height="400"></canvas>
         </div>
       </div>
     </template>
 
-    <template #argument>
-      <div class="w-full h-full flex justify-center items-center space-x-3">
+    <template #parameter>
+      <div class="w-full h-full flex justify-center items-center gap-3">
         <div class="flex flex-col items-center flex-1">
-          <div class="flex w-full justify-center space-x-3 mb-2">
-            <FloatLabel>
-              <InputNumber class="w-24" v-model.number="needleAmount" :max="5000" />
-              <label for="username">抛针数量</label>
-            </FloatLabel>
-            <Button label="抛针" @click="addNeedles" :disabled="isCalculating || isSimulating" />
-            <Button :label="isSimulating ? '停止模拟' : '自动模拟'" @click="isSimulating ? endSimulate() : startSimulate()" />
-          </div>
-          <div class="text-start">
-            <div > 和线相交的针的数量：{{ hits }} </div>
-            <div> 估算的 Pi 值：{{ estimatedPi.toFixed(5) }} </div>
-            <div> 历史估算 Pi 值的平均值：{{ getAverageEstimatedPi().toFixed(5) }}</div>
+          <div class="flex flex-col w-full justify-center items-center mb-2 max-w-xs gap-2">
+            <div class="flex flex-col gap-2 w-full">
+              <label>抛针数量</label>
+              <input type="number" class="input input-primary input-bordered" v-model="needleAmount" :max="5000" />
+            </div>
+            <div class="flex justify-between gap-2 w-full">
+              <button class="btn btn-primary flex-1" @click="addNeedles" :disabled="isCalculating || isSimulating"> 抛针 </button>
+              <button class="btn btn-primary flex-1" @click="isSimulating ? endSimulate() : startSimulate()" > {{ isSimulating ? '停止模拟' : '自动模拟' }} </button>
+            </div>
+            <div class="text-start w-full">
+              <div > 和线相交的针的数量：{{ hits }} </div>
+              <div> 估算的 Pi 值：{{ estimatedPi.toFixed(5) }} </div>
+              <div> 历史估算 Pi 值的平均值：{{ getAverageEstimatedPi().toFixed(5) }}</div>
+            </div>
           </div>
         </div>
         <div class="flex-1 h-full flex items-center">
@@ -76,7 +78,6 @@ $$
 const isSimulating = ref(false);
 
 async function startSimulate() {
-  console.log('start');
   isSimulating.value = true;
   while (true) {
     if (!isSimulating.value) {
@@ -179,7 +180,7 @@ function runSimulation() {
   if (!ctx) return;
   hits.value = 0;
   ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
-  ctx.strokeStyle = 'white';
+  ctx.strokeStyle = 'black';
   for (let y = floorLineSpacing; y < canvas.value.height; y += floorLineSpacing) {
     ctx.beginPath();
     ctx.moveTo(0, y);
@@ -208,7 +209,7 @@ function runSimulation() {
       ctx.beginPath();
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
-      ctx.strokeStyle = 'yellow';
+      ctx.strokeStyle = 'white';
       ctx.stroke();
     }
   }
@@ -223,7 +224,6 @@ const height = ref(0);
 
 function resizeUpdate() {
   if (container.value) {
-    console.log('ok');
     width.value = container.value.clientWidth;
     height.value = container.value.clientHeight;
 
@@ -235,7 +235,7 @@ function resizeUpdate() {
       const ctx = canvas.value?.getContext('2d');
       ctx?.scale(ratio, ratio);
     }
-
+    addNeedles();
   }
 }
 
@@ -251,13 +251,17 @@ function getAverageEstimatedPi() {
   return sum / cnt;
 }
 
+let running = false;
 async function addNeedles() {
+  if (running) return;
+  running = true;
   runSimulation();
   await new Promise<void>((resolve) => {
     setTimeout(() => {
       resolve();
-    }, 200);
+    }, 100);
   });
+  running = false;
 }
 
 const resizeObserver = ref<ResizeObserver | null>(null);

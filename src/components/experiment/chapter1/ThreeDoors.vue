@@ -265,22 +265,23 @@ $$
 
       </div>
     </template>
-    <template #argument>
+    <template #parameter>
+
       <div class="p-5 items-center flex w-full h-full justify-center gap-3">
-        <div class="flex flex-col items-center justify-center">
+        <div class="flex flex-col items-center flex-1">
           <div class="flex">
-            <p class="mt-2"> 模拟轮数： </p>
-            <div class="flex flex-col w-24 space-y-3 mr-3">
-              <InputNumber :min="1" :max="1000" v-model.number="autoGameRound" />
-              <Slider :min="1" :max="1000" v-model="autoGameRound" />
+            <p class="mt-3"> 模拟轮数： </p>
+            <div class="flex flex-col gap-3 mr-3">
+              <input class="input input-rounded input-primary" :min="1" :max="1000" v-model="autoGameRound" />
+              <input class="range range-primary range-xs" type="range" :min="1" :max="1000" v-model="autoGameRound" />
             </div>
-            <Button @click="() => {
-                autoGaming ? autoGaming = false : simulateGame();
-              }"> {{ autoGaming ? '终止模拟' : '开始模拟' }}</Button>
+            <button class="btn btn-primary" @click="() => {
+              autoGaming ? autoGaming = false : simulateGame();
+            }"> {{ autoGaming ? '终止模拟' : '开始模拟' }}</button>
           </div>
-          <div class="mt-3">
+          <div class="mt-5">
             <div class="mb-2 text-lg font-bold">实验结果:</div>
-            <div class="grid grid-cols-2 gap-4 justify-between">
+            <div class="grid grid-cols-2 gap-y-4 gap-x-10 justify-between">
               <div class="flex items-center">
                 <p>换门胜利次数：</p>
                 <p>{{ changeWinNum }}</p>
@@ -300,9 +301,9 @@ $$
             </div>
           </div>
         </div>
-        <div class="flex flex-col items-center justify-center">
+        <div class="flex flex-1 flex-col items-center justify-center">
           <Chart type="bar" :data="data" :options="options" class="flex-1 w-full"></Chart>
-          <Button @click="resetData" class="mt-3">重置数据</Button>
+          <button @click="resetData" class="btn btn-primary mt-3">重置数据</button>
         </div>
       </div>
     </template>

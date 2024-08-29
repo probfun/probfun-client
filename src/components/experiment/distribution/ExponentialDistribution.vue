@@ -4,6 +4,7 @@ import katex from 'katex';
 import 'katex/dist/katex.min.css';
 import ExponentialDiagram from './ExponentialDiagram.vue';
 import { toMarkdown } from '@/utils/markdown';
+import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
 const rate = ref(2);
 const selectedCity = ref();
@@ -69,35 +70,32 @@ $$
 </script>
 
 <template>
-  <Splitter class="mb-8 h-full !border-0">
-    <SplitterPanel class="pr-1.5">
-      <div class="flex-1 p-3.5 border rounded-lg flex flex-col h-full">
-        <div class="mb-2 font-bold"> 实验区 </div>
-        <div class="h-full w-full flex flex-col">
-          <div class="mb-5 w-full flex-1">
-            <exponential-diagram class="flex-1 h-full" :rate="rate" />
-          </div>
-          <div class="w-full flex items-center justify-center mb-5">
-            <Select v-model="selectedCity" :options="cities" optionLabel="name" placeholder="选择一个分布"
-              class="w-full md:w-56 mr-5" />
-            <div ref="katexContainer" class="text-2xl"></div>
-          </div>
-          <div class="flex w-full mb-5">
-            <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-              <p> Rate parameter </p>
-              <InputNumber v-model.number="rate" />
-              <Slider :min="0" :max="5" :step="0.1" v-model="rate" class="w-48" />
-            </div>
+  <experiment-board title="二项分布" :tags="[]">
+    <template #experiment>
+      <exponential-diagram class="flex-1 h-full" :rate="rate" />
+    </template>
+    <template #parameter>
+      <div class="w-full h-full flex flex-col items-center justify-center">
+        <div class="w-full flex items-center justify-center mb-5">
+          <Select v-model="selectedCity" :options="cities" optionLabel="name" placeholder="选择一个分布"
+                  class="w-full md:w-56 mr-5" />
+          <div ref="katexContainer" class="text-2xl"></div>
+        </div>
+        <div class="flex w-full mb-5">
+          <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+            <p> Rate parameter </p>
+            <InputNumber v-model.number="rate" />
+            <Slider :min="0" :max="5" :step="0.1" v-model="rate" class="w-48" />
           </div>
         </div>
       </div>
-    </SplitterPanel>
-    <SplitterPanel class="pr-3 pl-1.5" :size="25">
-      <Panel header="提示区" class="h-full overflow-auto">
-        <div v-html="toMarkdown(content)" class="markdown-format"></div>
-      </Panel>
-    </SplitterPanel>
-  </Splitter>
+    </template>
+    <template #conclusion>
+      <div class="w-full h-full p-5">
+        <div v-html="toMarkdown(content)" class="prose max-w-full text-base-content"></div>
+      </div>
+    </template>
+  </experiment-board>
 </template>
 
 <style scoped></style>

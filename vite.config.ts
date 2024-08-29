@@ -22,19 +22,18 @@ export default defineConfig(({ mode }) => {
       }
     },
     server: {
-      host: true,
+      proxy: {
         '/api': {
-          target: 'http://8.154.34.171:8000',
+          target: 'http://8.154.34.171:8080',
           changeOrigin: true,
-          secure: false,
-          ws: true,
-          rewrite: (path) => path.replace(/^\/api/, ''),
+          rewrite: (path: string) => path.replace(/^\/api/, ''),
         },
         '/media': {
-          target: 'http://8.154.34.171:8000',
+          target: 'http://8.154.34.171:8080',
           changeOrigin: true,
           secure: false
         }
       }
     }
-  })
+  };
+})

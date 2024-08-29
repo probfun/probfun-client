@@ -1,12 +1,12 @@
 <template>
   <div class="w-full flex px-2 pb-2 gap-1">
-    <div class="flex flex-col gap-1 w-2/3">
-        <container class="h-1/2" :tabs="displayTabList">
+    <div class="flex flex-col gap-1 w-1/2">
+        <container class="h-3/5" :tabs="displayTabList">
           <slot name="experiment"></slot>
         </container>
         <div class="h-1 hover:bg-blue-600 cursor-row-resize transition-all" @mousedown="startResizeRow"></div>
-        <container class="flex-1" :tabs="argumentTabList">
-          <slot name="argument"></slot>
+        <container class="flex-1" :tabs="parameterTabList">
+          <slot name="parameter"></slot>
         </container>
     </div>
     <div class="w-1 hover:bg-blue-600 cursor-col-resize transition-all" @mousedown="startResizeCol"></div>
@@ -42,7 +42,7 @@ const displayTabList = ref([{
          </svg>`
 }]);
 
-const argumentTabList = ref([{
+const parameterTabList = ref([{
   id: 0,
   label: '调整参数',
   icon: `<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' class='size-5 text-blue-600'>

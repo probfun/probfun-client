@@ -3,6 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
 import { toMarkdown } from '@/utils/markdown';
+import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
 const lambda = ref(3);  // Poisson distribution mean (λ)
 
@@ -144,34 +145,30 @@ $$
 </script>
 
 <template>
-    <Splitter class="mb-8 h-full !border-0">
-        <SplitterPanel class="pr-1.5">
-            <div class="flex-1 p-3.5 border rounded-lg flex flex-col h-full">
-                <div class="mb-2 font-bold"> 实验区 </div>
-                <div class="h-full w-full flex flex-col">
-                    <div class="card">
-                        <Chart type="bar" :data="chartData" :options="chartOptions" class="h-[30rem]" />
-                    </div>
-                    <div class="w-full flex items-center justify-center mb-5">
-                        <div ref="katexContainer" class="text-xl"></div>
-                    </div>
-                    <div class="flex w-full mb-5">
-                        <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                            <p> Mean (λ) </p>
-                            <InputNumber v-model.number="lambda" />
-                            <Slider :min="0.1" :max="20" :step="0.1" v-model="lambda" class="w-48" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </SplitterPanel>
-        <SplitterPanel class="pr-3 pl-1.5" :size="25">
-            <Panel header="提示区" class="h-full overflow-auto">
-                <div v-html="toMarkdown(content)" class="markdown-format">
-                </div>
-            </Panel>
-        </SplitterPanel>
-    </Splitter>
+  <experiment-board title="二项分布" :tags="[]">
+    <template #experiment>
+      <Chart type="bar" :data="chartData" :options="chartOptions" class="h-full w-full" />
+    </template>
+    <template #parameter>
+      <div class="w-full h-full flex flex-col items-center justify-center">
+        <div class="w-full flex items-center justify-center mb-5">
+          <div ref="katexContainer" class="text-xl"></div>
+        </div>
+        <div class="flex w-full mb-5">
+          <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+            <p> Mean (λ) </p>
+            <InputNumber v-model.number="lambda" />
+            <Slider :min="0.1" :max="20" :step="0.1" v-model="lambda" class="w-48" />
+          </div>
+        </div>
+      </div>
+    </template>
+    <template #conclusion>
+      <div class="w-full h-full p-5">
+        <div v-html="toMarkdown(content)" class="prose max-w-full text-base-content"></div>
+      </div>
+    </template>
+  </experiment-board>
 </template>
 
 <style scoped></style>
