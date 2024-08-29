@@ -14,11 +14,17 @@ const cities = ref([
     { name: '正态分布' },
 ]);
 
-const latexFormula = computed(() => `f(x) = 
+const latexFormula = computed(() => {
+    const aFormatted = a.value < 0 ? `(${a.value})` : a.value;
+    const bFormatted = b.value < 0 ? `(${b.value})` : b.value;
+
+    return `f(x) =
 \\begin{cases} 
-\\frac{1}{${b.value} - ${a.value}}, & \\text{if } ${a.value} \\leq x \\leq ${b.value} \\\\
+\\frac{1}{${bFormatted} - ${aFormatted}}, & \\text{if } ${a.value} \\leq x \\leq ${bFormatted} \\\\
 0, & \\text{otherwise}
-\\end{cases}`);
+\\end{cases}`;
+});
+
 const katexContainer = ref<HTMLElement | null>(null);
 
 const renderFormula = () => {
