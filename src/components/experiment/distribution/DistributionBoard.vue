@@ -94,22 +94,22 @@ $$ Y \\sim N(a\\mu + b, a^2\\sigma^2) $$
           <div class="flex w-full mb-5 space-x-4">
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
               <p>Mean</p>
-              <InputNumber v-model.number="mean" fluid />
+              <InputNumber v-model.number="mean" fluid :minFractionDigits="1"/>
               <Slider :min="-5" :max="5" :step="0.1" v-model="mean" class="w-full" />
             </div>
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
               <p>Variance</p>
-              <InputNumber v-model.number="stdDev" fluid />
+              <InputNumber v-model.number="stdDev" fluid :minFractionDigits="1"/>
               <Slider :min="0.1" :max="5" :step="0.1" v-model="stdDev" class="w-full" />
             </div>
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
               <p> a </p>
-              <InputNumber v-model.number="a" fluid :invalid="a === 0"/>
+              <InputNumber v-model.number="a" fluid :invalid="a === 0" :minFractionDigits="1"/>
               <Slider :min="-2" :max="2" :step="0.1" v-model="a" class="w-full" />
             </div>
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
               <p> b </p>
-              <InputNumber v-model.number="b" fluid />
+              <InputNumber v-model.number="b" fluid :minFractionDigits="1"/>
               <Slider :min="-5" :max="5" :step="0.1" v-model="b" class="w-5/6" />
             </div>
           </div>

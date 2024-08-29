@@ -5,13 +5,9 @@
         <img class="h-8" src="../assets/logo.svg" alt="">
       </div>
 
-      <div>
-        <IconField>
-          <InputIcon>
-            <i class="pi pi-search" />
-          </InputIcon>
-          <InputText class="w-96" placeholder="搜索" />
-        </IconField>
+      <div class="flex gap-2">
+        <InputText class="w-96 !rounded-full" placeholder="搜索" />
+        <Button icon="pi pi-search" rounded />
       </div>
 
       <div class="absolute right-6">
@@ -81,7 +77,12 @@ const sideBarItems = ref([
             label: "三门问题",
             icon: 'pi pi-chart-bar',
             command: () => router.push('/dashboard/experiment/chapter1/three-doors')
-          }
+          },
+          {
+            label: "阳性检测",
+            icon: 'pi pi-chart-bar',
+            command: () => router.push('/dashboard/experiment/chapter1/positive-test')
+          },
         ],
         icon: 'pi pi-bookmark'
       },
