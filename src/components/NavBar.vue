@@ -18,6 +18,21 @@ const chapter1Items = [
     label: "三门问题",
     icon: 'pi pi-chart-bar',
     route: '/dashboard/experiment/chapter1/three-doors'
+  },
+  {
+    label: "生日问题",
+    icon: 'pi pi-chart-bar',
+    route: '/dashboard/experiment/chapter1/birthday-problem'
+  },
+  {
+    label: "生日攻击问题",
+    icon: 'pi pi-chart-bar',
+    route: '/dashboard/experiment/chapter1/birthday-attack'
+  },
+  {
+    label: "阳性检测",
+    icon: 'pi pi-chart-bar',
+    route: '/dashboard/experiment/chapter1/positive-test'
   }
 ];
 

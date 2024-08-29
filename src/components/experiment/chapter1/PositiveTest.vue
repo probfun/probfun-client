@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue';
-import { toMarkDown } from '@/utils/markdown';
+import {computed, onMounted, ref, watch} from 'vue';
+import {toMarkdown} from '@/utils/markdown';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
@@ -43,16 +43,16 @@ const chartData = computed(() => ({
 const chartOptions = computed(() => {
     const documentStyle = getComputedStyle(document.documentElement);
     const textColor = documentStyle.getPropertyValue('--p-text-color');
-
     return {
-        plugins: {
-            legend: {
-                labels: {
-                    usePointStyle: true,
-                    color: textColor
-                }
-            }
-        }
+      animation: false,
+      plugins: {
+          legend: {
+              labels: {
+                  usePointStyle: true,
+                  color: textColor
+              }
+          }
+      }
     };
 });
 
@@ -75,9 +75,7 @@ const drawCanvas = () => {
         const y = Math.floor(i / 50) * (radius * 2 + padding) + radius;
 
         // 计算点的颜色：可以根据不同状态设置颜色
-        const color = i < infectedDots.value ? '#FF7F0E' : '#00C4CC';
-
-        ctx.fillStyle = color;
+      ctx.fillStyle = i < infectedDots.value ? '#FF7F0E' : '#00C4CC';
         ctx.beginPath();
         ctx.arc(x, y, radius, 0, Math.PI * 2);
         ctx.fill();
@@ -149,59 +147,58 @@ $$
 
 <template>
     <experiment-board title="阳性检测" :tags="['条件概率', '互斥事件', '独立事件']">
-        <template #experiment>
-            <div class="flex-1 flex flex-col h-full">
-                <!-- 绘制矩形或圆形区域 -->
-                <div class="flex-1">
-                    <canvas ref="canvasRef" width="1000" height="400" class="border w-full"></canvas>
-                    <div class="flex items-center text-gray-500">
-                        <span class="inline-block w-4 h-4 rounded-full bg-[#FF7F0E] mr-2"></span>
-                        橙色圆点代表检测结果为阳性的人
-                    </div>
-                </div>
-                <div class="flex justify-center items-center border-2 rounded-lg pl-3">
-                    <!-- 输入框区域 -->
-                    <div class="flex flex-col flex-1 space-y-4 justify-center items-center">
-                        <!-- 第一个输入框组 -->
-                        <div class="flex space-x-4 justify-center items-center">
-                            <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-                                <p>特异度</p>
-                                <InputNumber v-model.number="specificity" fluid :minFractionDigits="2" />
-                                <Slider :min="0.1" :max="1.0" :step="0.01" v-model="specificity" class="w-full" />
-                            </div>
-                            <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-                                <p>灵敏度</p>
-                                <InputNumber v-model.number="sensitivity" fluid :minFractionDigits="2" />
-                                <Slider :min="0.1" :max="1.0" :step="0.01" v-model="sensitivity" class="w-full" />
-                            </div>
-                        </div>
-                        <!-- 第二个输入框组 -->
-                        <div class="flex space-x-4 justify-center items-center">
-                            <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-                                <p>感染率</p>
-                                <InputNumber v-model.number="infectionRate" :minFractionDigits="2" fluid />
-                                <Slider :min="0.0" :max="1.0" :step="0.001" v-model="infectionRate" class="w-full" />
-                            </div>
-                            <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-                                <p>总人数</p>
-                                <InputNumber v-model.number="population" fluid />
-                                <Slider :min="1000" :max="1000000" :step="1000" v-model="population" class="w-full" />
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 饼图区域 -->
-                    <div class="flex-column flex-1 ml-1 justify-center items-center">
-                        <Chart type="pie" :data="chartData" :options="chartOptions"
-                            class="justify-center items-center" />
-                        <div class="flex justify-center items-center text-gray-500">
-                            检测结果为阳性时实际患病的概率
-                        </div>
-                    </div>
-                </div>
+      <template #experiment>
+        <div class="w-full flex flex-col h-full items-center p-3">
+          <canvas ref="canvasRef" width="1000" height="400" class="w-full"></canvas>
+          <div class="flex items-center text-gray-500">
+            <span class="inline-block w-4 h-4 rounded-full bg-[#FF7F0E] mr-2"></span>
+            橙色圆点代表检测结果为阳性的人
+          </div>
+          </div>
+      </template>
+      <template #parameter>
+        <div class="flex justify-center items-center h-full w-full p-3">
+          <div class="flex flex-col flex-1 space-y-4 justify-center items-center">
+            <div class="flex space-x-4 justify-center items-center">
+              <div class="flex flex-col flex-1 items-center justify-center space-y-3">
+                <p>特异度</p>
+                <InputNumber v-model.number="specificity" fluid :minFractionDigits="2" />
+                <Slider :min="0.1" :max="1.0" :step="0.01" v-model="specificity" class="w-full" />
+              </div>
+              <div class="flex flex-col flex-1 items-center justify-center space-y-3">
+                <p>灵敏度</p>
+                <InputNumber v-model.number="sensitivity" fluid :minFractionDigits="2" />
+                <Slider :min="0.1" :max="1.0" :step="0.01" v-model="sensitivity" class="w-full" />
+              </div>
             </div>
-        </template>
-        <template #hint>
-            <div v-html="toMarkDown(content)" class="markdown-format"></div>
+            <!-- 第二个输入框组 -->
+            <div class="flex space-x-4 justify-center items-center">
+              <div class="flex flex-col flex-1 items-center justify-center space-y-3">
+                <p>感染率</p>
+                <InputNumber v-model.number="infectionRate" :minFractionDigits="2" fluid />
+                <Slider :min="0.0" :max="1.0" :step="0.001" v-model="infectionRate" class="w-full" />
+              </div>
+              <div class="flex flex-col flex-1 items-center justify-center space-y-3">
+                <p>总人数</p>
+                <InputNumber v-model.number="population" fluid />
+                <Slider :min="1000" :max="1000000" :step="1000" v-model="population" class="w-full" />
+              </div>
+            </div>
+          </div>
+          <!-- 饼图区域 -->
+          <div class="flex-1 flex flex-col justify-center items-center">
+            <Chart type="pie" :data="chartData" :options="chartOptions"
+                   class="" />
+            <div class="text-gray-500">
+              检测结果为阳性时实际患病的概率
+            </div>
+          </div>
+        </div>
+      </template>
+        <template #conclusion>
+          <div class="w-full h-full p-5">
+            <div v-html="toMarkdown(content)" class="prose max-w-full text-base-content"></div>
+          </div>
         </template>
     </experiment-board>
 </template>

@@ -9,7 +9,7 @@
     </template>
 
     <template #parameter>
-      <div class="w-full h-full flex justify-center items-center gap-3">
+      <div class="p-5 w-full h-full flex justify-center items-center gap-3">
         <div class="flex flex-col items-center flex-1">
           <div class="flex flex-col w-full justify-center items-center mb-2 max-w-xs gap-2">
             <div class="flex flex-col gap-2 w-full">
@@ -27,8 +27,9 @@
             </div>
           </div>
         </div>
-        <div class="flex-1 h-full flex items-center">
-          <chart type="line" :data="chartData" class="w-full" :height="200" :options="chartOptions" />
+        <div class="flex-1 flex flex-col items-center justify-center">
+          <chart type="line" :data="chartData" class="flex-1 w-full" :options="chartOptions" />
+          <button @click="resetData" class="btn btn-primary mt-3">重置数据</button>
         </div>
       </div>
     </template>
@@ -43,7 +44,7 @@
 
 <script setup lang="ts">
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
-import {ref, onMounted, onBeforeUnmount, watch, computed, onUnmounted} from 'vue';
+import {ref, onMounted, computed, onUnmounted} from 'vue';
 import {toMarkdown} from "@/utils/markdown";
 
 const content = `
@@ -76,6 +77,12 @@ $$
 `;
 
 const isSimulating = ref(false);
+
+function resetData() {
+  hits.value = 0;
+  estimatedPi.value = 0;
+  historyEstimatedPi.value = [];
+}
 
 async function startSimulate() {
   isSimulating.value = true;
@@ -139,7 +146,6 @@ const chartOptions = ref({
     duration: 0 // 禁用所有动画效果
   },
   maintainAspectRatio: false,
-  responsive: false,
   aspectRatio: 0.6,
   plugins: {
     legend: {
@@ -235,7 +241,7 @@ function resizeUpdate() {
       const ctx = canvas.value?.getContext('2d');
       ctx?.scale(ratio, ratio);
     }
-    addNeedles();
+    // addNeedles();
   }
 }
 

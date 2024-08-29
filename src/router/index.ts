@@ -1,14 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import DashBoard from "@/pages/DashBoard.vue";
-import BuffonNeedle from "@/components/experiment/chapter1/BuffonNeedle.vue";
-import DistributionBoard from "@/components/experiment/distribution/NormalDistribution.vue";
-import ThreeDoors from "@/components/experiment/chapter1/ThreeDoors.vue";
-import BinomialDistribution from '@/components/experiment/distribution/BinomialDistribution.vue';
-import PoissonDistribution from '@/components/experiment/distribution/PoissonDistribution.vue';
 import GeometricDistribution from '@/components/experiment/distribution/GeometricDistribution.vue';
 import GeometricDistribution1 from '@/components/experiment/distribution/GeometricDistribution1.vue';
-import EvenDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
-import ExponentialDistribution from '@/components/experiment/distribution/ExponentialDistribution.vue';
 import Login from "@/pages/Login.vue";
 import Register from "@/pages/Register.vue";
 
@@ -30,6 +23,18 @@ const router = createRouter({
         {
           path: '/dashboard/experiment/chapter1/three-doors',
           component: () => import('@/components/experiment/chapter1/ThreeDoors.vue'),
+        },
+        {
+          path: '/dashboard/experiment/chapter1/positive-test',
+          component: () => import('@/components/experiment/chapter1/PositiveTest.vue'),
+        },
+        {
+          path: '/dashboard/experiment/chapter1/birthday-attack',
+          component: () => import('@/components/experiment/chapter1/BirthdayAttack.vue'),
+        },
+        {
+          path: '/dashboard/experiment/chapter1/birthday-problem',
+          component: () => import('@/components/experiment/chapter1/BirthdayProblem.vue'),
         },
         {
           path: '/dashboard/experiment/normalDistribution',

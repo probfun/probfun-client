@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
-import {toMarkDown} from "@/utils/markdown";
+import {toMarkdown} from "@/utils/markdown";
 
 const content = `
 #### 概述
@@ -30,8 +30,10 @@ const content = `
 
     </template>
 
-    <template #hint>
-      <div v-html="toMarkDown(content)" class="markdown-format text-indigo-800"> </div>
+    <template #conclusion>
+      <div class="w-full h-full p-5">
+        <div v-html="toMarkdown(content)" class="prose max-w-full text-base-content"> </div>
+      </div>
     </template>
   </experiment-board>
 </template>

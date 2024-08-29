@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
-import {toMarkDown} from "@/utils/markdown";
+import {toMarkdown} from "@/utils/markdown";
 import {onMounted, ref, watch} from "vue";
 import {useToast} from "primevue/usetoast";
 
@@ -259,7 +259,36 @@ watch(() => bornProb, () => {
   <experiment-board title="生日问题" :tags="['蒙特卡洛方法', '排列组合', '互补事件的概率', '大数定律', '均匀分布']">
    <template #experiment>
      <div class="p-5 flex flex-col overflow-y-hidden">
-        <div class="flex items-center justify-center space-x-2">
+        <div class="mt-4 grid grid-cols-8 gap-3 overflow-y-auto h-96">
+          <div class="flex flex-col items-center" v-for="person in people" :key="person.id">
+            <Button :label="(person.id + 1).toString()" class="size-12" rounded
+                    @click="selectBirthday(person.birthday)"
+                    :severity="person.birthday === selectedBirthday ? 'success' : ''" />
+            <label>{{ convertDayOfYearToDate(person.birthday) }}</label>
+          </div>
+        </div>
+
+       <div>
+          <div class="mt-4" v-if="maxCount > 1">
+            <label>最常见的生日：</label>
+            <label>{{ convertDayOfYearToDate(mostCommonBirthday) }}</label>
+            <label>，共有 {{ maxCount }} 人在这一天过生日!</label>
+          </div>
+         <div class="mt-4" v-if="maxCount === 1">
+           <label>每个人的生日都不同！</label>
+         </div>
+         <div class="mt-4" v-if="selectedBirthday !== mostCommonBirthday">
+           <label>你选择的生日生日：</label>
+           <label>{{ convertDayOfYearToDate(selectedBirthday) }}</label>
+           <label>，共有 {{ getBirthdayCount(selectedBirthday) }} 人在这一天过生日!</label>
+         </div>
+       </div>
+     </div>
+   </template>
+
+    <template #parameter>
+      <div class="w-full h-full flex flex-col items-center justify-center">
+        <div class="flex items-center justify-center gap-2">
           <float-label>
             <InputNumber id="people" :min="1" :max="100" v-model.number="peopleCount"/>
             <label for="people">人数：</label>
@@ -283,36 +312,15 @@ watch(() => bornProb, () => {
             </div>
           </Dialog>
         </div>
-        <div class="mt-4 grid grid-cols-8 gap-3 overflow-y-auto h-96">
-          <div class="flex flex-col items-center" v-for="person in people" :key="person.id">
-            <Button :label="person.id + 1" class="size-12" rounded
-                    @click="selectBirthday(person.birthday)"
-                    :severity="person.birthday === selectedBirthday ? 'success' : ''" />
-            <label>{{ convertDayOfYearToDate(person.birthday) }}</label>
-          </div>
-        </div>
 
-       <div>
-          <div class="mt-4" v-if="maxCount > 1">
-            <label>最常见的生日：</label>
-            <label>{{ convertDayOfYearToDate(mostCommonBirthday) }}</label>
-            <label>，共有 {{ maxCount }} 人在这一天过生日!</label>
-          </div>
-         <div class="mt-4" v-if="maxCount === 1">
-           <label>每个人的生日都不同！</label>
-         </div>
-         <div class="mt-4" v-if="selectedBirthday !== mostCommonBirthday">
-           <label>你选择的生日生日：</label>
-           <label>{{ convertDayOfYearToDate(selectedBirthday) }}</label>
-           <label>，共有 {{ getBirthdayCount(selectedBirthday) }} 人在这一天过生日!</label>
-         </div>
-       </div>
-       <chart class="h-64" type="bar" :data="sameDayChartData" :options="chartOptions"></chart>
-     </div>
-   </template>
+        <chart class="h-64" type="bar" :data="sameDayChartData" :options="chartOptions"></chart>
+      </div>
+    </template>
 
-    <template #hint>
-      <div v-html="toMarkDown(content)" class="markdown-format text-indigo-800"> </div>
+    <template #conclusion>
+      <div class="p-5">
+        <div v-html="toMarkdown(content)" class="prose max-w-full text-base-content"> </div>
+      </div>
     </template>
   </experiment-board>
 </template>

@@ -214,7 +214,7 @@ $$
           <div
               class="h-full w-full absolute top-0 left-0 bg-black bg-opacity-70 flex justify-center items-center z-10"
               v-if="gameState === 'End'">
-            <Button @click="startGame">开始游戏</Button>
+            <button class="btn btn-primary" @click="startGame">开始游戏</button>
           </div>
           <div class="font-bold text-xl mb-6 h-8 text-center flex items-center">
             <p v-if="gameState === 'Select'">请选择一扇门！</p>
@@ -253,25 +253,24 @@ $$
             </div>
           </div>
           <div class="h-8">
-            <Button :disabled="Door.selectedDoor.value == null" @click="selectDoor"
-                    v-if="gameState === 'Select'">选择</Button>
+            <button class="btn btn-primary" :disabled="Door.selectedDoor.value == null" @click="selectDoor"
+                    v-if="gameState === 'Select'">选择</button>
             <div class="w-full flex space-x-5 justify-center" v-if="gameState === 'Reveal'">
-              <Button @click="gameResult(false)">不换门</Button>
-              <Button @click="gameResult(true)">换门</Button>
+              <button class="btn btn-primary" @click="gameResult(false)">不换门</button>
+              <button class="btn btn-primary" @click="gameResult(true)">换门</button>
             </div>
-            <Button @click="startGame" v-if="gameState === 'Win' || gameState === 'Lose'">重新开始</Button>
+            <button class="btn btn-primary" @click="startGame" v-if="gameState === 'Win' || gameState === 'Lose'">重新开始</button>
           </div>
 <!--        </div>-->
-
       </div>
     </template>
-    <template #parameter>
 
+    <template #parameter>
       <div class="p-5 items-center flex w-full h-full justify-center gap-3">
         <div class="flex flex-col items-center flex-1">
           <div class="flex">
-            <p class="mt-3"> 模拟轮数： </p>
-            <div class="flex flex-col gap-3 mr-3">
+            <label class="mt-3 flex-shrink-0"> 模拟轮数： </label>
+            <div class="flex flex-col gap-3 mr-3 min-w-0 flex-1">
               <input class="input input-rounded input-primary" :min="1" :max="1000" v-model="autoGameRound" />
               <input class="range range-primary range-xs" type="range" :min="1" :max="1000" v-model="autoGameRound" />
             </div>
@@ -282,21 +281,17 @@ $$
           <div class="mt-5">
             <div class="mb-2 text-lg font-bold">实验结果:</div>
             <div class="grid grid-cols-2 gap-y-4 gap-x-10 justify-between">
-              <div class="flex items-center">
-                <p>换门胜利次数：</p>
-                <p>{{ changeWinNum }}</p>
+              <div class="flex items-center flex-shrink-0">
+                换门胜利次数： {{ changeWinNum }}
               </div>
-              <div class="flex items-center">
-                <p>换门失败次数：</p>
-                <p>{{ changeLoseNum }}</p>
+              <div class="flex items-center flex-shrink-0">
+                换门失败次数： {{ changeLoseNum }}
               </div>
-              <div class="flex items-center">
-                <p>不换门胜利次数：</p>
-                <p>{{ notChangeWinNum }}</p>
+              <div class="flex items-center flex-shrink-0">
+                不换门胜利次数： {{ notChangeWinNum }}
               </div>
-              <div class="flex items-center">
-                <p>不换门失败次数：</p>
-                <p>{{ notChangeLoseNum }}</p>
+              <div class="flex items-center flex-shrink-0">
+                不换门失败次数： {{ notChangeLoseNum }}
               </div>
             </div>
           </div>
@@ -307,8 +302,8 @@ $$
         </div>
       </div>
     </template>
-    <template #conclusion>
 
+    <template #conclusion>
       <div class="w-full h-full p-5">
         <div class="prose max-w-full text-base-content" v-html="toMarkdown(content)"></div>
       </div>

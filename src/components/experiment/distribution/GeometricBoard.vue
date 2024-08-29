@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router';
-import { toMarkDown } from '@/utils/markdown';
+import { toMarkdown } from '@/utils/markdown';
 
 const items = ref([
     { route: '/dashboard/experiment/geometric1', label: '直到第一次成功', icon: 'pi pi-chart-line' },
@@ -86,7 +86,7 @@ const content = `
         </SplitterPanel>
         <SplitterPanel class="pr-3 pl-1.5" :size="25">
             <Panel header="提示区" class="h-full overflow-auto">
-                <div v-html="toMarkDown(content)" class="markdown-format"></div>
+                <div v-html="toMarkdown(content)" class="markdown-format"></div>
             </Panel>
         </SplitterPanel>
     </Splitter>
