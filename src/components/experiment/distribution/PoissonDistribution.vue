@@ -147,7 +147,7 @@ $$
 <template>
   <experiment-board title="二项分布" :tags="[]">
     <template #experiment>
-      <Chart type="bar" :data="chartData" :options="chartOptions" class="h-full w-full" />
+      <Chart type="line" :data="chartData" :options="chartOptions" class="h-full w-full" />
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
