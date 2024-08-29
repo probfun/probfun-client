@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import {computed, onMounted, ref, watch} from 'vue';
-import {toMarkdown} from '@/utils/markdown';
+import { computed, onMounted, ref, watch } from 'vue';
+import { toMarkdown } from '@/utils/markdown';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
@@ -13,73 +13,84 @@ const population = ref(100000); // 总人数
 
 // 计算结果
 const truePositiveRate = computed(() => {
-    const infectedPopulation = population.value * infectionRate.value; // 真实感染人数
-    const healthyPopulation = population.value - infectedPopulation; // 未感染人数
+  const infectedPopulation = population.value * infectionRate.value; // 真实感染人数
+  const healthyPopulation = population.value - infectedPopulation; // 未感染人数
 
-    const truePositives = sensitivity.value * infectedPopulation; // 真阳性数量
-    const falsePositives = (1 - specificity.value) * healthyPopulation; // 假阳性数量
+  const truePositives = sensitivity.value * infectedPopulation; // 真阳性数量
+  const falsePositives = (1 - specificity.value) * healthyPopulation; // 假阳性数量
 
-    const totalPositiveTests = truePositives + falsePositives; // 总阳性人数
+  const totalPositiveTests = truePositives + falsePositives; // 总阳性人数
 
-    return totalPositiveTests ? truePositives / totalPositiveTests : 0; // 真实阳性概率
+  return totalPositiveTests ? truePositives / totalPositiveTests : 0; // 真实阳性概率
+});
+
+const result = computed(() => {
+  const infectedPopulation = population.value * infectionRate.value; // 真实感染人数
+  const healthyPopulation = population.value - infectedPopulation; // 未感染人数
+
+  const truePositives = sensitivity.value * infectedPopulation; // 真阳性数量
+  const falsePositives = (1 - specificity.value) * healthyPopulation; // 假阳性数量
+
+  const totalPositiveTests = Math.round(truePositives + falsePositives); // 总阳性人数
+  return totalPositiveTests;
 });
 
 // 饼图数据
 const chartData = computed(() => ({
-    labels: ['未患病假阳性', '患病真阳性'],
-    datasets: [
-        {
-            data: [
-                1 - truePositiveRate.value,
-                truePositiveRate.value
-            ],
-            backgroundColor: ['#00C4CC', '#FF7F0E'],
-            hoverBackgroundColor: ['#0097A7', '#FF570E']
-        }
-    ]
+  labels: ['未患病假阳性', '患病真阳性'],
+  datasets: [
+    {
+      data: [
+        1 - truePositiveRate.value,
+        truePositiveRate.value
+      ],
+      backgroundColor: ['#00C4CC', '#FF7F0E'],
+      hoverBackgroundColor: ['#0097A7', '#FF570E']
+    }
+  ]
 }));
 
 // 饼图选项
 const chartOptions = computed(() => {
-    const documentStyle = getComputedStyle(document.documentElement);
-    const textColor = documentStyle.getPropertyValue('--p-text-color');
-    return {
-      animation: false,
-      plugins: {
-          legend: {
-              labels: {
-                  usePointStyle: true,
-                  color: textColor
-              }
-          }
+  const documentStyle = getComputedStyle(document.documentElement);
+  const textColor = documentStyle.getPropertyValue('--p-text-color');
+  return {
+    animation: false,
+    plugins: {
+      legend: {
+        labels: {
+          usePointStyle: true,
+          color: textColor
+        }
       }
-    };
+    }
+  };
 });
 
 // 初始化图形
 const drawCanvas = () => {
-    const canvas = canvasRef.value;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+  const canvas = canvasRef.value;
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
 
-    // 清空画布
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // 清空画布
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const totalDots = 1000; // 显示1000个点
-    const radius = 5; // 每个点的半径
-    const padding = 10; // 点之间的间隔
+  const totalDots = 1000; // 显示1000个点
+  const radius = 5; // 每个点的半径
+  const padding = 10; // 点之间的间隔
 
-    for (let i = 0; i < totalDots; i++) {
-        const x = (i % 50) * (radius * 2 + padding) + radius;
-        const y = Math.floor(i / 50) * (radius * 2 + padding) + radius;
+  for (let i = 0; i < totalDots; i++) {
+    const x = (i % 50) * (radius * 2 + padding) + radius;
+    const y = Math.floor(i / 50) * (radius * 2 + padding) + radius;
 
-        // 计算点的颜色：可以根据不同状态设置颜色
-      ctx.fillStyle = i < infectedDots.value ? '#FF7F0E' : '#00C4CC';
-        ctx.beginPath();
-        ctx.arc(x, y, radius, 0, Math.PI * 2);
-        ctx.fill();
-    }
+    // 计算点的颜色：可以根据不同状态设置颜色
+    ctx.fillStyle = i < infectedDots.value ? '#FF7F0E' : '#00C4CC';
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+  }
 };
 
 // 计算感染和健康人数
@@ -89,7 +100,7 @@ const infectedDots = computed(() => 1000 * infectionRate.value * sensitivity.val
 watch([specificity, sensitivity, infectionRate, population], drawCanvas);
 
 onMounted(() => {
-    drawCanvas();
+  drawCanvas();
 });
 
 // Markdown 内容
@@ -146,61 +157,60 @@ $$
 </script>
 
 <template>
-    <experiment-board title="阳性检测" :tags="['条件概率', '互斥事件', '独立事件']">
-      <template #experiment>
-        <div class="w-full flex flex-col h-full items-center p-3">
-          <canvas ref="canvasRef" width="1000" height="400" class="w-full"></canvas>
-          <div class="flex items-center text-gray-500">
-            <span class="inline-block w-4 h-4 rounded-full bg-[#FF7F0E] mr-2"></span>
-            橙色圆点代表检测结果为阳性的人
-          </div>
-          </div>
-      </template>
-      <template #parameter>
-        <div class="flex justify-center items-center h-full w-full p-3">
-          <div class="flex flex-col flex-1 space-y-4 justify-center items-center">
-            <div class="flex space-x-4 justify-center items-center">
-              <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-                <p>特异度</p>
-                <InputNumber v-model.number="specificity" fluid :minFractionDigits="2" />
-                <Slider :min="0.1" :max="1.0" :step="0.01" v-model="specificity" class="w-full" />
-              </div>
-              <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-                <p>灵敏度</p>
-                <InputNumber v-model.number="sensitivity" fluid :minFractionDigits="2" />
-                <Slider :min="0.1" :max="1.0" :step="0.01" v-model="sensitivity" class="w-full" />
-              </div>
+  <experiment-board title="阳性检测" :tags="['条件概率', '互斥事件', '独立事件']">
+    <template #experiment>
+      <div class="w-full flex flex-col h-full items-center p-3">
+        <canvas ref="canvasRef" width="1000" height="400" class="w-full"></canvas>
+        <div class="flex items-center text-gray-500">
+          <span class="inline-block w-4 h-4 rounded-full bg-[#FF7F0E] mr-2"></span>
+          橙色圆点代表检测结果为阳性的人，共{{ result }}人
+        </div>
+      </div>
+    </template>
+    <template #parameter>
+      <div class="flex justify-center items-center h-full w-full p-3">
+        <div class="flex flex-col flex-1 space-y-4 justify-center items-center">
+          <div class="flex space-x-4 justify-center items-center">
+            <div class="flex flex-col flex-1 items-center justify-center space-y-3">
+              <p>特异度</p>
+              <InputNumber v-model.number="specificity" fluid :minFractionDigits="2" />
+              <Slider :min="0.1" :max="1.0" :step="0.01" v-model="specificity" class="w-full" />
             </div>
-            <!-- 第二个输入框组 -->
-            <div class="flex space-x-4 justify-center items-center">
-              <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-                <p>感染率</p>
-                <InputNumber v-model.number="infectionRate" :minFractionDigits="2" fluid />
-                <Slider :min="0.0" :max="1.0" :step="0.001" v-model="infectionRate" class="w-full" />
-              </div>
-              <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-                <p>总人数</p>
-                <InputNumber v-model.number="population" fluid />
-                <Slider :min="1000" :max="1000000" :step="1000" v-model="population" class="w-full" />
-              </div>
+            <div class="flex flex-col flex-1 items-center justify-center space-y-3">
+              <p>灵敏度</p>
+              <InputNumber v-model.number="sensitivity" fluid :minFractionDigits="2" />
+              <Slider :min="0.1" :max="1.0" :step="0.01" v-model="sensitivity" class="w-full" />
             </div>
           </div>
-          <!-- 饼图区域 -->
-          <div class="flex-1 flex flex-col justify-center items-center">
-            <Chart type="pie" :data="chartData" :options="chartOptions"
-                   class="" />
-            <div class="text-gray-500">
-              检测结果为阳性时实际患病的概率
+          <!-- 第二个输入框组 -->
+          <div class="flex space-x-4 justify-center items-center">
+            <div class="flex flex-col flex-1 items-center justify-center space-y-3">
+              <p>感染率</p>
+              <InputNumber v-model.number="infectionRate" :minFractionDigits="2" fluid />
+              <Slider :min="0.0" :max="1.0" :step="0.001" v-model="infectionRate" class="w-full" />
+            </div>
+            <div class="flex flex-col flex-1 items-center justify-center space-y-3">
+              <p>总人数</p>
+              <InputNumber v-model.number="population" fluid />
+              <Slider :min="1000" :max="1000000" :step="1000" v-model="population" class="w-full" />
             </div>
           </div>
         </div>
-      </template>
-        <template #conclusion>
-          <div class="w-full h-full p-5">
-            <div v-html="toMarkdown(content)" class="prose max-w-full text-base-content"></div>
+        <!-- 饼图区域 -->
+        <div class="flex-1 flex flex-col justify-center items-center">
+          <Chart type="pie" :data="chartData" :options="chartOptions" class="" />
+          <div class="text-gray-500">
+            检测结果为阳性时实际患病的概率 {{ truePositiveRate.toFixed(3) }}
           </div>
-        </template>
-    </experiment-board>
+        </div>
+      </div>
+    </template>
+    <template #conclusion>
+      <div class="w-full h-full p-5">
+        <div v-html="toMarkdown(content)" class="prose max-w-full text-base-content"></div>
+      </div>
+    </template>
+  </experiment-board>
 </template>
 
 <style scoped>
