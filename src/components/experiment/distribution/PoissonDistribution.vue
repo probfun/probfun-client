@@ -7,7 +7,7 @@ import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
 const lambda = ref(3);  // Poisson distribution mean (λ)
 
-const latexFormula = computed(() => `P(X = k) = \\frac{${lambda.value}^k e^{-\\lambda}}{k!}`);
+const latexFormula = computed(() => `P(X = k) = \\frac{${lambda.value}^k e^{-${lambda.value}}}{k!}`);
 const katexContainer = ref<HTMLElement | null>(null);
 
 const renderFormula = () => {

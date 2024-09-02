@@ -8,8 +8,11 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     BinomialDistribution: typeof import('./src/components/experiment/distribution/BinomialDistribution.vue')['default']
+    BinomialPoisson: typeof import('./src/components/experiment/distribution/comparison/BinomialPoisson.vue')['default']
     BirthdayAttack: typeof import('./src/components/experiment/chapter1/BirthdayAttack.vue')['default']
     BirthdayProblem: typeof import('./src/components/experiment/chapter1/BirthdayProblem.vue')['default']
+    BN: typeof import('./src/components/experiment/distribution/comparison/BN.vue')['default']
+    BP: typeof import('./src/components/experiment/distribution/comparison/BP.vue')['default']
     BuffonNeedle: typeof import('./src/components/experiment/chapter1/BuffonNeedle.vue')['default']
     Button: typeof import('primevue/button')['default']
     Chart: typeof import('primevue/chart')['default']
@@ -27,7 +30,10 @@ declare module 'vue' {
     NavBar: typeof import('./src/components/NavBar.vue')['default']
     NormalDistribution: typeof import('./src/components/experiment/distribution/NormalDistribution.vue')['default']
     Panel: typeof import('primevue/panel')['default']
+    PE: typeof import('./src/components/experiment/distribution/comparison/PE.vue')['default']
+    PED: typeof import('./src/components/experiment/distribution/comparison/PED.vue')['default']
     PoissonDistribution: typeof import('./src/components/experiment/distribution/PoissonDistribution.vue')['default']
+    PoissonExponential: typeof import('./src/components/experiment/distribution/comparison/PoissonExponential.vue')['default']
     PositiveTest: typeof import('./src/components/experiment/chapter1/PositiveTest.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
