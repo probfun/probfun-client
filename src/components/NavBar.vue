@@ -80,6 +80,11 @@ const comparisonOfDistributions = [
     icon: 'pi pi-chart-bar',
     route: '/dashboard/experiment/comparison/poissonExponential'
   },
+  {
+    label: "泊松分布与正态分布",
+    icon: 'pi pi-chart-bar',
+    route: '/dashboard/experiment/comparison/poissonNormal'
+  },
 ];
 
 const isDrawerOpen = ref(false);

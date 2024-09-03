@@ -5,12 +5,7 @@ import 'katex/dist/katex.min.css';
 import { toMarkdown } from '@/utils/markdown';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
-const lambda = ref();
-
-const poissonFormula = computed(() => `P(X = k) = \\frac{${lambda.value.toFixed(2)}^k e^{-${lambda.value.toFixed(2)}}}{k!}`);
-const poissonContainer = ref<HTMLElement | null>(null);
-
-
+const lambda = ref(1);
 
 onMounted(() => {
     chartData.value = setChartData();
@@ -27,14 +22,14 @@ const setChartData = () => {
         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
         datasets: [
             {
-                label: 'Poisson Distribution',
+                label: '泊松分布',
                 data: [65, 59, 80, 81, 56, 55, 40],
                 fill: false,
                 borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
                 tension: 0.4
             },
             {
-                label: 'Exponential Distribution',
+                label: 'Second Dataset',
                 data: [28, 48, 40, 19, 86, 27, 90],
                 fill: false,
                 borderColor: documentStyle.getPropertyValue('--p-gray-500'),
@@ -43,7 +38,6 @@ const setChartData = () => {
         ]
     };
 };
-
 const setChartOptions = () => {
     const documentStyle = getComputedStyle(document.documentElement);
     const textColor = documentStyle.getPropertyValue('--p-text-color');
@@ -145,7 +139,6 @@ $$
 - 泊松分布的参数 $$ \\lambda $$ 是单位时间内的平均事件次数，而指数分布的参数 $$ \lambda $$ 是时间间隔的倒数。
 
 通过这些公式，可以清晰地看到泊松分布和指数分布在描述随机事件发生过程中的紧密联系。泊松分布用于描述事件的数量，而指数分布用于描述事件之间的时间间隔，两者共同构成了泊松过程的基础。
-
 `
 </script>
 
@@ -155,7 +148,18 @@ $$
             <Chart type="line" :data="chartData" :options="chartOptions" class="h-full w-full" />
         </template>
         <template #parameter>
-
+            <div class="w-full h-full flex flex-col items-center justify-center">
+                <div class="w-full flex items-center justify-center mb-5">
+                    这咋展示啊
+                </div>
+                <div class="flex w-full mb-5">
+                    <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+                        <p> Rate parameter </p>
+                        <InputNumber v-model.number="lambda" :min-fraction-digits="1" />
+                        <Slider :min="0" :max="5" :step="0.1" v-model="lambda" class="w-48" />
+                    </div>
+                </div>
+            </div>
         </template>
         <template #conclusion>
             <div class="w-full h-full p-5">

@@ -74,6 +74,10 @@ const router = createRouter({
           path: '/dashboard/experiment/comparison/poissonExponential',
           component: () => import('@/components/experiment/distribution/comparison/PE.vue'),
         },
+        {
+          path: '/dashboard/experiment/comparison/poissonNormal',
+          component: () => import('@/components/experiment/distribution/comparison/PN.vue'),
+        },
         // {
         //   path: '/dashboard/setting',
         //   component: DistributionBoard,
