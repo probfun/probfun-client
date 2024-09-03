@@ -67,6 +67,10 @@ const router = createRouter({
           component: () => import('@/components/experiment/distribution/ExponentialDistribution.vue'),
         },
         {
+          path: '/dashboard/experiment/exponential2',
+          component: () => import('@/components/experiment/distribution/Exponential2.vue'),
+        },
+        {
           path: '/dashboard/experiment/comparison/binomialPoisson',
           component: () => import('@/components/experiment/distribution/comparison/BP.vue'),
         },
