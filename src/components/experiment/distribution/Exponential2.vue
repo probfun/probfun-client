@@ -69,7 +69,7 @@ $$
 <template>
   <experiment-board title="二项分布" :tags="[]">
     <template #experiment>
-      <exponential2-diagram class="flex-1 h-full" :rate="rate" :shift="shift"/>
+      <exponential2-diagram class="flex-1 h-full" :rate="rate" :shift="shift" />
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
