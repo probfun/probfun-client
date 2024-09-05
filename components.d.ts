@@ -30,6 +30,7 @@ declare module 'vue' {
     InputNumber: typeof import('primevue/inputnumber')['default']
     NavBar: typeof import('./src/components/NavBar.vue')['default']
     NormalDistribution: typeof import('./src/components/experiment/distribution/NormalDistribution.vue')['default']
+    PE: typeof import('./src/components/experiment/distribution/comparison/PE.vue')['default']
     PE1: typeof import('./src/components/experiment/distribution/comparison/PE1.vue')['default']
     PE2: typeof import('./src/components/experiment/distribution/comparison/PE2.vue')['default']
     PN: typeof import('./src/components/experiment/distribution/comparison/PN.vue')['default']
