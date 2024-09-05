@@ -36,7 +36,7 @@
 
     <template #conclusion>
       <div class="w-full h-full p-5">
-        <div v-html="toMarkdown(content)" class="prose max-w-full text-base-content"> </div>
+        <div v-html="toMarkdown(content)" class="prose-sm max-w-none text-base-content"> </div>
       </div>
     </template>
   </experiment-board>
@@ -186,7 +186,7 @@ function runSimulation() {
   if (!ctx) return;
   hits.value = 0;
   ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
-  ctx.strokeStyle = 'black';
+  ctx.strokeStyle = 'white';
   for (let y = floorLineSpacing; y < canvas.value.height; y += floorLineSpacing) {
     ctx.beginPath();
     ctx.moveTo(0, y);
@@ -215,7 +215,7 @@ function runSimulation() {
       ctx.beginPath();
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
-      ctx.strokeStyle = 'white';
+      ctx.strokeStyle = 'yellow';
       ctx.stroke();
     }
   }

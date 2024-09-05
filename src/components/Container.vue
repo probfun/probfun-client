@@ -5,6 +5,7 @@ interface Tab {
   id: number;
   label: string;
   icon?: string;
+  name?: string;
 }
 
 const props = defineProps<{

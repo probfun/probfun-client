@@ -2,7 +2,37 @@
 import {computed, ref} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {useStore} from "vuex";
-
+import { Avatar, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Plus } from 'lucide-vue-next'
 const store = useStore();
 
 const router = useRouter();
@@ -80,6 +110,34 @@ const isActiveRoute = (itemRoute: string) => {
 };
 
 const isAuthenticated = computed(() => store.getters.isAuthenticated);
+
+const user = ref({
+  nickname: 'cheng',
+  studentId: '2022213665',
+  gender: 'secret',
+  school: '',
+  avatarUrl: '/default-avatar.png',
+});
+
+function submitForm() {
+
+}
+
+const fileInput = ref<HTMLInputElement | null>(null);
+
+const triggerFileUpload = () => {
+  fileInput.value?.click();
+};
+
+const handleFileUpload = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const files: FileList | null = target.files;
+  if (files && files.length > 0) {
+    const file: File = files[0];
+    user.value.avatarUrl = URL.createObjectURL(file);
+  }
+};
+
 </script>
 
 <template>
@@ -136,11 +194,136 @@ const isAuthenticated = computed(() => store.getters.isAuthenticated);
                 d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" />
           </svg>
         </label>
-        <div class="avatar" v-if="isAuthenticated">
-          <div class="w-8 rounded-full cursor-pointer">
-            <img src="/default-avatar.png" alt="" />
-          </div>
-        </div>
+
+        <Dialog v-if="isAuthenticated">
+          <DialogTrigger as-child>
+            <Button variant="ghost" size="icon" class="rounded-full">
+              <img :src="store.getters.getUser.avatarUrl" class="w-8 rounded-full" alt="" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent class="overflow-y-auto p-10 max-w-none w-auto">
+            <DialogHeader>
+              <DialogTitle>个人资料</DialogTitle>
+              <DialogDescription>
+                在此更改您的个人资料。完成后单击“保存”。
+              </DialogDescription>
+            </DialogHeader>
+
+            <div class="flex">
+              <form @submit="submitForm" class="w-64 space-y-3">
+                <div class="space-y-2">
+                  <label class="text-sm">学工号</label>
+                  <Input v-model="user.studentId" disabled />
+                </div>
+
+                <FormField v-slot="{ componentField }" name="username">
+                  <FormItem>
+                    <FormLabel>昵称</FormLabel>
+                    <FormControl>
+                      <Input type="text" placeholder="请输入昵称" v-model="user.nickname" v-slot="componentField" class="transition-all" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormField>
+
+                <FormField v-slot="{ componentField }" name="gender">
+                  <FormItem>
+                    <FormLabel>性别</FormLabel>
+                    <FormControl>
+                      <Select v-model="user.gender" v-slot="componentField">
+                        <SelectTrigger>
+                          <SelectValue placeholder="请选择性别" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectItem value="secret">
+                              保密
+                            </SelectItem>
+                            <SelectItem value="male">
+                              男
+                            </SelectItem>
+                            <SelectItem value="female">
+                              女
+                            </SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormField>
+
+                <FormField v-slot="{ componentField }" name="username">
+                  <FormItem>
+                    <FormLabel>学院</FormLabel>
+                    <FormControl>
+                      <Input type="text" placeholder="请输入学院" v-model="user.school" v-slot="componentField" class="transition-all" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormField>
+
+                <FormField v-slot="{ componentField }" name="username">
+                  <FormItem>
+                    <FormLabel>专业</FormLabel>
+                    <FormControl>
+                      <Input type="text" placeholder="请输入专业" v-model="user.school" v-slot="componentField" class="transition-all" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormField>
+
+                <FormField v-slot="{ componentField }" name="username">
+                  <FormItem>
+                    <FormLabel>邮箱</FormLabel>
+                    <FormControl>
+                      <Input type="text" placeholder="请输入邮箱" v-model="user.school" v-slot="componentField" class="transition-all" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormField>
+
+                <FormField v-slot="{ componentField }" name="username">
+                  <FormItem>
+                    <FormLabel>手机号</FormLabel>
+                    <FormControl>
+                      <Input type="text" placeholder="请输入手机号" v-model="user.school" v-slot="componentField" class="transition-all" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormField>
+              </form>
+
+              <div class="flex justify-center pl-10">
+                <Avatar class="size-48 relative">
+                  <AvatarImage :src="user.avatarUrl" alt="avatar" />
+                  <Button variant="ghost"
+                          class="absolute top-0 left-0 size-48 rounded-full opacity-0 transition-all hover:opacity-100 hover:bg-opacity-30 hover:bg-black"
+                          @click="triggerFileUpload">
+                    <div class="flex flex-col items-center text-background">
+                      <Plus class="size-6" />
+                      <div class="font-semibold"> 上传图片 </div>
+                    </div>
+                  </Button>
+                </Avatar>
+              </div>
+
+              <input
+                  type="file"
+                  ref="fileInput"
+                  class="hidden"
+                  @change="handleFileUpload"
+                  accept="image/*"
+              />
+            </div>
+
+            <DialogFooter>
+              <Button type="submit" form="dialogForm">
+                保存设置
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
         <div class="flex items-center gap-1" v-else>
           <button class="btn btn-sm btn-ghost text-base" @click="router.push('/register')">注册</button>
@@ -153,7 +336,7 @@ const isAuthenticated = computed(() => store.getters.isAuthenticated);
       <input id="my-drawer" type="checkbox" class="drawer-toggle" v-model="isDrawerOpen" />
       <div class="drawer-side">
         <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
-        <div class="bg-base-100 min-h-full w-[40rem] max-w-full p-4">
+        <div class="bg-base-100 min-h-full w-96 max-w-full p-4">
           <div class="flex justify-between p-3 pb-5 border-b border-base-300">
             <label class="font-bold text-2xl">
               实验

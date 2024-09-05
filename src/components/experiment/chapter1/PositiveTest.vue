@@ -207,7 +207,7 @@ $$
     </template>
     <template #conclusion>
       <div class="w-full h-full p-5">
-        <div v-html="toMarkdown(content)" class="prose max-w-full text-base-content"></div>
+        <div v-html="toMarkdown(content)" class="prose-sm max-w-none text-base-content"></div>
       </div>
     </template>
   </experiment-board>
