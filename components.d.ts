@@ -28,6 +28,8 @@ declare module 'vue' {
     NavBar: typeof import('./src/components/NavBar.vue')['default']
     NormalDistribution: typeof import('./src/components/experiment/distribution/NormalDistribution.vue')['default']
     PE: typeof import('./src/components/experiment/distribution/comparison/PE.vue')['default']
+    PE1: typeof import('./src/components/experiment/distribution/comparison/PE1.vue')['default']
+    PE2: typeof import('./src/components/experiment/distribution/comparison/PE2.vue')['default']
     PN: typeof import('./src/components/experiment/distribution/comparison/PN.vue')['default']
     PoissonDistribution: typeof import('./src/components/experiment/distribution/PoissonDistribution.vue')['default']
     PositiveTest: typeof import('./src/components/experiment/chapter1/PositiveTest.vue')['default']

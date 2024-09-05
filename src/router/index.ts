@@ -80,7 +80,11 @@ const router = createRouter({
         },
         {
           path: '/dashboard/experiment/comparison/poissonExponential',
-          component: () => import('@/components/experiment/distribution/comparison/PE.vue'),
+          component: () => import('@/components/experiment/distribution/comparison/PE1.vue'),
+        },
+        {
+          path: '/dashboard/experiment/comparison/poissonExponential2',
+          component: () => import('@/components/experiment/distribution/comparison/PE2.vue'),
         },
         {
           path: '/dashboard/experiment/comparison/poissonNormal',
