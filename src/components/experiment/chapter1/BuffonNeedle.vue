@@ -22,7 +22,12 @@
             </div>
             <div class="text-start w-full">
               <div > 和线相交的针的数量：{{ hits }} </div>
-              <div> 估算的 Pi 值：{{ estimatedPi.toFixed(5) }} </div>
+              <div class="text-start w-full h-full p-5">
+              估算的 Pi 值:
+              <div v-html="toMarkdown(`$\\pi = \\frac{2l}{Pd} = $ ${estimatedPi.toFixed(5)}`)" class="prose w-full text-base-content"></div>
+           
+          </div>
+          
               <div> 历史估算 Pi 值的平均值：{{ getAverageEstimatedPi().toFixed(5) }}</div>
             </div>
           </div>
