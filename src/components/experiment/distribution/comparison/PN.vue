@@ -166,7 +166,7 @@ $$
                 <div class="flex w-full mb-5">
                     <div class="flex flex-col flex-1 items-center justify-center space-y-5">
                         <p> λ </p>
-                        <InputNumber v-model.number="lambda" />
+                        <InputNumber v-model.number="lambda[0]" />
                         <Slider :min="30" :max="60" :step="1" v-model="lambda" class="w-48" />
                     </div>
                 </div>

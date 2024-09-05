@@ -157,7 +157,7 @@ $$
         <div class="flex w-full mb-5">
           <div class="flex flex-col flex-1 items-center justify-center space-y-5">
             <p> Mean (λ) </p>
-            <InputNumber v-model.number="lambda" :min-fraction-digits="1"/>
+            <InputNumber v-model.number="lambda[0]" :min-fraction-digits="1"/>
             <Slider :min="0.1" :max="20" :step="0.1" v-model="lambda" class="w-48" />
           </div>
         </div>

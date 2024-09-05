@@ -198,12 +198,12 @@ $$
                 <div class="flex w-full mb-5">
                     <div class="flex flex-col flex-1 items-center justify-center space-y-5">
                         <p> Number of experiments </p>
-                        <InputNumber v-model.number="number" />
+                        <InputNumber v-model.number="number[0]" />
                         <Slider :min="20" :max="50" :step="1" v-model="number" class="w-48" />
                     </div>
                     <div class="flex flex-col flex-1 items-center justify-center space-y-5">
                         <p> Probability of success </p>
-                        <InputNumber v-model.number="probability" :min-fraction-digits="2" />
+                        <InputNumber v-model.number="probability[0]" :min-fraction-digits="2" />
                         <Slider :min="0" :max="1" :step="0.01" v-model="probability" class="w-48" />
                     </div>
                 </div>

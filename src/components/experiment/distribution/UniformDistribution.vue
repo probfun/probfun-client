@@ -97,22 +97,22 @@ $$
         <div class="grid grid-cols-4 gap-5 p-5">
           <div class="flex flex-col flex-1 items-center justify-center space-y-5 w-full">
             <p> a </p>
-            <InputNumber v-model.number="a" :invalid="a > b" :min-fraction-digits="1" fluid />
+            <InputNumber v-model.number="a[0]" :invalid="a > b" :min-fraction-digits="1" fluid />
             <Slider :min="-10" :max="9.9" :step="0.1" v-model="a" class="w-full" />
           </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-5 w-full">
             <p> b </p>
-            <InputNumber v-model.number="b" :min-fraction-digits="1" fluid />
+            <InputNumber v-model.number="b[0]" :min-fraction-digits="1" fluid />
             <Slider :min="a[0] + 0.1" :max="10" :step="0.1" v-model="b" class="w-full" />
           </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-5 w-full">
             <p> k </p>
-            <InputNumber v-model.number="k" :min-fraction-digits="1" fluid />
+            <InputNumber v-model.number="k[0]" :min-fraction-digits="1" fluid />
             <Slider :min="0.1" :max="10" :step="0.1" v-model="k" class="w-full" />
           </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-5 w-full">
             <p> m </p>
-            <InputNumber v-model.number="m" :min-fraction-digits="1" fluid />
+            <InputNumber v-model.number="m[0]" :min-fraction-digits="1" fluid />
             <Slider :min="0" :max="10" :step="0.1" v-model="m" class="w-full" />
           </div>
         </div>
