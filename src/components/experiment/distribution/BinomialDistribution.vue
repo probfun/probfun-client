@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
+import { Slider } from '@/components/ui/slider';
+
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
 import { toMarkdown } from '@/utils/markdown';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
-const number = ref(5);  // Number of experiments (n)
-const probability = ref(0.5);  // Probability of success (p)
+const number = ref([5]);  // Number of experiments (n)
+const probability = ref([0.5]);  // Probability of success (p)
 
-const latexFormula = computed(() => `P(X = k) = \\binom{${number.value}}{k} ${probability.value}^k (1-${probability.value})^{${number.value}-k}`);
+const latexFormula = computed(() => `P(X = k) = \\binom{${number.value[0]}}{k} ${probability.value}^k (1-${probability.value})^{${number.value[0]}-k}`);
 const katexContainer = ref<HTMLElement | null>(null);
 
 const renderFormula = () => {
@@ -33,10 +35,10 @@ const setChartData = () => {
     // 计算二项分布的数据
     const labels = [];
     const data = [];
-    for (let k = 0; k <= number.value; k++) {
-        const probabilityOfK = binomialCoefficient(number.value, k) *
-            Math.pow(probability.value, k) *
-            Math.pow(1 - probability.value, number.value - k);
+    for (let k = 0; k <= number.value[0]; k++) {
+        const probabilityOfK = binomialCoefficient(number.value[0], k) *
+            Math.pow(probability.value[0], k) *
+            Math.pow(1 - probability.value[0], number.value[0] - k);
         labels.push(k);
         data.push(probabilityOfK);
     }

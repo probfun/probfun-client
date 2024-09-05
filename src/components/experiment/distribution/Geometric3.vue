@@ -5,7 +5,7 @@ import 'katex/dist/katex.min.css';
 import { toMarkdown } from '@/utils/markdown';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
-const probability = ref(0.5);  // 成功的概率 (p)
+const probability = ref([0.5]);  // 成功的概率 (p)
 const fixedN = ref(3);  // 固定的试验次数 n
 
 const latexMemoryless = computed(() => `P(X > ${fixedN.value} + k \\mid X > ${fixedN.value}) = P(X > k) = (1 - ${probability.value})^k`);
@@ -33,8 +33,8 @@ const setChartData = () => {
     const n = fixedN.value;
 
     const kValues = Array.from({ length: 20 }, (_, i) => i + 1);  // 生成1到20的k值
-    const data1 = kValues.map(k => Math.pow(1 - p, k)); // 计算 P(X > k) 的概率
-    const data2 = kValues.map(k => Math.pow(1 - p, k + n)); // 计算 P(X > k + n) 的概率
+    const data1 = kValues.map(k => Math.pow(1 - p[0], k)); // 计算 P(X > k) 的概率
+    const data2 = kValues.map(k => Math.pow(1 - p[0], k + n)); // 计算 P(X > k + n) 的概率
 
     return {
         labels: kValues,
@@ -60,7 +60,7 @@ const setChartData = () => {
             },
             {
                 label: '',
-                data: kValues.map((k, index) => (k >= 1 && k <= 1 + n) ? Math.pow(1 - p, 1 + n) : null), // 限制x范围的y值
+                data: kValues.map((k, index) => (k >= 1 && k <= 1 + n) ? Math.pow(1 - p[0], 1 + n) : null), // 限制x范围的y值
                 fill: false,
                 borderColor: documentStyle.getPropertyValue('--p-red-500'), // 设置辅助线的颜色
                 borderWidth: 1, // 辅助线的宽度

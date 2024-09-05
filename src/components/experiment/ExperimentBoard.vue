@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 import Container from "@/components/Container.vue";
-import {onMounted, onUnmounted, PropType, ref} from "vue";
+import {PropType, ref} from "vue";
 
 interface DiscussTab {
   id: number;
@@ -44,7 +44,7 @@ defineProps({
   },
   discussTabList: {
     type: Array as PropType<DiscussTab[]>,
-    required: true,
+    required: false,
     default:  [
       {
         id: 0,

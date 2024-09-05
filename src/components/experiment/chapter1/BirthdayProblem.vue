@@ -8,7 +8,6 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { BarChart } from '@/components/ui/chart-bar';
 
 import {
   Dialog,
@@ -25,12 +24,9 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-
-import {exp} from "three/src/nodes/math/MathNode";
 
 const content = `
 ### 概述

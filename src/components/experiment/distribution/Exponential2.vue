@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue';
+import { Slider } from '@/components/ui/slider';
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
 import Exponential2Diagram from './Exponential2Diagram.vue';
 import { toMarkdown } from '@/utils/markdown';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
-const rate = ref(2);
-const shift = ref(1);
+const rate = ref([2]);
+const shift = ref([1]);
 
 const latexFormula = computed(() => `P(X > ${shift.value} + s \\mid X > t) = P(X > s) = e^{-${rate.value} s}`);
 const katexContainer = ref<HTMLElement | null>(null);
@@ -69,7 +70,7 @@ $$
 <template>
   <experiment-board title="二项分布" :tags="[]">
     <template #experiment>
-      <exponential2-diagram class="flex-1 h-full" :rate="rate" :shift="shift" />
+      <exponential2-diagram class="flex-1 h-full" :rate="rate[0]" :shift="shift[0]" />
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">

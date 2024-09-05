@@ -6,23 +6,23 @@ import DistributionDiagram from "@/components/experiment/distribution/Distributi
 import { toMarkdown } from '@/utils/markdown';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
-const mean = ref(0);
-const stdDev = ref(1);
-const a = ref(1);
-const b = ref(0);
+const mean = ref([0]);
+const stdDev = ref([1]);
+const a = ref([1]);
+const b = ref([0]);
 const transformedMean = ref();
 const transformedVariance = ref();
 
 
 const latexFormula = computed(() => {
-  transformedMean.value = a.value * mean.value + b.value;
-  transformedVariance.value = a.value ** 2 * stdDev.value ** 2;
+  transformedMean.value = a.value[0] * mean.value[0] + b.value[0];
+  transformedVariance.value = a.value[0] ** 2 * stdDev.value[0] ** 2;
   const meanVal = transformedMean.value.toFixed(1); // 转换为字符串仅用于展示
   const varianceVal = transformedVariance.value.toFixed(1); // 转换为字符串仅用于展示
   return `f(x) = \\frac{1}{\\sqrt{2\\pi\\times${varianceVal}}} e^{-\\frac{(x-${meanVal})^2}{2\\times${varianceVal}}}`;
 });
 
-const transformedFormula = computed(() => `X \\sim N(${a.value}\\cdot${mean.value} + ${b.value}, ${a.value}^2\\cdot${stdDev.value}^2)`);
+const transformedFormula = computed(() => `X \\sim N(${a.value[0]}\\cdot${mean.value[0]} + ${b.value[0]}, ${a.value[0]}^2\\cdot${stdDev.value[0]}^2)`);
 
 const katexMainFormula = ref<HTMLElement | null>(null);
 const katexTransformedFormula = ref<HTMLElement | null>(null);
@@ -103,7 +103,7 @@ $$ Y \\sim N(a\\mu + b, a^2\\sigma^2) $$
           </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-3">
             <p> a </p>
-            <InputNumber v-model.number="a" fluid :invalid="a === 0" :min-fraction-digits="1"/>
+            <InputNumber v-model.number="a" fluid :invalid="a[0] === 0" :min-fraction-digits="1"/>
             <Slider :min="-2" :max="2" :step="0.1" v-model="a" class="w-full" />
           </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-3">
@@ -116,7 +116,7 @@ $$ Y \\sim N(a\\mu + b, a^2\\sigma^2) $$
     </template>
     <template #conclusion>
       <div class="w-full h-full p-5">
-        <div v-html="toMarkdown(content)" class="prose-none max-w-none text-base-content"></div>
+        <div v-html="toMarkdown(content)" class="prose-sm max-w-none text-base-content"></div>
       </div>
     </template>
   </experiment-board>

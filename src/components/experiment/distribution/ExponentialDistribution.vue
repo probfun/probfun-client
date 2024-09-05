@@ -6,7 +6,7 @@ import ExponentialDiagram from './ExponentialDiagram.vue';
 import { toMarkdown } from '@/utils/markdown';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
-const rate = ref(2);
+const rate = ref([2]);
 
 const latexFormula = computed(() => `f(x) = ${rate.value} e^{-${rate.value} x}, \\quad x \\geq 0`);
 const katexContainer = ref<HTMLElement | null>(null);
@@ -68,7 +68,7 @@ $$
 <template>
   <experiment-board title="二项分布" :tags="[]">
     <template #experiment>
-      <exponential-diagram class="flex-1 h-full" :rate="rate" />
+      <exponential-diagram class="flex-1 h-full" :rate="rate[0]" />
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">

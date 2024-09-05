@@ -5,13 +5,13 @@ import 'katex/dist/katex.min.css';
 import { toMarkdown } from '@/utils/markdown';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
-const number = ref(20);
-const probability = ref(0.1);
-const mean = computed(() => number.value * probability.value);
-const variance = computed(() => number.value * probability.value * (1 - probability.value));
+const number = ref([20]);
+const probability = ref([0.1]);
+const mean = computed(() => number.value[0] * probability.value[0]);
+const variance = computed(() => number.value[0] * probability.value[0] * (1 - probability.value[0]));
 const stdDev = computed(() => Math.sqrt(variance.value));
 
-const binomialFormula = computed(() => `P(X = k) = \\binom{${number.value}}{k} ${probability.value}^k (1-${probability.value})^{${number.value}-k}`);
+const binomialFormula = computed(() => `P(X = k) = \\binom{${number.value[0]}}{k} ${probability.value[0]}^k (1-${probability.value[0]})^{${number.value[0]}-k}`);
 const binomialContainer = ref<HTMLElement | null>(null);
 
 const normalFormula = computed(() => `P(X = k) \\approx \\frac{1}{\\sqrt{2\\pi ${variance.value.toFixed(2)}}} e^{-\\frac{(k - ${mean.value.toFixed(2)})^2}{2${variance.value.toFixed(2)}}}`);
@@ -44,11 +44,11 @@ const setChartData = () => {
     const labels = [];
     const binomialData = [];
     const normalData = [];
-    for (let k = 0; k <= number.value; k++) {
+    for (let k = 0; k <= number.value[0]; k++) {
         // 计算二项分布
-        const probabilityOfK = binomialCoefficient(number.value, k) *
-            Math.pow(probability.value, k) *
-            Math.pow(1 - probability.value, number.value - k);
+        const probabilityOfK = binomialCoefficient(number.value[0], k) *
+            Math.pow(probability.value[0], k) *
+            Math.pow(1 - probability.value[0], number.value[0] - k);
         binomialData.push(probabilityOfK);
 
         // 计算正态分布

@@ -5,7 +5,7 @@ import 'katex/dist/katex.min.css';
 import { toMarkdown } from '@/utils/markdown';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
-const probability = ref(0.5);  // Probability of success (p)
+const probability = ref([0.5]);  // Probability of success (p)
 
 const latexFormula = computed(() => `P(X = k) = (1 - ${probability.value})^{k} \\cdot ${probability.value}`);
 const katexContainer = ref<HTMLElement | null>(null);
@@ -31,7 +31,7 @@ const setChartData = () => {
     const p = probability.value;
 
     const kValues = Array.from({ length: 20 }, (_, i) => i + 1);  // 生成1到10的k值
-    const data = kValues.map(k => Math.pow(1 - p, k) * p); // 计算几何分布的概率
+    const data = kValues.map(k => Math.pow(1 - p[0], k) * p[0]); // 计算几何分布的概率
 
     return {
         labels: kValues,

@@ -5,8 +5,8 @@ import 'katex/dist/katex.min.css';
 import { toMarkdown } from '@/utils/markdown';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
-const time = ref(10);
-const lambda = computed(() => 60 / time.value);
+const time = ref([10]);
+const lambda = computed(() => 60 / time.value[0]);
 
 const latexFormula = computed(() => `P(X = k) = \\frac{${lambda.value}^k e^{-${lambda.value}}}{k!}`);
 const katexContainer = ref<HTMLElement | null>(null);

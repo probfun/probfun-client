@@ -5,9 +5,9 @@ import 'katex/dist/katex.min.css';
 import { toMarkdown } from '@/utils/markdown';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
-const lambda = ref(10);
+const lambda = ref([10]);
 
-const latexFormula = computed(() => `f(x) = \\frac{1}{${lambda.value}} e^{-\\frac{x}{${lambda.value}}}, \\quad x \\geq 0`);
+const latexFormula = computed(() => `f(x) = \\frac{1}{${lambda.value[0]}} e^{-\\frac{x}{${lambda.value[0]}}}, \\quad x \\geq 0`);
 const katexContainer = ref<HTMLElement | null>(null);
 
 const renderFormula = () => {
@@ -32,9 +32,9 @@ const setChartData = () => {
 
     const labels = [];
     const data = [];
-    const maxK = 3 * lambda.value;  // 根据 λ 设置 k 的最大值
+    const maxK = 3 * lambda.value[0];  // 根据 λ 设置 k 的最大值
     for (let k = 0; k <= maxK; k++) {
-        const probabilityOfK = 1 / lambda.value * Math.exp(-k / lambda.value);
+        const probabilityOfK = 1 / lambda.value[0] * Math.exp(-k / lambda.value[0]);
         labels.push(k);
         data.push(probabilityOfK);
     }

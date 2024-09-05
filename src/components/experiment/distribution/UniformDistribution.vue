@@ -6,19 +6,19 @@ import UniformDiagram from './UniformDiagram.vue';
 import { toMarkdown } from '@/utils/markdown';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
-const a = ref(0);
-const b = ref(1);
-const k = ref(1);
-const m = ref(0);
+const a = ref([0]);
+const b = ref([1]);
+const k = ref([1]);
+const m = ref([0]);
 
 const latexFormula = computed(() => {
-  const aFormatted = a.value < 0 ? `(${a.value})` : a.value;
-  const bFormatted = b.value < 0 ? `(${b.value})` : b.value;
+  const aFormatted = a.value[0] < 0 ? `(${a.value[0]})` : a.value[0];
+  const bFormatted = b.value[0] < 0 ? `(${b.value[0]})` : b.value[0];
 
   return `f(x) =
 \\begin{cases} 
-\\frac{${k.value}}{${bFormatted} - ${aFormatted}} + ${m.value}, & \\text{if } ${a.value} \\leq x \\leq ${bFormatted} \\\\
-0 + ${m.value}, & \\text{otherwise}
+\\frac{${k.value[0]}}{${bFormatted} - ${aFormatted}} + ${m.value[0]}, & \\text{if } ${a.value[0]} \\leq x \\leq ${bFormatted} \\\\
+0 + ${m.value[0]}, & \\text{otherwise}
 \\end{cases}`;
 });
 
@@ -87,7 +87,7 @@ $$
 <template>
   <experiment-board title="二项分布" :tags="[]">
     <template #experiment>
-      <uniform-diagram class="flex-1 h-full" :a="a" :b="b" :k="k" :m="m" />
+      <uniform-diagram class="flex-1 h-full" :a="a[0]" :b="b[0]" :k="k[0]" :m="m[0]" />
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
@@ -103,7 +103,7 @@ $$
           <div class="flex flex-col flex-1 items-center justify-center space-y-5 w-full">
             <p> b </p>
             <InputNumber v-model.number="b" :min-fraction-digits="1" fluid />
-            <Slider :min="a + 0.1" :max="10" :step="0.1" v-model="b" class="w-full" />
+            <Slider :min="a[0] + 0.1" :max="10" :step="0.1" v-model="b" class="w-full" />
           </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-5 w-full">
             <p> k </p>
