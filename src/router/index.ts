@@ -75,8 +75,16 @@ const router = createRouter({
           component: () => import('@/components/experiment/distribution/comparison/BP.vue'),
         },
         {
+          path: '/dashboard/experiment/comparison/binomialNormal',
+          component: () => import('@/components/experiment/distribution/comparison/BN.vue'),
+        },
+        {
           path: '/dashboard/experiment/comparison/poissonExponential',
-          component: () => import('@/components/experiment/distribution/comparison/PE.vue'),
+          component: () => import('@/components/experiment/distribution/comparison/PE1.vue'),
+        },
+        {
+          path: '/dashboard/experiment/comparison/poissonExponential2',
+          component: () => import('@/components/experiment/distribution/comparison/PE2.vue'),
         },
         {
           path: '/dashboard/experiment/comparison/poissonNormal',

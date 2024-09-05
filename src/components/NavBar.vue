@@ -76,6 +76,11 @@ const comparisonOfDistributions = [
     route: '/dashboard/experiment/comparison/binomialPoisson'
   },
   {
+    label: "二项分布与正态分布",
+    icon: 'pi pi-chart-bar',
+    route: '/dashboard/experiment/comparison/binomialNormal'
+  },
+  {
     label: "泊松分布与指数分布",
     icon: 'pi pi-chart-bar',
     route: '/dashboard/experiment/comparison/poissonExponential'

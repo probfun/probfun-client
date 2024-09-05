@@ -58,17 +58,16 @@ const setChartData = () => {
         datasets: [
             {
                 label: 'Poisson Distribution',
-                backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
                 borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
                 data: poissonData,
                 fill: false,
             },
             {
                 label: 'Normal Distribution',
-                backgroundColor: documentStyle.getPropertyValue('--p-gray-500'),
                 borderColor: documentStyle.getPropertyValue('--p-gray-500'),
                 data: normalData,
                 fill: false,
+                tension: 0.4
             }
         ]
     };
