@@ -160,7 +160,7 @@ $$
 <template>
   <experiment-board title="二项分布" :tags="[]">
     <template #experiment>
-      <Chart type="bar" :data="chartData" :options="chartOptions" class="h-full w-full" />
+      <Chart type="line" :data="chartData" :options="chartOptions" class="h-full w-full" />
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
@@ -175,7 +175,7 @@ $$
           </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-5">
             <p> Probability of success </p>
-            <InputNumber v-model.number="probability" />
+            <InputNumber v-model.number="probability" :min-fraction-digits="1"/>
             <Slider :min="0" :max="1" :step="0.1" v-model="probability" class="w-48" />
           </div>
         </div>

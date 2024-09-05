@@ -7,7 +7,7 @@ import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
 const lambda = ref(3);  // Poisson distribution mean (λ)
 
-const latexFormula = computed(() => `P(X = k) = \\frac{${lambda.value}^k e^{-\\lambda}}{k!}`);
+const latexFormula = computed(() => `P(X = k) = \\frac{${lambda.value}^k e^{-${lambda.value}}}{k!}`);
 const katexContainer = ref<HTMLElement | null>(null);
 
 const renderFormula = () => {
@@ -147,7 +147,7 @@ $$
 <template>
   <experiment-board title="二项分布" :tags="[]">
     <template #experiment>
-      <Chart type="bar" :data="chartData" :options="chartOptions" class="h-full w-full" />
+      <Chart type="line" :data="chartData" :options="chartOptions" class="h-full w-full" />
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
@@ -157,7 +157,7 @@ $$
         <div class="flex w-full mb-5">
           <div class="flex flex-col flex-1 items-center justify-center space-y-5">
             <p> Mean (λ) </p>
-            <InputNumber v-model.number="lambda" />
+            <InputNumber v-model.number="lambda" :min-fraction-digits="1"/>
             <Slider :min="0.1" :max="20" :step="0.1" v-model="lambda" class="w-48" />
           </div>
         </div>

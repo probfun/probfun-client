@@ -64,6 +64,10 @@ function selectDoor() {
   doors.value[revealDoorId - 1].openDoor();
 }
 
+// 新增一个状态变量来存储用户选择的策略
+const selectedStrategy = ref<'never' | 'always' | 'random'>('never');
+
+
 const changeWinNum = ref(0);
 const changeLoseNum = ref(0);
 const notChangeWinNum = ref(0);
@@ -96,7 +100,16 @@ async function simulateGame() {
     await wait(waitTime);
     selectDoor();
     await wait(waitTime);
-    const change = Math.random() < 0.5;
+
+    let change: boolean;
+    if (selectedStrategy.value === "never") {
+      change = false;
+    } else if (selectedStrategy.value === "always") {
+      change = true;
+    } else {
+      change = Math.random() < 0.5;
+    }
+
     gameResult(change);
     await wait(waitTime);
   }
@@ -143,19 +156,19 @@ function resetData() {
 const discussTabList = [
     {
       id: 0,
+      label: '实验简述',
+      name: 'change',
+      icon: `<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' class='size-5 text-blue-600'>
+                  <path stroke-linecap='round' stroke-linejoin='round' d='M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155' />
+                 </svg>`
+    },
+    {
+      id: 1,
       label: '实验结论',
       name: 'conclusion',
       icon: `<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' class='size-5 text-blue-600'>
                 <path stroke-linecap='round' stroke-linejoin='round' d='M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5' />
                </svg>`
-    },
-    {
-      id: 1,
-      label: '换门争议',
-      name: 'change',
-      icon: `<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' class='size-5 text-blue-600'>
-                  <path stroke-linecap='round' stroke-linejoin='round' d='M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155' />
-                 </svg>`
     },
     {
       id: 2,
@@ -167,7 +180,8 @@ const discussTabList = [
     }
 ];
 
-const content = `
+const conclusionContent = `
+
 ### 实验思路
 我们假设三扇门分别是 A、B、C，选手最初的选择是门 A，主持人打开的是门 B，那么问题就变成了求解：
 
@@ -230,6 +244,51 @@ $$
 ### 结论
 综上所述,我们可以得到在假设最初选择A门,主持人打开B门的前提下,汽车在C门的概率最高,概率为2/3.故此时参赛者应该选择换成C门.
 `
+
+const explanationContent = `
+### 问题简述
+
+这是一个猜奖问题，游戏规则和过程如下：
+
+有三扇关闭着的门，主持人将两只羊和一台车随机地放门后。选择一扇门，门后的奖品归你。
+
+首先你选择一扇门，确定选择后点击“选择”按钮，然后主持人会打开未被选择的门中后面有羊的一扇，替你排除一扇门。现在你可以选择换门或者不换门。假如你想赢得车，你会选择换门还是不换门呢？
+
+### 换门争议
+
+关于三门问题，两种答案（换门还是不换门获得车的概率更大）争执已久。归纳起来，可以是：
+
+既然主持人排除了一个错误选项，那么原始问题就变成了二选一的新问题，此时选哪个都一样，中奖概率都是 $\\frac{1}{2}$。因此答案是「否」。
+
+三扇门的中奖概率都是 $\\frac{1}{3}$，参赛者选中的门的中奖概率自然也是 $\\frac{1}{3}$；而主持人选择的门打开后，$\\frac{1}{3}$就「跑到」另一扇门上去了，所以另一扇门的中奖概率是$\\frac{2}{3}$ 。因此答案是「是」。
+
+
+
+根据贝叶斯公式，目标后验概率为$$P(\\text{A}|{B'})$$ = $\\frac{1}{3P({B'})}$。因此，以上两种答案对应边缘概率$$P({B'})$$分别是$\\frac{2}{3}$和1。这又对应了两种假设：
+
+主持人并不知道门后的情况，随机选择后恰好门后是羊；特别地，主持人不知道参赛者选择的门后的情况，因而主持人的选择没有带来新的信息量,即$$P({B'}) ={\\frac{2}{3}}$$。
+
+主持人知道门后的情况，因此选择的门后边必然是羊；特别地，主持人知道参赛者选择的门后的情况，因而主持人的选择带来了新的信息量。即$$P({B'}) = 1 $$。
+
+这两种假设即是长期持续的争论是因为「节目主持人开启剩下两扇门的其中一扇」，并没有体现出主持人事先是否知道门后的情况；因而两种理解都算是可以接受的。
+
+---
+
+尽管在原始问题中，有「文字游戏」的嫌疑，但由于「露出其中一只山羊」的保证，事实上主持人的选择就变成了确定性的结论，因而带来了信息量。以概率论的角度来描述，即是 $$P({B'}) = 1 $$。
+
+因此，三门问题的答案，应当是「换另一扇门会增加参赛者赢得汽车的机会（概率从$\\frac{1}{3}$增加到 $\\frac{2}{3}$）」。
+
+此外，也可以使用枚举法来理解：
+
+根据题目，参赛者需要在三扇门中进行选择，而门后共有一台汽车和两只羊。不妨将其设为汽车和羊A 及羊B。那么，若参赛者在主持人展示一只羊之后更改选择，则获胜的概率为 $\\frac{2}{3}$（失败的概率则是 $\\frac{1}{3}$）。所有可能的情况枚举如下：
+
+当参赛者一开始选择汽车时（$\\frac{1}{3}$概率），不论主持人选择羊A 还是羊B，若参赛者更换选择，都不能赢得汽车。
+
+当参赛者一开始选择羊A时（$\\frac{1}{3}$概率），主持人必然选择羊B，若参赛者更换选择，则必然赢得汽车。
+
+当参赛者一开始选择羊B时（$\\frac{1}{3}$概率），主持人必然选择羊A，若参赛者更换选择，则必然赢得汽车。
+
+`;
 
 </script>
 
@@ -305,6 +364,33 @@ $$
               autoGaming ? autoGaming = false : simulateGame();
             }"> {{ autoGaming ? '终止模拟' : '开始模拟' }}</button>
           </div>
+
+          <div class="flex flex-col items-center mt-5">
+            <label class="font-bold mb-2 text-lg">选择换门策略：</label>
+          <div class="flex space-x-3">
+            <button
+              class="btn"
+              :class="{'btn-primary': selectedStrategy === 'never'}"
+              @click="() => {
+          selectedStrategy = 'never';
+          console.log('当前选择的策略:', selectedStrategy); // 输出当前策略
+        }">
+              每次都不换门
+            </button>
+            <button
+              class="btn"
+              :class="{'btn-primary': selectedStrategy === 'always'}"
+                @click="selectedStrategy = 'always'">
+                每次都换门
+            </button>
+            <button
+              class="btn"
+              :class="{'btn-primary': selectedStrategy === 'random'}"
+              @click="selectedStrategy = 'random'">
+              随机换门
+            </button>
+          </div>
+        </div>
           <div class="mt-5">
             <div class="mb-2 text-lg font-bold">实验结果:</div>
             <div class="grid grid-cols-2 gap-y-4 gap-x-10 justify-between">
@@ -320,6 +406,12 @@ $$
               <div class="flex items-center flex-shrink-0">
                 不换门失败次数： {{ notChangeLoseNum }}
               </div>
+              <div class="flex items-center flex-shrink-0">
+                不换门胜率： {{ (notChangeWinNum / (notChangeWinNum + notChangeLoseNum)).toFixed(2) }}
+              </div>
+              <div class="flex items-center flex-shrink-0">
+                换门胜率： {{ (changeWinNum / (changeWinNum + changeLoseNum)).toFixed(2) }}
+              </div>
             </div>
           </div>
         </div>
@@ -332,13 +424,13 @@ $$
 
     <template #conclusion>
       <div class="w-full h-full p-5">
-        <div class="prose-sm max-w-none text-base-content" v-html="toMarkdown(content)"></div>
+        <div class="prose max-w-full text-base-content" v-html="toMarkdown(conclusionContent)"></div>
       </div>
     </template>
 
     <template #change>
       <div class="w-full h-full p-5">
-        <div class="prose-sm max-w-none text-base-content" v-html="toMarkdown(content)"></div>
+        <div class="prose max-w-full text-base-content" v-html="toMarkdown(explanationContent)"></div>
       </div>
     </template>
   </experiment-board>

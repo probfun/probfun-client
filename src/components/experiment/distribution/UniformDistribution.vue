@@ -8,6 +8,8 @@ import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
 const a = ref(0);
 const b = ref(1);
+const k = ref(1);
+const m = ref(0);
 
 const latexFormula = computed(() => {
   const aFormatted = a.value < 0 ? `(${a.value})` : a.value;
@@ -15,8 +17,8 @@ const latexFormula = computed(() => {
 
   return `f(x) =
 \\begin{cases} 
-\\frac{1}{${bFormatted} - ${aFormatted}}, & \\text{if } ${a.value} \\leq x \\leq ${bFormatted} \\\\
-0, & \\text{otherwise}
+\\frac{${k.value}}{${bFormatted} - ${aFormatted}} + ${m.value}, & \\text{if } ${a.value} \\leq x \\leq ${bFormatted} \\\\
+0 + ${m.value}, & \\text{otherwise}
 \\end{cases}`;
 });
 
@@ -85,23 +87,33 @@ $$
 <template>
   <experiment-board title="二项分布" :tags="[]">
     <template #experiment>
-      <uniform-diagram class="flex-1 h-full" :a="a" :b="b" />
+      <uniform-diagram class="flex-1 h-full" :a="a" :b="b" :k="k" :m="m" />
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
         <div class="w-full flex items-center justify-center mb-5">
           <div ref="katexContainer" class="text-xl"></div>
         </div>
-        <div class="flex w-full mb-5">
-          <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+        <div class="grid grid-cols-4 gap-5 p-5">
+          <div class="flex flex-col flex-1 items-center justify-center space-y-5 w-full">
             <p> a </p>
-            <InputNumber v-model.number="a" :invalid="a > b"/>
-            <Slider :min="-10" :max="9.9" :step="0.1" v-model="a" class="w-48" />
+            <InputNumber v-model.number="a" :invalid="a > b" :min-fraction-digits="1" fluid />
+            <Slider :min="-10" :max="9.9" :step="0.1" v-model="a" class="w-full" />
           </div>
-          <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+          <div class="flex flex-col flex-1 items-center justify-center space-y-5 w-full">
             <p> b </p>
-            <InputNumber v-model.number="b" />
-            <Slider :min="a + 0.1" :max="10" :step="0.1" v-model="b" class="w-48" />
+            <InputNumber v-model.number="b" :min-fraction-digits="1" fluid />
+            <Slider :min="a + 0.1" :max="10" :step="0.1" v-model="b" class="w-full" />
+          </div>
+          <div class="flex flex-col flex-1 items-center justify-center space-y-5 w-full">
+            <p> k </p>
+            <InputNumber v-model.number="k" :min-fraction-digits="1" fluid />
+            <Slider :min="0.1" :max="10" :step="0.1" v-model="k" class="w-full" />
+          </div>
+          <div class="flex flex-col flex-1 items-center justify-center space-y-5 w-full">
+            <p> m </p>
+            <InputNumber v-model.number="m" :min-fraction-digits="1" fluid />
+            <Slider :min="0" :max="10" :step="0.1" v-model="m" class="w-full" />
           </div>
         </div>
       </div>

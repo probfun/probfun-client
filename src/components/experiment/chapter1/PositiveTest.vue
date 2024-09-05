@@ -1,7 +1,19 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
+import katex from 'katex';
+import 'katex/dist/katex.min.css';
 import { toMarkdown } from '@/utils/markdown';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
+
+const katexFormula = computed(() => `p = \\frac{${sensitivity.value} * ${infectionRate.value}}{${sensitivity.value} * ${infectionRate.value} + (1 - ${infectionRate.value}) * (1 - ${specificity.value})} = ${truePositiveRate.value.toFixed(3)}`);
+const katexContainer = ref<HTMLElement | null>(null);
+const renderFormula = () => {
+  if (katexContainer.value) {
+    katex.render(katexFormula.value, katexContainer.value, {
+      throwOnError: false
+    });
+  }
+};
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 
@@ -101,6 +113,7 @@ watch([specificity, sensitivity, infectionRate, population], drawCanvas);
 
 onMounted(() => {
   drawCanvas();
+  renderFormula();
 });
 
 // Markdown 内容
@@ -194,6 +207,9 @@ $$
               <InputNumber v-model.number="population" fluid />
               <Slider :min="1000" :max="1000000" :step="1000" v-model="population" class="w-full" />
             </div>
+          </div>
+          <div class="w-full flex items-center justify-center mt-5">
+            <div ref="katexContainer" class="text-l"></div>
           </div>
         </div>
         <!-- 饼图区域 -->

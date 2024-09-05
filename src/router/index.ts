@@ -77,6 +77,30 @@ const router = createRouter({
           path: '/dashboard/experiment/exponentialDistribution',
           component: () => ExponentialDistribution
         },
+        {
+          path: '/dashboard/experiment/exponential2',
+          component: () => import('@/components/experiment/distribution/Exponential2.vue'),
+        },
+        {
+          path: '/dashboard/experiment/comparison/binomialPoisson',
+          component: () => import('@/components/experiment/distribution/comparison/BP.vue'),
+        },
+        {
+          path: '/dashboard/experiment/comparison/binomialNormal',
+          component: () => import('@/components/experiment/distribution/comparison/BN.vue'),
+        },
+        {
+          path: '/dashboard/experiment/comparison/poissonExponential',
+          component: () => import('@/components/experiment/distribution/comparison/PE1.vue'),
+        },
+        {
+          path: '/dashboard/experiment/comparison/poissonExponential2',
+          component: () => import('@/components/experiment/distribution/comparison/PE2.vue'),
+        },
+        {
+          path: '/dashboard/experiment/comparison/poissonNormal',
+          component: () => import('@/components/experiment/distribution/comparison/PN.vue'),
+        },
         // {
         //   path: '/dashboard/setting',
         //   component: DistributionBoard,
