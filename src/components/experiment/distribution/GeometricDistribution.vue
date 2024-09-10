@@ -378,13 +378,13 @@ const content = `
                 <div class="flex w-full mb-5">
                     <div class="flex flex-col flex-1 items-center justify-center space-y-5">
                         <p> Probability of success </p>
-                        <InputNumber v-model.number="probability" :min-fraction-digits="1" />
-                        <Slider :min="0" :max="1" :step="0.1" v-model="probability" class="w-48" />
+                        <InputNumber v-model.number="probability[0]" :min-fraction-digits="1" />
+                        <Slider :min="0" :max="1" :step="0.1" v-model="probability[0]" class="w-48" />
                     </div>
                     <div v-if="isChart3" class="flex flex-col flex-1 items-center justify-center space-y-5">
                         <p> Fixed number of trial </p>
-                        <InputNumber v-model.number="fixedN" />
-                        <Slider :min="0" :max="9" :step="1" v-model="fixedN" class="w-48" />
+                        <InputNumber v-model.number="fixedN[0]" />
+                        <Slider :min="0" :max="9" :step="1" v-model="fixedN[0]" class="w-48" />
                     </div>
                 </div>
             </div>

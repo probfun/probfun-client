@@ -266,8 +266,8 @@ $$
                 <div class="flex w-full mb-5">
                     <div class="flex flex-col flex-1 items-center justify-center space-y-5">
                         <p> 公交车的发车间隔（min） </p>
-                        <InputNumber v-model.number="time" :min-fraction-digits="1" />
-                        <Slider :min="5" :max="30" :step="5" v-model="time" class="w-48" />
+                        <InputNumber v-model.number="time[0]" :min-fraction-digits="1" />
+                        <Slider :min="5" :max="30" :step="5" v-model="time[0]" class="w-48" />
                     </div>
                 </div>
                 <div class="w-full flex items-center justify-center mb-5">
