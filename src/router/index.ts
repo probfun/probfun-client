@@ -58,7 +58,7 @@ const router = createRouter({
           component: () => PoissonDistribution
         },
         {
-          path: '/dashboard/experiment/geometric1',
+          path: '/dashboard/experiment/geometricDistribution',
           component: () => GeometricDistribution
         },
         {

@@ -6,8 +6,8 @@ import ExponentialDiagram from './ExponentialDiagram.vue';
 import { toMarkdown } from '@/utils/markdown';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
-const rate = ref(2);
-const shift = ref(1);
+const rate = ref([2]);
+const shift = ref([1]);
 
 const isChart1 = ref(true);
 const isChart2 = ref(false);
