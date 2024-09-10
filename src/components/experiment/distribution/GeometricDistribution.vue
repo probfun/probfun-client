@@ -30,13 +30,13 @@ const toggleChart3 = () => {
     isChart3.value = true;
 }
 
-const oneFormula = computed(() => `P(X = k) = (1 - ${probability.value})^{k-1} \\cdot ${probability.value}`);
+const oneFormula = computed(() => `P(X = k) = (1 - ${probability.value[0]})^{k-1} \\cdot ${probability.value[0]}`);
 const oneContainer = ref<HTMLElement | null>(null);
 
-const twoFormula = computed(() => `P(X = k) = (1 - ${probability.value})^{k} \\cdot ${probability.value}`);
+const twoFormula = computed(() => `P(X = k) = (1 - ${probability.value[0]})^{k} \\cdot ${probability.value[0]}`);
 const twoContainer = ref<HTMLElement | null>(null);
 
-const threeFormula = computed(() => `P(X > ${fixedN.value} + k \\mid X > ${fixedN.value}) = P(X > k) = (1 - ${probability.value})^k`);
+const threeFormula = computed(() => `P(X > ${fixedN.value[0]} + k \\mid X > ${fixedN.value[0]}) = P(X > k) = (1 - ${probability.value[0]})^k`);
 const threeContainer = ref<HTMLElement | null>(null);
 
 const renderFormula = () => {
@@ -379,12 +379,12 @@ const content = `
                     <div class="flex flex-col flex-1 items-center justify-center space-y-5">
                         <p> Probability of success </p>
                         <InputNumber v-model.number="probability[0]" :min-fraction-digits="1" />
-                        <Slider :min="0" :max="1" :step="0.1" v-model="probability[0]" class="w-48" />
+                        <Slider :min="0" :max="1" :step="0.1" v-model="probability" class="w-48" />
                     </div>
                     <div v-if="isChart3" class="flex flex-col flex-1 items-center justify-center space-y-5">
                         <p> Fixed number of trial </p>
                         <InputNumber v-model.number="fixedN[0]" />
-                        <Slider :min="0" :max="9" :step="1" v-model="fixedN[0]" class="w-48" />
+                        <Slider :min="0" :max="9" :step="1" v-model="fixedN" class="w-48" />
                     </div>
                 </div>
             </div>

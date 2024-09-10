@@ -55,15 +55,15 @@ const router = createRouter({
         },
         {
           path: '/dashboard/experiment/poissonDistribution',
-          component: () => PoissonDistribution
+          component: PoissonDistribution
         },
         {
           path: '/dashboard/experiment/geometricDistribution',
-          component: () => GeometricDistribution
+          component: GeometricDistribution
         },
         {
           path: '/dashboard/experiment/evenDistribution',
-          component: () => UniformDistribution
+          component: UniformDistribution
         },
         {
           path: '/dashboard/experiment/exponentialDistribution',
