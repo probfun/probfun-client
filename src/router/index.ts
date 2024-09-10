@@ -47,16 +47,8 @@ const router = createRouter({
           component: () => import('@/components/experiment/distribution/PoissonDistribution.vue'),
         },
         {
-          path: '/dashboard/experiment/geometric1',
-          component: () => import('@/components/experiment/distribution/Geometric1.vue')
-        },
-        {
-          path: '/dashboard/experiment/geometric2',
-          component: () => import('@/components/experiment/distribution/Geometric2.vue')
-        },
-        {
-          path: '/dashboard/experiment/geometric3',
-          component: () => import('@/components/experiment/distribution/Geometric3.vue')
+          path: '/dashboard/experiment/geometricDistribution',
+          component: () => import('@/components/experiment/distribution/GeometricDistribution.vue')
         },
         {
           path: '/dashboard/experiment/evenDistribution',
@@ -65,10 +57,6 @@ const router = createRouter({
         {
           path: '/dashboard/experiment/exponentialDistribution',
           component: () => import('@/components/experiment/distribution/ExponentialDistribution.vue'),
-        },
-        {
-          path: '/dashboard/experiment/exponential2',
-          component: () => import('@/components/experiment/distribution/Exponential2.vue'),
         },
         {
           path: '/dashboard/experiment/comparison/binomialPoisson',
@@ -80,11 +68,7 @@ const router = createRouter({
         },
         {
           path: '/dashboard/experiment/comparison/poissonExponential',
-          component: () => import('@/components/experiment/distribution/comparison/PE1.vue'),
-        },
-        {
-          path: '/dashboard/experiment/comparison/poissonExponential2',
-          component: () => import('@/components/experiment/distribution/comparison/PE2.vue'),
+          component: () => import('@/components/experiment/distribution/comparison/PE.vue'),
         },
         {
           path: '/dashboard/experiment/comparison/poissonNormal',

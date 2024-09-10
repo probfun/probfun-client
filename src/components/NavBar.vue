@@ -50,7 +50,7 @@ const chapter2Items = [
   {
     label: "几何分布",
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/geometric1'
+    route: '/dashboard/experiment/geometricDistribution'
   },
   {
     label: "均匀分布",
