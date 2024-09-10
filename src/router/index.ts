@@ -10,7 +10,7 @@ import BirthdayAttack from "@/components/experiment/chapter1/BirthdayAttack.vue"
 import BirthdayProblem from "@/components/experiment/chapter1/BirthdayProblem.vue";
 import NormalDistribution from "@/components/experiment/distribution/NormalDistribution.vue";
 import PoissonDistribution from "@/components/experiment/distribution/PoissonDistribution.vue";
-import Geometric1 from "@/components/experiment/distribution/Geometric1.vue";
+import GeometricDistribution from "@/components/experiment/distribution/GeometricDistribution.vue";
 import UniformDistribution from "@/components/experiment/distribution/UniformDistribution.vue";
 import ExponentialDistribution from "@/components/experiment/distribution/ExponentialDistribution.vue";
 
@@ -59,15 +59,7 @@ const router = createRouter({
         },
         {
           path: '/dashboard/experiment/geometric1',
-          component: () => Geometric1
-        },
-        {
-          path: '/dashboard/experiment/geometric2',
-          component: () => import('@/components/experiment/distribution/Geometric2.vue')
-        },
-        {
-          path: '/dashboard/experiment/geometric3',
-          component: () => import('@/components/experiment/distribution/Geometric3.vue')
+          component: () => GeometricDistribution
         },
         {
           path: '/dashboard/experiment/evenDistribution',
@@ -91,11 +83,7 @@ const router = createRouter({
         },
         {
           path: '/dashboard/experiment/comparison/poissonExponential',
-          component: () => import('@/components/experiment/distribution/comparison/PE1.vue'),
-        },
-        {
-          path: '/dashboard/experiment/comparison/poissonExponential2',
-          component: () => import('@/components/experiment/distribution/comparison/PE2.vue'),
+          component: () => import('@/components/experiment/distribution/comparison/PE.vue'),
         },
         {
           path: '/dashboard/experiment/comparison/poissonNormal',

@@ -7,13 +7,33 @@ import { toMarkdown } from '@/utils/markdown';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
 const rate = ref([2]);
+const shift = ref([1]);
 
-const latexFormula = computed(() => `f(x) = ${rate.value} e^{-${rate.value} x}, \\quad x \\geq 0`);
-const katexContainer = ref<HTMLElement | null>(null);
+const isChart1 = ref(true);
+const isChart2 = ref(false);
+const toggleChart1 = () => {
+  isChart1.value = true;
+  isChart2.value = false;
+}
+const toggleChart2 = () => {
+  isChart1.value = false;
+  isChart2.value = true;
+}
+
+const oneFormula = computed(() => `f(x) = ${rate.value} e^{-${rate.value} x}, \\quad x \\geq 0`);
+const oneContainer = ref<HTMLElement | null>(null);
+
+const twoFormula = computed(() => `P(X > ${shift.value} + s \\mid X > t) = P(X > s) = e^{-${rate.value} s}`);
+const twoContainer = ref<HTMLElement | null>(null);
 
 const renderFormula = () => {
-  if (katexContainer.value) {
-    katex.render(latexFormula.value, katexContainer.value, {
+  if (oneContainer.value) {
+    katex.render(oneFormula.value, oneContainer.value, {
+      throwOnError: false
+    });
+  }
+  if (twoContainer.value) {
+    katex.render(twoFormula.value, twoContainer.value, {
       throwOnError: false
     });
   }
@@ -23,7 +43,7 @@ onMounted(() => {
   renderFormula();
 });
 
-watch(latexFormula, () => {
+watch([oneFormula, twoFormula], () => {
   renderFormula();
 });
 
@@ -68,32 +88,38 @@ $$
 <template>
   <experiment-board title="二项分布" :tags="[]">
     <template #experiment>
-      <exponential-diagram class="flex-1 h-full" :rate="rate[0]" />
+      <exponential-diagram class="flex-1 h-full" :rate="rate" :shift="shift" :show-graph="isChart1"/>
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
         <div class="w-full flex items-center justify-center mb-5">
-          <div class="dropdown dropdown-end">
+          <div class="dropdown">
             <div tabindex="0" role="button" class="btn m-1">点我切换</div>
             <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-              <li><router-link to="/dashboard/experiment/exponentialDistribution">一般指数分布</router-link></li>
-              <li><router-link to="/dashboard/experiment/exponential2">指数分布的无记忆性</router-link></li>
+              <li @click="toggleChart1"><a>一般指数分布</a></li>
+              <li @click="toggleChart2"><a>指数分布的无记忆性</a></li>
             </ul>
           </div>
-          <div ref="katexContainer" class="text-2xl"></div>
+          <div v-show="isChart1" ref="oneContainer" class="text-2xl"></div>
+          <div v-show="isChart2" ref="twoContainer" class="text-2xl"></div>
         </div>
         <div class="flex w-full mb-5">
           <div class="flex flex-col flex-1 items-center justify-center space-y-5">
             <p> Rate parameter </p>
-            <InputNumber v-model.number="rate[0]" :min-fraction-digits="1" />
+            <InputNumber v-model.number="rate" :min-fraction-digits="1" />
             <Slider :min="0" :max="10" :step="0.1" v-model="rate" class="w-48" />
+          </div>
+          <div v-if="isChart2" class="flex flex-col flex-1 items-center justify-center space-y-5">
+            <p> Fixed number </p>
+            <InputNumber v-model.number="shift" :min-fraction-digits="1" />
+            <Slider :min="0" :max="5" :step="0.1" v-model="shift" class="w-48" />
           </div>
         </div>
       </div>
     </template>
     <template #conclusion>
       <div class="w-full h-full p-5">
-        <div v-html="toMarkdown(content)" class="prose-sm max-w-none text-base-content"></div>
+        <div v-html="toMarkdown(content)" class="prose max-w-full text-base-content"></div>
       </div>
     </template>
   </experiment-board>
