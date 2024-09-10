@@ -88,7 +88,7 @@ $$
 <template>
   <experiment-board title="二项分布" :tags="[]">
     <template #experiment>
-      <exponential-diagram class="flex-1 h-full" :rate="rate" :shift="shift" :show-graph="isChart1"/>
+      <exponential-diagram class="flex-1 h-full" :rate="rate[0]" :shift="shift[0]" :show-graph="isChart1"/>
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
