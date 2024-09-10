@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import {computed, onMounted, ref, watch} from 'vue';
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
-import { toMarkdown } from '@/utils/markdown';
+import {toMarkdown} from '@/utils/markdown';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
-const katexFormula = computed(() => `p = \\frac{${sensitivity.value} * ${infectionRate.value}}{${sensitivity.value} * ${infectionRate.value} + (1 - ${infectionRate.value}) * (1 - ${specificity.value})} = ${truePositiveRate.value.toFixed(3)}`);
+const katexFormula = computed(() => `p = \\frac{${sensitivity.value[0]} * ${infectionRate.value[0]}}{${sensitivity.value[0]} * ${infectionRate.value[0]} + (1 - ${infectionRate.value[0]}) * (1 - ${specificity.value[0]})} = ${truePositiveRate.value.toFixed(3)}`);
 const katexContainer = ref<HTMLElement | null>(null);
 const renderFormula = () => {
   if (katexContainer.value) {
@@ -18,18 +18,18 @@ const renderFormula = () => {
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 
 // 输入变量
-const specificity = ref(0.97); // 特异度
-const sensitivity = ref(0.99); // 灵敏度
-const infectionRate = ref(0.001); // 感染率
-const population = ref(100000); // 总人数
+const specificity = ref([0.97]); // 特异度
+const sensitivity = ref([0.99]); // 灵敏度
+const infectionRate = ref([0.001]); // 感染率
+const population = ref([100000]); // 总人数
 
 // 计算结果
 const truePositiveRate = computed(() => {
-  const infectedPopulation = population.value * infectionRate.value; // 真实感染人数
-  const healthyPopulation = population.value - infectedPopulation; // 未感染人数
+  const infectedPopulation = population.value[0] * infectionRate.value[0]; // 真实感染人数
+  const healthyPopulation = population.value[0] - infectedPopulation; // 未感染人数
 
-  const truePositives = sensitivity.value * infectedPopulation; // 真阳性数量
-  const falsePositives = (1 - specificity.value) * healthyPopulation; // 假阳性数量
+  const truePositives = sensitivity.value[0] * infectedPopulation; // 真阳性数量
+  const falsePositives = (1 - specificity.value[0]) * healthyPopulation; // 假阳性数量
 
   const totalPositiveTests = truePositives + falsePositives; // 总阳性人数
 
@@ -37,14 +37,14 @@ const truePositiveRate = computed(() => {
 });
 
 const result = computed(() => {
-  const infectedPopulation = population.value * infectionRate.value; // 真实感染人数
-  const healthyPopulation = population.value - infectedPopulation; // 未感染人数
+  const infectedPopulation = population.value[0] * infectionRate.value[0]; // 真实感染人数
+  const healthyPopulation = population.value[0] - infectedPopulation; // 未感染人数
 
-  const truePositives = sensitivity.value * infectedPopulation; // 真阳性数量
-  const falsePositives = (1 - specificity.value) * healthyPopulation; // 假阳性数量
+  const truePositives = sensitivity.value[0] * infectedPopulation; // 真阳性数量
+  const falsePositives = (1 - specificity.value[0]) * healthyPopulation; // 假阳性数量
 
-  const totalPositiveTests = Math.round(truePositives + falsePositives); // 总阳性人数
-  return totalPositiveTests;
+   // 总阳性人数
+  return Math.round(truePositives + falsePositives);
 });
 
 // 饼图数据
@@ -106,7 +106,7 @@ const drawCanvas = () => {
 };
 
 // 计算感染和健康人数
-const infectedDots = computed(() => 1000 * infectionRate.value * sensitivity.value + (1000 - 1000 * infectionRate.value) * (1 - specificity.value));
+const infectedDots = computed(() => 1000 * infectionRate.value[0] * sensitivity.value[0] + (1000 - 1000 * infectionRate.value[0]) * (1 - specificity.value[0]));
 
 // 监听输入变化并更新画布
 watch([specificity, sensitivity, infectionRate, population], drawCanvas);
@@ -186,12 +186,12 @@ $$
           <div class="flex space-x-4 justify-center items-center">
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
               <p>特异度</p>
-              <InputNumber v-model.number="specificity" fluid :minFractionDigits="2" />
+              <InputNumber v-model.number="specificity[0]" fluid :minFractionDigits="2" />
               <Slider :min="0.1" :max="1.0" :step="0.01" v-model="specificity" class="w-full" />
             </div>
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
               <p>灵敏度</p>
-              <InputNumber v-model.number="sensitivity" fluid :minFractionDigits="2" />
+              <InputNumber v-model.number="sensitivity[0]" fluid :minFractionDigits="2" />
               <Slider :min="0.1" :max="1.0" :step="0.01" v-model="sensitivity" class="w-full" />
             </div>
           </div>
@@ -199,12 +199,12 @@ $$
           <div class="flex space-x-4 justify-center items-center">
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
               <p>感染率</p>
-              <InputNumber v-model.number="infectionRate" :minFractionDigits="2" fluid />
+              <InputNumber v-model.number="infectionRate[0]" :minFractionDigits="2" fluid />
               <Slider :min="0.0" :max="1.0" :step="0.001" v-model="infectionRate" class="w-full" />
             </div>
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
               <p>总人数</p>
-              <InputNumber v-model.number="population" fluid />
+              <InputNumber v-model.number="population[0]" fluid />
               <Slider :min="1000" :max="1000000" :step="1000" v-model="population" class="w-full" />
             </div>
           </div>
@@ -223,7 +223,7 @@ $$
     </template>
     <template #conclusion>
       <div class="w-full h-full p-5">
-        <div v-html="toMarkdown(content)" class="prose max-w-full text-base-content"></div>
+        <div v-html="toMarkdown(content)" class="prose-sm max-w-none text-base-content"></div>
       </div>
     </template>
   </experiment-board>

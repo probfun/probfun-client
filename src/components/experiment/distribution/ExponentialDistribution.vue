@@ -106,7 +106,7 @@ $$
         <div class="flex w-full mb-5">
           <div class="flex flex-col flex-1 items-center justify-center space-y-5">
             <p> Rate parameter </p>
-            <InputNumber v-model.number="rate" :min-fraction-digits="1" />
+            <InputNumber v-model.number="rate[0]" :min-fraction-digits="1" />
             <Slider :min="0" :max="10" :step="0.1" v-model="rate" class="w-48" />
           </div>
           <div v-if="isChart2" class="flex flex-col flex-1 items-center justify-center space-y-5">
@@ -119,7 +119,7 @@ $$
     </template>
     <template #conclusion>
       <div class="w-full h-full p-5">
-        <div v-html="toMarkdown(content)" class="prose max-w-full text-base-content"></div>
+        <div v-html="toMarkdown(content)" class="prose-sm max-w-none text-base-content"></div>
       </div>
     </template>
   </experiment-board>

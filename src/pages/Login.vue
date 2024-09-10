@@ -50,21 +50,31 @@ async function login() {
     return;
   }
   const requestData = {
-    id: id.value,
+    studentId: id.value,
     password: password.value,
   };
-
+  // await axios.get('/api/user/login');
   try {
-    const response = await axios.post('/api/usermanager/login', requestData);
+    // const response = await axios.post('/api/user/login', requestData);
+    // const data = response.data;
+    const data = {
+      data: {
+        token: '123',
+        user: {
+          avatarUrl: '/default-avatar.png',
+          studentId: '2018000000',
+          nickname: 'linyuxuanlin',
 
-    const data = response.data;
-    toast.add({ severity: 'success', summary: '成功', detail: '登录成功', life: 3000 });
-    localStorage.setItem('token', data.data.user.token); // 存储令牌
+        }
+      }
+    }
+    toast.add({ severity: 'success', summary: '成功', detail: '登录成功', group: 'br', life: 3000 });
+    localStorage.setItem('token', data.data.token); // 存储令牌
     await store.dispatch('login', data.data.user); // 更新 Vuex 状态
     await router.push('/dashboard');
   } catch (error) {
     console.error('Error:', error);
-    toast.add({ severity: 'error', summary: '错误', detail: '学号或密码错误，请重试', life: 3000 });
+    toast.add({ severity: 'error', summary: '错误', detail: '学号或密码错误，请重试', group: 'br', life: 3000 });
   }
 }
 </script>

@@ -5,11 +5,11 @@ import 'katex/dist/katex.min.css';
 import { toMarkdown } from '@/utils/markdown';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
-const number = ref(10);
-const probability = ref(0.1);
-const lambda = computed(() => number.value * probability.value);
+const number = ref([10]);
+const probability = ref([0.1]);
+const lambda = computed(() => number.value[0] * probability.value[0]);
 
-const binomialFormula = computed(() => `P(X = k) = \\binom{${number.value}}{k} ${probability.value}^k (1-${probability.value})^{${number.value}-k}`);
+const binomialFormula = computed(() => `P(X = k) = \\binom{${number.value[0]}}{k} ${probability.value[0]}^k (1-${probability.value[0]})^{${number.value[0]}-k}`);
 const binomialContainer = ref<HTMLElement | null>(null);
 
 const poissonFormula = computed(() => `P(X = k) = \\frac{${lambda.value.toFixed(2)}^k e^{-${lambda.value.toFixed(2)}}}{k!}`);
@@ -43,11 +43,11 @@ const setChartData = () => {
     const labels = [];
     const binomialData = [];
     const poissonData = [];
-    for (let k = 0; k <= number.value; k++) {
+    for (let k = 0; k <= number.value[0]; k++) {
         // 计算二项分布
-        const probabilityOfK = binomialCoefficient(number.value, k) *
-            Math.pow(probability.value, k) *
-            Math.pow(1 - probability.value, number.value - k);
+        const probabilityOfK = binomialCoefficient(number.value[0], k) *
+            Math.pow(probability.value[0], k) *
+            Math.pow(1 - probability.value[0], number.value[0] - k);
         binomialData.push(probabilityOfK);
 
         // 计算泊松分布
@@ -238,17 +238,17 @@ $$
                 <div class="flex w-full mb-5">
                     <div class="flex flex-col flex-1 items-center justify-center space-y-5">
                         <p> Number of experiments </p>
-                        <InputNumber v-model.number="number" />
+                        <InputNumber v-model.number="number[0]" />
                         <Slider :min="1" :max="50" :step="1" v-model="number" class="w-48" />
                     </div>
                     <div class="flex flex-col flex-1 items-center justify-center space-y-5">
                         <p> Probability of success </p>
-                        <InputNumber v-model.number="probability" :min-fraction-digits="2" />
+                        <InputNumber v-model.number="probability[0]" :min-fraction-digits="2" />
                         <Slider :min="0" :max="1" :step="0.01" v-model="probability" class="w-48" />
                     </div>
                 </div>
                 <div class="w-full flex items-center justify-center mb-5">
-                    <div class="text-xl mr-10">泊松分布：λ = np = {{ number }} * {{ probability }}={{ (number * probability).toFixed(2) }}</div>
+                    <div class="text-xl mr-10">泊松分布：λ = np = {{ number }} * {{ probability }}={{ (number[0] * probability[0]).toFixed(2) }}</div>
                     <div ref="poissonContainer" class="text-xl"></div>
                 </div>
             </div>

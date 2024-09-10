@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import '@/input.css'
+import '@/assets/index.css'
 import App from '@/App.vue'
 import PrimeVue from 'primevue/config';
 import router from '@/router';
@@ -10,7 +11,6 @@ import store from './store';
 import ToastService from 'primevue/toastservice';
 
 const app = createApp(App);
-// 恢复令牌
 const token = localStorage.getItem('token');
 if (token) {
   // 假设你有一个 `checkToken` 方法来验证令牌

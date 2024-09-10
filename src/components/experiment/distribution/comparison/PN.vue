@@ -5,10 +5,10 @@ import 'katex/dist/katex.min.css';
 import { toMarkdown } from '@/utils/markdown';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
-const lambda = ref(30);
+const lambda = ref([30]);
 
-const poissonFormula = computed(() => `P(X = k) = \\frac{${lambda.value}^k e^{-${lambda.value}}}{k!}`);
-const normalFormula = computed(() => `N(X) = \\frac{1}{\\sqrt{2\\pi \\cdot ${lambda.value}}} e^{-\\frac{(X - ${lambda.value})^2}{2 \\cdot ${lambda.value}}}`);
+const poissonFormula = computed(() => `P(X = k) = \\frac{${lambda.value[0]}^k e^{-${lambda.value[0]}}}{k!}`);
+const normalFormula = computed(() => `N(X) = \\frac{1}{\\sqrt{2\\pi \\cdot ${lambda.value[0]}}} e^{-\\frac{(X - ${lambda.value[0]})^2}{2 \\cdot ${lambda.value[0]}}}`);
 
 const poissonContainer = ref<HTMLElement | null>(null);
 const normalContainer = ref<HTMLElement | null>(null);
@@ -40,11 +40,11 @@ const setChartData = () => {
     const labels = [];
     const poissonData = [];
     const normalData = [];
-    const mean = lambda.value;
-    const stddev = Math.sqrt(lambda.value);
+    const mean = lambda.value[0];
+    const stddev = Math.sqrt(lambda.value[0]);
 
-    for (let k = 0; k <= lambda.value * 2; k++) {
-        const poissonProbability = (Math.pow(lambda.value, k) * Math.exp(-lambda.value)) / factorial(k);
+    for (let k = 0; k <= lambda.value[0] * 2; k++) {
+        const poissonProbability = (Math.pow(lambda.value[0], k) * Math.exp(-lambda.value[0])) / factorial(k);
         poissonData.push(poissonProbability);
 
         const normalProbability = (1 / (stddev * Math.sqrt(2 * Math.PI))) * Math.exp(-Math.pow(k - mean, 2) / (2 * Math.pow(stddev, 2)));
@@ -166,7 +166,7 @@ $$
                 <div class="flex w-full mb-5">
                     <div class="flex flex-col flex-1 items-center justify-center space-y-5">
                         <p> λ </p>
-                        <InputNumber v-model.number="lambda" />
+                        <InputNumber v-model.number="lambda[0]" />
                         <Slider :min="30" :max="60" :step="1" v-model="lambda" class="w-48" />
                     </div>
                 </div>

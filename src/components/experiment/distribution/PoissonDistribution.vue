@@ -5,7 +5,7 @@ import 'katex/dist/katex.min.css';
 import { toMarkdown } from '@/utils/markdown';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
-const lambda = ref(3);  // Poisson distribution mean (λ)
+const lambda = ref([3]);  // Poisson distribution mean (λ)
 
 const latexFormula = computed(() => `P(X = k) = \\frac{${lambda.value}^k e^{-${lambda.value}}}{k!}`);
 const katexContainer = ref<HTMLElement | null>(null);
@@ -32,9 +32,9 @@ const setChartData = () => {
     // 计算泊松分布的数据
     const labels = [];
     const data = [];
-    const maxK = Math.ceil(4 * lambda.value);  // 根据 λ 设置 k 的最大值
+    const maxK = Math.ceil(4 * lambda.value[0]);  // 根据 λ 设置 k 的最大值
     for (let k = 0; k <= maxK; k++) {
-        const probabilityOfK = (Math.pow(lambda.value, k) * Math.exp(-lambda.value)) / factorial(k);
+        const probabilityOfK = (Math.pow(lambda.value[0], k) * Math.exp(-lambda.value[0])) / factorial(k);
         labels.push(k);
         data.push(probabilityOfK);
     }
@@ -82,7 +82,7 @@ const setChartOptions = () => {
                 },
                 // 设置 x 轴的最大值
                 min: 0,
-                max: Math.ceil(2 * lambda.value),
+                max: Math.ceil(2 * lambda.value[0]),
             },
             y: {
                 ticks: {
@@ -157,7 +157,7 @@ $$
         <div class="flex w-full mb-5">
           <div class="flex flex-col flex-1 items-center justify-center space-y-5">
             <p> Mean (λ) </p>
-            <InputNumber v-model.number="lambda" :min-fraction-digits="1"/>
+            <InputNumber v-model.number="lambda[0]" :min-fraction-digits="1"/>
             <Slider :min="0.1" :max="20" :step="0.1" v-model="lambda" class="w-48" />
           </div>
         </div>
@@ -165,7 +165,7 @@ $$
     </template>
     <template #conclusion>
       <div class="w-full h-full p-5">
-        <div v-html="toMarkdown(content)" class="prose max-w-full text-base-content"></div>
+        <div v-html="toMarkdown(content)" class="prose-sm max-w-none text-base-content"></div>
       </div>
     </template>
   </experiment-board>
