@@ -58,6 +58,7 @@ declare module 'vue' {
     HoverCardContent: typeof import('./src/components/ui/hover-card/HoverCardContent.vue')['default']
     HoverCardTrigger: typeof import('./src/components/ui/hover-card/HoverCardTrigger.vue')['default']
     Input: typeof import('./src/components/ui/input/Input.vue')['default']
+    GeometricDistribution: typeof import('./src/components/experiment/distribution/GeometricDistribution.vue')['default']
     InputNumber: typeof import('primevue/inputnumber')['default']
     Label: typeof import('./src/components/ui/label/Label.vue')['default']
     NavBar: typeof import('./src/components/NavBar.vue')['default']
