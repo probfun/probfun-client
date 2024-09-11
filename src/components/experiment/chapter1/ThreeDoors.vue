@@ -2,6 +2,7 @@
 import { computed, ref, Ref, watch } from 'vue';
 import {toMarkdown} from "@/utils/markdown";
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
+import {GraduationCap, MessagesSquare, Columns2, MessageCircleMore} from "lucide-vue-next";
 
 class Door {
   id: number;
@@ -158,25 +159,25 @@ const discussTabList = [
       id: 0,
       label: '实验简述',
       name: 'change',
-      icon: `<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' class='size-5 text-blue-600'>
-                  <path stroke-linecap='round' stroke-linejoin='round' d='M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155' />
-                 </svg>`
+      icon: Columns2
     },
     {
       id: 1,
       label: '实验结论',
       name: 'conclusion',
-      icon: `<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' class='size-5 text-blue-600'>
-                <path stroke-linecap='round' stroke-linejoin='round' d='M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5' />
-               </svg>`
+      icon: GraduationCap
     },
     {
       id: 2,
-      label: '讨论区',
+      label: '相关讨论',
       name: 'discuss',
-      icon: `<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' class='size-5 text-blue-600'>
-                <path stroke-linecap='round' stroke-linejoin='round' d='M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155' />
-               </svg>`
+      icon: MessageCircleMore
+    },
+    {
+      id: 3,
+      label: '讨论区',
+      name: 'PeopleDiscuss',
+      icon: MessagesSquare
     }
 ];
 
@@ -246,7 +247,7 @@ $$
 `
 
 const explanationContent = `
-### 问题简述
+### 实验简述
 
 这是一个猜奖问题，游戏规则和过程如下：
 
@@ -254,6 +255,10 @@ const explanationContent = `
 
 首先你选择一扇门，确定选择后点击“选择”按钮，然后主持人会打开未被选择的门中后面有羊的一扇，替你排除一扇门。现在你可以选择换门或者不换门。假如你想赢得车，你会选择换门还是不换门呢？
 
+
+`;
+
+const discussContent = ` 
 ### 换门争议
 
 关于三门问题，两种答案（换门还是不换门获得车的概率更大）争执已久。归纳起来，可以是：
@@ -273,6 +278,8 @@ const explanationContent = `
 这两种假设即是长期持续的争论是因为「节目主持人开启剩下两扇门的其中一扇」，并没有体现出主持人事先是否知道门后的情况；因而两种理解都算是可以接受的。
 
 ---
+
+### 争议理解
 
 尽管在原始问题中，有「文字游戏」的嫌疑，但由于「露出其中一只山羊」的保证，事实上主持人的选择就变成了确定性的结论，因而带来了信息量。以概率论的角度来描述，即是 $$P({B'}) = 1 $$。
 
@@ -352,21 +359,26 @@ const explanationContent = `
     </template>
 
     <template #parameter>
-      <div class="p-5 items-center flex w-full h-full justify-center gap-3">
-        <div class="flex flex-col items-center flex-1">
-          <div class="flex">
-            <label class="mt-3 flex-shrink-0"> 模拟轮数： </label>
-            <div class="flex flex-col gap-3 mr-3 min-w-0 flex-1">
-              <input class="input input-rounded input-primary" :min="1" :max="1000" v-model="autoGameRound" />
+      <div class="p-5 items-center flex w-full h-full h-full justify-center gap-3">
+        <div class="flex flex-col  items-center flex-1">
+          <!-- <div class="flex"> -->
+            <!-- <label class="font-bold h-full flex-shrink-0"> 模拟轮数： </label> -->
+            <div class="flex w-full  justify-center items-center text-lg font-bold">   
+              <label>模拟轮数</label>
+            </div>             
+            <div class="font-bold h-full justify-center items-center mb-4 gap-3 flex flex-col">   
+             <input class="input input-rounded input-primary" :min="1" :max="1000" v-model="autoGameRound" />
+
               <input class="range range-primary range-xs" type="range" :min="1" :max="1000" v-model="autoGameRound" />
             </div>
-            <button class="btn btn-primary" @click="() => {
-              autoGaming ? autoGaming = false : simulateGame();
-            }"> {{ autoGaming ? '终止模拟' : '开始模拟' }}</button>
-          </div>
+              <div class="flex justify-center gap-2 w-full">
+      <button class="btn btn-primary" @click="() => {
+        autoGaming ? autoGaming = false : simulateGame();
+      }"> {{ autoGaming ? '终止模拟' : '开始模拟' }}</button>
+    </div>
 
-          <div class="flex flex-col items-center mt-5">
-            <label class="font-bold mb-2 text-lg">选择换门策略：</label>
+          <div class="flex flex-col mt-5">
+            <label class="font-bold mb-2 text-lg justfy-center">选择换门策略：</label>
           <div class="flex space-x-3">
             <button
               class="btn"
@@ -424,13 +436,18 @@ const explanationContent = `
 
     <template #conclusion>
       <div class="w-full h-full p-5">
-        <div class="prose max-w-full text-base-content" v-html="toMarkdown(conclusionContent)"></div>
+        <div class="prose-sm max-w-full text-foreground" v-html="toMarkdown(conclusionContent)"></div>
       </div>
     </template>
 
     <template #change>
       <div class="w-full h-full p-5">
-        <div class="prose max-w-full text-base-content" v-html="toMarkdown(explanationContent)"></div>
+        <div class="prose-sm max-w-full text-foreground" v-html="toMarkdown(explanationContent)"></div>
+      </div>
+    </template>
+    <template #discuss>
+      <div class="w-full h-full p-5">
+        <div class="prose-sm max-w-full text-foreground" v-html="toMarkdown(discussContent)"></div>
       </div>
     </template>
   </experiment-board>

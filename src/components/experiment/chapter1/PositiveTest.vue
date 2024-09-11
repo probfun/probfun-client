@@ -5,8 +5,12 @@ import 'katex/dist/katex.min.css';
 import {toMarkdown} from '@/utils/markdown';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
-const katexFormula = computed(() => `p = \\frac{${sensitivity.value[0]} * ${infectionRate.value[0]}}{${sensitivity.value[0]} * ${infectionRate.value[0]} + (1 - ${infectionRate.value[0]}) * (1 - ${specificity.value[0]})} = ${truePositiveRate.value.toFixed(3)}`);
+const katexFormula = computed(() => `\\text{p}
+= \\frac{b * m}{b * m + n * (1 - a)}  \\\\ 
+= \\frac{${sensitivity.value[0]} * ${infectionRate.value[0]}}{${sensitivity.value[0]} * ${infectionRate.value[0]} + (1 - ${infectionRate.value[0]}) * (1 - ${specificity.value[0]})}\\\\
+= ${truePositiveRate.value.toFixed(3)}`);
 const katexContainer = ref<HTMLElement | null>(null);
+
 const renderFormula = () => {
   if (katexContainer.value) {
     katex.render(katexFormula.value, katexContainer.value, {
@@ -124,17 +128,17 @@ const content = `
 
 在进行模拟实验之前，我们先了解如下概念：
 
-#### 1. 灵敏度
+#### **1. 灵敏度**
 
-**灵敏度**，又称为真阳性率，是指在所有实际患病的个体中，测试能够正确识别出患病者的比例。它衡量了测试发现疾病的能力。
+灵敏度，又称为真阳性率，是指在所有实际患病的个体中，测试能够正确识别出患病者的比例。它衡量了测试发现疾病的能力。
 
 $$
 \\text{灵敏度} = \\frac{\\text{真实阳性}}{\\text{真实阳性} + \\text{假阴性}}
 $$
 
-#### 2. 特异度
+#### **2. 特异度**
 
-**特异度**，又称为真阴性率，是指在所有实际健康的个体中，测试能够正确识别出健康者的比例。它衡量了测试排除非患病者的能力。
+特异度，又称为真阴性率，是指在所有实际健康的个体中，测试能够正确识别出健康者的比例。它衡量了测试排除非患病者的能力。
 
 $$
 \\text{特异度} = \\frac{\\text{真实阴性}}{\\text{真实阴性} + \\text{假阳性}}
@@ -148,17 +152,17 @@ $$
 - 假设新冠检测的灵敏度为 $$b$$
 - 假设该地区内新冠的总感染率为 $$c$$
 
-#### 计算步骤
+### 计算步骤
 
-1. **设定总人数**：假设该地区一共有 $$d$$ 人，则有 $$m = d * c$$ 人真实感染新冠，$$n = d - m$$ 人没有感染新冠。
+ **1.设定总人数**：假设该地区一共有 $$d$$ 人，则有 $$m = d * c$$ 人真实感染新冠，$$n = d - m$$ 人没有感染新冠。
 
-2. **假阳性**：由于实验特异度为 $$a$$，则在 $$n$$ 人中，有 $$n * (1 - a)$$ 人显示结果为阳性。
+**2. 假阳性**：由于实验特异度为 $$a$$，则在 $$n$$ 人中，有 $$n * (1 - a)$$ 人显示结果为阳性。
 
-3. **真阳性**：由于实验灵敏度为 $$b$$，则在 $$m$$ 个真实感染新冠的人中，有 $$b * m$$ 个人显示结果为阳性。
+**3. 真阳性**：由于实验灵敏度为 $$b$$，则在 $$m$$ 个真实感染新冠的人中，有 $$b * m$$ 个人显示结果为阳性。
 
-4. **总阳性人数**：该地区总共有 $$b * m + n * (1 - a)$$ 人核酸检测结果为阳性。
+ **4.总阳性人数**：该地区总共有 $$b * m + n * (1 - a)$$ 人核酸检测结果为阳性。
 
-5. **真实患病概率**：当核酸检测结果为阳性时，真实患新冠的概率为 $$p$$，其计算公式为：
+ **5.真实患病概率**：当核酸检测结果为阳性时，真实患新冠的概率为 $$p$$，其计算公式为：
 
 $$
 p = \\frac{b * m}{b * m + n * (1 - a)}
@@ -185,12 +189,12 @@ $$
         <div class="flex flex-col flex-1 space-y-4 justify-center items-center">
           <div class="flex space-x-4 justify-center items-center">
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-              <p>特异度</p>
+              <p>特异度(a)</p>
               <InputNumber v-model.number="specificity[0]" fluid :minFractionDigits="2" />
               <Slider :min="0.1" :max="1.0" :step="0.01" v-model="specificity" class="w-full" />
             </div>
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-              <p>灵敏度</p>
+              <p>灵敏度(b)</p>
               <InputNumber v-model.number="sensitivity[0]" fluid :minFractionDigits="2" />
               <Slider :min="0.1" :max="1.0" :step="0.01" v-model="sensitivity" class="w-full" />
             </div>
@@ -198,18 +202,18 @@ $$
           <!-- 第二个输入框组 -->
           <div class="flex space-x-4 justify-center items-center">
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-              <p>感染率</p>
+              <p>感染率(c)</p>
               <InputNumber v-model.number="infectionRate[0]" :minFractionDigits="2" fluid />
               <Slider :min="0.0" :max="1.0" :step="0.001" v-model="infectionRate" class="w-full" />
             </div>
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-              <p>总人数</p>
+              <p>总人数(d)</p>
               <InputNumber v-model.number="population[0]" fluid />
               <Slider :min="1000" :max="1000000" :step="1000" v-model="population" class="w-full" />
             </div>
           </div>
           <div class="w-full flex items-center justify-center mt-5">
-            <div ref="katexContainer" class="text-l"></div>
+            <div ref="katexContainer" class="katex-style"></div>
           </div>
         </div>
         <!-- 饼图区域 -->
@@ -231,4 +235,7 @@ $$
 
 <style scoped>
 /* Your custom styles if needed */
+.katex-style {
+  line-height: 2.5; /* 设置较大的行间距 */
+}
 </style>

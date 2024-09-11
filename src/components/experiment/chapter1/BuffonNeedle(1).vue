@@ -15,9 +15,9 @@
             <div class="flex font-bold flex-col items-center gap-1 w-full">
               <label>抛针数量</label>
             </div>
-            <div class="font-bold h-full justify-center items-center mb-2 gap-3 flex flex-col">
+            <div class="font-bold h-full justify-center items-center mb-2 gap-3 flex flex-col">   
               <input type="number" class="input input-primary input-bordered" v-model="needleAmount" :max="5000" />
-            </div>
+              </div>
             <div class="flex justify-between gap-2 w-full">
               <button class="btn btn-primary flex-1" @click="addNeedles" :disabled="isCalculating || isSimulating"> 抛针 </button>
               <button class="btn btn-primary flex-1" @click="isSimulating ? endSimulate() : startSimulate()" > {{ isSimulating ? '停止模拟' : '自动模拟' }} </button>
@@ -25,15 +25,15 @@
           </div>
           <div class="mt-5">
             <div class="mb-2 text-lg font-bold">实验结果:</div>
-
+            
             <div class="text-start w-full">
               <div > 和线相交的针的数量：{{ hits }} </div>
               <div class="text-start w-full h-full p-5">
-                估算的 Pi 值:
-                <div v-html="toMarkdown(`$\\pi = \\frac{2l}{Pd} = $ ${estimatedPi.toFixed(5)}`)" class="prose w-full text-base-content"></div>
-
-              </div>
-
+              估算的 Pi 值:
+              <div v-html="toMarkdown(`$\\pi = \\frac{2l}{Pd} = $ ${estimatedPi.toFixed(5)}`)" class="prose w-full text-base-content"></div>
+           
+          </div>
+          
               <div> 历史估算 Pi 值的平均值：{{ getAverageEstimatedPi().toFixed(5) }}</div>
             </div>
           </div>
@@ -56,42 +56,42 @@
         <div v-html="toMarkdown(discussContent)" class="prose-sm max-w-none text-base-content"> </div>
       </div>
       <div>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>方法</th>
+          <th>优点</th>
+          <th>缺点</th>
+          <th>适用场景</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>方法1</strong></td>
+          <td>数学上严密，形式上直观，尤其是通过概率密度函数和积分可以清晰地描述针与线相交的概率从而推导出π的表达式</td>
+          <td>理论上复杂，实际操作时需要积分</td>
+          <td>适合理论分析或推导π的公式</td>
+        </tr>
+        <tr>
+          <td><strong>方法2</strong></td>
+          <td>通过起点、角度生成终点，几何描述清晰直观</td>
+          <td>计算量大，特别是每次都要生成起点和终点</td>
+          <td>适合模拟或者编程实现复杂的几何问题</td>
+        </tr>
+        <tr>
+          <td><strong>方法3</strong></td>
+          <td>仅需检查两端点是否位于同一半平面，算法简洁，计算量较小，几何描述清晰直观</td>
+          <td>不容易直接推导出π的表达式</td>
+          <td>适合需要简化计算或者快速判断相交情况的场景，但不利于进一步推导π的公式</td>
+        </tr>
+      </tbody>
+    </table>
 
-        <table>
-          <thead>
-          <tr>
-            <th>方法</th>
-            <th>优点</th>
-            <th>缺点</th>
-            <th>适用场景</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr>
-            <td><strong>方法1</strong></td>
-            <td>数学上严密，形式上直观，尤其是通过概率密度函数和积分可以清晰地描述针与线相交的概率从而推导出π的表达式</td>
-            <td>理论上复杂，实际操作时需要积分</td>
-            <td>适合理论分析或推导π的公式</td>
-          </tr>
-          <tr>
-            <td><strong>方法2</strong></td>
-            <td>通过起点、角度生成终点，几何描述清晰直观</td>
-            <td>计算量大，特别是每次都要生成起点和终点</td>
-            <td>适合模拟或者编程实现复杂的几何问题</td>
-          </tr>
-          <tr>
-            <td><strong>方法3</strong></td>
-            <td>仅需检查两端点是否位于同一半平面，算法简洁，计算量较小，几何描述清晰直观</td>
-            <td>不容易直接推导出π的表达式</td>
-            <td>适合需要简化计算或者快速判断相交情况的场景，但不利于进一步推导π的公式</td>
-          </tr>
-          </tbody>
-        </table>
-
-        <div class="w-full h-full p-5">
-          <div v-html="toMarkdown(discussContentt)" class="prose-sm max-w-none text-base-content"> </div>
-        </div>
+    <div class="w-full h-full p-5">
+        <div v-html="toMarkdown(discussContentt)" class="prose-sm max-w-none text-base-content"> </div>
       </div>
+  </div>
     </template>
   </experiment-board>
 </template>
@@ -185,7 +185,7 @@ $
 **2. 夹角**：在  $[0, pi]$ 范围内随机生成针与水平线的夹角。
 
 **3. 终点计算**：使用三角函数计算针的终点坐标。设针的长度为 $l$，起点坐标为 $P(x)$，针的夹角为 $θ$，终点坐标 $\Q(x_1, y_1)$ 可以通过以下公式计算：
-
+   
 $
    x_1 = x_0 + l \\cdot cos(θ)
    $，
@@ -222,8 +222,8 @@ $
 const discussContentt = `
 ### **抛针？抛圆环？Barbier的巧妙证明**
 
-抛一根任意的针，可长可短，则产生的交点数的数学期望是：$E = p_1 +2 p_2 + 3 p_3+···$，其中$p_1$是针落下后刚好有$1$个交点的概率，$p3$是刚好有$3$个交点的概率，
-是刚好有$3$个交点的概率，等等。 蒲丰问题所问的是得到至少一个交点的概率： $E = p_1 + p_2 +  p_3+···$(针恰好落在某横线之上的事件，以及一个端点在某横线上的事件的概率都是
+抛一根任意的针，可长可短，则产生的交点数的数学期望是：$E = p_1 +2 p_2 + 3 p_3+···$，其中$p_1$是针落下后刚好有$1$个交点的概率，$p3$是刚好有$3$个交点的概率， 
+是刚好有$3$个交点的概率，等等。 蒲丰问题所问的是得到至少一个交点的概率： $E = p_1 + p_2 +  p_3+···$(针恰好落在某横线之上的事件，以及一个端点在某横线上的事件的概率都是 
  ，所以在我们的讨论中将它们忽略不计)。
 如果针是短的，则得到多于一个交点的概率为零，$p_1 = p_2 = p_3 = ··· = 0$ ，则有$E = p$,即所求的概率正是交点数的期望。如此表述极为重要，因为我们就可以用到期望的线性性了。
 
@@ -250,7 +250,7 @@ const discussContentt = `
  现在 $P_n$
  和  $P^n$
  都是多边形，故两者交点数的期望都是“ $c$
- 倍的长度”，对
+ 倍的长度”，对 
  的期望则是 $2$
  ，代回上式得到：$cl(P_n)≤2≤cl(P^n)$。
  当 $n→∞$

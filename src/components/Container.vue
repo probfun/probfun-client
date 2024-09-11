@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import {h, ref} from "vue";
+import {Button} from "@/components/ui/button";
+import {Label} from "@/components/ui/label";
+import { SquareSigma } from 'lucide-vue-next';
 
-interface Tab {
+export interface Tab {
   id: number;
   label: string;
-  icon?: string;
+  icon?: any;
   name?: string;
 }
 
@@ -16,20 +19,25 @@ const activeTab = ref<number>(props.tabs[0].id ?? 0);
 </script>
 
 <template>
-<div class="rounded-xl bg-base-100 overflow-auto border border-primary flex flex-col">
-  <div class="w-full bg-base-200 p-1.5 flex gap-1 flex-shrink-0">
-    <button
+<div class="rounded-lg overflow-auto border border-primary flex flex-col">
+  <div class="w-full bg-secondary p-1 flex gap-1 flex-shrink-0 overflow-x-auto"
+  :style="{
+    scrollbarWidth: 'none',
+  }">
+    <Button
         v-for="tab in tabs"
         :key="tab.id"
-        class="px-2 gap-1 btn btn-sm text-base btn-ghost transition-all flex"
-        :class="tab.id === activeTab ? '' : 'opacity-60'"
+        variant="ghost"
+        size="sm"
+        class="px-2 h-auto py-1 gap-1 transition-all flex"
+        :class="tab.id === activeTab ? 'bg-background' : 'opacity-50'"
         @click="activeTab = tab.id"
     >
-      <span v-if="tab.icon" v-html="tab.icon" class="size-5 flex items-center justify-center"></span>
+      <component v-if="tab.icon" :is="h(tab.icon)" class="size-4 flex text-primary items-center justify-center"></component>
       {{ tab.label }}
-    </button>
+    </Button>
   </div>
-  <div class="flex-1 overflow-auto">
+  <div class="flex-1 overflow-auto bg-card">
     <slot :activeTab="activeTab"></slot>
   </div>
 </div>
