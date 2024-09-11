@@ -13,8 +13,6 @@ const saveImg = () => {
 }
 const back = () => {
     save.value = false;
-}
-const removeImg = () => {
     chartData.value.labels = [];
     chartData.value.datasets = [];
 }
@@ -85,6 +83,10 @@ const chartData = ref<{
     datasets: []
 });
 const addNewDataset = () => {
+    if (!save.value) {
+        return;
+    }
+
     const documentStyle = getComputedStyle(document.documentElement);
     const labels = Array.from({ length: 40 }, (_, i) => i + 1);
     const data = [];
@@ -206,10 +208,9 @@ $$
         <template #parameter>
             <div class="w-full h-full flex flex-col items-center justify-center">
                 <div>
-                    <button v-if="!save" @click="saveImg" class="btn mb-5">显示历史图像</button>
+                    <button v-if="!save" @click="saveImg" class="btn mb-5">显示历史图像模式</button>
                     <div>
                         <button v-if="save" @click="back" class="btn mb-5 mr-2">返回</button>
-                        <button v-if="save" @click="removeImg" class="btn mb-5 ml-2">清除</button>
                     </div>
                 </div>
                 <div class="w-full flex items-center justify-center mb-5">

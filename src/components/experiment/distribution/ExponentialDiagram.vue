@@ -5,10 +5,14 @@ import { onMounted, ref, watch } from 'vue';
 const elt = ref<HTMLDivElement | null>(null);
 let calculator: any = null;
 
+let idNumber = 0;
+const historyExpressions = ref<any[]>([]); // 用来存储历史表达式
+
 const props = defineProps<{
     rate: number;
     shift: number;
     showGraph: boolean;
+    showHistory: boolean;
 }>();
 
 onMounted(() => {
@@ -26,6 +30,7 @@ onMounted(() => {
 });
 
 const drawUniformDistribution = () => {
+    // 清除现有表达式
     calculator.removeExpression({ id: 'left_side' });
     calculator.removeExpression({ id: 'right_side' });
     calculator.removeExpression({ id: 'fun2' });
@@ -41,14 +46,25 @@ const drawUniformDistribution = () => {
             color: Desmos.Colors.BLUE
         };
 
-        // 绘制右侧区间 (x >= 0)，函数值为 0
+        // 绘制右侧区间 (x >= 0)
         const rightSide = {
             id: 'right_side',
             latex: `f_2(x) = ${props.rate} e^{-${props.rate} x} \\{x >= 0\\}`,
             color: Desmos.Colors.BLUE
         };
 
-        // 设置三个部分的表达式和垂直线
+        // 如果显示历史记录，将当前表达式加入历史数组
+        if (props.showHistory) {
+            idNumber++;
+            const expression = {
+                id: `history_${idNumber}`,
+                latex: `f(x) = ${props.rate} e^{-${props.rate} x} \\{x >= 0\\}`,
+                color: Desmos.Colors.BLUE
+            };
+            historyExpressions.value.push(expression);
+        }
+
+        // 绘制当前的表达式
         calculator.setExpression(leftSide);
         calculator.setExpression(rightSide);
 
@@ -83,7 +99,7 @@ const drawUniformDistribution = () => {
             lineStyle: Desmos.Styles.DASHED // 设置线条为虚线
         };
 
-        // 设置三个部分的表达式和垂直线
+        // 绘制当前的表达式
         calculator.setExpression(rightSide);
         calculator.setExpression(fun2);
         calculator.setExpression(fun3);
@@ -96,10 +112,25 @@ const drawUniformDistribution = () => {
             top: 1.5,
         });
     }
+
+    // 如果显示历史图像，将历史表达式加载到图表中
+    if (props.showHistory) {
+        historyExpressions.value.forEach((expression) => {
+            calculator.setExpression(expression);
+        });
+    }
+    else {
+        historyExpressions.value.forEach((expression) => {
+            calculator.removeExpression({ id: expression.id });
+        });
+        // 清空历史表达式数组
+        historyExpressions.value = [];
+    }
+
 };
 
 // 监听 props 的变化以动态更新图像
-watch(() => [props.rate, props.shift, props.showGraph], () => {
+watch(() => [props.rate, props.shift, props.showGraph, props.showHistory], () => {
     drawUniformDistribution();
 });
 </script>

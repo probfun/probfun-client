@@ -9,6 +9,14 @@ import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 const rate = ref([2]);
 const shift = ref([1]);
 
+const save = ref(false);
+const saveImg = () => {
+  save.value = true;
+}
+const back = () => {
+  save.value = false;
+}
+
 const isChart1 = ref(true);
 const isChart2 = ref(false);
 const toggleChart1 = () => {
@@ -88,10 +96,17 @@ $$
 <template>
   <experiment-board title="二项分布" :tags="[]">
     <template #experiment>
-      <exponential-diagram class="flex-1 h-full" :rate="rate[0]" :shift="shift[0]" :show-graph="isChart1"/>
+      <exponential-diagram class="flex-1 h-full" :rate="rate[0]" :shift="shift[0]" :show-graph="isChart1"
+        :show-history="save" />
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
+        <div v-if="isChart1">
+          <button v-if="!save" @click="saveImg" class="btn mb-5">显示历史图像模式</button>
+          <div>
+            <button v-if="save" @click="back" class="btn mb-5 mr-2">返回</button>
+          </div>
+        </div>
         <div class="w-full flex items-center justify-center mb-5">
           <div class="dropdown">
             <div tabindex="0" role="button" class="btn m-1">点我切换</div>

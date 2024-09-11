@@ -11,6 +11,14 @@ const b = ref([1]);
 const k = ref([1]);
 const m = ref([0]);
 
+const save = ref(false);
+const saveImg = () => {
+  save.value = true;
+}
+const back = () => {
+  save.value = false;
+}
+
 const latexFormula = computed(() => {
   const aFormatted = a.value[0] < 0 ? `(${a.value[0]})` : a.value[0];
   const bFormatted = b.value[0] < 0 ? `(${b.value[0]})` : b.value[0];
@@ -87,10 +95,16 @@ $$
 <template>
   <experiment-board title="二项分布" :tags="[]">
     <template #experiment>
-      <uniform-diagram class="flex-1 h-full" :a="a[0]" :b="b[0]" :k="k[0]" :m="m[0]" />
+      <uniform-diagram class="flex-1 h-full" :a="a[0]" :b="b[0]" :k="k[0]" :m="m[0]" :show-history="save" />
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
+        <div>
+          <button v-if="!save" @click="saveImg" class="btn mb-5">显示历史图像模式</button>
+          <div>
+            <button v-if="save" @click="back" class="btn mb-5 mr-2">返回</button>
+          </div>
+        </div>
         <div class="w-full flex items-center justify-center mb-5">
           <div ref="katexContainer" class="text-xl"></div>
         </div>

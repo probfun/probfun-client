@@ -13,6 +13,13 @@ const b = ref([0]);
 const transformedMean = ref();
 const transformedVariance = ref();
 
+const save = ref(false);
+const saveImg = () => {
+  save.value = true;
+}
+const back = () => {
+  save.value = false;
+}
 
 const latexFormula = computed(() => {
   transformedMean.value = a.value[0] * mean.value[0] + b.value[0];
@@ -82,33 +89,39 @@ $$ Y \\sim N(a\\mu + b, a^2\\sigma^2) $$
   <experiment-board title="二项分布" :tags="[]">
     <template #experiment>
       <distribution-diagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance" :a="a"
-        :b="b" />
+        :b="b" :show-history="save"/>
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
         <div class="w-full flex items-center justify-center">
+          <div>
+            <button v-if="!save" @click="saveImg" class="btn mr-5">显示历史图像模式</button>
+            <div>
+              <button v-if="save" @click="back" class="btn mr-5">返回</button>
+            </div>
+          </div>
           <div ref="katexMainFormula" class="text-xl mr-5"></div>
           <div ref="katexTransformedFormula" class="text-xl ml-5"></div>
         </div>
         <div class="grid grid-cols-2 gap-5 p-5">
           <div class="flex flex-col flex-1 items-center justify-center space-y-3">
             <p>Mean</p>
-            <InputNumber v-model.number="mean[0]" fluid :min-fraction-digits="1"/>
+            <InputNumber v-model.number="mean[0]" fluid :min-fraction-digits="1" />
             <Slider :min="-5" :max="5" :step="0.1" v-model="mean" class="w-full" />
           </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-3">
             <p>Variance</p>
-            <InputNumber v-model.number="stdDev[0]" fluid :min-fraction-digits="1"/>
+            <InputNumber v-model.number="stdDev[0]" fluid :min-fraction-digits="1" />
             <Slider :min="0.1" :max="5" :step="0.1" v-model="stdDev" class="w-full" />
           </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-3">
             <p> a </p>
-            <InputNumber v-model.number="a[0]" fluid :invalid="a[0] === 0" :min-fraction-digits="1"/>
+            <InputNumber v-model.number="a[0]" fluid :invalid="a[0] === 0" :min-fraction-digits="1" />
             <Slider :min="-2" :max="2" :step="0.1" v-model="a" class="w-full" />
           </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-3">
             <p> b </p>
-            <InputNumber v-model.number="b[0]" fluid :min-fraction-digits="1"/>
+            <InputNumber v-model.number="b[0]" fluid :min-fraction-digits="1" />
             <Slider :min="-5" :max="5" :step="0.1" v-model="b" class="w-5/6" />
           </div>
         </div>
