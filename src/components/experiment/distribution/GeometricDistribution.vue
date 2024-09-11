@@ -11,23 +11,32 @@ const fixedN = ref([3]);  // 固定的试验次数 n
 const isChart1 = ref(true);
 const isChart2 = ref(false);
 const isChart3 = ref(false);
-
 const toggleChart1 = () => {
     isChart1.value = true;
     isChart2.value = false;
     isChart3.value = false;
 }
-
 const toggleChart2 = () => {
     isChart1.value = false;
     isChart2.value = true;
     isChart3.value = false;
 }
-
 const toggleChart3 = () => {
     isChart1.value = false;
     isChart2.value = false;
     isChart3.value = true;
+}
+
+const save = ref(false);
+const saveImg = () => {
+    save.value = true;
+}
+const back = () => {
+    save.value = false;
+}
+const removeImg = () => {
+    chartData.value.labels = [];
+    chartData.value.datasets = [];
 }
 
 const oneFormula = computed(() => `P(X = k) = (1 - ${probability.value[0]})^{k-1} \\cdot ${probability.value[0]}`);
@@ -73,7 +82,7 @@ const setChartData1 = () => {
     const documentStyle = getComputedStyle(document.documentElement);
     const p = probability.value[0];
 
-    const kValues = Array.from({ length: 20 }, (_, i) => i + 1);  // 生成1到10的k值
+    const kValues = Array.from({ length: 20 }, (_, i) => i + 1);
     const data = kValues.map(k => Math.pow(1 - p, k - 1) * p); // 计算几何分布的概率
 
     return {
@@ -135,6 +144,56 @@ const setChartOptions1 = () => {
         }
     };
 }
+
+const chartData = ref<{
+    labels: number[],
+    datasets: {
+        label: string,
+        backgroundColor: string,
+        borderColor: string,
+        data: number[],
+        fill: boolean
+    }[]
+}>({
+    labels: [],
+    datasets: []
+});
+const addNewDataset = () => {
+    if (!isChart1.value) {
+        return;
+    }
+
+    const documentStyle = getComputedStyle(document.documentElement);
+    const labels = Array.from({ length: 20 }, (_, i) => i + 1);
+    const data = [];
+
+    const p = probability.value[0];
+    // 计算几何分布的概率，并将结果直接推入 data 数组
+    for (let k = 1; k <= 20; k++) {
+        const probabilityOfK = Math.pow(1 - p, k - 1) * p;
+        data.push(probabilityOfK);
+    }
+
+    // 检查是否已经存在相同的 dataset
+    const existingDataset = chartData.value.datasets.find(
+        (dataset) => dataset.label === `probability=${probability.value[0]}`
+    );
+
+    // 如果已经存在相同的 dataset，不添加
+    if (existingDataset) {
+        return;
+    }
+
+    // 更新 chartData，添加新的 dataset
+    chartData.value.labels = labels;
+    chartData.value.datasets.push({
+        label: `probability=${probability.value[0]}`,
+        backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
+        borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
+        data: data,
+        fill: false
+    });
+};
 
 const chartData2 = ref();
 const chartOptions2 = ref();
@@ -303,6 +362,7 @@ watch([probability, fixedN], () => {
     chartData1.value = setChartData1();
     chartData2.value = setChartData2();
     chartData3.value = setChartData3();
+    addNewDataset();
     renderFormula();
 });
 
@@ -356,12 +416,22 @@ const content = `
 <template>
     <experiment-board title="二项分布" :tags="[]">
         <template #experiment>
-            <Chart v-if="isChart1" type="line" :data="chartData1" :options="chartOptions1" class="h-full w-full" />
+            <Chart v-if="isChart1 && !save" type="line" :data="chartData1" :options="chartOptions1"
+                class="h-full w-full" />
+            <Chart v-if="isChart1 && save" type="line" :data="chartData" :options="chartOptions1"
+                class="h-full w-full" />
             <Chart v-if="isChart2" type="line" :data="chartData2" :options="chartOptions2" class="h-full w-full" />
             <Chart v-if="isChart3" type="line" :data="chartData3" :options="chartOptions3" class="h-full w-full" />
         </template>
         <template #parameter>
             <div class="w-full h-full flex flex-col items-center justify-center">
+                <div v-if="isChart1">
+                    <button v-if="!save" @click="saveImg" class="btn mb-5">显示历史图像</button>
+                    <div>
+                        <button v-if="save" @click="back" class="btn mb-5 mr-2">返回</button>
+                        <button v-if="save" @click="removeImg" class="btn mb-5 ml-2">清除</button>
+                    </div>
+                </div>
                 <div class="w-full flex items-center justify-center mb-5">
                     <div class="dropdown">
                         <div tabindex="0" role="button" class="btn m-1">点我切换</div>
