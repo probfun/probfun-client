@@ -24,12 +24,26 @@ const back = () => {
 const latexFormula = computed(() => {
   transformedMean.value = a.value[0] * mean.value[0] + b.value[0];
   transformedVariance.value = a.value[0] ** 2 * stdDev.value[0] ** 2;
-  const meanVal = transformedMean.value.toFixed(1); // 转换为字符串仅用于展示
-  const varianceVal = transformedVariance.value.toFixed(1); // 转换为字符串仅用于展示
-  return `f(x) = \\frac{1}{\\sqrt{2\\pi\\times${varianceVal}}} e^{-\\frac{(x-${meanVal})^2}{2\\times${varianceVal}}}`;
+
+  const meanVal = transformedMean.value.toFixed(1);
+  const varianceVal = transformedVariance.value.toFixed(1);
+
+  // 如果 meanVal 为负数，则添加括号
+  const meanDisplay = meanVal < 0 ? `(${meanVal})` : meanVal;
+  // 如果 varianceVal 为负数（虽然理论上方差不会是负数，但以防万一）
+  const varianceDisplay = varianceVal < 0 ? `(${varianceVal})` : varianceVal;
+
+  return `f(x) = \\frac{1}{\\sqrt{2\\pi\\times${varianceDisplay}}} e^{-\\frac{(x-${meanDisplay})^2}{2\\times${varianceDisplay}}}`;
 });
 
-const transformedFormula = computed(() => `X \\sim N(${a.value[0]}\\cdot${mean.value[0]} + ${b.value[0]}, ${a.value[0]}^2\\cdot${stdDev.value[0]}^2)`);
+const transformedFormula = computed(() => {
+  // 计算均值和方差
+  const transformedMean = a.value[0] * mean.value[0] + b.value[0];
+  const transformedVariance = a.value[0] ** 2 * stdDev.value[0] ** 2;
+
+  return `X \\sim N(${transformedMean.toFixed(2)}, ${transformedVariance.toFixed(2)})`;
+});
+
 
 const katexMainFormula = ref<HTMLElement | null>(null);
 const katexTransformedFormula = ref<HTMLElement | null>(null);
@@ -88,8 +102,8 @@ $$ Y \\sim N(a\\mu + b, a^2\\sigma^2) $$
 
   <experiment-board title="二项分布" :tags="[]">
     <template #experiment>
-      <distribution-diagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance" :a="a"
-        :b="b" :show-history="save"/>
+      <distribution-diagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance" :a="a" :b="b"
+        :show-history="save" />
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">

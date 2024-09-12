@@ -19,6 +19,17 @@ const back = () => {
     chartData.value.datasets = [];
 }
 
+const latexFormula = computed(() => `P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k} = \\binom{${number.value}}{k} ${probability.value}^k (1-${probability.value})^{${number.value}-k}`);
+const katexContainer = ref<HTMLElement | null>(null);
+
+const renderFormula = () => {
+    if (katexContainer.value) {
+        katex.render(latexFormula.value, katexContainer.value, {
+            throwOnError: false
+        });
+    }
+};
+
 onMounted(() => {
     chartDataO.value = setChartData();
     chartOptions.value = setChartOptions();
@@ -164,16 +175,6 @@ watch([number, probability], () => {
     renderFormula();
 });
 
-// LaTeX公式显示
-const latexFormula = computed(() => `P(X = k) = \\binom{${number.value[0]}}{k} ${probability.value}^k (1-${probability.value})^{${number.value[0]}-k}`);
-const katexContainer = ref<HTMLElement | null>(null);
-const renderFormula = () => {
-    if (katexContainer.value) {
-        katex.render(latexFormula.value, katexContainer.value, {
-            throwOnError: false
-        });
-    }
-};
 onMounted(() => {
     renderFormula();
 });
