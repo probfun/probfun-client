@@ -63,7 +63,7 @@ async function login() {
         user: {
           avatarUrl: '/default-avatar.png',
           studentId: '2018000000',
-          nickname: 'linyuxuanlin',
+          nickname: '邮趣概率测试账号',
 
         }
       }
