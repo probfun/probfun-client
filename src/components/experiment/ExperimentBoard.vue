@@ -1,6 +1,5 @@
 <template>
-  <div class="w-full flex px-2 pb-2 gap-1">
-<!--    <div class="flex flex-col gap-1 w-1/2">-->
+    <div class="w-full flex p-1 gap-1">
       <ResizablePanelGroup
           id="demo-group-1"
           direction="horizontal"
@@ -42,14 +41,7 @@
 
       </ResizablePanelGroup>
 
-<!--      <div class="h-1 hover:bg-blue-600 cursor-row-resize transition-all" @mousedown="startResizeRow"></div>-->
-
-<!--    </div>-->
-<!--    <div class="w-1 hover:bg-blue-600 cursor-col-resize transition-all" @mousedown="startResizeCol"></div>-->
-
-  </div>
-
-
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -62,9 +54,8 @@ import {
 import {GraduationCap, MessagesSquare, Presentation,
   ChartColumnIncreasing} from 'lucide-vue-next';
 import {PropType, ref} from "vue";
+import SideBar from "@/components/SideBar.vue";
 
-
-console.log(typeof GraduationCap)
 //
 defineProps({
   title: {

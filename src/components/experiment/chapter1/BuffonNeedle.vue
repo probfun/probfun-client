@@ -1,63 +1,58 @@
 <template>
-  <experiment-board title="Buffon投针" :tags="['辛钦大数定律', '蒙特卡罗方法']":discuss-tab-list="discussTabList">
+  <experiment-board title="Buffon投针" :tags="['辛钦大数定律', '蒙特卡罗方法']" :discuss-tab-list="discussTabList">
     <template #experiment>
       <div ref="container" class="h-full">
         <div class="bg-primary">
-          <canvas ref="canvas" class="w-full" height="400"></canvas>
+          <canvas ref="canvas" class="w-full h-full"></canvas>
         </div>
       </div>
     </template>
 
     <template #parameter>
-      <div class="p-5 w-full h-full flex justify-center items-center gap-3">
+      <div class="p-3 flex min-h-full min-w-full items-center gap-3">
         <div class="flex flex-col items-center flex-1">
           <div class="flex flex-col w-full justify-center items-center mb-1 max-w-xs gap-2">
             <div class="flex font-bold flex-col items-center gap-1 w-full">
-              <label>抛针数量</label>
-            </div>
-            <div class="font-bold h-full justify-center items-center mb-2 gap-3 flex flex-col">
-              <input type="number" class="input input-primary input-bordered" v-model="needleAmount" :max="5000" />
+              <Label class="text-left w-full font-bold">抛针数量</Label>
+              <Input type="number" v-model="needleAmount" :max="5000" />
             </div>
             <div class="flex justify-between gap-2 w-full">
-              <button class="btn btn-primary flex-1" @click="addNeedles" :disabled="isCalculating || isSimulating"> 抛针 </button>
-              <button class="btn btn-primary flex-1" @click="isSimulating ? endSimulate() : startSimulate()" > {{ isSimulating ? '停止模拟' : '自动模拟' }} </button>
+              <Button class="flex-1" @click="addNeedles" :disabled="isCalculating || isSimulating"> 抛针 </Button>
+              <Button class="flex-1" @click="isSimulating ? endSimulate() : startSimulate()" > {{ isSimulating ? '停止模拟' : '自动模拟' }} </Button>
             </div>
           </div>
-          <div class="mt-5">
-            <div class="mb-2 text-lg font-bold">实验结果:</div>
+          <div class="mt-5 flex flex-col">
+            <Label class="mb-2 font-bold">实验结果:</Label>
 
-            <div class="text-start w-full">
-              <div > 和线相交的针的数量：{{ hits }} </div>
-              <div class="text-start w-full h-full p-5">
-                估算的 Pi 值:
+            <div class="text-start w-full flex flex-col">
+              <Label > 和线相交的针的数量：{{ hits }} </Label>
+              <Label class="text-start w-full h-full py-5">
+
+                <p class="mb-1"> 估算的 Pi 值: </p>
                 <div v-html="toMarkdown(`$\\pi = \\frac{2l}{Pd} = $ ${estimatedPi.toFixed(5)}`)" class="prose w-full text-base-content"></div>
+              </Label>
 
-              </div>
-
-              <div> 历史估算 Pi 值的平均值：{{ getAverageEstimatedPi().toFixed(5) }}</div>
+              <Label> 历史估算 Pi 值的平均值：{{ getAverageEstimatedPi().toFixed(5) }}</Label>
             </div>
           </div>
         </div>
         <div class="flex-1 flex flex-col items-center justify-center">
           <chart type="line" :data="chartData" class="flex-1 w-full" :options="chartOptions" />
-          <button @click="resetData" class="btn btn-primary mt-3">重置数据</button>
+          <Button @click="resetData" class="mt-3">重置数据</Button>
         </div>
       </div>
     </template>
 
     <template #conclusion>
-      <div class="w-full h-full p-5">
-        <div v-html="toMarkdown(conclusionContent)" class="prose-sm max-w-none text-base-content"> </div>
+      <div class="w-full h-full p-3">
+        <div v-html="toMarkdown(conclusionContent)" class="prose-sm max-w-none text-foreground"> </div>
       </div>
     </template>
 
     <template #discuss>
-      <div class="w-full h-full p-5">
-        <div v-html="toMarkdown(discussContent)" class="prose-sm max-w-none text-base-content"> </div>
-      </div>
-      <div>
-
-        <table>
+      <div class="w-full h-full p-3">
+        <div v-html="toMarkdown(discussContent)" class="prose-sm max-w-none text-foreground"> </div>
+        <table class="mb-5">
           <thead>
           <tr>
             <th>方法</th>
@@ -87,10 +82,7 @@
           </tr>
           </tbody>
         </table>
-
-        <div class="w-full h-full p-5">
-          <div v-html="toMarkdown(discussContentt)" class="prose-sm max-w-none text-base-content"> </div>
-        </div>
+        <div v-html="toMarkdown(discussContentt)" class="prose-sm max-w-none text-foreground"> </div>
       </div>
     </template>
   </experiment-board>
@@ -102,24 +94,29 @@
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 import {ref, onMounted, computed, onUnmounted} from 'vue';
 import {toMarkdown} from "@/utils/markdown";
-
+import {GraduationCap, MessageCircleMore, MessagesSquare} from "lucide-vue-next";
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 
 const discussTabList = [
   {
     id: 0,
     label: '实验结论',
     name: 'conclusion',
+    icon: GraduationCap
 
   },{
     id: 1,
     label: '相关讨论',
     name: 'discuss',
+    icon: MessageCircleMore
   },
 
   {
     id: 2,
     label: '讨论区',
     name: 'peapleDiscuss',
+    icon: MessagesSquare
   }
 ];
 

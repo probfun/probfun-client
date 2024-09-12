@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import { computed, ref, Ref, watch } from 'vue';
 import {toMarkdown} from "@/utils/markdown";
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 import {GraduationCap, MessagesSquare, Columns2, MessageCircleMore} from "lucide-vue-next";
+import {cn} from "@/lib/utils";
+import { Slider } from '@/components/ui/slider'
+import { Input } from '@/components/ui/input'
 
 class Door {
   id: number;
@@ -92,8 +97,8 @@ function gameResult(change: boolean) {
 async function simulateGame() {
   const wait = async (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
   autoGaming.value = true;
-  const waitTime = 1000 / autoGameRound.value;
-  for (let i = 0; i < autoGameRound.value; i++) {
+  const waitTime = 1000 / autoGameRound.value[0];
+  for (let i = 0; i < autoGameRound.value[0]; i++) {
     if (!autoGaming.value) return;
     startGame();
     await wait(waitTime);
@@ -117,7 +122,7 @@ async function simulateGame() {
   autoGaming.value = false;
 }
 
-const autoGameRound = ref(500);
+const autoGameRound = ref([500]);
 const autoGaming = ref(false);
 
 const data = computed(() => ({
@@ -307,7 +312,7 @@ const discussContent = `
           <div
               class="h-full w-full absolute top-0 left-0 bg-black bg-opacity-70 flex justify-center items-center z-10"
               v-if="gameState === 'End'">
-            <button class="btn btn-primary" @click="startGame">开始游戏</button>
+            <Button @click="startGame">开始游戏</Button>
           </div>
           <div class="font-bold text-xl mb-6 h-8 text-center flex items-center">
             <p v-if="gameState === 'Select'">请选择一扇门！</p>
@@ -346,107 +351,97 @@ const discussContent = `
             </div>
           </div>
           <div class="h-8">
-            <button class="btn btn-primary" :disabled="Door.selectedDoor.value == null" @click="selectDoor"
-                    v-if="gameState === 'Select'">选择</button>
+            <Button :disabled="Door.selectedDoor.value == null" @click="selectDoor"
+                    v-if="gameState === 'Select'">选择</Button>
             <div class="w-full flex space-x-5 justify-center" v-if="gameState === 'Reveal'">
-              <button class="btn btn-primary" @click="gameResult(false)">不换门</button>
-              <button class="btn btn-primary" @click="gameResult(true)">换门</button>
+              <Button @click="gameResult(false)">不换门</Button>
+              <Button @click="gameResult(true)">换门</Button>
             </div>
-            <button class="btn btn-primary" @click="startGame" v-if="gameState === 'Win' || gameState === 'Lose'">重新开始</button>
+            <Button @click="startGame" v-if="gameState === 'Win' || gameState === 'Lose'">重新开始</Button>
           </div>
 <!--        </div>-->
       </div>
     </template>
 
     <template #parameter>
-      <div class="p-5 items-center flex w-full h-full h-full justify-center gap-3">
-        <div class="flex flex-col  items-center flex-1">
-          <!-- <div class="flex"> -->
-            <!-- <label class="font-bold h-full flex-shrink-0"> 模拟轮数： </label> -->
-            <div class="flex w-full  justify-center items-center text-lg font-bold">   
-              <label>模拟轮数</label>
-            </div>             
-            <div class="font-bold h-full justify-center items-center mb-4 gap-3 flex flex-col">   
-             <input class="input input-rounded input-primary" :min="1" :max="1000" v-model="autoGameRound" />
+      <div class="p-5 items-center flex min-w-full min-h-full overflow-x-auto justify-center gap-3">
+        <div class="flex flex-col items-center flex-1">
+          <div class="font-bold h-full justify-center items-center mb-4 gap-3 flex flex-col">
+            <Label class="flex w-full font-bold text-left">模拟轮数</Label>
+            <Input class="" :min="1" :max="1000" v-model="autoGameRound[0]" />
 
-              <input class="range range-primary range-xs" type="range" :min="1" :max="1000" v-model="autoGameRound" />
-            </div>
-              <div class="flex justify-center gap-2 w-full">
-      <button class="btn btn-primary" @click="() => {
-        autoGaming ? autoGaming = false : simulateGame();
-      }"> {{ autoGaming ? '终止模拟' : '开始模拟' }}</button>
-    </div>
+            <Slider class="" v-model="autoGameRound" />
+          </div>
+          <div class="flex justify-center gap-2 w-full">
+            <Button class="" @click="() => {
+              autoGaming ? autoGaming = false : simulateGame();
+            }"> {{ autoGaming ? '终止模拟' : '开始模拟' }}</Button>
+          </div>
 
           <div class="flex flex-col mt-5">
-            <label class="font-bold mb-2 text-lg justfy-center">选择换门策略：</label>
-          <div class="flex space-x-3">
-            <button
-              class="btn"
-              :class="{'btn-primary': selectedStrategy === 'never'}"
-              @click="() => {
-          selectedStrategy = 'never';
-          console.log('当前选择的策略:', selectedStrategy); // 输出当前策略
-        }">
-              每次都不换门
-            </button>
-            <button
-              class="btn"
-              :class="{'btn-primary': selectedStrategy === 'always'}"
-                @click="selectedStrategy = 'always'">
-                每次都换门
-            </button>
-            <button
-              class="btn"
-              :class="{'btn-primary': selectedStrategy === 'random'}"
-              @click="selectedStrategy = 'random'">
-              随机换门
-            </button>
-          </div>
+            <Label class="font-bold mb-2 justify-center">选择换门策略：</Label>
+            <div class="flex space-x-3">
+              <Button
+                  :class="cn('transition-all', selectedStrategy !== 'never' && 'opacity-60')"
+                  @click="selectedStrategy = 'never'">
+                每次都不换门
+              </Button>
+              <Button
+                  :class="cn('transition-all', selectedStrategy !== 'always' && 'opacity-60')"
+                  @click="selectedStrategy = 'always'">
+                  每次都换门
+              </Button>
+              <Button
+                  :class="cn('transition-all', selectedStrategy !== 'random' && 'opacity-60')"
+                  @click="selectedStrategy = 'random'">
+                随机换门
+              </Button>
+            </div>
         </div>
-          <div class="mt-5">
-            <div class="mb-2 text-lg font-bold">实验结果:</div>
+          <div class="mt-5 flex flex-col">
+            <Label class="mb-2 font-bold">实验结果:</Label>
             <div class="grid grid-cols-2 gap-y-4 gap-x-10 justify-between">
-              <div class="flex items-center flex-shrink-0">
+              <Label class="flex items-center flex-shrink-0">
                 换门胜利次数： {{ changeWinNum }}
-              </div>
-              <div class="flex items-center flex-shrink-0">
+              </Label>
+              <Label class="flex items-center flex-shrink-0">
                 换门失败次数： {{ changeLoseNum }}
-              </div>
-              <div class="flex items-center flex-shrink-0">
+              </Label>
+              <Label class="flex items-center flex-shrink-0">
                 不换门胜利次数： {{ notChangeWinNum }}
-              </div>
-              <div class="flex items-center flex-shrink-0">
+              </Label>
+              <Label class="flex items-center flex-shrink-0">
                 不换门失败次数： {{ notChangeLoseNum }}
-              </div>
-              <div class="flex items-center flex-shrink-0">
+              </Label>
+              <Label class="flex items-center flex-shrink-0">
                 不换门胜率： {{ (notChangeWinNum / (notChangeWinNum + notChangeLoseNum)).toFixed(2) }}
-              </div>
-              <div class="flex items-center flex-shrink-0">
+              </Label>
+              <Label class="flex items-center flex-shrink-0">
                 换门胜率： {{ (changeWinNum / (changeWinNum + changeLoseNum)).toFixed(2) }}
-              </div>
+              </Label>
             </div>
           </div>
         </div>
         <div class="flex flex-1 flex-col items-center justify-center">
           <Chart type="bar" :data="data" :options="options" class="flex-1 w-full"></Chart>
-          <button @click="resetData" class="btn btn-primary mt-3">重置数据</button>
+          <Button @click="resetData" class="mt-3">重置数据</Button>
         </div>
       </div>
     </template>
 
     <template #conclusion>
-      <div class="w-full h-full p-5">
+      <div class="w-full h-full p-3">
         <div class="prose-sm max-w-full text-foreground" v-html="toMarkdown(conclusionContent)"></div>
       </div>
     </template>
 
     <template #change>
-      <div class="w-full h-full p-5">
+      <div class="w-full h-full p-3">
         <div class="prose-sm max-w-full text-foreground" v-html="toMarkdown(explanationContent)"></div>
       </div>
     </template>
     <template #discuss>
-      <div class="w-full h-full p-5">
+      <div class="w-full h-full p-3">
         <div class="prose-sm max-w-full text-foreground" v-html="toMarkdown(discussContent)"></div>
       </div>
     </template>
