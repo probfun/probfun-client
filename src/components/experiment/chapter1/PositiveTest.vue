@@ -192,12 +192,12 @@ $$
           <div class="flex space-x-4 justify-center items-center">
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
               <p>特异度(a)</p>
-              <InputNumber v-model.number="specificity" fluid :minFractionDigits="2" />
+              <InputNumber v-model.number="specificity[0]" fluid :minFractionDigits="2" />
               <Slider :min="0.1" :max="1.0" :step="0.01" v-model="specificity" class="w-full" />
             </div>
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
               <p>灵敏度(b)</p>
-              <InputNumber v-model.number="sensitivity" fluid :minFractionDigits="2" />
+              <InputNumber v-model.number="sensitivity[0]" fluid :minFractionDigits="2" />
               <Slider :min="0.1" :max="1.0" :step="0.01" v-model="sensitivity" class="w-full" />
             </div>
           </div>
@@ -205,12 +205,12 @@ $$
           <div class="flex space-x-4 justify-center items-center">
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
               <p>感染率(c)</p>
-              <InputNumber v-model.number="infectionRate" :minFractionDigits="2" fluid />
+              <InputNumber v-model.number="infectionRate[0]" :minFractionDigits="2" fluid />
               <Slider :min="0.0" :max="1.0" :step="0.001" v-model="infectionRate" class="w-full" />
             </div>
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
               <p>总人数(d)</p>
-              <InputNumber v-model.number="population" fluid />
+              <InputNumber v-model.number="population[0]" fluid />
               <Slider :min="1000" :max="1000000" :step="1000" v-model="population" class="w-full" />
             </div>
           </div>
