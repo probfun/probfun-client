@@ -5,7 +5,13 @@ import 'katex/dist/katex.min.css';
 import {toMarkdown} from '@/utils/markdown';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
-const katexFormula = computed(() => `p = \\frac{${sensitivity.value[0]} * ${infectionRate.value[0]}}{${sensitivity.value[0]} * ${infectionRate.value[0]} + (1 - ${infectionRate.value[0]}) * (1 - ${specificity.value[0]})} = ${truePositiveRate.value.toFixed(3)}`);
+const katexFormula = computed(() => `
+  \\begin{aligned}
+    p &= \\frac{b * m}{b * m + n * (1 - a)} \\\\
+      &= \\frac{${sensitivity.value} * ${infectionRate.value}}{${sensitivity.value} * ${infectionRate.value} + (1 - ${infectionRate.value}) * (1 - ${specificity.value})} \\\\
+      &= ${truePositiveRate.value.toFixed(3)}
+  \\end{aligned}
+`);
 const katexContainer = ref<HTMLElement | null>(null);
 const renderFormula = () => {
   if (katexContainer.value) {
@@ -185,26 +191,26 @@ $$
         <div class="flex flex-col flex-1 space-y-4 justify-center items-center">
           <div class="flex space-x-4 justify-center items-center">
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-              <p>特异度</p>
-              <InputNumber v-model.number="specificity[0]" fluid :minFractionDigits="2" />
+              <p>特异度(a)</p>
+              <InputNumber v-model.number="specificity" fluid :minFractionDigits="2" />
               <Slider :min="0.1" :max="1.0" :step="0.01" v-model="specificity" class="w-full" />
             </div>
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-              <p>灵敏度</p>
-              <InputNumber v-model.number="sensitivity[0]" fluid :minFractionDigits="2" />
+              <p>灵敏度(b)</p>
+              <InputNumber v-model.number="sensitivity" fluid :minFractionDigits="2" />
               <Slider :min="0.1" :max="1.0" :step="0.01" v-model="sensitivity" class="w-full" />
             </div>
           </div>
           <!-- 第二个输入框组 -->
           <div class="flex space-x-4 justify-center items-center">
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-              <p>感染率</p>
-              <InputNumber v-model.number="infectionRate[0]" :minFractionDigits="2" fluid />
+              <p>感染率(c)</p>
+              <InputNumber v-model.number="infectionRate" :minFractionDigits="2" fluid />
               <Slider :min="0.0" :max="1.0" :step="0.001" v-model="infectionRate" class="w-full" />
             </div>
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-              <p>总人数</p>
-              <InputNumber v-model.number="population[0]" fluid />
+              <p>总人数(d)</p>
+              <InputNumber v-model.number="population" fluid />
               <Slider :min="1000" :max="1000000" :step="1000" v-model="population" class="w-full" />
             </div>
           </div>

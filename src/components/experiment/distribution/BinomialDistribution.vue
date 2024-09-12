@@ -9,15 +9,16 @@ import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 const number = ref([1]);  // Number of experiments (n)
 const probability = ref([0]);  // Probability of success (p)
 
-const save = ref(false);
-const saveImg = () => {
-    save.value = true;
-}
-const back = () => {
-    save.value = false;
-    chartData.value.labels = [];
-    chartData.value.datasets = [];
-}
+const latexFormula = computed(() => `P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k} = \\binom{${number.value}}{k} ${probability.value}^k (1-${probability.value})^{${number.value}-k}`);
+const katexContainer = ref<HTMLElement | null>(null);
+
+const renderFormula = () => {
+    if (katexContainer.value) {
+        katex.render(latexFormula.value, katexContainer.value, {
+            throwOnError: false
+        });
+    }
+};
 
 onMounted(() => {
     chartDataO.value = setChartData();
