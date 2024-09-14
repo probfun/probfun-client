@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import {h, ref} from "vue";
 import {Button} from "@/components/ui/button";
-import {Label} from "@/components/ui/label";
-import { SquareSigma } from 'lucide-vue-next';
 import { vAutoAnimate } from '@formkit/auto-animate'
 
 export interface Tab {
