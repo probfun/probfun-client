@@ -51,7 +51,7 @@ const login = async () => {
   }
 
   const requestData = {
-    studentId: id.value,
+    id: id.value,
     password: password.value,
   };
 
@@ -65,9 +65,10 @@ const login = async () => {
 
     await router.push('/dashboard');
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error:', error);
-    toast.add({ severity: 'error', summary: '错误', detail: '学号或密码错误，请重试', group: 'br', life: 3000 });
+    const errorMessage = error.response?.data?.msg || '登录失败，请重试';
+    toast.add({ severity: 'error', summary: '错误', detail: errorMessage, life: 3000 });
   }
 };
 </script>
