@@ -37,11 +37,14 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useToast } from 'primevue/usetoast';
+import { useUserStore } from '@/store/index'
 
 const id = ref('');
 const password = ref('');
 const toast = useToast();
 const router = useRouter();
+const userStore = useUserStore();
+
 
 // 登录函数
 const login = async () => {
@@ -61,8 +64,8 @@ const login = async () => {
 
     toast.add({ severity: 'success', summary: '成功', detail: '登录成功', group: 'br', life: 3000 });
 
-    localStorage.setItem('token', data.data.token);
-
+    localStorage.setItem('token', data.data.token); // 存储令牌
+    userStore.login(data.data.user); // 更新 Pinia 状态，存储用户信息
     await router.push('/dashboard');
 
   } catch (error: any) {

@@ -1,31 +1,26 @@
-import { createStore } from 'vuex';
+import { defineStore } from 'pinia';
+import { createPinia } from 'pinia';
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 
-export default createStore({
-  state: {
-    user: null, // 存储用户信息
-  },
-  mutations: {
-    setUser(state, user) {
-      state.user = user;
-    },
-    clearUser(state) {
-      state.user = null;
-    },
-  },
+const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
+
+export const useUserStore = defineStore('userStore', {
+  state: () => ({
+    user: null as null | Record<string, any>, // 存储用户信息
+  }),
   actions: {
-    login({ commit }, user) {
-      commit('setUser', user);
+    login(user: Record<string, any>) {
+      this.user = user;
     },
-    logout({ commit }) {
-      commit('clearUser');
+    logout() {
+      this.user = null;
+      localStorage.removeItem('token');  // 清除 token
+      localStorage.removeItem('user');   // 清除用户信息
     },
   },
   getters: {
-    isAuthenticated(state) {
-      return !!state.user;
-    },
-    getUser(state) {
-      return state.user;
-    },
+    isAuthenticated: (state) => !!state.user,
+    getUser: (state) => state.user,
   },
 });

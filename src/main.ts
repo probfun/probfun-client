@@ -7,9 +7,10 @@ import router from '@/router';
 import { definePreset } from '@primevue/themes';
 import Aura from '@primevue/themes/aura';
 import 'primeicons/primeicons.css'
-import store from './store';
+import { createPinia } from 'pinia'
 import ToastService from 'primevue/toastservice';
 
+const pinia = createPinia()
 const app = createApp(App);
 const MyPreset = definePreset(Aura, {
     semantic: {
@@ -41,6 +42,6 @@ app.use(PrimeVue, {
     }
 });
 app.use(ToastService);
-app.use(store);
+app.use(pinia);
 app.use(router);
 app.mount('#app');

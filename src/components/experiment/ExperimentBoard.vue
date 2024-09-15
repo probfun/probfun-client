@@ -5,9 +5,9 @@
           direction="horizontal"
           class="rounded-lg"
       >
-        <ResizablePanel id="demo-panel-2" :default-size="70" :min-size="20" :max-size="80">
+        <ResizablePanel id="demo-panel-2" :default-size="50" :min-size="20" :max-size="80">
           <ResizablePanelGroup id="demo-group-2" direction="vertical">
-            <ResizablePanel id="demo-panel-3" :default-size="60">
+            <ResizablePanel id="demo-panel-3" :default-size="50">
               <div class="flex h-full items-center justify-center p-1">
                 <container class="h-full w-full" :tabs="displayTabList">
                   <slot name="experiment"></slot>
@@ -15,7 +15,7 @@
               </div>
             </ResizablePanel>
             <ResizableHandle id="demo-handle-2" />
-            <ResizablePanel id="demo-panel-4" :default-size="40">
+            <ResizablePanel id="demo-panel-4" :default-size="50">
               <div class="flex h-full items-center justify-center p-1">
                 <container class="h-full w-full" :tabs="parameterTabList">
                   <slot name="parameter"></slot>
@@ -25,7 +25,7 @@
           </ResizablePanelGroup>
         </ResizablePanel>
         <ResizableHandle id="demo-handle-1" />
-        <ResizablePanel id="demo-panel-1" :default-size="30">
+        <ResizablePanel id="demo-panel-1" :default-size="50">
           <div class="flex h-full items-center justify-center p-1">
             <container class="flex-1 h-full" :tabs="discussTabList">
               <template #default="{ activeTab }">
