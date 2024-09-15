@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import Components from 'unplugin-vue-components/vite';
-import {PrimeVueResolver} from '@primevue/auto-import-resolver';
+import { PrimeVueResolver } from '@primevue/auto-import-resolver';
 
 export default defineConfig(({ mode }) => {
   return {
@@ -24,16 +24,17 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
         '/api': {
-        target: 'http://8.154.34.171:8080',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
-
-        '/media': {
           target: 'http://8.154.34.171:8080',
           changeOrigin: true,
-          secure: false
+          rewrite: (path) => path.replace(/^\/api/, ''),
+
+          '/media': {
+            target: 'http://8.154.34.171:8080',
+            changeOrigin: true,
+            secure: false
+          }
         }
       }
-    }
-  };
+    },
+  }
 })
