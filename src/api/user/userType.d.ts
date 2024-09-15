@@ -8,5 +8,6 @@ export interface User {
     school: string,
     major: string,
     grade: number,
-    avatarUrl: string
+    avatarUrl: string,
+    token: string;
 }

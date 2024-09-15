@@ -142,7 +142,7 @@ const register = async () => {
 
     // 跳转到登录页面
     await router.push('/login');
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error during registration:', error);
 
     // 根据后端返回的具体错误信息进行提示
