@@ -2,11 +2,35 @@ import { post, get } from '../request';
 import { User } from './userType';
 
 export async function loginApi(studentId: string, password: string) {
-    const result = await post<User>('/user/login', {
-        studentId,
-        password
-    });
-    return result.data;
+    try {
+        const result = await post<User>('/usermanager/login', {
+            studentId,
+            password
+        });
+        return result.data;
+    }
+    catch (error) {
+        console.error('Login API error:', error);
+        throw error;
+    }
+
+}
+
+export async function registerApi(studentId: string, nickname: string, password: string, email: string) {
+    try {
+        const result = await post<User>('/usermanager/register', {
+            studentId,
+            nickname,
+            password,
+            email
+        });
+        return result.data;
+    }
+    catch (error) {
+        console.error('Register API error:', error);
+        throw error;
+    }
+
 }
 
 export async function testApi() {

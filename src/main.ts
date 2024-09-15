@@ -9,16 +9,10 @@ import Aura from '@primevue/themes/aura';
 import 'primeicons/primeicons.css'
 import store from './store';
 import ToastService from 'primevue/toastservice';
+import { createPinia } from 'pinia';
 
 const app = createApp(App);
-const token = localStorage.getItem('token');
-if (token) {
-  // 假设你有一个 `checkToken` 方法来验证令牌
-  // 并将用户信息存储到 Vuex
-  void store.dispatch('restoreSession', token); // 自定义 action 恢复会话
-}
-
-
+const pinia = createPinia();
 const MyPreset = definePreset(Aura, {
     semantic: {
         primary: {
@@ -50,5 +44,6 @@ app.use(PrimeVue, {
 });
 app.use(ToastService);
 app.use(store);
+app.use(pinia);
 app.use(router);
 app.mount('#app');

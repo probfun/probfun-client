@@ -20,7 +20,8 @@
             <input type="password" v-model="password" class="input input-lg" placeholder="密码" />
           </div>
 
-          <button type="submit" class="btn btn-lg btn-primary rounded-full mt-2 w-full max-w-xs" @click="login"> 登录 </button>
+          <button type="submit" class="btn btn-lg btn-primary rounded-full mt-2 w-full max-w-xs" @click="login"> 登录
+          </button>
         </div>
 
         <div class="w-full flex justify-center mt-5 text-lg">
@@ -34,51 +35,45 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useStore } from 'vuex';
 import axios from 'axios';
-import {useToast} from "primevue/usetoast";
-const toast = useToast();
+import { useToast } from 'primevue/usetoast';
+import { useAuthStore } from '@/store/userStore';
 
 const id = ref('');
 const password = ref('');
+const toast = useToast();
 const router = useRouter();
-const store = useStore();
+const authStore = useAuthStore(); // 使用 Pinia 的 AuthStore
 
-async function login() {
+// 登录函数
+const login = async () => {
   if (!id.value || !password.value) {
     toast.add({ severity: 'warn', summary: '提示', detail: '请填写所有字段', life: 3000 });
     return;
   }
+
   const requestData = {
     studentId: id.value,
     password: password.value,
   };
-  // await axios.get('/api/user/login');
-  try {
-    // const response = await axios.post('/api/user/login', requestData);
-    // const data = response.data;
-    const data = {
-      data: {
-        token: '123',
-        user: {
-          avatarUrl: '/default-avatar.png',
-          studentId: '2018000000',
-          nickname: '邮趣概率测试账号',
 
-        }
-      }
-    }
+  try {
+    const response = await axios.post('/api/usermanager/login', requestData);
+    const data = response.data;
+
     toast.add({ severity: 'success', summary: '成功', detail: '登录成功', group: 'br', life: 3000 });
-    localStorage.setItem('token', data.data.token); // 存储令牌
-    await store.dispatch('login', data.data.user); // 更新 Vuex 状态
+
+    localStorage.setItem('token', data.data.token);
+
+    authStore.login(data.data.user);
+
     await router.push('/dashboard');
+
   } catch (error) {
     console.error('Error:', error);
     toast.add({ severity: 'error', summary: '错误', detail: '学号或密码错误，请重试', group: 'br', life: 3000 });
   }
-}
+};
 </script>
 
-
-<style scoped>
-</style>
+<style scoped></style>

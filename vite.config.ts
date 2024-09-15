@@ -24,10 +24,10 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
         '/api': {
-          target: 'http://8.154.34.171',
-          changeOrigin: true,
-          // rewrite: (path: string) => path.replace(/^\/api/, ''),
-        },
+        target: 'http://8.154.34.171:8080',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+
         '/media': {
           target: 'http://8.154.34.171:8080',
           changeOrigin: true,

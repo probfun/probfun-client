@@ -9,30 +9,31 @@
     </div>
     <div class="flex-1 bg-base-100 flex items-center justify-center">
       <div class="flex flex-col rounded-lg w-full max-w-lg">
-        <h1 class="text-6xl font-bold mb-16">注册</h1>
+        <h1 class="text-5xl font-bold mb-10">注册</h1>
         <div class="w-full flex flex-col items-center">
-          <div class="rounded-xl border-2 flex flex-col overflow-hidden w-full mb-16 shadow-lg">
-            <div class="text-2xl font-bold p-4 bg-secondary"> 学号 </div>
+          <div class="rounded-xl border-2 flex flex-col overflow-hidden w-full mb-5 shadow-lg">
+            <div class="text-xl font-bold p-4 bg-secondary"> 学号 </div>
             <input v-model="schoolID" class="input input-lg" placeholder="学号" />
           </div>
 
-          <div class="rounded-xl border-2 flex flex-col overflow-hidden w-full mb-16 shadow-lg">
-            <div class="text-2xl font-bold p-4 bg-secondary"> 用户名 </div>
+          <div class="rounded-xl border-2 flex flex-col overflow-hidden w-full mb-5 shadow-lg">
+            <div class="text-xl font-bold p-4 bg-secondary"> 用户名 </div>
             <input v-model="username" class="input input-lg" placeholder="用户名" />
           </div>
 
 
-          <div class="rounded-xl border-2 flex flex-col overflow-hidden w-full mb-10 shadow-lg">
-            <div class="text-2xl font-bold p-4 bg-secondary"> 密码 </div>
+          <div class="rounded-xl border-2 flex flex-col overflow-hidden w-full mb-5 shadow-lg">
+            <div class="text-xl font-bold p-4 bg-secondary"> 密码 </div>
             <input type="password" v-model="password" class="input input-lg" placeholder="密码" />
           </div>
 
-          <div class="rounded-xl border-2 flex flex-col overflow-hidden w-full mb-16 shadow-lg">
-            <div class="text-2xl font-bold p-4 bg-secondary"> 邮箱 </div>
+          <div class="rounded-xl border-2 flex flex-col overflow-hidden w-full mb-5 shadow-lg">
+            <div class="text-xl font-bold p-4 bg-secondary"> 邮箱 </div>
             <input v-model="email" class="input input-lg" placeholder="邮箱" />
           </div>
 
-          <button type="submit" class="btn btn-lg btn-primary rounded-full mt-2 w-full max-w-xs" @click="register"> 注册 </button>
+          <button type="submit" class="btn btn-lg btn-primary rounded-full mt-2 w-full max-w-xs" @click="register"> 注册
+          </button>
         </div>
 
         <div class="w-full flex justify-center mt-5 text-lg">
@@ -42,103 +43,113 @@
     </div>
   </div>
 
-<!--  <div class="h-screen w-screen flex">-->
-<!--    <div class="w-1/3 h-full flex items-center justify-center">-->
-<!--      <div class="logo-container">-->
-<!--        <img src="/src/assets/Frame%208.svg" alt="Logo" class="logo-icon" />-->
-<!--        <span class="text-primary text-3xl">邮趣概率</span>-->
-<!--      </div>-->
-<!--    </div>-->
+  <!--  <div class="h-screen w-screen flex">-->
+  <!--    <div class="w-1/3 h-full flex items-center justify-center">-->
+  <!--      <div class="logo-container">-->
+  <!--        <img src="/src/assets/Frame%208.svg" alt="Logo" class="logo-icon" />-->
+  <!--        <span class="text-primary text-3xl">邮趣概率</span>-->
+  <!--      </div>-->
+  <!--    </div>-->
 
-<!--    <div class="flex items-center justify-center h-full flex-1">-->
-<!--      <div class="flex flex-col px-16 py-8 bg-base-100 border-2 shadow-lg items-center rounded-lg">-->
-<!--        <h1 class="text-2xl font-bold mb-8">注册</h1>-->
-<!--        <div v-focustrap class="w-full sm:w-80 flex flex-col gap-6">-->
-<!--          <InputGroup>-->
-<!--            <InputGroupAddon>-->
-<!--              <i class="pi pi-pencil" />-->
-<!--            </InputGroupAddon>-->
-<!--            <InputText id="schoolID" v-model="schoolID" type="schoolID" placeholder="学号" autofocus fluid />-->
-<!--          </InputGroup>-->
+  <!--    <div class="flex items-center justify-center h-full flex-1">-->
+  <!--      <div class="flex flex-col px-16 py-8 bg-base-100 border-2 shadow-lg items-center rounded-lg">-->
+  <!--        <h1 class="text-2xl font-bold mb-8">注册</h1>-->
+  <!--        <div v-focustrap class="w-full sm:w-80 flex flex-col gap-6">-->
+  <!--          <InputGroup>-->
+  <!--            <InputGroupAddon>-->
+  <!--              <i class="pi pi-pencil" />-->
+  <!--            </InputGroupAddon>-->
+  <!--            <InputText id="schoolID" v-model="schoolID" type="schoolID" placeholder="学号" autofocus fluid />-->
+  <!--          </InputGroup>-->
 
-<!--          <InputGroup>-->
-<!--            <InputGroupAddon>-->
-<!--              <i class="pi pi-user" />-->
-<!--            </InputGroupAddon>-->
-<!--            <InputText id="input" v-model="username" type="text" placeholder="用户名" fluid />-->
-<!--          </InputGroup>-->
+  <!--          <InputGroup>-->
+  <!--            <InputGroupAddon>-->
+  <!--              <i class="pi pi-user" />-->
+  <!--            </InputGroupAddon>-->
+  <!--            <InputText id="input" v-model="username" type="text" placeholder="用户名" fluid />-->
+  <!--          </InputGroup>-->
 
-<!--          <InputGroup>-->
-<!--            <InputGroupAddon>-->
-<!--              <i class="pi pi-key" />-->
-<!--            </InputGroupAddon>-->
-<!--            <Password id="password" v-model="password" type="password" placeholder="密码" fluid toggleMask />-->
-<!--          </InputGroup>-->
+  <!--          <InputGroup>-->
+  <!--            <InputGroupAddon>-->
+  <!--              <i class="pi pi-key" />-->
+  <!--            </InputGroupAddon>-->
+  <!--            <Password id="password" v-model="password" type="password" placeholder="密码" fluid toggleMask />-->
+  <!--          </InputGroup>-->
 
-<!--          <InputGroup>-->
-<!--            <InputGroupAddon>-->
-<!--              <i class="pi pi-envelope" />-->
-<!--            </InputGroupAddon>-->
-<!--            <InputText id="email" v-model="email" type="email" placeholder="邮箱" fluid />-->
-<!--          </InputGroup>-->
+  <!--          <InputGroup>-->
+  <!--            <InputGroupAddon>-->
+  <!--              <i class="pi pi-envelope" />-->
+  <!--            </InputGroupAddon>-->
+  <!--            <InputText id="email" v-model="email" type="email" placeholder="邮箱" fluid />-->
+  <!--          </InputGroup>-->
 
-<!--          <div class="flex items-center gap-2">-->
-<!--            <Checkbox id="accept" v-model="accept" name="accept" value="Accept" />-->
-<!--            <label for="accept">我同意隐私政策</label>-->
-<!--          </div>-->
+  <!--          <div class="flex items-center gap-2">-->
+  <!--            <Checkbox id="accept" v-model="accept" name="accept" value="Accept" />-->
+  <!--            <label for="accept">我同意隐私政策</label>-->
+  <!--          </div>-->
 
-<!--          <button type="submit" class="btn btn-primary mt-2" @click="register"> 注册 </button>-->
-<!--        </div>-->
+  <!--          <button type="submit" class="btn btn-primary mt-2" @click="register"> 注册 </button>-->
+  <!--        </div>-->
 
-<!--        <div class="w-full flex justify-center mt-5">-->
-<!--          已有账号？点击<router-link to="/login" class="text-blue-700"> 登录 </router-link>-->
-<!--        </div>-->
-<!--      </div>-->
+  <!--        <div class="w-full flex justify-center mt-5">-->
+  <!--          已有账号？点击<router-link to="/login" class="text-blue-700"> 登录 </router-link>-->
+  <!--        </div>-->
+  <!--      </div>-->
 
-<!--    </div>-->
+  <!--    </div>-->
 
-<!--  </div>-->
+  <!--  </div>-->
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-import {useToast} from "primevue/usetoast";
-const toast = useToast();
+import { useToast } from 'primevue/usetoast';
 
 const schoolID = ref('');
 const username = ref('');
 const password = ref('');
 const email = ref('');
 const router = useRouter();
+const toast = useToast();
 
-async function register() {
+// 注册方法
+const register = async () => {
+  // 校验所有字段是否填写
   if (!schoolID.value || !username.value || !password.value || !email.value) {
     toast.add({ severity: 'warn', summary: '提示', detail: '请填写所有字段', life: 3000 });
     return;
   }
 
+  // 准备请求数据
   const requestData = {
-    id: schoolID.value,
+    studentId: schoolID.value,
     password: password.value,
-    username: username.value,
-    gender: '未知',
-    number: '随意',
+    nickname: username.value,
+    gender: '未知', // 可根据需要调整字段
+    phone: '随意',   // 确认是否需要
     introduction: '',
     email: email.value,
   };
 
   try {
+    // 发送注册请求
     const response = await axios.post('/api/usermanager/register', requestData);
-    toast.add({ severity: 'success', summary: '成功', detail: '注册成功', life: 3000 });
+
+    // 注册成功后的提示信息
+    toast.add({ severity: 'success', summary: '成功', detail: '注册成功，请登录', life: 3000 });
+
+    // 跳转到登录页面
     await router.push('/login');
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error during registration:', error);
 
-  toast.add({ severity: 'error', summary: '错误', detail: '注册失败，请重试', life: 3000 });
+    // 根据后端返回的具体错误信息进行提示
+    const errorMessage = error.response?.data?.msg || '注册失败，请重试';
+    toast.add({ severity: 'error', summary: '错误', detail: errorMessage, life: 3000 });
   }
-}
+};
 </script>
 
 <style scoped>
