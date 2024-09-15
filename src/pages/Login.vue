@@ -37,13 +37,11 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useToast } from 'primevue/usetoast';
-import { useAuthStore } from '@/store/userStore';
 
 const id = ref('');
 const password = ref('');
 const toast = useToast();
 const router = useRouter();
-const authStore = useAuthStore(); // 使用 Pinia 的 AuthStore
 
 // 登录函数
 const login = async () => {
@@ -64,8 +62,6 @@ const login = async () => {
     toast.add({ severity: 'success', summary: '成功', detail: '登录成功', group: 'br', life: 3000 });
 
     localStorage.setItem('token', data.data.token);
-
-    authStore.login(data.data.user);
 
     await router.push('/dashboard');
 

@@ -9,10 +9,8 @@ import Aura from '@primevue/themes/aura';
 import 'primeicons/primeicons.css'
 import store from './store';
 import ToastService from 'primevue/toastservice';
-import { createPinia } from 'pinia';
 
 const app = createApp(App);
-const pinia = createPinia();
 const MyPreset = definePreset(Aura, {
     semantic: {
         primary: {
@@ -44,6 +42,5 @@ app.use(PrimeVue, {
 });
 app.use(ToastService);
 app.use(store);
-app.use(pinia);
 app.use(router);
 app.mount('#app');
