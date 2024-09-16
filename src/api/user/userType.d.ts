@@ -6,5 +6,6 @@ export interface User {
     introduction: string,
     email: string,
     password: string,
-    image: file
+    image: file,
+    token: string
 }

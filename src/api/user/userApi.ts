@@ -1,11 +1,11 @@
 import { post, get } from '../request';
 import { User } from './userType';
 
-export async function loginApi(studentId: string, password: string) {
+export async function loginApi(id: string, password: string) {
     try {
-        const result = await post<User>('/usermanager/login', {
-            studentId,
-            password
+        const result = await post<User>('/api/usermanager/login', {
+            id,
+            password,
         });
         return result.data;
     }
@@ -16,13 +16,16 @@ export async function loginApi(studentId: string, password: string) {
 
 }
 
-export async function registerApi(studentId: string, nickname: string, password: string, email: string) {
+export async function registerApi(id: string, password: string, username: string, gender: string, number: string, introduction: string, email: string) {
     try {
-        const result = await post<User>('/usermanager/register', {
-            studentId,
-            nickname,
+        const result = await post<User>('/api/usermanager/register', {
+            id,
             password,
-            email
+            username,
+            gender,
+            number,
+            introduction,
+            email,
         });
         return result.data;
     }

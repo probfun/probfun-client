@@ -63,11 +63,11 @@ const logout = async () => {
 const isAuthenticated = computed(() => userStore.isAuthenticated);
 
 const user = ref({
-  nickname: computed(() => userStore.getUser?.username || ''),
-  studentId: computed(() => userStore.getUser?.id || ''),
+  nickname: computed(() => userStore.getUser.user.username || ''),
+  studentId: computed(() => userStore.getUser.user.id || ''),
   gender: 'secret',
   school: '',
-  avatarUrl: computed(() => userStore.getUser?.image || '/default-avatar.png'),
+  avatarUrl: computed(() => userStore.getUser.user.image || '/default-avatar.png'),
 });
 
 function submitForm() {
@@ -111,7 +111,7 @@ const handleFileUpload = (event: Event) => {
       <Dialog v-if="isAuthenticated">
         <DialogTrigger as-child>
           <div class="flex items-center gap-2">
-            <Label class="text-base"> {{ userStore.getUser?.username }}</Label>
+            <Label class="text-base"> {{ userStore.getUser.user.username }}</Label>
             <Button variant="ghost" size="icon" class="rounded-full">
               <img :src="userStore.getUser?.avatarUrl || '/default-avatar.png'" class="w-8 rounded-full" alt="" />
             </Button>

@@ -35,7 +35,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
+import { loginApi } from '@/api/user/userApi';
 import { useToast } from 'primevue/usetoast';
 import { useUserStore } from '@/store/index'
 
@@ -47,7 +47,7 @@ const userStore = useUserStore();
 
 
 // 登录函数
-const login = async () => {
+async function login() {
   if (!id.value || !password.value) {
     toast.add({ severity: 'warn', summary: '提示', detail: '请填写所有字段', life: 3000 });
     return;
@@ -59,13 +59,14 @@ const login = async () => {
   };
 
   try {
-    const response = await axios.post('/api/usermanager/login', requestData);
-    const data = response.data;
+    const response = await loginApi(requestData.id, requestData.password);
+    const data = response;
 
     toast.add({ severity: 'success', summary: '成功', detail: '登录成功', group: 'br', life: 3000 });
 
-    localStorage.setItem('token', data.data.token); // 存储令牌
-    userStore.login(data.data.user, data.data.token); // 更新 Pinia 状态，存储用户信息
+    localStorage.setItem('token', data.token); // 存储令牌
+    userStore.login(data, data.token); // 更新 Pinia 状态，存储用户信息
+
     await router.push('/dashboard');
 
   } catch (error: any) {

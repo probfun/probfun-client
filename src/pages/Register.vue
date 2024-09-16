@@ -104,7 +104,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
+import { registerApi } from '@/api/user/userApi';
 import { useToast } from 'primevue/usetoast';
 
 const schoolID = ref('');
@@ -115,7 +115,7 @@ const router = useRouter();
 const toast = useToast();
 
 // 注册方法
-const register = async () => {
+async function register() {
   // 校验所有字段是否填写
   if (!schoolID.value || !username.value || !password.value || !email.value) {
     toast.add({ severity: 'warn', summary: '提示', detail: '请填写所有字段', life: 3000 });
@@ -124,18 +124,18 @@ const register = async () => {
 
   // 准备请求数据
   const requestData = {
-    studentId: schoolID.value,
+    id: schoolID.value,
     password: password.value,
-    nickname: username.value,
+    username: username.value,
     gender: '未知', // 可根据需要调整字段
-    phone: '随意',   // 确认是否需要
+    number: '随意',   // 确认是否需要
     introduction: '',
     email: email.value,
   };
 
   try {
     // 发送注册请求
-    const response = await axios.post('/api/usermanager/register', requestData);
+    const response = await registerApi(requestData.id, requestData.password, requestData.username, requestData.gender, requestData.number, requestData.introduction, requestData.email);
 
     // 注册成功后的提示信息
     toast.add({ severity: 'success', summary: '成功', detail: '注册成功，请登录', life: 3000 });

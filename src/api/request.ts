@@ -32,10 +32,6 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
     (response: AxiosResponse<ResponseData>) => {
-        const res = response.data;
-        if (res.code !== 200) {
-            return Promise.reject(new Error(res.message || 'Error'));
-        }
         return response;
     },
     (error) => {
