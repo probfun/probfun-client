@@ -58,9 +58,6 @@ const isActiveRoute = (itemRoute: string) => {
 
 const logout = async () => {
   userStore.logout();  // 清除 Pinia 中的用户状态
-
-  // 可选：登出后重定向到登录页
-
 };
 
 const isAuthenticated = computed(() => userStore.isAuthenticated);
@@ -238,9 +235,6 @@ const handleFileUpload = (event: Event) => {
           <DialogFooter>
             <Button type="submit" form="dialogForm">
               保存设置
-            </Button>
-            <Button @click="logout" type="submit" form="dialogForm">
-              退出登录
             </Button>
           </DialogFooter>
         </DialogContent>

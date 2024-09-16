@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { Book, MessageSquareMore, Star, Bot, User, Sun, LogOut, CircleHelp, Dices } from 'lucide-vue-next';
-import {ref} from "vue";
-import {useRoute, useRouter} from "vue-router";
-
+import { ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useUserStore } from '@/store/index';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger
 } from '@/components/ui/tooltip'
-import {Label} from "@/components/ui/label";
-import {Button} from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { vAutoAnimate } from "@formkit/auto-animate";
-import {Input} from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
 
 interface SideBarItem {
   label: string;
@@ -22,6 +22,7 @@ interface SideBarItem {
 }
 
 const route = useRoute();
+const userStore = useUserStore();
 
 function toggleDrawer() {
   showIndex.value = !showIndex.value;
@@ -47,17 +48,17 @@ const sideBarItem = ref<SideBarItem[]>([
   },
   {
     label: '收藏',
-    icon: Star ,
+    icon: Star,
     route: '/dashboard'
   },
   {
     label: '大模型回答',
-    icon: Bot ,
+    icon: Bot,
     route: '/dashboard'
   },
   {
     label: '个人资料',
-    icon: User ,
+    icon: User,
     route: '/dashboard'
   },
   {
@@ -76,7 +77,9 @@ const sideBarBottomItem = ref<SideBarItem[]>([
   {
     label: '登出',
     icon: LogOut,
-    route: '/dashboard'
+    command: () => {
+      userStore.logout();
+    }
   }
 ]);
 
@@ -182,9 +185,9 @@ const comparisonOfDistributions = [
               <Tooltip>
                 <TooltipTrigger>
                   <Button @click="() => {
-                  if (item.route) router.push(item.route);
-                  else if (item.command) item.command();
-                }" size="icon" variant="ghost">
+                    if (item.route) router.push(item.route);
+                    else if (item.command) item.command();
+                  }" size="icon" variant="ghost">
                     <component :is="item.icon" class="size-5"></component>
                   </Button>
                 </TooltipTrigger>
@@ -203,9 +206,9 @@ const comparisonOfDistributions = [
               <Tooltip>
                 <TooltipTrigger>
                   <Button @click="() => {
-                 if (item.route) router.push(item.route);
-                 else if (item.command) item.command();
-               }" size="icon" variant="ghost">
+                    if (item.route) router.push(item.route);
+                    else if (item.command) item.command();
+                  }" size="icon" variant="ghost">
                     <component :is="item.icon" class="size-5"></component>
                   </Button>
                 </TooltipTrigger>
@@ -224,19 +227,19 @@ const comparisonOfDistributions = [
       <div class="drawer-side">
         <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
         <div class="bg-background min-h-full w-72 max-w-full p-2 ml-12 pt-14">
-<!--          <div class="flex justify-between p-3 pb-5 border-b">-->
-<!--            <label class="font-bold text-2xl">-->
-<!--              实验-->
-<!--            </label>-->
-<!--            <div>-->
-<!--              <button class="btn btn-ghost btn-circle btn-sm" for="my-drawer" @click="toggleDrawer">-->
-<!--                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"-->
-<!--                     stroke="currentColor" class="size-6">-->
-<!--                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />-->
-<!--                </svg>-->
-<!--              </button>-->
-<!--            </div>-->
-<!--          </div>-->
+          <!--          <div class="flex justify-between p-3 pb-5 border-b">-->
+          <!--            <label class="font-bold text-2xl">-->
+          <!--              实验-->
+          <!--            </label>-->
+          <!--            <div>-->
+          <!--              <button class="btn btn-ghost btn-circle btn-sm" for="my-drawer" @click="toggleDrawer">-->
+          <!--                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"-->
+          <!--                     stroke="currentColor" class="size-6">-->
+          <!--                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />-->
+          <!--                </svg>-->
+          <!--              </button>-->
+          <!--            </div>-->
+          <!--          </div>-->
 
           <ul class="menu rounded-box w-full">
             <li>
@@ -247,7 +250,7 @@ const comparisonOfDistributions = [
                 <ul>
                   <li v-for="item in chapter1Items" :key="item.label">
                     <a @click="() => { router.push(item.route); toggleDrawer(); }"
-                       :class="{ 'active': isActiveRoute(item.route) }">
+                      :class="{ 'active': isActiveRoute(item.route) }">
                       <i :class="item.icon"></i> {{ item.label }}
                     </a>
                   </li>
@@ -263,7 +266,7 @@ const comparisonOfDistributions = [
                 <ul>
                   <li v-for="item in chapter2Items" :key="item.label">
                     <a @click="() => { router.push(item.route); toggleDrawer(); }"
-                       :class="{ 'active': isActiveRoute(item.route) }">
+                      :class="{ 'active': isActiveRoute(item.route) }">
                       <i :class="item.icon"></i> {{ item.label }}
                     </a>
                   </li>
@@ -273,7 +276,7 @@ const comparisonOfDistributions = [
                       <ul>
                         <li v-for="item in comparisonOfDistributions" :key="item.label">
                           <a @click="() => { router.push(item.route); toggleDrawer(); }"
-                             :class="{ 'active': isActiveRoute(item.route) }">
+                            :class="{ 'active': isActiveRoute(item.route) }">
                             <i :class="item.icon"></i> {{ item.label }}
                           </a>
                         </li>
@@ -292,12 +295,14 @@ const comparisonOfDistributions = [
 </template>
 
 <style scoped>
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 0.2s;
   transition-timing-function: ease-in-out;
 }
 
-.fade-enter-from, .fade-leave-to {
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
 }
 </style>
