@@ -190,9 +190,9 @@ const content = `
 
 泊松分布和指数分布之间有着紧密的关系，特别是在描述随机事件的时间和数量方面。以下是两者的详细关系及相关公式：
 
-### 1. 泊松分布 (Poisson Distribution)
+### 1. 泊松分布 $(Poisson Distribution)$
 
-泊松分布描述的是在固定时间内随机事件发生的次数。其概率质量函数（PMF）为：
+泊松分布描述的是在固定时间内随机事件发生的次数。其概率质量函数$（PMF）$为：
 
 $$
 P(X = k) = \\frac{{\\lambda^k e^{-\\lambda}}}{{k!}}
@@ -202,9 +202,9 @@ $$
 - $$ \\lambda $$ 是单位时间内事件发生的平均次数。
 - $$ k $$ 是事件的具体发生次数（$$ k = 0, 1, 2, \\dots $$）。
 
-### 2. 指数分布 (Exponential Distribution)
+### 2. 指数分布 $(Exponential Distribution)$
 
-指数分布描述的是两个连续事件之间的时间间隔。其概率密度函数（PDF）为：
+指数分布描述的是两个连续事件之间的时间间隔。其概率密度函数$（PDF）$为：
 
 $$
 f(t) = \\lambda e^{-\\lambda t}, \\quad t \\geq 0
