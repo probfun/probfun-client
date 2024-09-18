@@ -1,40 +1,326 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
-import katex from 'katex';
-import 'katex/dist/katex.min.css';
+import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { toMarkdown } from '@/utils/markdown';
-import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
+import katex from 'katex';
+import { computed, onMounted, ref, watch } from 'vue'
+import 'katex/dist/katex.min.css';
 
-const probability = ref([0.5]);  // Probability of success (p)
-const fixedN = ref([3]);  // 固定的试验次数 n
+const probability = ref([0.5]); // Probability of success (p)
+const fixedN = ref([3]); // 固定的试验次数 n
 
 const isChart1 = ref(true);
 const isChart2 = ref(false);
 const isChart3 = ref(false);
-const toggleChart1 = () => {
-    isChart1.value = true;
-    isChart2.value = false;
-    isChart3.value = false;
+function toggleChart1() {
+  isChart1.value = true;
+  isChart2.value = false;
+  isChart3.value = false;
 }
-const toggleChart2 = () => {
-    isChart1.value = false;
-    isChart2.value = true;
-    isChart3.value = false;
+function toggleChart2() {
+  isChart1.value = false;
+  isChart2.value = true;
+  isChart3.value = false;
 }
-const toggleChart3 = () => {
-    isChart1.value = false;
-    isChart2.value = false;
-    isChart3.value = true;
+function toggleChart3() {
+  isChart1.value = false;
+  isChart2.value = false;
+  isChart3.value = true;
 }
 
-const save = ref(false);
-const saveImg = () => {
-    save.value = true;
+const chartData1 = ref();
+const chartOptions1 = ref();
+function setChartData1() {
+  const documentStyle = getComputedStyle(document.documentElement);
+  const p = probability.value[0];
+
+  const kValues = Array.from({ length: 20 }, (_, i) => i + 1);
+  const data = kValues.map(k => (1 - p) ** (k - 1) * p); // 计算几何分布的概率
+
+  return {
+    labels: kValues,
+    datasets: [
+      {
+        label: '几何分布',
+        data,
+        fill: false,
+        borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
+        tension: 0.4,
+      },
+    ],
+  };
 }
-const back = () => {
-    save.value = false;
-    chartData.value.labels = [];
-    chartData.value.datasets = [];
+function setChartOptions1() {
+  const documentStyle = getComputedStyle(document.documentElement);
+  const textColor = documentStyle.getPropertyValue('--p-text-color');
+  const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
+  const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+
+  return {
+    maintainAspectRatio: false,
+    aspectRatio: 0.6,
+    plugins: {
+      legend: {
+        labels: {
+          color: textColor,
+        },
+      },
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: '试验次数 (k)',
+          color: textColor,
+        },
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: '概率 (P(X = k))',
+          color: textColor,
+        },
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+        },
+      },
+    },
+  };
+}
+
+const chartData = ref<{
+  labels: number[]
+  datasets: {
+    label: string
+    backgroundColor: string
+    borderColor: string
+    data: number[]
+    fill: boolean
+  }[]
+}>({
+  labels: [],
+  datasets: [],
+});
+
+const save = ref(false);
+
+function addNewDataset() {
+  if (!isChart1.value) {
+    return;
+  }
+  if (!save.value) {
+    return;
+  }
+
+  const documentStyle = getComputedStyle(document.documentElement);
+  const labels = Array.from({ length: 20 }, (_, i) => i + 1);
+  const data = [];
+
+  const p = probability.value[0];
+  // 计算几何分布的概率，并将结果直接推入 data 数组
+  for (let k = 1; k <= 20; k++) {
+    const probabilityOfK = (1 - p) ** (k - 1) * p;
+    data.push(probabilityOfK);
+  }
+
+  // 检查是否已经存在相同的 dataset
+  const existingDataset = chartData.value.datasets.find(
+    dataset => dataset.label === `probability=${probability.value[0]}`,
+  );
+
+  // 如果已经存在相同的 dataset，不添加
+  if (existingDataset) {
+    return;
+  }
+
+  // 更新 chartData，添加新的 dataset
+  chartData.value.labels = labels;
+  chartData.value.datasets.push({
+    label: `probability=${probability.value[0]}`,
+    backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
+    borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
+    data,
+    fill: false,
+  });
+}
+
+const chartData2 = ref();
+const chartOptions2 = ref();
+function setChartData2() {
+  const documentStyle = getComputedStyle(document.documentElement);
+  const p = probability.value[0];
+
+  const kValues = Array.from({ length: 20 }, (_, i) => i + 1); // 生成1到10的k值
+  const data = kValues.map(k => (1 - p) ** k * p); // 计算几何分布的概率
+
+  return {
+    labels: kValues,
+    datasets: [
+      {
+        label: '几何分布',
+        data,
+        fill: false,
+        borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
+        tension: 0.4,
+      },
+    ],
+  };
+}
+function setChartOptions2() {
+  const documentStyle = getComputedStyle(document.documentElement);
+  const textColor = documentStyle.getPropertyValue('--p-text-color');
+  const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
+  const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+
+  return {
+    maintainAspectRatio: false,
+    aspectRatio: 0.6,
+    plugins: {
+      legend: {
+        labels: {
+          color: textColor,
+        },
+      },
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: '试验次数 (k)',
+          color: textColor,
+        },
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: '概率 (P(X = k))',
+          color: textColor,
+        },
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+        },
+      },
+    },
+  };
+}
+
+const chartData3 = ref();
+const chartOptions3 = ref();
+function setChartData3() {
+  const documentStyle = getComputedStyle(document.documentElement);
+  const p = probability.value[0];
+  const n = fixedN.value[0];
+
+  const kValues = Array.from({ length: 20 }, (_, i) => i + 1); // 生成1到20的k值
+  const data1 = kValues.map(k => (1 - p) ** k); // 计算 P(X > k) 的概率
+  const data2 = kValues.map(k => (1 - p) ** (k + n)); // 计算 P(X > k + n) 的概率
+
+  return {
+    labels: kValues,
+    datasets: [
+      {
+        label: '几何分布 P(X > k)',
+        data: data1,
+        fill: false,
+        borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
+        tension: 0.4,
+      },
+      {
+        label: `条件分布 P(X > k + ${n} | X > ${n})`,
+        data: data2,
+        fill: false,
+        borderColor: documentStyle.getPropertyValue('--p-orange-500'),
+        tension: 0.4,
+        borderDash: [5, 5],
+        pointBackgroundColor: documentStyle.getPropertyValue('--p-orange-500'),
+        pointBorderColor: documentStyle.getPropertyValue('--p-orange-500'),
+        spanGaps: true,
+        borderJoinStyle: 'miter',
+      },
+      {
+        label: '',
+        data: kValues.map((k, _) => (k >= 1 && k <= 1 + n) ? (1 - p) ** (1 + n) : null), // 限制x范围的y值
+        fill: false,
+        borderColor: documentStyle.getPropertyValue('--p-red-500'), // 设置辅助线的颜色
+        borderWidth: 1, // 辅助线的宽度
+        pointRadius: 0, // 不显示点
+        borderDash: [10, 5], // 虚线样式
+        tension: 0, // 线的张力设置为 0，确保为直线
+      },
+    ],
+  };
+}
+function setChartOptions3() {
+  const documentStyle = getComputedStyle(document.documentElement);
+  const textColor = documentStyle.getPropertyValue('--p-text-color');
+  const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
+  const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+
+  return {
+    maintainAspectRatio: false,
+    aspectRatio: 0.6,
+    plugins: {
+      legend: {
+        labels: {
+          color: textColor,
+        },
+      },
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: '试验次数 (k)',
+          color: textColor,
+        },
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: '概率',
+          color: textColor,
+        },
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+        },
+      },
+    },
+  };
+}
+
+function saveImg() {
+  save.value = true;
+}
+function back() {
+  save.value = false;
+  chartData.value.labels = [];
+  chartData.value.datasets = [];
 }
 
 const oneFormula = computed(() => `P(X = k) = (1 - ${probability.value[0]})^{k-1} \\cdot ${probability.value[0]}`);
@@ -46,325 +332,41 @@ const twoContainer = ref<HTMLElement | null>(null);
 const threeFormula = computed(() => `P(X > ${fixedN.value[0]} + k \\mid X > ${fixedN.value[0]}) = P(X > k) = (1 - ${probability.value[0]})^k`);
 const threeContainer = ref<HTMLElement | null>(null);
 
-const renderFormula = () => {
-    if (oneContainer.value) {
-        katex.render(oneFormula.value, oneContainer.value, {
-            throwOnError: false
-        });
-    }
-    if (twoContainer.value) {
-        katex.render(twoFormula.value, twoContainer.value, {
-            throwOnError: false
-        });
-    }
-    if (threeContainer.value) {
-        katex.render(threeFormula.value, threeContainer.value, {
-            throwOnError: false
-        });
-    }
-};
+function renderFormula() {
+  if (oneContainer.value) {
+    katex.render(oneFormula.value, oneContainer.value, {
+      throwOnError: false,
+    });
+  }
+  if (twoContainer.value) {
+    katex.render(twoFormula.value, twoContainer.value, {
+      throwOnError: false,
+    });
+  }
+  if (threeContainer.value) {
+    katex.render(threeFormula.value, threeContainer.value, {
+      throwOnError: false,
+    });
+  }
+}
 
 onMounted(() => {
-    chartData1.value = setChartData1();
-    chartOptions1.value = setChartOptions1();
-    chartData2.value = setChartData2();
-    chartOptions2.value = setChartOptions2();
-    chartData3.value = setChartData3();
-    chartOptions3.value = setChartOptions3();
-    renderFormula();
+  chartData1.value = setChartData1();
+  chartOptions1.value = setChartOptions1();
+  chartData2.value = setChartData2();
+  chartOptions2.value = setChartOptions2();
+  chartData3.value = setChartData3();
+  chartOptions3.value = setChartOptions3();
+  renderFormula();
 });
-
-const chartData1 = ref();
-const chartOptions1 = ref();
-const setChartData1 = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
-    const p = probability.value[0];
-
-    const kValues = Array.from({ length: 20 }, (_, i) => i + 1);
-    const data = kValues.map(k => Math.pow(1 - p, k - 1) * p); // 计算几何分布的概率
-
-    return {
-        labels: kValues,
-        datasets: [
-            {
-                label: '几何分布',
-                data: data,
-                fill: false,
-                borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-                tension: 0.4
-            },
-        ]
-    };
-};
-const setChartOptions1 = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
-    const textColor = documentStyle.getPropertyValue('--p-text-color');
-    const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
-    const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
-
-    return {
-        maintainAspectRatio: false,
-        aspectRatio: 0.6,
-        plugins: {
-            legend: {
-                labels: {
-                    color: textColor
-                }
-            }
-        },
-        scales: {
-            x: {
-                title: {
-                    display: true,
-                    text: '试验次数 (k)',
-                    color: textColor
-                },
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder
-                }
-            },
-            y: {
-                title: {
-                    display: true,
-                    text: '概率 (P(X = k))',
-                    color: textColor
-                },
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder
-                }
-            }
-        }
-    };
-}
-
-const chartData = ref<{
-    labels: number[],
-    datasets: {
-        label: string,
-        backgroundColor: string,
-        borderColor: string,
-        data: number[],
-        fill: boolean
-    }[]
-}>({
-    labels: [],
-    datasets: []
-});
-const addNewDataset = () => {
-    if (!isChart1.value) {
-        return;
-    }
-    if (!save.value) {
-        return;
-    }
-
-    const documentStyle = getComputedStyle(document.documentElement);
-    const labels = Array.from({ length: 20 }, (_, i) => i + 1);
-    const data = [];
-
-    const p = probability.value[0];
-    // 计算几何分布的概率，并将结果直接推入 data 数组
-    for (let k = 1; k <= 20; k++) {
-        const probabilityOfK = Math.pow(1 - p, k - 1) * p;
-        data.push(probabilityOfK);
-    }
-
-    // 检查是否已经存在相同的 dataset
-    const existingDataset = chartData.value.datasets.find(
-        (dataset) => dataset.label === `probability=${probability.value[0]}`
-    );
-
-    // 如果已经存在相同的 dataset，不添加
-    if (existingDataset) {
-        return;
-    }
-
-    // 更新 chartData，添加新的 dataset
-    chartData.value.labels = labels;
-    chartData.value.datasets.push({
-        label: `probability=${probability.value[0]}`,
-        backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
-        borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-        data: data,
-        fill: false
-    });
-};
-
-const chartData2 = ref();
-const chartOptions2 = ref();
-const setChartData2 = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
-    const p = probability.value[0];
-
-    const kValues = Array.from({ length: 20 }, (_, i) => i + 1);  // 生成1到10的k值
-    const data = kValues.map(k => Math.pow(1 - p, k) * p); // 计算几何分布的概率
-
-    return {
-        labels: kValues,
-        datasets: [
-            {
-                label: '几何分布',
-                data: data,
-                fill: false,
-                borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-                tension: 0.4
-            },
-        ]
-    };
-};
-const setChartOptions2 = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
-    const textColor = documentStyle.getPropertyValue('--p-text-color');
-    const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
-    const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
-
-    return {
-        maintainAspectRatio: false,
-        aspectRatio: 0.6,
-        plugins: {
-            legend: {
-                labels: {
-                    color: textColor
-                }
-            }
-        },
-        scales: {
-            x: {
-                title: {
-                    display: true,
-                    text: '试验次数 (k)',
-                    color: textColor
-                },
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder
-                }
-            },
-            y: {
-                title: {
-                    display: true,
-                    text: '概率 (P(X = k))',
-                    color: textColor
-                },
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder
-                }
-            }
-        }
-    };
-}
-
-const chartData3 = ref();
-const chartOptions3 = ref();
-const setChartData3 = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
-    const p = probability.value[0];
-    const n = fixedN.value[0];
-
-    const kValues = Array.from({ length: 20 }, (_, i) => i + 1);  // 生成1到20的k值
-    const data1 = kValues.map(k => Math.pow(1 - p, k)); // 计算 P(X > k) 的概率
-    const data2 = kValues.map(k => Math.pow(1 - p, k + n)); // 计算 P(X > k + n) 的概率
-
-    return {
-        labels: kValues,
-        datasets: [
-            {
-                label: '几何分布 P(X > k)',
-                data: data1,
-                fill: false,
-                borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-                tension: 0.4
-            },
-            {
-                label: `条件分布 P(X > k + ${n} | X > ${n})`,
-                data: data2,
-                fill: false,
-                borderColor: documentStyle.getPropertyValue('--p-orange-500'),
-                tension: 0.4,
-                borderDash: [5, 5],
-                pointBackgroundColor: documentStyle.getPropertyValue('--p-orange-500'),
-                pointBorderColor: documentStyle.getPropertyValue('--p-orange-500'),
-                spanGaps: true,
-                borderJoinStyle: 'miter'
-            },
-            {
-                label: '',
-                data: kValues.map((k, index) => (k >= 1 && k <= 1 + n) ? Math.pow(1 - p, 1 + n) : null), // 限制x范围的y值
-                fill: false,
-                borderColor: documentStyle.getPropertyValue('--p-red-500'), // 设置辅助线的颜色
-                borderWidth: 1, // 辅助线的宽度
-                pointRadius: 0, // 不显示点
-                borderDash: [10, 5], // 虚线样式
-                tension: 0 // 线的张力设置为 0，确保为直线
-            }
-        ]
-    };
-};
-const setChartOptions3 = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
-    const textColor = documentStyle.getPropertyValue('--p-text-color');
-    const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
-    const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
-
-    return {
-        maintainAspectRatio: false,
-        aspectRatio: 0.6,
-        plugins: {
-            legend: {
-                labels: {
-                    color: textColor
-                }
-            }
-        },
-        scales: {
-            x: {
-                title: {
-                    display: true,
-                    text: '试验次数 (k)',
-                    color: textColor
-                },
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder
-                }
-            },
-            y: {
-                title: {
-                    display: true,
-                    text: '概率',
-                    color: textColor
-                },
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder
-                }
-            }
-        }
-    };
-}
 
 // 监听 probability 的变化以动态更新图像
 watch([probability, fixedN], () => {
-    chartData1.value = setChartData1();
-    chartData2.value = setChartData2();
-    chartData3.value = setChartData3();
-    addNewDataset();
-    renderFormula();
+  chartData1.value = setChartData1();
+  chartData2.value = setChartData2();
+  chartData3.value = setChartData3();
+  addNewDataset();
+  renderFormula();
 });
 
 const content = `
@@ -424,56 +426,72 @@ $$
 </script>
 
 <template>
-    <experiment-board title="二项分布" :tags="[]">
-        <template #experiment>
-            <Chart v-if="isChart1 && !save" type="line" :data="chartData1" :options="chartOptions1"
-                class="h-full w-full" />
-            <Chart v-if="isChart1 && save" type="line" :data="chartData" :options="chartOptions1"
-                class="h-full w-full" />
-            <Chart v-if="isChart2" type="line" :data="chartData2" :options="chartOptions2" class="h-full w-full" />
-            <Chart v-if="isChart3" type="line" :data="chartData3" :options="chartOptions3" class="h-full w-full" />
-        </template>
-        <template #parameter>
-            <div class="w-full h-full flex flex-col items-center justify-center">
-                <div v-if="isChart1">
-                    <button v-if="!save" @click="saveImg" class="btn mb-5">显示历史图像模式</button>
-                    <div>
-                        <button v-if="save" @click="back" class="btn mb-5 mr-2">返回</button>
-                    </div>
-                </div>
-                <div class="w-full flex items-center justify-center mb-5">
-                    <div class="dropdown">
-                        <div tabindex="0" role="button" class="btn m-1">点我切换</div>
-                        <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-                            <li @click="toggleChart1"><a>直到第一次成功的次数</a></li>
-                            <li @click="toggleChart2"><a>第一次成功前的失败次数</a></li>
-                            <li @click="toggleChart3"><a>几何分布的无记忆性</a></li>
-                        </ul>
-                    </div>
-                    <div v-show="isChart1" ref="oneContainer" class="text-xl"></div>
-                    <div v-show="isChart2" ref="twoContainer" class="text-xl"></div>
-                    <div v-show="isChart3" ref="threeContainer" class="text-xl"></div>
-                </div>
-                <div class="flex w-full mb-5">
-                    <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                        <p> Probability of success </p>
-                        <InputNumber v-model.number="probability[0]" :min-fraction-digits="1" />
-                        <Slider :min="0" :max="1" :step="0.1" v-model="probability" class="w-48" />
-                    </div>
-                    <div v-if="isChart3" class="flex flex-col flex-1 items-center justify-center space-y-5">
-                        <p> Fixed number of trial </p>
-                        <InputNumber v-model.number="fixedN[0]" />
-                        <Slider :min="0" :max="9" :step="1" v-model="fixedN" class="w-48" />
-                    </div>
-                </div>
+  <ExperimentBoard title="二项分布" :tags="[]">
+    <template #experiment>
+      <Chart
+        v-if="isChart1 && !save" type="line" :data="chartData1" :options="chartOptions1"
+        class="h-full w-full"
+      />
+      <Chart
+        v-if="isChart1 && save" type="line" :data="chartData" :options="chartOptions1"
+        class="h-full w-full"
+      />
+      <Chart v-if="isChart2" type="line" :data="chartData2" :options="chartOptions2" class="h-full w-full" />
+      <Chart v-if="isChart3" type="line" :data="chartData3" :options="chartOptions3" class="h-full w-full" />
+    </template>
+    <template #parameter>
+      <div class="w-full h-full flex flex-col items-center justify-center">
+        <div v-if="isChart1">
+          <button v-if="!save" class="btn mb-5" @click="saveImg">
+            显示历史图像模式
+          </button>
+          <div>
+            <button v-if="save" class="btn mb-5 mr-2" @click="back">
+              返回
+            </button>
+          </div>
+        </div>
+        <div class="w-full flex items-center justify-center mb-5">
+          <div class="dropdown">
+            <div tabindex="0" role="button" class="btn m-1">
+              点我切换
             </div>
-        </template>
-        <template #conclusion>
-            <div class="w-full h-full p-5">
-                <div v-html="toMarkdown(content)" class="prose max-w-full text-base-content"></div>
-            </div>
-        </template>
-    </experiment-board>
+            <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+              <li @click="toggleChart1">
+                <a>直到第一次成功的次数</a>
+              </li>
+              <li @click="toggleChart2">
+                <a>第一次成功前的失败次数</a>
+              </li>
+              <li @click="toggleChart3">
+                <a>几何分布的无记忆性</a>
+              </li>
+            </ul>
+          </div>
+          <div v-show="isChart1" ref="oneContainer" class="text-xl" />
+          <div v-show="isChart2" ref="twoContainer" class="text-xl" />
+          <div v-show="isChart3" ref="threeContainer" class="text-xl" />
+        </div>
+        <div class="flex w-full mb-5">
+          <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+            <p> Probability of success </p>
+            <InputNumber v-model.number="probability[0]" :min-fraction-digits="1" />
+            <Slider v-model="probability" :min="0" :max="1" :step="0.1" class="w-48" />
+          </div>
+          <div v-if="isChart3" class="flex flex-col flex-1 items-center justify-center space-y-5">
+            <p> Fixed number of trial </p>
+            <InputNumber v-model.number="fixedN[0]" />
+            <Slider v-model="fixedN" :min="0" :max="9" :step="1" class="w-48" />
+          </div>
+        </div>
+      </div>
+    </template>
+    <template #conclusion>
+      <div class="w-full h-full p-5">
+        <div class="prose max-w-full" v-html="toMarkdown(content)" />
+      </div>
+    </template>
+  </ExperimentBoard>
 </template>
 
 <style scoped></style>

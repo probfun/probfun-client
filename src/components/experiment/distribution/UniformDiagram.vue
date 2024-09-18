@@ -1,20 +1,23 @@
 <script setup lang="ts">
-declare const Desmos: any;
 import { onMounted, ref, watch } from 'vue';
+
+// 用来存储历史表达式
+
+const props = defineProps<{
+  a: number
+  b: number
+  k: number
+  m: number
+  showHistory: boolean
+}>();
+
+declare const Desmos: any;
 
 const elt = ref<HTMLDivElement | null>(null);
 let calculator: any = null;
 
 let idNumber = 0;
-const historyExpressions = ref<any[]>([]); // 用来存储历史表达式
-
-const props = defineProps<{
-  a: number;
-  b: number;
-  k: number;
-  m: number;
-  showHistory: boolean;
-}>();
+const historyExpressions = ref<any[]>([]);
 
 onMounted(() => {
   const options = {
@@ -30,28 +33,29 @@ onMounted(() => {
   drawUniformDistribution();
 });
 
-const drawUniformDistribution = () => {
-  if (!calculator) return;
+function drawUniformDistribution() {
+  if (!calculator)
+    return;
 
   // 绘制左侧区间 (x < a)，函数值为 0
   const leftSide = {
     id: 'left_side',
     latex: `f_1(x) = 0 + ${props.m} \\{x < ${props.a}\\}`,
-    color: Desmos.Colors.BLUE
+    color: Desmos.Colors.BLUE,
   };
 
   // 绘制中间区间 (a <= x <= b)，函数值为 1 / (b - a)
   const middleSection = {
     id: 'middle_section',
     latex: `f_2(x) = \\frac{${props.k}}{${props.b} - ${props.a}} + ${props.m} \\{${props.a} \\leq x \\leq ${props.b}\\}`,
-    color: Desmos.Colors.BLUE
+    color: Desmos.Colors.BLUE,
   };
 
   // 绘制右侧区间 (x > b)，函数值为 0
   const rightSide = {
     id: 'right_side',
     latex: `f_3(x) = 0 + ${props.m} \\{x > ${props.b}\\}`,
-    color: Desmos.Colors.BLUE
+    color: Desmos.Colors.BLUE,
   };
 
   // 绘制 x = a 处的垂直线段
@@ -60,9 +64,9 @@ const drawUniformDistribution = () => {
     latex: `\\left( ${props.a}, t \\right)`,
     parametricDomain: {
       min: props.m,
-      max: props.k / (props.b - props.a) + props.m
+      max: props.k / (props.b - props.a) + props.m,
     },
-    color: Desmos.Colors.BLUE
+    color: Desmos.Colors.BLUE,
   };
 
   // 绘制 x = b 处的垂直线段
@@ -71,9 +75,9 @@ const drawUniformDistribution = () => {
     latex: `\\left( ${props.b}, t \\right)`,
     parametricDomain: {
       min: props.m,
-      max: props.k / (props.b - props.a) + props.m
+      max: props.k / (props.b - props.a) + props.m,
     },
-    color: Desmos.Colors.BLUE
+    color: Desmos.Colors.BLUE,
   };
 
   if (props.showHistory) {
@@ -116,7 +120,7 @@ const drawUniformDistribution = () => {
     bottom: -0.1,
     top: props.k / (props.b - props.a) + props.m + 1,
   });
-};
+}
 
 // 监听 props 的变化以动态更新图像
 watch(() => [props.a, props.b, props.k, props.m, props.showHistory], () => {
@@ -125,7 +129,7 @@ watch(() => [props.a, props.b, props.k, props.m, props.showHistory], () => {
 </script>
 
 <template>
-  <div id="elt" class="w-full h-full" ref="elt"></div>
+  <div id="elt" ref="elt" class="w-full h-full" />
 </template>
 
 <style scoped></style>

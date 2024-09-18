@@ -1,11 +1,12 @@
 export interface User {
-    id: string,
-    username: string,
-    gender: string,
-    number: string,
-    introduction: string,
-    email: string,
-    password: string,
-    image: file,
-    token: string
+  uid: string
+  studentId: string
+  nickname: string
+  gender: string
+  email: string
+  phone: string
+  school: string
+  major: string
+  grade: number
+  avatarUrl: string
 }

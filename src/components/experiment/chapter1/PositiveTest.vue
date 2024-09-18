@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import {computed, onMounted, ref, watch} from 'vue';
+import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
+import { toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
+import { computed, onMounted, ref, watch } from 'vue';
 import 'katex/dist/katex.min.css';
-import {toMarkdown} from '@/utils/markdown';
-import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
 
 const katexFormula = computed(() => `
   \\begin{aligned}
@@ -13,13 +13,13 @@ const katexFormula = computed(() => `
   \\end{aligned}
 `);
 const katexContainer = ref<HTMLElement | null>(null);
-const renderFormula = () => {
+function renderFormula() {
   if (katexContainer.value) {
     katex.render(katexFormula.value, katexContainer.value, {
-      throwOnError: false
+      throwOnError: false,
     });
   }
-};
+}
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 
@@ -49,7 +49,7 @@ const result = computed(() => {
   const truePositives = sensitivity.value[0] * infectedPopulation; // 真阳性数量
   const falsePositives = (1 - specificity.value[0]) * healthyPopulation; // 假阳性数量
 
-   // 总阳性人数
+  // 总阳性人数
   return Math.round(truePositives + falsePositives);
 });
 
@@ -60,12 +60,12 @@ const chartData = computed(() => ({
     {
       data: [
         1 - truePositiveRate.value,
-        truePositiveRate.value
+        truePositiveRate.value,
       ],
       backgroundColor: ['#00C4CC', '#FF7F0E'],
-      hoverBackgroundColor: ['#0097A7', '#FF570E']
-    }
-  ]
+      hoverBackgroundColor: ['#0097A7', '#FF570E'],
+    },
+  ],
 }));
 
 // 饼图选项
@@ -78,19 +78,21 @@ const chartOptions = computed(() => {
       legend: {
         labels: {
           usePointStyle: true,
-          color: textColor
-        }
-      }
-    }
+          color: textColor,
+        },
+      },
+    },
   };
 });
 
 // 初始化图形
-const drawCanvas = () => {
+function drawCanvas() {
   const canvas = canvasRef.value;
-  if (!canvas) return;
+  if (!canvas)
+    return;
   const ctx = canvas.getContext('2d');
-  if (!ctx) return;
+  if (!ctx)
+    return;
 
   // 清空画布
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -109,7 +111,7 @@ const drawCanvas = () => {
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
   }
-};
+}
 
 // 计算感染和健康人数
 const infectedDots = computed(() => 1000 * infectionRate.value[0] * sensitivity.value[0] + (1000 - 1000 * infectionRate.value[0]) * (1 - specificity.value[0]));
@@ -177,12 +179,12 @@ $$
 </script>
 
 <template>
-  <experiment-board title="阳性检测" :tags="['条件概率', '互斥事件', '独立事件']">
+  <ExperimentBoard title="阳性检测" :tags="['条件概率', '互斥事件', '独立事件']">
     <template #experiment>
       <div class="w-full flex flex-col h-full items-center p-3">
-        <canvas ref="canvasRef" width="1000" height="400" class="w-full"></canvas>
+        <canvas ref="canvasRef" width="1000" height="400" class="w-full" />
         <div class="flex items-center text-gray-500">
-          <span class="inline-block w-4 h-4 rounded-full bg-[#FF7F0E] mr-2"></span>
+          <span class="inline-block w-4 h-4 rounded-full bg-[#FF7F0E] mr-2" />
           橙色圆点代表检测结果为阳性的人，共{{ result }}人
         </div>
       </div>
@@ -193,38 +195,38 @@ $$
           <div class="flex space-x-4 justify-center items-center">
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
               <p>特异度(a)</p>
-              <InputNumber v-model.number="specificity[0]" fluid :minFractionDigits="2" />
+              <InputNumber v-model.number="specificity[0]" fluid :min-fraction-digits="2" />
               <p>特异度(a)</p>
-              <InputNumber v-model.number="specificity[0]" fluid :minFractionDigits="2" />
-              <Slider :min="0.1" :max="1.0" :step="0.01" v-model="specificity" class="w-full" />
+              <InputNumber v-model.number="specificity[0]" fluid :min-fraction-digits="2" />
+              <Slider v-model="specificity" :min="0.1" :max="1.0" :step="0.01" class="w-full" />
             </div>
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
               <p>灵敏度(b)</p>
-              <InputNumber v-model.number="sensitivity[0]" fluid :minFractionDigits="2" />
+              <InputNumber v-model.number="sensitivity[0]" fluid :min-fraction-digits="2" />
               <p>灵敏度(b)</p>
-              <InputNumber v-model.number="sensitivity[0]" fluid :minFractionDigits="2" />
-              <Slider :min="0.1" :max="1.0" :step="0.01" v-model="sensitivity" class="w-full" />
+              <InputNumber v-model.number="sensitivity[0]" fluid :min-fraction-digits="2" />
+              <Slider v-model="sensitivity" :min="0.1" :max="1.0" :step="0.01" class="w-full" />
             </div>
           </div>
           <!-- 第二个输入框组 -->
           <div class="flex space-x-4 justify-center items-center">
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
               <p>感染率(c)</p>
-              <InputNumber v-model.number="infectionRate[0]" :minFractionDigits="2" fluid />
+              <InputNumber v-model.number="infectionRate[0]" :min-fraction-digits="2" fluid />
               <p>感染率(c)</p>
-              <InputNumber v-model.number="infectionRate[0]" :minFractionDigits="2" fluid />
-              <Slider :min="0.0" :max="1.0" :step="0.001" v-model="infectionRate" class="w-full" />
+              <InputNumber v-model.number="infectionRate[0]" :min-fraction-digits="2" fluid />
+              <Slider v-model="infectionRate" :min="0.0" :max="1.0" :step="0.001" class="w-full" />
             </div>
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
               <p>总人数(d)</p>
               <InputNumber v-model.number="population[0]" fluid />
               <p>总人数(d)</p>
               <InputNumber v-model.number="population[0]" fluid />
-              <Slider :min="1000" :max="1000000" :step="1000" v-model="population" class="w-full" />
+              <Slider v-model="population" :min="1000" :max="1000000" :step="1000" class="w-full" />
             </div>
           </div>
           <div class="w-full flex items-center justify-center mt-5">
-            <div ref="katexContainer" class="katex-style"></div>
+            <div ref="katexContainer" class="katex-style" />
           </div>
         </div>
         <!-- 饼图区域 -->
@@ -238,10 +240,10 @@ $$
     </template>
     <template #conclusion>
       <div class="w-full h-full p-5">
-        <div v-html="toMarkdown(content)" class="prose-sm max-w-none text-base-content"></div>
+        <div class="prose-sm max-w-none" v-html="toMarkdown(content)" />
       </div>
     </template>
-  </experiment-board>
+  </ExperimentBoard>
 </template>
 
 <style scoped>

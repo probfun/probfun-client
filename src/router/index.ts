@@ -1,25 +1,37 @@
+import AiPanel from '@/components/ai/AiPanel.vue';
+import LoginCard from '@/components/auth/LoginCard.vue';
+import RegisterCard from '@/components/auth/RegisterCard.vue';
+import BirthdayAttack from '@/components/experiment/chapter1/BirthdayAttack.vue';
+import BirthdayProblem from '@/components/experiment/chapter1/BirthdayProblem.vue';
+import BuffonNeedle from '@/components/experiment/chapter1/BuffonNeedle.vue';
+import PositiveTest from '@/components/experiment/chapter1/PositiveTest.vue';
+import ThreeDoors from '@/components/experiment/chapter1/ThreeDoors.vue';
+import GeometricDistribution from '@/components/experiment/distribution/GeometricDistribution.vue';
+import NormalDistribution from '@/components/experiment/distribution/NormalDistribution.vue';
+import PoissonDistribution from '@/components/experiment/distribution/PoissonDistribution.vue';
+import UniformDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
+import StarPanel from '@/components/star/StarPanel.vue';
+import UserPanel from '@/components/user/UserPanel.vue';
+import AuthPage from '@/pages/AuthPage.vue';
+import DashBoard from '@/pages/DashBoard.vue';
 import { createRouter, createWebHistory } from 'vue-router';
-import DashBoard from "@/pages/DashBoard.vue";
-import Login from "@/pages/Login.vue";
-import Register from "@/pages/Register.vue";
-import UserPanel from "@/components/UserPanel.vue";
-import BuffonNeedle from "@/components/experiment/chapter1/BuffonNeedle.vue";
-import ThreeDoors from "@/components/experiment/chapter1/ThreeDoors.vue";
-import PositiveTest from "@/components/experiment/chapter1/PositiveTest.vue";
-import BirthdayAttack from "@/components/experiment/chapter1/BirthdayAttack.vue";
-import BirthdayProblem from "@/components/experiment/chapter1/BirthdayProblem.vue";
-import NormalDistribution from "@/components/experiment/distribution/NormalDistribution.vue";
-import PoissonDistribution from "@/components/experiment/distribution/PoissonDistribution.vue";
-import GeometricDistribution from "@/components/experiment/distribution/GeometricDistribution.vue";
-import UniformDistribution from "@/components/experiment/distribution/UniformDistribution.vue";
-import ExponentialDistribution from "@/components/experiment/distribution/ExponentialDistribution.vue";
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
       path: '/',
-      redirect: '/dashboard',
+      component: AuthPage,
+      children: [
+        {
+          path: '/login',
+          component: LoginCard,
+        },
+        {
+          path: '/register',
+          component: RegisterCard,
+        },
+      ],
     },
     {
       path: '/dashboard',
@@ -27,27 +39,27 @@ const router = createRouter({
       children: [
         {
           path: '/dashboard/experiment/chapter1/buffon',
-          component: BuffonNeedle
+          component: BuffonNeedle,
         },
         {
           path: '/dashboard/experiment/chapter1/three-doors',
-          component: ThreeDoors
+          component: ThreeDoors,
         },
         {
           path: '/dashboard/experiment/chapter1/positive-test',
-          component: PositiveTest
+          component: PositiveTest,
         },
         {
           path: '/dashboard/experiment/chapter1/birthday-attack',
-          component: BirthdayAttack
+          component: BirthdayAttack,
         },
         {
           path: '/dashboard/experiment/chapter1/birthday-problem',
-          component: BirthdayProblem
+          component: BirthdayProblem,
         },
         {
           path: '/dashboard/experiment/normalDistribution',
-          component: NormalDistribution
+          component: NormalDistribution,
         },
         {
           path: '/dashboard/experiment/binomialDistribution',
@@ -55,15 +67,15 @@ const router = createRouter({
         },
         {
           path: '/dashboard/experiment/poissonDistribution',
-          component: PoissonDistribution
+          component: PoissonDistribution,
         },
         {
           path: '/dashboard/experiment/geometricDistribution',
-          component: GeometricDistribution
+          component: GeometricDistribution,
         },
         {
           path: '/dashboard/experiment/evenDistribution',
-          component: UniformDistribution
+          component: UniformDistribution,
         },
         {
           path: '/dashboard/experiment/exponentialDistribution',
@@ -85,27 +97,19 @@ const router = createRouter({
           path: '/dashboard/experiment/comparison/poissonNormal',
           component: () => import('@/components/experiment/distribution/comparison/PN.vue'),
         },
-        // {
-        //   path: '/dashboard/setting',
-        //   component: DistributionBoard,
-        // },
-        // {
-        //   path: '/dashboard/chat',
-        //   component: DistributionBoard,
-        // },
-        // {
-        //   path: '/dashboard/favorite',
-        //   component: DistributionBoard,
-        // },
+        {
+          path: '/dashboard/info',
+          component: UserPanel,
+        },
+        {
+          path: '/dashboard/ai',
+          component: AiPanel,
+        },
+        {
+          path: '/dashboard/star',
+          component: StarPanel,
+        },
       ],
-    },
-    {
-      path: '/login',
-      component: Login
-    },
-    {
-      path: '/register',
-      component: Register
     },
     // {
     //   path: '/terms',
@@ -115,20 +119,38 @@ const router = createRouter({
     //   path: '/privacy',
     //   component: () => import('@/pages/PrivacyPage.vue')
     // },
-  ]
+  ],
 });
 
-// router.beforeEach((to, from, next) => {
-//   const user = localStorage.getItem('user') ?? '{}';
-//   const role = JSON.parse(user)?.role ?? 0;
-//   // const role = 0;
-//   const requiresRoles = to.meta.requiresRole as number[] | undefined;
-//
-//   if (requiresRoles && !requiresRoles.includes(role)) {
-//     next({ path: '/login' });
-//   } else {
-//     next();
-//   }
-// });
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token');
+  if (to.path === '/') {
+    if (token) {
+      next('/dashboard');
+    }
+    else {
+      next('/login');
+    }
+    return;
+  }
+  if (to.path === '/login' || to.path === '/register') {
+    if (token) {
+      next('/dashboard');
+    }
+    else {
+      next();
+    }
+    return;
+  }
+  if (to.path === '/dashboard') {
+    if (token) {
+      next();
+    }
+    else {
+      next('/login');
+    }
+  }
+  next();
+});
 
 export default router;

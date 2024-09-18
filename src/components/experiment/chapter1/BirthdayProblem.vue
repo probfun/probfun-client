@@ -1,14 +1,6 @@
 <script setup lang="ts">
-
-import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
-import {toMarkdown} from "@/utils/markdown";
-import {computed, onMounted, ref, watch} from "vue";
-import {useToast} from "primevue/usetoast";
-import { Label } from '@/components/ui/label';
-import { Slider } from '@/components/ui/slider';
+import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-
 import {
   Dialog,
   DialogClose,
@@ -19,6 +11,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -27,6 +21,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Slider } from '@/components/ui/slider';
+import { toMarkdown } from '@/utils/markdown';
+
+import { useToast } from 'primevue/usetoast';
+import { computed, onMounted, ref, watch } from 'vue';
 
 const content = `
 ### **问题简述**
@@ -70,8 +69,8 @@ const content = `
 `;
 
 interface Person {
-  id: number;
-  birthday: number;
+  id: number
+  birthday: number
 }
 
 const toast = useToast();
@@ -87,7 +86,7 @@ function convertDayOfYearToDate(dayOfYear: number) {
     month++;
   }
 
-  return (month + 1) + "月" + dayOfYear + "日";
+  return `${month + 1}月${dayOfYear}日`;
 }
 
 function generatePeople(n: number) {
@@ -121,7 +120,7 @@ function generatePeople(n: number) {
 
     return {
       id: i,
-      birthday: birthday
+      birthday,
     };
   });
 
@@ -136,7 +135,7 @@ function generatePeople(n: number) {
 
   if (expType.value === '1') {
     if (curPeopleCount.value !== peopleCount.value) {
-      pSameDayPeople.value = new Array<number>(101).fill(0);
+      pSameDayPeople.value = Array.from({ length: 101 }).fill(0);
     }
   } if (expType.value === '2') {
     if (curPeopleCount.value !== peopleCount.value) {
@@ -167,7 +166,7 @@ function getBirthdayCount(birthday: number) {
 }
 
 function getMostCommonBirthday() {
-  const birthdayCount = new Array(365).fill(0);
+  const birthdayCount = Array.from({ length: 365 }).fill(0);
   for (const person of people.value) {
     birthdayCount[person.birthday]++;
   }
@@ -191,7 +190,7 @@ const visible = ref(false);
 function saveSetting() {
   realBornProb.value = bornProb.value;
   visible.value = false;
-  toast.add({severity: 'success', summary: '成功', detail: '设置成功', life: 3000});
+  toast.add({ severity: 'success', summary: '成功', detail: '设置成功', life: 3000 });
 }
 
 function cancelSetting() {
@@ -202,9 +201,9 @@ function cancelSetting() {
 const isSimulating = ref(false);
 
 function resetData() {
-  sameDayProb.value = new Array<number>(101).fill(0);
-  sameDayCount.value = new Array<number>(101).fill(0);
-  sameDayTotal.value = new Array<number>(101).fill(0);
+  sameDayProb.value = Array.from({ length: 101 }).fill(0);
+  sameDayCount.value = Array.from({ length: 101 }).fill(0);
+  sameDayTotal.value = Array.from({ length: 101 }).fill(0);
 }
 
 async function startSimulate() {
@@ -218,21 +217,26 @@ async function startSimulate() {
     for (let i = 2; i <= 100; i++) {
       peopleCount.value = i;
       for (let t = 0; t < 100; t++) {
-        if (!isSimulating.value) return;
+        if (!isSimulating.value)
+          return;
         generatePeople(peopleCount.value);
         await new Promise(resolve => setTimeout(resolve, 10));
       }
     }
-  } else if (expType.value === '1') {
+  }
+  else if (expType.value === '1') {
     while (true) {
-      if (!isSimulating.value) break;
+      if (!isSimulating.value)
+        break;
       peopleCount.value = Math.floor(Math.random() * 100) + 1;
       generatePeople(peopleCount.value);
       await new Promise(resolve => setTimeout(resolve, 10));
     }
-  } else if (expType.value === '2') {
+  }
+  else if (expType.value === '2') {
     for (let t = 0; t < 1000; t++) {
-      if (!isSimulating.value) return;
+      if (!isSimulating.value)
+        return;
       generatePeople(peopleCount.value);
       await new Promise(resolve => setTimeout(resolve, 10));
     }
@@ -249,42 +253,47 @@ const nSameDayProb = ref<number[]>(new Array<number>(curPeopleCount.value + 1).f
 const nSameDayCount = ref<number[]>(new Array<number>(curPeopleCount.value + 1).fill(0));
 const nSameDayTotal = ref(0);
 
-const pSameDayPeople = ref<number[]>(new Array<number>(101).fill(0));
+const pSameDayPeople = ref<number[]>(Array.from({ length: 101 }).fill(0));
 
-const sameDayProb = ref(new Array<number>(101).fill(0));
-const sameDayCount = ref(new Array<number>(101).fill(0));
-const sameDayTotal = ref(new Array<number>(101).fill(0));
+const sameDayProb = ref(Array.from({ length: 101 }).fill(0));
+const sameDayCount = ref(Array.from({ length: 101 }).fill(0));
+const sameDayTotal = ref(Array.from({ length: 101 }).fill(0));
 
-const bornProb = ref(new Array<number[]>(12).fill([50]));
-const realBornProb = ref(new Array<number[]>(12).fill([50]));
+const bornProb = ref(Array.from({ length: 12 }).fill([50]));
+const realBornProb = ref(Array.from({ length: 12 }).fill([50]));
 
-const getDaisyUIColor = (variableName: string) => {
+function getDaisyUIColor(variableName: string) {
   const hslValue = getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
   const [h, s, l] = hslValue.split(' ').map((val, index) => {
-    return index > 0 ? parseFloat(val) / 100 : parseFloat(val);
+    return index > 0 ? Number.parseFloat(val) / 100 : Number.parseFloat(val);
   });
   const c = (1 - Math.abs(2 * l - 1)) * s;
   const x = c * (1 - Math.abs((h / 60) % 2 - 1));
   const m = l - c / 2;
-  let r = 0, g = 0, b = 0;
-  if (0 <= h && h < 60) {
+  let r = 0; let g = 0; let b = 0;
+  if (h >= 0 && h < 60) {
     r = c; g = x; b = 0;
-  } else if (60 <= h && h < 120) {
+  }
+  else if (h >= 60 && h < 120) {
     r = x; g = c; b = 0;
-  } else if (120 <= h && h < 180) {
+  }
+  else if (h >= 120 && h < 180) {
     r = 0; g = c; b = x;
-  } else if (180 <= h && h < 240) {
+  }
+  else if (h >= 180 && h < 240) {
     r = 0; g = x; b = c;
-  } else if (240 <= h && h < 300) {
+  }
+  else if (h >= 240 && h < 300) {
     r = x; g = 0; b = c;
-  } else if (300 <= h && h < 360) {
+  }
+  else if (h >= 300 && h < 360) {
     r = c; g = 0; b = x;
   }
   r = Math.round((r + m) * 255);
   g = Math.round((g + m) * 255);
   b = Math.round((b + m) * 255);
   return `rgba(${r}, ${g}, ${b}, 100)`;
-};
+}
 
 const textColor = getDaisyUIColor('--foreground');
 const textColorSecondary = getDaisyUIColor('--secondary-foreground');
@@ -301,61 +310,61 @@ const chartOptions = ref({
   plugins: {
     legend: {
       labels: {
-        color: textColor
-      }
-    }
+        color: textColor,
+      },
+    },
   },
   scales: {
     x: {
       title: {
-        display: true,         // 显示横坐标标签
-        text: '人数',          // 横坐标标签名称
-        color: textColorSecondary
+        display: true, // 显示横坐标标签
+        text: '人数', // 横坐标标签名称
+        color: textColorSecondary,
       },
       ticks: {
-        color: textColorSecondary
+        color: textColorSecondary,
       },
       grid: {
-        color: surfaceBorder
-      }
+        color: surfaceBorder,
+      },
     },
     y: {
       ticks: {
-        color: textColorSecondary
+        color: textColorSecondary,
       },
       grid: {
-        color: surfaceBorder
+        color: surfaceBorder,
       },
       min: 0,
-      max: 1
-    }
-  }
+      max: 1,
+    },
+  },
 });
 
 onMounted(() => {
   nSameDayChartData.value = {
-    labels: Array.from({length: curPeopleCount.value + 1}, (_, i) => i),
+    labels: Array.from({ length: curPeopleCount.value + 1 }, (_, i) => i),
     datasets: [
       {
-        label: "至少有n人同天生日的概率",
+        label: '至少有n人同天生日的概率',
         data: nSameDayProb.value,
         fill: false,
         borderColor: primaryColor,
-        tension: 0.1
-      }
-    ]
+        tension: 0.1,
+      },
+    ],
   };
   sameDayChartData.value = {
-    labels: Array.from({length: 101}, (_, i) => i),
+    labels: Array.from({ length: 101 }, (_, i) => i),
     datasets: [
       {
-        label: "至少有两人同天生日的概率",
+        label: '至少有两人同天生日的概率',
         data: sameDayProb.value,
         fill: false,
         borderColor: primaryColor,
-        tension: 0.1
-      }
-    ]
+        tension: 0.1,
+      },
+    ],
   };
 });
 
@@ -365,118 +374,124 @@ const pSameDayChartData = ref();
 
 watch(() => sameDayProb, () => {
   sameDayChartData.value = {
-    labels: Array.from({length: 101}, (_, i) => i),
+    labels: Array.from({ length: 101 }, (_, i) => i),
     datasets: [
       {
-        label: "至少有两人同天生日的概率",
+        label: '至少有两人同天生日的概率',
         data: sameDayProb.value,
         fill: false,
         backgroundColor: primaryColor,
-        tension: 0.1
-      }
-    ]
+        tension: 0.1,
+      },
+    ],
   };
 }, { deep: true });
 
 watch(() => pSameDayPeople, () => {
   pSameDayChartData.value = {
-    labels: Array.from({length: 101}, (_, i) => i),
+    labels: Array.from({ length: 101 }, (_, i) => i),
     datasets: [
       {
-        label: "有两人同生日概率超过 p% 的最小人数",
+        label: '有两人同生日概率超过 p% 的最小人数',
         data: pSameDayPeople.value,
         fill: false,
         borderColor: primaryColor,
-        tension: 0.1
-      }
-    ]
+        tension: 0.1,
+      },
+    ],
   };
 }, { deep: true });
 
 watch(() => nSameDayProb, () => {
   nSameDayChartData.value = {
-    labels: Array.from({length: curPeopleCount.value + 1}, (_, i) => i),
+    labels: Array.from({ length: curPeopleCount.value + 1 }, (_, i) => i),
     datasets: [
       {
-        label: "至少有n人同天生日的概率",
+        label: '至少有n人同天生日的概率',
         data: nSameDayProb.value,
         fill: false,
         borderColor: primaryColor,
-        tension: 0.1
-      }
-    ]
+        tension: 0.1,
+      },
+    ],
   };
 }, { deep: true });
-
 
 watch(bornProb, () => {
   const bornProbSum = bornProb.value.flat().reduce((a, b) => a + b, 0);
   const monthProb = bornProb.value.map(prob => prob[0] / bornProbSum);
-  const labels = Array.from({length: 12}, (_, i) => (i + 1) + "月");
+  const labels = Array.from({ length: 12 }, (_, i) => `${i + 1}月`);
   chartData.value = {
-    labels: labels,
+    labels,
     datasets: [
       {
-        label: "出生概率",
+        label: '出生概率',
         data: monthProb,
         fill: false,
         borderColor: primaryColor,
-        tension: 0.1
-      }
-    ]
+        tension: 0.1,
+      },
+    ],
   };
 }, { deep: true });
-
 
 const data = computed(() => {
   return sameDayProb.value.map((item, index) => {
     return {
       name: index,
-      至少有两人同天生日的概率: item
+      至少有两人同天生日的概率: item,
     };
   });
 });
 
-const expType = ref("0");
+const expType = ref('0');
 </script>
 
 <template>
-  <experiment-board title="生日问题" :tags="['蒙特卡洛方法', '排列组合', '互补事件的概率', '大数定律', '均匀分布']">
-   <template #experiment>
-     <div class="p-5 flex flex-col overflow-hidden h-full w-full" v-if="!isSimulating">
-        <div class="grid gap-3 overflow-y-auto py-3"
-        :style="{
-          gridTemplateColumns: 'repeat(auto-fill, minmax(65px, 1fr))',
-          gridAutoRows: '1fr'
-        }">
-          <div class="flex flex-col items-center justify-center" v-for="person in people" :key="person.id">
-            <Button class="size-10 rounded-full"
-                    @click="selectBirthday(person.birthday)"
-                    :class="person.birthday === selectedBirthday ? 'bg-green-500 hover:bg-green-500' : 'bg-primary'"> {{ person.id + 1 }}</Button>
+  <ExperimentBoard title="生日问题" :tags="['蒙特卡洛方法', '排列组合', '互补事件的概率', '大数定律', '均匀分布']">
+    <template #experiment>
+      <div v-if="!isSimulating" class="p-5 flex flex-col overflow-hidden h-full w-full">
+        <div
+          class="grid gap-3 overflow-y-auto py-3"
+          :style="{
+            gridTemplateColumns: 'repeat(auto-fill, minmax(65px, 1fr))',
+            gridAutoRows: '1fr',
+          }"
+        >
+          <div v-for="person in people" :key="person.id" class="flex flex-col items-center justify-center">
+            <Button
+              class="size-10 rounded-full"
+              :class="person.birthday === selectedBirthday ? 'bg-green-500 hover:bg-green-500' : 'bg-primary'"
+              @click="selectBirthday(person.birthday)"
+            >
+              {{ person.id + 1 }}
+            </Button>
             <Label class="mt-2">{{ convertDayOfYearToDate(person.birthday) }}</Label>
           </div>
         </div>
 
-       <div>
-          <div class="mt-4" v-if="maxCount > 1">
+        <div>
+          <div v-if="maxCount > 1" class="mt-4">
             <Label>最常见的生日：</Label>
             <Label>{{ convertDayOfYearToDate(mostCommonBirthday) }}</Label>
             <Label>，共有 {{ maxCount }} 人在这一天过生日!</Label>
           </div>
-         <div class="mt-4" v-if="maxCount === 1">
-           <Label>每个人的生日都不同！</Label>
-         </div>
-         <div class="mt-4" v-if="selectedBirthday !== mostCommonBirthday">
-           <Label>你选择的生日生日：</Label>
-           <Label>{{ convertDayOfYearToDate(selectedBirthday) }}</Label>
-           <Label>，共有 {{ getBirthdayCount(selectedBirthday) }} 人在这一天过生日!</Label>
-         </div>
-       </div>
-     </div>
-     <div class="w-full h-full flex items-center justify-center" v-else>
-       <div class="text-lg font-bold"> 数值模拟中，实验不予展示！ </div>
-     </div>
-   </template>
+          <div v-if="maxCount === 1" class="mt-4">
+            <Label>每个人的生日都不同！</Label>
+          </div>
+          <div v-if="selectedBirthday !== mostCommonBirthday" class="mt-4">
+            <Label>你选择的生日生日：</Label>
+            <Label>{{ convertDayOfYearToDate(selectedBirthday) }}</Label>
+            <Label>，共有 {{ getBirthdayCount(selectedBirthday) }} 人在这一天过生日!</Label>
+          </div>
+        </div>
+      </div>
+      <div v-else class="w-full h-full flex items-center justify-center">
+        <div class="text-lg font-bold">
+          数值模拟中，实验不予展示！
+        </div>
+      </div>
+    </template>
 
     <template #parameter>
       <div class="w-full h-full flex items-center justify-center p-3">
@@ -484,12 +499,16 @@ const expType = ref("0");
           <div class="w-full flex items-center justify-center gap-2">
             <div class="flex items-center grow">
               <Label for="people" class="flex-shrink-0">人数：</Label>
-              <Input type="number" id="people" :min="1" :max="100" v-model.number="peopleCount"  :disabled="isSimulating"/>
+              <Input id="people" v-model.number="peopleCount" type="number" :min="1" :max="100" :disabled="isSimulating" />
             </div>
-            <Button @click="generatePeople(peopleCount)" :disabled="isSimulating">生成</Button>
+            <Button :disabled="isSimulating" @click="generatePeople(peopleCount)">
+              生成
+            </Button>
             <Dialog>
               <DialogTrigger>
-                <Button @click="visible = !visible" :disabled="isSimulating"> 设置出生概率 </Button>
+                <Button :disabled="isSimulating" @click="visible = !visible">
+                  设置出生概率
+                </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
@@ -499,24 +518,29 @@ const expType = ref("0");
                   </DialogDescription>
                 </DialogHeader>
                 <div class="grid grid-cols-4 items-center gap-4 mb-4">
-                  <div class="flex flex-col gap-2" v-for="(_, index) in bornProb">
+                  <div v-for="(_, index) in bornProb" class="flex flex-col gap-2">
                     <Label> {{ index + 1 }} 月：</Label>
                     <Slider v-model="bornProb[index]" :min="0" :max="100" :step="0.01" />
                   </div>
                 </div>
-                <chart class="h-64" type="line" :data="chartData" :options="chartOptions"></chart>
+                <chart class="h-64" type="line" :data="chartData" :options="chartOptions" />
                 <DialogFooter>
-                  <Button type="Button"  @click="bornProb = new Array<number[]>(12).fill([50])"> 复原 </Button>
+                  <Button type="Button" @click="bornProb = new Array<number[]>(12).fill([50])">
+                    复原
+                  </Button>
                   <DialogClose as-child>
-                    <Button type="Button" @click="cancelSetting"> 取消 </Button>
+                    <Button type="Button" @click="cancelSetting">
+                      取消
+                    </Button>
                   </DialogClose>
                   <DialogClose as-child>
-                    <Button type="Button" @click="saveSetting"> 保存 </Button>
+                    <Button type="Button" @click="saveSetting">
+                      保存
+                    </Button>
                   </DialogClose>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
-
           </div>
 
           <div class="flex items-center gap-4 w-full">
@@ -540,44 +564,48 @@ const expType = ref("0");
                   </SelectGroup>
                 </SelectContent>
               </Select>
-<!--              <Select class="select select-primary grow">-->
-<!--                <option selected :value="0"> 不同人数下至少有两人同天生日的概率 </option>-->
-<!--                <option :value="1"> 有两人同生日的概率超过 p% 的最小人数 </option>-->
-<!--                <option :value="2"> 至少有 n 人生日相同的概率 </option>-->
-<!--              </Select>-->
+              <!--              <Select class="select select-primary grow"> -->
+              <!--                <option selected :value="0"> 不同人数下至少有两人同天生日的概率 </option> -->
+              <!--                <option :value="1"> 有两人同生日的概率超过 p% 的最小人数 </option> -->
+              <!--                <option :value="2"> 至少有 n 人生日相同的概率 </option> -->
+              <!--              </Select> -->
             </div>
-            <Button @click="isSimulating ? stopSimulate() : startSimulate()"> {{ isSimulating ? '停止模拟' : '开始模拟' }} </Button>
+            <Button @click="isSimulating ? stopSimulate() : startSimulate()">
+              {{ isSimulating ? '停止模拟' : '开始模拟' }}
+            </Button>
           </div>
-          <chart class="w-full h-full" type="bar" :data="sameDayChartData" :options="chartOptions" v-if="expType === '0'" />
-          <chart class="w-full h-full" type="line" :data="pSameDayChartData" :options="chartOptions" v-else-if="expType === '1'" />
-          <chart class="w-full h-full" type="line" :data="nSameDayChartData" :options="chartOptions" v-else-if="expType === '2'" />
-          <Button @click="resetData" class="mt-3" :disabled="isSimulating">重置数据</Button>
+          <chart v-if="expType === '0'" class="w-full h-full" type="bar" :data="sameDayChartData" :options="chartOptions" />
+          <chart v-else-if="expType === '1'" class="w-full h-full" type="line" :data="pSameDayChartData" :options="chartOptions" />
+          <chart v-else-if="expType === '2'" class="w-full h-full" type="line" :data="nSameDayChartData" :options="chartOptions" />
+          <Button class="mt-3" :disabled="isSimulating" @click="resetData">
+            重置数据
+          </Button>
         </div>
       </div>
 
-<!--      <Dialog v-model:visible="visible" modal header="设置出生概率" :style="{ width: '60rem' }">-->
-<!--        <span class="text-surface-500 dark:text-surface-400 block mb-8">默认每个月的出生概率相等，你可以对其进行修改。</span>-->
-<!--        <div class="grid grid-cols-4 items-center gap-4 mb-4">-->
-<!--          <div class="flex flex-col gap-2" v-for="(_, index) in bornProb">-->
-<!--            <label> {{ index + 1 }} 月：</label>-->
-<!--            <input type="range" class="range range-primary range-sm" v-model.number="bornProb[index]" :min="0" :max="100" :step="0.01" />-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        <chart class="h-64" type="line" :data="chartData" :options="chartOptions"></chart>-->
-<!--        <div class="flex justify-end gap-3 mt-4">-->
-<!--          <Button class="btn btn-primary" type="Button"  @click="bornProb = new Array<number>(12).fill(50)"> 复原 </Button>-->
-<!--          <Button class="btn btn-primary" type="Button" @click="cancelSetting"> 取消 </Button>-->
-<!--          <Button class="btn btn-primary" type="Button" @click="saveSetting"> 保存 </Button>-->
-<!--        </div>-->
-<!--      </Dialog>-->
+      <!--      <Dialog v-model:visible="visible" modal header="设置出生概率" :style="{ width: '60rem' }"> -->
+      <!--        <span class="text-surface-500 dark:text-surface-400 block mb-8">默认每个月的出生概率相等，你可以对其进行修改。</span> -->
+      <!--        <div class="grid grid-cols-4 items-center gap-4 mb-4"> -->
+      <!--          <div class="flex flex-col gap-2" v-for="(_, index) in bornProb"> -->
+      <!--            <label> {{ index + 1 }} 月：</label> -->
+      <!--            <input type="range" class="range range-primary range-sm" v-model.number="bornProb[index]" :min="0" :max="100" :step="0.01" /> -->
+      <!--          </div> -->
+      <!--        </div> -->
+      <!--        <chart class="h-64" type="line" :data="chartData" :options="chartOptions"></chart> -->
+      <!--        <div class="flex justify-end gap-3 mt-4"> -->
+      <!--          <Button class="btn btn-primary" type="Button"  @click="bornProb = new Array<number>(12).fill(50)"> 复原 </Button> -->
+      <!--          <Button class="btn btn-primary" type="Button" @click="cancelSetting"> 取消 </Button> -->
+      <!--          <Button class="btn btn-primary" type="Button" @click="saveSetting"> 保存 </Button> -->
+      <!--        </div> -->
+      <!--      </Dialog> -->
     </template>
 
     <template #conclusion>
       <div class="p-5">
-        <div v-html="toMarkdown(content)" class="prose-sm max-w-none text-base-content"> </div>
+        <div class="prose-sm max-w-none text-foreground" v-html="toMarkdown(content)" />
       </div>
     </template>
-  </experiment-board>
+  </ExperimentBoard>
 </template>
 
 <style scoped>

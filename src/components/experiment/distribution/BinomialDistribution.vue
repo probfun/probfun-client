@@ -1,182 +1,182 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { Slider } from '@/components/ui/slider';
-import katex from 'katex';
-import 'katex/dist/katex.min.css';
 import { toMarkdown } from '@/utils/markdown';
-import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
+import katex from 'katex';
+import { computed, onMounted, ref, watch } from 'vue';
+import 'katex/dist/katex.min.css';
 
-const number = ref([1]);  // Number of experiments (n)
-const probability = ref([0]);  // Probability of success (p)
+const number = ref([1]); // Number of experiments (n)
+const probability = ref([0]); // Probability of success (p)
 
 const save = ref(false);
-const saveImg = () => {
-    save.value = true;
+function saveImg() {
+  save.value = true;
 }
-const back = () => {
-    save.value = false;
-    chartData.value.labels = [];
-    chartData.value.datasets = [];
+function back() {
+  save.value = false;
+  chartData.value.labels = [];
+  chartData.value.datasets = [];
 }
 
 const latexFormula = computed(() => `P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k} = \\binom{${number.value}}{k} ${probability.value}^k (1-${probability.value})^{${number.value}-k}`);
 const katexContainer = ref<HTMLElement | null>(null);
 
-const renderFormula = () => {
-    if (katexContainer.value) {
-        katex.render(latexFormula.value, katexContainer.value, {
-            throwOnError: false
-        });
-    }
-};
+function renderFormula() {
+  if (katexContainer.value) {
+    katex.render(latexFormula.value, katexContainer.value, {
+      throwOnError: false,
+    });
+  }
+}
 
 onMounted(() => {
-    chartDataO.value = setChartData();
-    chartOptions.value = setChartOptions();
+  chartDataO.value = setChartData();
+  chartOptions.value = setChartOptions();
 });
 
 const chartDataO = ref();
-const setChartData = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
+function setChartData() {
+  const documentStyle = getComputedStyle(document.documentElement);
 
-    // 计算二项分布的数据
-    const labels = [];
-    const data = [];
-    for (let k = 0; k <= number.value[0]; k++) {
-        const probabilityOfK = binomialCoefficient(number.value[0], k) *
-            Math.pow(probability.value[0], k) *
-            Math.pow(1 - probability.value[0], number.value[0] - k);
-        labels.push(k);
-        data.push(probabilityOfK);
-    }
+  // 计算二项分布的数据
+  const labels = [];
+  const data = [];
+  for (let k = 0; k <= number.value[0]; k++) {
+    const probabilityOfK = binomialCoefficient(number.value[0], k)
+      * probability.value[0] ** k
+      * (1 - probability.value[0]) ** (number.value[0] - k);
+    labels.push(k);
+    data.push(probabilityOfK);
+  }
 
-    return {
-        labels: labels,
-        datasets: [
-            {
-                label: 'Binomial Distribution',
-                backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
-                borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-                data: data
-            },
-        ]
-    };
-};
-
-// 计算二项系数（组合数）
-const binomialCoefficient = (n: number, k: number) => {
-    let result = 1;
-    for (let i = 1; i <= k; i++) {
-        result *= (n - i + 1) / i;
-    }
-    return result;
-};
-// 维护历史数据的 chartData，包含多个 dataset
-const chartData = ref<{
-    labels: number[],
-    datasets: {
-        label: string,
-        backgroundColor: string,
-        borderColor: string,
-        data: number[],
-        fill: boolean
-    }[]
-}>({
-    labels: [],
-    datasets: []
-});
-const addNewDataset = () => {
-    if (!save.value) {
-        return;
-    }
-    
-    const documentStyle = getComputedStyle(document.documentElement);
-    const labels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    const data = [];
-
-    // 计算新的二项分布数据
-    for (let k = 0; k <= number.value[0]; k++) {
-        const probabilityOfK = binomialCoefficient(number.value[0], k) *
-            Math.pow(probability.value[0], k) *
-            Math.pow(1 - probability.value[0], number.value[0] - k);
-        data.push(probabilityOfK);
-    }
-
-    // 检查是否已经存在相同的 dataset
-    const existingDataset = chartData.value.datasets.find(
-        (dataset) => dataset.label === `n=${number.value[0]}, p=${probability.value[0]}`
-    );
-
-    // 如果已经存在相同的 dataset，不添加
-    if (existingDataset) {
-        return;
-    }
-
-    // 更新 chartData，添加新的 dataset
-    chartData.value.labels = labels;
-    chartData.value.datasets.push({
-        label: `n=${number.value[0]}, p=${probability.value[0]}`,
+  return {
+    labels,
+    datasets: [
+      {
+        label: 'Binomial Distribution',
         backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
         borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-        data: data,
-        fill: false
-    });
-};
+        data,
+      },
+    ],
+  };
+}
+
+// 计算二项系数（组合数）
+function binomialCoefficient(n: number, k: number) {
+  let result = 1;
+  for (let i = 1; i <= k; i++) {
+    result *= (n - i + 1) / i;
+  }
+  return result;
+}
+// 维护历史数据的 chartData，包含多个 dataset
+const chartData = ref<{
+  labels: number[]
+  datasets: {
+    label: string
+    backgroundColor: string
+    borderColor: string
+    data: number[]
+    fill: boolean
+  }[]
+}>({
+  labels: [],
+  datasets: [],
+});
+function addNewDataset() {
+  if (!save.value) {
+    return;
+  }
+
+  const documentStyle = getComputedStyle(document.documentElement);
+  const labels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const data = [];
+
+  // 计算新的二项分布数据
+  for (let k = 0; k <= number.value[0]; k++) {
+    const probabilityOfK = binomialCoefficient(number.value[0], k)
+      * probability.value[0] ** k
+      * (1 - probability.value[0]) ** (number.value[0] - k);
+    data.push(probabilityOfK);
+  }
+
+  // 检查是否已经存在相同的 dataset
+  const existingDataset = chartData.value.datasets.find(
+    dataset => dataset.label === `n=${number.value[0]}, p=${probability.value[0]}`,
+  );
+
+  // 如果已经存在相同的 dataset，不添加
+  if (existingDataset) {
+    return;
+  }
+
+  // 更新 chartData，添加新的 dataset
+  chartData.value.labels = labels;
+  chartData.value.datasets.push({
+    label: `n=${number.value[0]}, p=${probability.value[0]}`,
+    backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
+    borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
+    data,
+    fill: false,
+  });
+}
 
 // 设置图表选项
-const setChartOptions = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
-    const textColor = documentStyle.getPropertyValue('--p-text-color');
-    const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
-    const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+function setChartOptions() {
+  const documentStyle = getComputedStyle(document.documentElement);
+  const textColor = documentStyle.getPropertyValue('--p-text-color');
+  const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
+  const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
 
-    return {
-        maintainAspectRatio: false,
-        aspectRatio: 0.8,
-        plugins: {
-            legend: {
-                labels: {
-                    color: textColor
-                }
-            }
+  return {
+    maintainAspectRatio: false,
+    aspectRatio: 0.8,
+    plugins: {
+      legend: {
+        labels: {
+          color: textColor,
         },
-        scales: {
-            x: {
-                ticks: {
-                    color: textColorSecondary,
-                    font: {
-                        weight: 500
-                    }
-                },
-                grid: {
-                    display: false,
-                    drawBorder: false
-                }
-            },
-            y: {
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder,
-                    drawBorder: false
-                }
-            }
-        }
-    };
-};
+      },
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: textColorSecondary,
+          font: {
+            weight: 500,
+          },
+        },
+        grid: {
+          display: false,
+          drawBorder: false,
+        },
+      },
+      y: {
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+          drawBorder: false,
+        },
+      },
+    },
+  };
+}
 
 const chartOptions = ref(setChartOptions());
 
 // 监听 number 和 probability 变化，更新图表
 watch([number, probability], () => {
-    chartDataO.value = setChartData();
-    addNewDataset();
-    renderFormula();
+  chartDataO.value = setChartData();
+  addNewDataset();
+  renderFormula();
 });
 
 onMounted(() => {
-    renderFormula();
+  renderFormula();
 });
 
 const content = `
@@ -227,42 +227,46 @@ $$
 </script>
 
 <template>
-    <experiment-board title="二项分布" :tags="[]">
-        <template #experiment>
-            <Chart v-if="!save" type="line" :data="chartDataO" :options="chartOptions" class="h-full w-full" />
-            <Chart v-if="save" type="line" :data="chartData" :options="chartOptions" class="h-full w-full" />
-        </template>
-        <template #parameter>
-            <div class="w-full h-full flex flex-col items-center justify-center">
-                <div>
-                    <button v-if="!save" @click="saveImg" class="btn mb-5">显示历史图像模式</button>
-                    <div>
-                        <button v-if="save" @click="back" class="btn mb-5 mr-2">返回</button>
-                    </div>
-                </div>
-                <div class="w-full flex items-center justify-center mb-5">
-                    <div ref="katexContainer" class="text-xl"></div>
-                </div>
-                <div class="flex w-full mb-5">
-                    <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                        <p> Number of experiments </p>
-                        <InputNumber v-model.number="number[0]" />
-                        <Slider :min="1" :max="10" :step="1" v-model="number" class="w-48" />
-                    </div>
-                    <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                        <p> Probability of success </p>
-                        <InputNumber v-model.number="probability[0]" :min-fraction-digits="1" />
-                        <Slider :min="0" :max="1" :step="0.1" v-model="probability" class="w-48" />
-                    </div>
-                </div>
-            </div>
-        </template>
-        <template #conclusion>
-            <div class="w-full h-full p-5">
-                <div v-html="toMarkdown(content)" class="prose-sm max-w-none text-base-content"></div>
-            </div>
-        </template>
-    </experiment-board>
+  <ExperimentBoard title="二项分布" :tags="[]">
+    <template #experiment>
+      <Chart v-if="!save" type="line" :data="chartDataO" :options="chartOptions" class="h-full w-full" />
+      <Chart v-if="save" type="line" :data="chartData" :options="chartOptions" class="h-full w-full" />
+    </template>
+    <template #parameter>
+      <div class="w-full h-full flex flex-col items-center justify-center">
+        <div>
+          <button v-if="!save" class="btn mb-5" @click="saveImg">
+            显示历史图像模式
+          </button>
+          <div>
+            <button v-if="save" class="btn mb-5 mr-2" @click="back">
+              返回
+            </button>
+          </div>
+        </div>
+        <div class="w-full flex items-center justify-center mb-5">
+          <div ref="katexContainer" class="text-xl" />
+        </div>
+        <div class="flex w-full mb-5">
+          <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+            <p> Number of experiments </p>
+            <InputNumber v-model.number="number[0]" />
+            <Slider v-model="number" :min="1" :max="10" :step="1" class="w-48" />
+          </div>
+          <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+            <p> Probability of success </p>
+            <InputNumber v-model.number="probability[0]" :min-fraction-digits="1" />
+            <Slider v-model="probability" :min="0" :max="1" :step="0.1" class="w-48" />
+          </div>
+        </div>
+      </div>
+    </template>
+    <template #conclusion>
+      <div class="w-full h-full p-5">
+        <div class="prose-sm max-w-none" v-html="toMarkdown(content)" />
+      </div>
+    </template>
+  </ExperimentBoard>
 </template>
 
 <style scoped></style>
