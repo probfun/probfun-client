@@ -25,7 +25,7 @@ import { Slider } from '@/components/ui/slider';
 import { toMarkdown } from '@/utils/markdown';
 
 import { useToast } from 'primevue/usetoast';
-import { computed, onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 const content = `
 ### **问题简述**
@@ -89,6 +89,26 @@ function convertDayOfYearToDate(dayOfYear: number) {
   return `${month + 1}月${dayOfYear}日`;
 }
 
+const selectedBirthday = ref(0);
+
+const curPeopleCount = ref(peopleCount.value);
+const nSameDayProb = ref(Array.from({ length: curPeopleCount.value + 1 }).fill(0) as number[]);
+const nSameDayCount = ref(Array.from({ length: curPeopleCount.value + 1 }).fill(0) as number[]);
+const nSameDayTotal = ref(0);
+
+const pSameDayPeople = ref(Array.from({ length: 101 }).fill(0) as number[]);
+
+const sameDayProb = ref(Array.from({ length: 101 }).fill(0) as number[]);
+const sameDayCount = ref(Array.from({ length: 101 }).fill(0) as number[]);
+const sameDayTotal = ref(Array.from({ length: 101 }).fill(0) as number[]);
+
+const bornProb = ref(Array.from({ length: 12 }).fill(() => [50]) as number[][]);
+const realBornProb = ref(Array.from({ length: 12 }, () => [50]) as number[][]);
+
+const mostCommonBirthday = ref(0);
+const maxCount = ref(0);
+
+const expType = ref('0');
 function generatePeople(n: number) {
   const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]; // 每个月的天数
 
@@ -135,12 +155,13 @@ function generatePeople(n: number) {
 
   if (expType.value === '1') {
     if (curPeopleCount.value !== peopleCount.value) {
-      pSameDayPeople.value = Array.from({ length: 101 }).fill(0);
+      pSameDayPeople.value = Array.from({ length: 101 }).fill(0) as number[];
     }
-  } if (expType.value === '2') {
+  }
+  else if (expType.value === '2') {
     if (curPeopleCount.value !== peopleCount.value) {
-      nSameDayProb.value = new Array<number>(peopleCount.value + 1).fill(0);
-      nSameDayCount.value = new Array<number>(peopleCount.value + 1).fill(0);
+      nSameDayProb.value = Array.from({ length: peopleCount.value + 1 }).fill(0) as number[];
+      nSameDayCount.value = Array.from({ length: peopleCount.value + 1 }).fill(0) as number[];
       nSameDayTotal.value = 0;
       curPeopleCount.value = peopleCount.value;
     }
@@ -152,21 +173,16 @@ function generatePeople(n: number) {
   }
 }
 
-const selectedBirthday = ref(0);
-
 function selectBirthday(birthday: number) {
   selectedBirthday.value = birthday;
 }
-
-const mostCommonBirthday = ref(0);
-const maxCount = ref(0);
 
 function getBirthdayCount(birthday: number) {
   return people.value.filter(person => person.birthday === birthday).length;
 }
 
 function getMostCommonBirthday() {
-  const birthdayCount = Array.from({ length: 365 }).fill(0);
+  const birthdayCount = Array.from({ length: 365 }).fill(0) as number[];
   for (const person of people.value) {
     birthdayCount[person.birthday]++;
   }
@@ -201,9 +217,9 @@ function cancelSetting() {
 const isSimulating = ref(false);
 
 function resetData() {
-  sameDayProb.value = Array.from({ length: 101 }).fill(0);
-  sameDayCount.value = Array.from({ length: 101 }).fill(0);
-  sameDayTotal.value = Array.from({ length: 101 }).fill(0);
+  sameDayProb.value = Array.from({ length: 101 }).fill(0) as number[];
+  sameDayCount.value = Array.from({ length: 101 }).fill(0) as number[];
+  sameDayTotal.value = Array.from({ length: 101 }).fill(0) as number[];
 }
 
 async function startSimulate() {
@@ -248,20 +264,6 @@ function stopSimulate() {
   isSimulating.value = false;
 }
 
-const curPeopleCount = ref(peopleCount.value);
-const nSameDayProb = ref<number[]>(new Array<number>(curPeopleCount.value + 1).fill(0));
-const nSameDayCount = ref<number[]>(new Array<number>(curPeopleCount.value + 1).fill(0));
-const nSameDayTotal = ref(0);
-
-const pSameDayPeople = ref<number[]>(Array.from({ length: 101 }).fill(0));
-
-const sameDayProb = ref(Array.from({ length: 101 }).fill(0));
-const sameDayCount = ref(Array.from({ length: 101 }).fill(0));
-const sameDayTotal = ref(Array.from({ length: 101 }).fill(0));
-
-const bornProb = ref(Array.from({ length: 12 }).fill([50]));
-const realBornProb = ref(Array.from({ length: 12 }).fill([50]));
-
 function getDaisyUIColor(variableName: string) {
   const hslValue = getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
   const [h, s, l] = hslValue.split(' ').map((val, index) => {
@@ -270,24 +272,38 @@ function getDaisyUIColor(variableName: string) {
   const c = (1 - Math.abs(2 * l - 1)) * s;
   const x = c * (1 - Math.abs((h / 60) % 2 - 1));
   const m = l - c / 2;
-  let r = 0; let g = 0; let b = 0;
+  let r = 0;
+  let g = 0;
+  let b = 0;
   if (h >= 0 && h < 60) {
-    r = c; g = x; b = 0;
+    r = c;
+    g = x;
+    b = 0;
   }
   else if (h >= 60 && h < 120) {
-    r = x; g = c; b = 0;
+    r = x;
+    g = c;
+    b = 0;
   }
   else if (h >= 120 && h < 180) {
-    r = 0; g = c; b = x;
+    r = 0;
+    g = c;
+    b = x;
   }
   else if (h >= 180 && h < 240) {
-    r = 0; g = x; b = c;
+    r = 0;
+    g = x;
+    b = c;
   }
   else if (h >= 240 && h < 300) {
-    r = x; g = 0; b = c;
+    r = x;
+    g = 0;
+    b = c;
   }
   else if (h >= 300 && h < 360) {
-    r = c; g = 0; b = x;
+    r = c;
+    g = 0;
+    b = x;
   }
   r = Math.round((r + m) * 255);
   g = Math.round((g + m) * 255);
@@ -341,6 +357,10 @@ const chartOptions = ref({
   },
 });
 
+const sameDayChartData = ref();
+const nSameDayChartData = ref();
+const pSameDayChartData = ref();
+
 onMounted(() => {
   nSameDayChartData.value = {
     labels: Array.from({ length: curPeopleCount.value + 1 }, (_, i) => i),
@@ -367,10 +387,6 @@ onMounted(() => {
     ],
   };
 });
-
-const sameDayChartData = ref();
-const nSameDayChartData = ref();
-const pSameDayChartData = ref();
 
 watch(() => sameDayProb, () => {
   sameDayChartData.value = {
@@ -435,16 +451,14 @@ watch(bornProb, () => {
   };
 }, { deep: true });
 
-const data = computed(() => {
-  return sameDayProb.value.map((item, index) => {
-    return {
-      name: index,
-      至少有两人同天生日的概率: item,
-    };
-  });
-});
-
-const expType = ref('0');
+// const data = computed(() => {
+//   return sameDayProb.value.map((item, index) => {
+//     return {
+//       name: index,
+//       至少有两人同天生日的概率: item,
+//     };
+//   });
+// });
 </script>
 
 <template>
@@ -518,7 +532,7 @@ const expType = ref('0');
                   </DialogDescription>
                 </DialogHeader>
                 <div class="grid grid-cols-4 items-center gap-4 mb-4">
-                  <div v-for="(_, index) in bornProb" class="flex flex-col gap-2">
+                  <div v-for="(_, index) in bornProb" :key="index" class="flex flex-col gap-2">
                     <Label> {{ index + 1 }} 月：</Label>
                     <Slider v-model="bornProb[index]" :min="0" :max="100" :step="0.01" />
                   </div>

@@ -184,7 +184,7 @@ const comparisonOfDistributions = [
               <Tooltip>
                 <TooltipTrigger>
                   <Button
-                    size="icon" variant="ghost" :class="cn(isActiveRoute(item.route) && 'bg-muted')"
+                    size="icon" variant="ghost" :class="cn(isActiveRoute(item.route ?? '') && 'bg-muted')"
                     @click="() => {
                       if (item.command) item.command();
                       else if (item.route) router.push(item.route);
