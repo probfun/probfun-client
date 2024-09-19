@@ -1,12 +1,13 @@
-import type { UserPublic } from '@/api/user/userType';
-
 export interface Comment {
-  commentId: string
-  user: UserPublic
-  timestamp: string
-  content: string
-  likes: number
-  liked: boolean
-  expId: string
-  parentId: string
+    commentID: string;
+    user: {
+        uid: string;
+        nickname: string;
+        avatarUrl: string;
+    };
+    timestamp: string;
+    content: string;
+    likes: number;
+    expId: string;
+    parentId: string | null;
 }
