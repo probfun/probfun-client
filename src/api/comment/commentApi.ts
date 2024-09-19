@@ -1,32 +1,25 @@
-import type { Comment } from './commentType';
-import { del, get, post } from '../request';
+import { get, post, del } from "../request";
+import { Comment } from "./commentType";
 
-export async function fetchCommentApi(expId: string) {
-  const result = await get<{
-    comments: Comment[]
-  }>(`/api/comment/${expId}`);
-  return result.data;
+export async function getCommentApi(expID: string) {
+    const result = await get<{ comment: Comment }>(`/api/comment/${expID}`);
+    return result.data;
 }
 
-export async function postCommentApi(expId: string, content: string, parentId: string | null) {
-  const result = await post<{
-    comment: Comment
-  }>(`/api/comment/${expId}`, {
-    content,
-    parentId,
-  });
-  return result.data;
+export async function addCommentApi(expID: string, content: string, parentID: string) {
+    const result = await post<{ comment: Comment }>(`/api/comment/${expID}`, {
+        content,
+        parentID,
+    });
+    return result.data;
 }
 
 export async function likeCommentApi(commentId: string) {
-  const result = await post<{
-    liked: boolean
-    likes: number
-  }>(`/api/comment/${commentId}/like`);
-  return result.data;
+    const result = await post<{ comment: Comment }>(`/api/comment/${commentId}`);
+    return result.data;
 }
 
 export async function deleteCommentApi(commentId: string) {
-  const result = await del<object>(`/api/comment/${commentId}`);
-  return result.data;
+    const result = await del<{ comment: Comment }>(`/api/comment/${commentId}`);
+    return result.data;
 }
