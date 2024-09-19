@@ -97,7 +97,7 @@ declare module 'vue' {
     Slider: typeof import('./src/components/ui/slider/Slider.vue')['default']
     StarPanel: typeof import('./src/components/star/StarPanel.vue')['default']
     ThreeDoors: typeof import('./src/components/experiment/chapter1/ThreeDoors.vue')['default']
-    Toast: typeof import('primevue/toast')['default']
+    Toast: typeof import('./src/components/ui/toast/Toast.vue')['default']
     ToastAction: typeof import('./src/components/ui/toast/ToastAction.vue')['default']
     ToastClose: typeof import('./src/components/ui/toast/ToastClose.vue')['default']
     ToastDescription: typeof import('./src/components/ui/toast/ToastDescription.vue')['default']

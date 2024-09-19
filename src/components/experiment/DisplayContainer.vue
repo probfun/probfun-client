@@ -60,11 +60,7 @@ import {
 import {GraduationCap, MessagesSquare, Presentation,
   ChartColumnIncreasing} from 'lucide-vue-next';
 import {PropType, ref} from "vue";
-import SideBar from "@/components/SideBar.vue";
 
-
-
-//
 defineProps({
   title: {
     type: String,
@@ -73,6 +69,16 @@ defineProps({
   tags: {
     type: Array as PropType<string[]>,
     required: true
+  },
+  experimentTitle: {
+    type: String,
+    required: false,
+    default: '实验'
+  },
+  experimentTags: {
+    type: Array as PropType<string[]>,
+    required: false,
+    default: []
   },
   discussTabList: {
     type: Array as PropType<Tab[]>,

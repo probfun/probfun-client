@@ -4,7 +4,7 @@ import {toMarkdown} from "@/utils/markdown";
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
-import {GraduationCap, MessagesSquare, Columns2, MessageCircleMore, Lightbulb} from "lucide-vue-next";
+import {GraduationCap, MessagesSquare, Lightbulb} from "lucide-vue-next";
 import {cn} from "@/lib/utils";
 import { Slider } from '@/components/ui/slider'
 import { Input } from '@/components/ui/input'
@@ -254,7 +254,8 @@ $$
 综上所述,我们可以得到在假设最初选择A门,主持人打开B门的前提下,汽车在C门的概率最高,概率为2/3.故此时参赛者应该选择换成C门.
 `
 
-
+const explanationContent = `
+`;
 
 const discussContent = ` 
 ### **换门争议**
