@@ -4,7 +4,7 @@ import {toMarkdown} from "@/utils/markdown";
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
-import {GraduationCap, MessagesSquare, Columns2, MessageCircleMore} from "lucide-vue-next";
+import {GraduationCap, MessagesSquare, Columns2, MessageCircleMore, Lightbulb} from "lucide-vue-next";
 import {cn} from "@/lib/utils";
 import { Slider } from '@/components/ui/slider'
 import { Input } from '@/components/ui/input'
@@ -171,7 +171,7 @@ const discussTabList = [
       id: 1,
       label: '相关讨论',
       name: 'discuss',
-      icon: MessageCircleMore
+      icon: Lightbulb
     },
     {
       id: 2,
