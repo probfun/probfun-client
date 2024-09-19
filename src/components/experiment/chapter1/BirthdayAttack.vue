@@ -1,7 +1,6 @@
 <script setup lang="ts">
-
-import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
-import {toMarkdown} from "@/utils/markdown";
+import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
+import { toMarkdown } from '@/utils/markdown';
 
 const content = `
 ### **概述**
@@ -25,17 +24,15 @@ const content = `
 </script>
 
 <template>
-  <experiment-board title="生日攻击问题" :tags="['条件概率', '泰勒展开', '独立事件的联合概率']">
-    <template #experiment>
-
-    </template>
+  <ExperimentBoard title="生日攻击问题" :tags="['条件概率', '泰勒展开', '独立事件的联合概率']">
+    <template #experiment />
 
     <template #conclusion>
       <div class="w-full h-full p-5">
-        <div v-html="toMarkdown(content)" class="prose-sm max-w-none text-base-content"> </div>
+        <div class="prose-sm max-w-none text-foreground" v-html="toMarkdown(content)" />
       </div>
     </template>
-  </experiment-board>
+  </ExperimentBoard>
 </template>
 
 <style scoped>

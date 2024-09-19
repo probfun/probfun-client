@@ -1,172 +1,174 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
-import katex from 'katex';
-import 'katex/dist/katex.min.css';
+import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { toMarkdown } from '@/utils/markdown';
-import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
+import katex from 'katex';
+import { computed, onMounted, ref, watch } from 'vue'
+import 'katex/dist/katex.min.css';
 
-const lambda = ref([3]);  // Poisson distribution mean (λ)
+const lambda = ref([3]); // Poisson distribution mean (λ)
 
 const save = ref(false);
-const saveImg = () => {
-    save.value = true;
+function saveImg() {
+  save.value = true;
 }
-const back = () => {
-    save.value = false;
-    chartData.value.labels = [];
-    chartData.value.datasets = [];
+
+// 计算阶乘
+function factorial(n: number) {
+  if (n === 0 || n === 1)
+    return 1;
+  let result = 1;
+  for (let i = 2; i <= n; i++) {
+    result *= i;
+  }
+  return result;
+}
+const chartDataO = ref();
+const chartOptions = ref();
+function setChartData() {
+  const documentStyle = getComputedStyle(document.documentElement);
+
+  // 计算泊松分布的数据
+  const labels = [];
+  const data = [];
+  const maxK = Math.ceil(4 * lambda.value[0]); // 根据 λ 设置 k 的最大值
+  for (let k = 0; k <= maxK; k++) {
+    const probabilityOfK = (lambda.value[0] ** k * Math.exp(-lambda.value[0])) / factorial(k);
+    labels.push(k);
+    data.push(probabilityOfK);
+  }
+
+  return {
+    labels,
+    datasets: [
+      {
+        label: 'Poisson Distribution',
+        backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
+        borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
+        data,
+      },
+    ],
+  };
+}
+const chartData = ref<{
+  labels: number[]
+  datasets: {
+    label: string
+    backgroundColor: string
+    borderColor: string
+    data: number[]
+    fill: boolean
+  }[]
+}>({
+  labels: [],
+  datasets: [],
+});
+function addNewDataset() {
+  if (!save.value) {
+    return;
+  }
+
+  const documentStyle = getComputedStyle(document.documentElement);
+  const labels = Array.from({ length: 40 }, (_, i) => i + 1);
+  const data = [];
+
+  const maxK = Math.ceil(4 * lambda.value[0]); // 根据 λ 设置 k 的最大值
+  for (let k = 0; k <= maxK; k++) {
+    const probabilityOfK = (lambda.value[0] ** k * Math.exp(-lambda.value[0])) / factorial(k);
+    data.push(probabilityOfK);
+  }
+
+  // 检查是否已经存在相同的 dataset
+  const existingDataset = chartData.value.datasets.find(
+    dataset => dataset.label === `lambda=${lambda.value[0]}`,
+  );
+
+  // 如果已经存在相同的 dataset，不添加
+  if (existingDataset) {
+    return;
+  }
+
+  // 更新 chartData，添加新的 dataset
+  chartData.value.labels = labels;
+  chartData.value.datasets.push({
+    label: `lambda=${lambda.value[0]}`,
+    backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
+    borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
+    data,
+    fill: false,
+  });
+}
+function setChartOptions() {
+  const documentStyle = getComputedStyle(document.documentElement);
+  const textColor = documentStyle.getPropertyValue('--p-text-color');
+  const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
+  const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+
+  return {
+    maintainAspectRatio: false,
+    aspectRatio: 0.8,
+    plugins: {
+      legend: {
+        labels: {
+          color: textColor,
+        },
+      },
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: textColorSecondary,
+          font: {
+            weight: 500,
+          },
+        },
+        grid: {
+          display: false,
+          drawBorder: false,
+        },
+        min: 0,
+        max: 40,
+      },
+      y: {
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+          drawBorder: false,
+        },
+      },
+    },
+  };
+}
+
+function back() {
+  save.value = false;
+  chartData.value.labels = [];
+  chartData.value.datasets = [];
 }
 
 const latexFormula = computed(() => `P(X = k) = \\frac{${lambda.value}^k e^{-${lambda.value}}}{k!}`);
 const katexContainer = ref<HTMLElement | null>(null);
-const renderFormula = () => {
-    if (katexContainer.value) {
-        katex.render(latexFormula.value, katexContainer.value, {
-            throwOnError: false
-        });
-    }
-};
+function renderFormula() {
+  if (katexContainer.value) {
+    katex.render(latexFormula.value, katexContainer.value, {
+      throwOnError: false,
+    });
+  }
+}
 
 onMounted(() => {
-    chartDataO.value = setChartData();
-    chartOptions.value = setChartOptions();
-    renderFormula();
+  chartDataO.value = setChartData();
+  chartOptions.value = setChartOptions();
+  renderFormula();
 });
-
-// 计算阶乘
-const factorial = (n: number) => {
-    if (n === 0 || n === 1) return 1;
-    let result = 1;
-    for (let i = 2; i <= n; i++) {
-        result *= i;
-    }
-    return result;
-};
-const chartDataO = ref();
-const chartOptions = ref();
-const setChartData = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
-
-    // 计算泊松分布的数据
-    const labels = [];
-    const data = [];
-    const maxK = Math.ceil(4 * lambda.value[0]);  // 根据 λ 设置 k 的最大值
-    for (let k = 0; k <= maxK; k++) {
-        const probabilityOfK = (Math.pow(lambda.value[0], k) * Math.exp(-lambda.value[0])) / factorial(k);
-        labels.push(k);
-        data.push(probabilityOfK);
-    }
-
-    return {
-        labels: labels,
-        datasets: [
-            {
-                label: 'Poisson Distribution',
-                backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
-                borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-                data: data
-            },
-        ]
-    };
-};
-const chartData = ref<{
-    labels: number[],
-    datasets: {
-        label: string,
-        backgroundColor: string,
-        borderColor: string,
-        data: number[],
-        fill: boolean
-    }[]
-}>({
-    labels: [],
-    datasets: []
-});
-const addNewDataset = () => {
-    if (!save.value) {
-        return;
-    }
-
-    const documentStyle = getComputedStyle(document.documentElement);
-    const labels = Array.from({ length: 40 }, (_, i) => i + 1);
-    const data = [];
-
-    const maxK = Math.ceil(4 * lambda.value[0]);  // 根据 λ 设置 k 的最大值
-    for (let k = 0; k <= maxK; k++) {
-        const probabilityOfK = (Math.pow(lambda.value[0], k) * Math.exp(-lambda.value[0])) / factorial(k);
-        data.push(probabilityOfK);
-    }
-
-    // 检查是否已经存在相同的 dataset
-    const existingDataset = chartData.value.datasets.find(
-        (dataset) => dataset.label === `lambda=${lambda.value[0]}`
-    );
-
-    // 如果已经存在相同的 dataset，不添加
-    if (existingDataset) {
-        return;
-    }
-
-    // 更新 chartData，添加新的 dataset
-    chartData.value.labels = labels;
-    chartData.value.datasets.push({
-        label: `lambda=${lambda.value[0]}`,
-        backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
-        borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-        data: data,
-        fill: false
-    });
-};
-const setChartOptions = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
-    const textColor = documentStyle.getPropertyValue('--p-text-color');
-    const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
-    const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
-
-    return {
-        maintainAspectRatio: false,
-        aspectRatio: 0.8,
-        plugins: {
-            legend: {
-                labels: {
-                    color: textColor
-                }
-            }
-        },
-        scales: {
-            x: {
-                ticks: {
-                    color: textColorSecondary,
-                    font: {
-                        weight: 500
-                    }
-                },
-                grid: {
-                    display: false,
-                    drawBorder: false
-                },
-                min: 0,
-                max: 40,
-            },
-            y: {
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder,
-                    drawBorder: false
-                }
-            }
-        }
-    };
-}
 
 // 监听 lambda 的变化以动态更新图像
 watch(lambda, () => {
-    chartDataO.value = setChartData();
-    addNewDataset();
-    chartOptions.value = setChartOptions();  // 确保 chartOptions 也更新
-    renderFormula();
+  chartDataO.value = setChartData();
+  addNewDataset();
+  chartOptions.value = setChartOptions(); // 确保 chartOptions 也更新
+  renderFormula();
 });
 
 const content = `
@@ -201,37 +203,41 @@ $$
 </script>
 
 <template>
-    <experiment-board title="二项分布" :tags="[]">
-        <template #experiment>
-            <Chart v-if="!save" type="line" :data="chartDataO" :options="chartOptions" class="h-full w-full" />
-            <Chart v-if="save" type="line" :data="chartData" :options="chartOptions" class="h-full w-full" />
-        </template>
-        <template #parameter>
-            <div class="w-full h-full flex flex-col items-center justify-center">
-                <div>
-                    <button v-if="!save" @click="saveImg" class="btn mb-5">显示历史图像模式</button>
-                    <div>
-                        <button v-if="save" @click="back" class="btn mb-5 mr-2">返回</button>
-                    </div>
-                </div>
-                <div class="w-full flex items-center justify-center mb-5">
-                    <div ref="katexContainer" class="text-xl"></div>
-                </div>
-                <div class="flex w-full mb-5">
-                    <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                        <p> Mean (λ) </p>
-                        <InputNumber v-model.number="lambda[0]" :min-fraction-digits="1" />
-                        <Slider :min="0.1" :max="20" :step="0.1" v-model="lambda" class="w-48" />
-                    </div>
-                </div>
-            </div>
-        </template>
-        <template #conclusion>
-            <div class="w-full h-full p-5">
-                <div v-html="toMarkdown(content)" class="prose-sm max-w-none text-base-content"></div>
-            </div>
-        </template>
-    </experiment-board>
+  <ExperimentBoard title="二项分布" :tags="[]">
+    <template #experiment>
+      <Chart v-if="!save" type="line" :data="chartDataO" :options="chartOptions" class="h-full w-full" />
+      <Chart v-if="save" type="line" :data="chartData" :options="chartOptions" class="h-full w-full" />
+    </template>
+    <template #parameter>
+      <div class="w-full h-full flex flex-col items-center justify-center">
+        <div>
+          <button v-if="!save" class="btn mb-5" @click="saveImg">
+            显示历史图像模式
+          </button>
+          <div>
+            <button v-if="save" class="btn mb-5 mr-2" @click="back">
+              返回
+            </button>
+          </div>
+        </div>
+        <div class="w-full flex items-center justify-center mb-5">
+          <div ref="katexContainer" class="text-xl" />
+        </div>
+        <div class="flex w-full mb-5">
+          <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+            <p> Mean (λ) </p>
+            <InputNumber v-model.number="lambda[0]" :min-fraction-digits="1" />
+            <Slider v-model="lambda" :min="0.1" :max="20" :step="0.1" class="w-48" />
+          </div>
+        </div>
+      </div>
+    </template>
+    <template #conclusion>
+      <div class="w-full h-full p-5">
+        <div class="prose-sm max-w-none " v-html="toMarkdown(content)" />
+      </div>
+    </template>
+  </ExperimentBoard>
 </template>
 
 <style scoped></style>

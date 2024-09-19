@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
-import katex from 'katex';
-import 'katex/dist/katex.min.css';
-import UniformDiagram from './UniformDiagram.vue';
+import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { toMarkdown } from '@/utils/markdown';
-import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
+import katex from 'katex';
+import { computed, onMounted, ref, watch } from 'vue'
+import UniformDiagram from './UniformDiagram.vue';
+import 'katex/dist/katex.min.css';
 
 const a = ref([0]);
 const b = ref([1]);
@@ -12,10 +12,10 @@ const k = ref([1]);
 const m = ref([0]);
 
 const save = ref(false);
-const saveImg = () => {
+function saveImg() {
   save.value = true;
 }
-const back = () => {
+function back() {
   save.value = false;
 }
 
@@ -32,13 +32,13 @@ const latexFormula = computed(() => {
 
 const katexContainer = ref<HTMLElement | null>(null);
 
-const renderFormula = () => {
+function renderFormula() {
   if (katexContainer.value) {
     katex.render(latexFormula.value, katexContainer.value, {
-      throwOnError: false
+      throwOnError: false,
     });
   }
-};
+}
 
 onMounted(() => {
   renderFormula();
@@ -94,51 +94,55 @@ $$
 </script>
 
 <template>
-  <experiment-board title="二项分布" :tags="[]">
+  <ExperimentBoard title="二项分布" :tags="[]">
     <template #experiment>
-      <uniform-diagram class="flex-1 h-full" :a="a[0]" :b="b[0]" :k="k[0]" :m="m[0]" :show-history="save" />
+      <UniformDiagram class="flex-1 h-full" :a="a[0]" :b="b[0]" :k="k[0]" :m="m[0]" :show-history="save" />
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
         <div>
-          <button v-if="!save" @click="saveImg" class="btn mb-5">显示历史图像模式</button>
+          <button v-if="!save" class="btn mb-5" @click="saveImg">
+            显示历史图像模式
+          </button>
           <div>
-            <button v-if="save" @click="back" class="btn mb-5 mr-2">返回</button>
+            <button v-if="save" class="btn mb-5 mr-2" @click="back">
+              返回
+            </button>
           </div>
         </div>
         <div class="w-full flex items-center justify-center mb-5">
-          <div ref="katexContainer" class="text-xl"></div>
+          <div ref="katexContainer" class="text-xl" />
         </div>
         <div class="grid grid-cols-4 gap-5 p-5">
           <div class="flex flex-col flex-1 items-center justify-center space-y-5 w-full">
             <p> a </p>
             <InputNumber v-model.number="a[0]" :invalid="a > b" :min-fraction-digits="1" fluid />
-            <Slider :min="-10" :max="9.9" :step="0.1" v-model="a" class="w-full" />
+            <Slider v-model="a" :min="-10" :max="9.9" :step="0.1" class="w-full" />
           </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-5 w-full">
             <p> b </p>
             <InputNumber v-model.number="b[0]" :min-fraction-digits="1" fluid />
-            <Slider :min="a[0] + 0.1" :max="10" :step="0.1" v-model="b" class="w-full" />
+            <Slider v-model="b" :min="a[0] + 0.1" :max="10" :step="0.1" class="w-full" />
           </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-5 w-full">
             <p> k </p>
             <InputNumber v-model.number="k[0]" :min-fraction-digits="1" fluid />
-            <Slider :min="0.1" :max="10" :step="0.1" v-model="k" class="w-full" />
+            <Slider v-model="k" :min="0.1" :max="10" :step="0.1" class="w-full" />
           </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-5 w-full">
             <p> m </p>
             <InputNumber v-model.number="m[0]" :min-fraction-digits="1" fluid />
-            <Slider :min="0" :max="10" :step="0.1" v-model="m" class="w-full" />
+            <Slider v-model="m" :min="0" :max="10" :step="0.1" class="w-full" />
           </div>
         </div>
       </div>
     </template>
     <template #conclusion>
       <div class="w-full h-full p-5">
-        <div v-html="toMarkdown(content)" class="prose-sm max-w-none text-base-content"></div>
+        <div class="prose-sm max-w-none" v-html="toMarkdown(content)" />
       </div>
     </template>
-  </experiment-board>
+  </ExperimentBoard>
 </template>
 
 <style scoped></style>

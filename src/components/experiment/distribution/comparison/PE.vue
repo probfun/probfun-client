@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from "vue";
-import katex from 'katex';
-import 'katex/dist/katex.min.css';
+import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { toMarkdown } from '@/utils/markdown';
-import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
+import katex from 'katex';
+import { computed, onMounted, ref, watch } from 'vue';
+import 'katex/dist/katex.min.css';
 
 const time = ref([10]);
 const lambda = computed(() => 60 / time.value[0]);
@@ -16,174 +16,175 @@ const exponentialContainer = ref<HTMLElement | null>(null);
 const poissonFormula = computed(() => `P(X = k) = \\frac{${lambda.value}^k e^{-${lambda.value}}}{k!}`);
 const poissonContainer = ref<HTMLElement | null>(null);
 
-const renderFormula = () => {
-    if (exponentialContainer.value) {
-        katex.render(exponentialFormula.value, exponentialContainer.value, {
-            throwOnError: false
-        });
-    }
-    if (poissonContainer.value) {
-        katex.render(poissonFormula.value, poissonContainer.value, {
-            throwOnError: false
-        });
-    }
-};
+function renderFormula() {
+  if (exponentialContainer.value) {
+    katex.render(exponentialFormula.value, exponentialContainer.value, {
+      throwOnError: false,
+    });
+  }
+  if (poissonContainer.value) {
+    katex.render(poissonFormula.value, poissonContainer.value, {
+      throwOnError: false,
+    });
+  }
+}
 
 onMounted(() => {
-    chartData.value = setChartData();
-    chartOptions.value = setChartOptions();
-    chartData2.value = setChartData2();
-    chartOptions2.value = setChartOptions2();
-    renderFormula();
+  chartData.value = setChartData();
+  chartOptions.value = setChartOptions();
+  chartData2.value = setChartData2();
+  chartOptions2.value = setChartOptions2();
+  renderFormula();
 });
 
 const chartData = ref();
 const chartOptions = ref();
 
-const setChartData = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
+function setChartData() {
+  const documentStyle = getComputedStyle(document.documentElement);
 
-    const labels = [];
-    const data = [];
-    const maxK = 3 * time.value[0];  // 根据 λ 设置 k 的最大值
-    for (let k = 0; k <= maxK; k++) {
-        const probabilityOfK = 1 / time.value[0] * Math.exp(-k / time.value[0]);
-        labels.push(k);
-        data.push(probabilityOfK);
-    }
+  const labels = [];
+  const data = [];
+  const maxK = 3 * time.value[0]; // 根据 λ 设置 k 的最大值
+  for (let k = 0; k <= maxK; k++) {
+    const probabilityOfK = 1 / time.value[0] * Math.exp(-k / time.value[0]);
+    labels.push(k);
+    data.push(probabilityOfK);
+  }
 
-    return {
-        labels: labels,
-        datasets: [
-            {
-                label: '到站时间间隔概率',
-                backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
-                borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-                data: data
-            },
-        ]
-    };
-};
-const setChartOptions = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
-    const textColor = documentStyle.getPropertyValue('--p-text-color');
-    const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
-    const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+  return {
+    labels,
+    datasets: [
+      {
+        label: '到站时间间隔概率',
+        backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
+        borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
+        data,
+      },
+    ],
+  };
+}
+function setChartOptions() {
+  const documentStyle = getComputedStyle(document.documentElement);
+  const textColor = documentStyle.getPropertyValue('--p-text-color');
+  const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
+  const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
 
-    return {
-        maintainAspectRatio: false,
-        aspectRatio: 0.6,
-        plugins: {
-            legend: {
-                labels: {
-                    color: textColor
-                }
-            }
+  return {
+    maintainAspectRatio: false,
+    aspectRatio: 0.6,
+    plugins: {
+      legend: {
+        labels: {
+          color: textColor,
         },
-        scales: {
-            x: {
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder
-                }
-            },
-            y: {
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder
-                }
-            }
-        }
-    };
+      },
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+        },
+      },
+      y: {
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+        },
+      },
+    },
+  };
 }
 
 const chartData2 = ref();
 const chartOptions2 = ref();
 
-const setChartData2 = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
+function setChartData2() {
+  const documentStyle = getComputedStyle(document.documentElement);
 
-    const labels = [];
-    const data = [];
-    const maxK = Math.ceil(2 * lambda.value);  // 根据 λ 设置 k 的最大值
-    for (let k = 0; k <= maxK; k++) {
-        const probabilityOfK = (Math.pow(lambda.value, k) * Math.exp(-lambda.value)) / factorial(k);
-        labels.push(k);
-        data.push(probabilityOfK);
-    }
+  const labels = [];
+  const data = [];
+  const maxK = Math.ceil(2 * lambda.value); // 根据 λ 设置 k 的最大值
+  for (let k = 0; k <= maxK; k++) {
+    const probabilityOfK = (lambda.value ** k * Math.exp(-lambda.value)) / factorial(k);
+    labels.push(k);
+    data.push(probabilityOfK);
+  }
 
-    return {
-        labels: labels,
-        datasets: [
-            {
-                label: '每小时到站数量概率',
-                backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
-                borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-                data: data
-            },
-        ]
-    };
-};
-const setChartOptions2 = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
-    const textColor = documentStyle.getPropertyValue('--p-text-color');
-    const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
-    const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+  return {
+    labels,
+    datasets: [
+      {
+        label: '每小时到站数量概率',
+        backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
+        borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
+        data,
+      },
+    ],
+  };
+}
+function setChartOptions2() {
+  const documentStyle = getComputedStyle(document.documentElement);
+  const textColor = documentStyle.getPropertyValue('--p-text-color');
+  const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
+  const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
 
-    return {
-        maintainAspectRatio: false,
-        aspectRatio: 0.6,
-        plugins: {
-            legend: {
-                labels: {
-                    color: textColor
-                }
-            }
+  return {
+    maintainAspectRatio: false,
+    aspectRatio: 0.6,
+    plugins: {
+      legend: {
+        labels: {
+          color: textColor,
         },
-        scales: {
-            x: {
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder
-                }
-            },
-            y: {
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder
-                }
-            }
-        }
-    };
+      },
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+        },
+      },
+      y: {
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+        },
+      },
+    },
+  };
 }
 
-const factorial = (n: number) => {
-    if (n === 0 || n === 1) return 1;
-    let result = 1;
-    for (let i = 2; i <= n; i++) {
-        result *= i;
-    }
-    return result;
-};
+function factorial(n: number) {
+  if (n === 0 || n === 1)
+    return 1;
+  let result = 1;
+  for (let i = 2; i <= n; i++) {
+    result *= i;
+  }
+  return result;
+}
 
 watch([time], () => {
-    chartData.value = setChartData();
-    chartData2.value = setChartData2();
-    renderFormula();
+  chartData.value = setChartData();
+  chartData2.value = setChartData2();
+  renderFormula();
 });
 
-const toggleChart = () => {
-    exponential.value = !exponential.value;
-    poisson.value = !poisson.value;
-};
+function toggleChart() {
+  exponential.value = !exponential.value;
+  poisson.value = !poisson.value;
+}
 
 const content = `
 ## 泊松分布与指数分布的关系
@@ -256,33 +257,39 @@ $$
 </script>
 
 <template>
-    <experiment-board title="泊松分布与指数分布" :tags="[]">
-        <template #experiment>
-            <Chart v-if="exponential" type="bar" :data="chartData" :options="chartOptions" class="h-full w-full" />
-            <Chart v-if="poisson" type="bar" :data="chartData2" :options="chartOptions2" class="h-full w-full" />
-        </template>
-        <template #parameter>
-            <div class="w-full h-full flex flex-col items-center justify-center">
-                <div class="flex w-full mb-5">
-                    <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                        <p> 公交车的发车间隔（min） </p>
-                        <InputNumber v-model.number="time[0]" :min-fraction-digits="1" />
-                        <Slider :min="5" :max="30" :step="5" v-model="time" class="w-48" />
-                    </div>
-                </div>
-                <div class="w-full flex items-center justify-center mb-5">
-                    <button class="btn mr-5" @click="toggleChart">点我切换</button>
-                    <div v-show="exponential" ref="exponentialContainer" class="text-xl"></div>
-                    <div v-show="poisson" ref="poissonContainer" class="text-xl"></div>
-                </div>
-                <div v-if="exponential">平均等车时间{{ time[0] }}分钟</div>
-                <div v-if="poisson">平均每小时到达{{ lambda }}辆车</div>
-            </div>
-        </template>
-        <template #conclusion>
-            <div class="w-full h-full p-5">
-                <div v-html="toMarkdown(content)" class="prose max-w-full text-base-content"></div>
-            </div>
-        </template>
-    </experiment-board>
+  <ExperimentBoard title="泊松分布与指数分布" :tags="[]">
+    <template #experiment>
+      <Chart v-if="exponential" type="bar" :data="chartData" :options="chartOptions" class="h-full w-full" />
+      <Chart v-if="poisson" type="bar" :data="chartData2" :options="chartOptions2" class="h-full w-full" />
+    </template>
+    <template #parameter>
+      <div class="w-full h-full flex flex-col items-center justify-center">
+        <div class="flex w-full mb-5">
+          <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+            <p> 公交车的发车间隔（min） </p>
+            <InputNumber v-model.number="time[0]" :min-fraction-digits="1" />
+            <Slider v-model="time" :min="5" :max="30" :step="5" class="w-48" />
+          </div>
+        </div>
+        <div class="w-full flex items-center justify-center mb-5">
+          <button class="btn mr-5" @click="toggleChart">
+            点我切换
+          </button>
+          <div v-show="exponential" ref="exponentialContainer" class="text-xl" />
+          <div v-show="poisson" ref="poissonContainer" class="text-xl" />
+        </div>
+        <div v-if="exponential">
+          平均等车时间{{ time[0] }}分钟
+        </div>
+        <div v-if="poisson">
+          平均每小时到达{{ lambda }}辆车
+        </div>
+      </div>
+    </template>
+    <template #conclusion>
+      <div class="w-full h-full p-5">
+        <div class="prose-sm max-w-none" v-html="toMarkdown(content)" />
+      </div>
+    </template>
+  </ExperimentBoard>
 </template>

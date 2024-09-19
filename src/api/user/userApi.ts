@@ -1,57 +1,82 @@
-import { post, get } from '../request';
-import { User } from './userType';
+import type { User } from './userType';
+import { get, post, put } from '../request';
 
-export async function loginApi(id: string, password: string) {
-    try {
-        const result = await post<User>('/api/usermanager/login', {
-            id,
-            password,
-        });
-        return result.data;
-    }
-    catch (error) {
-        console.error('Login API error:', error);
-        throw error;
-    }
-
+export async function isValidApi(studentId: string) {
+  return {
+    isValid: true,
+  };
+  const result = await post<{
+    isValid: boolean
+  }>('/api/user/valid', {
+    studentId,
+  });
+  return result.data;
 }
 
-export async function registerApi(id: string, password: string, username: string, gender: string, number: string, introduction: string, email: string) {
-    try {
-        const result = await post<User>('/api/usermanager/register', {
-            id,
-            password,
-            username,
-            gender,
-            number,
-            introduction,
-            email,
-        });
-        return result.data;
-    }
-    catch (error) {
-        console.error('Register API error:', error);
-        throw error;
-    }
-
+export async function loginApi(studentId: string, password: string) {
+  const result = await post<{
+    token: string
+    user: User & { token: string }
+  }>('/api/user/login', {
+    studentId,
+    password,
+  });
+  return result.data;
 }
 
-export async function testApi() {
-    const result = await get<{
-        aaa: string,
-        bbb: string
-    }>('/user/test');
-    return result.data;
+export async function registerApi(studentId: string, password: string, nickname: string, gender: number, email: string, phone: string, major: string, school: string) {
+  const result = await post<{
+    user: User
+  }>('/api/user/register', {
+    studentId,
+    password,
+    nickname,
+    gender,
+    email,
+    phone,
+    major,
+    school,
+  });
+  return result.data;
 }
 
-// 演示
-// async function login() {
-//     const studentId = 'aaa';
-//     const password = 'bbb';
-//     try {
-//         const user = await loginApi(studentId, password);
-//         console.log(user);
-//     } catch (error) {
-//         console.error(error);
-//     }
-// }
+export async function fetchUserApi() {
+  const result = await get<{
+    user: User
+  }>('/api/user');
+  return result.data;
+}
+
+export async function putUserApi(
+  nickname: string,
+  gender: number,
+  email: string,
+  phone: string,
+  major: string,
+  school: string,
+) {
+  const result = await put<{
+    user: User
+  }>('/api/user', {
+    nickname,
+    gender,
+    email,
+    phone,
+    major,
+    school,
+  });
+  return result.data;
+}
+
+export async function putUserAvatarApi(avatar: File) {
+  const formData = new FormData();
+  formData.append('avatar', avatar);
+  const result = await put<{
+    user: User
+  }>('/api/user/avatar', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return result.data;
+}

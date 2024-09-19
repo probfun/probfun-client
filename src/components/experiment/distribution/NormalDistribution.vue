@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
-import katex from 'katex';
-import 'katex/dist/katex.min.css';
-import DistributionDiagram from "@/components/experiment/distribution/DistributionDiagram.vue";
+import DistributionDiagram from '@/components/experiment/distribution/DistributionDiagram.vue';
+import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { toMarkdown } from '@/utils/markdown';
-import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
+import katex from 'katex';
+import { computed, onMounted, ref, watch } from 'vue'
+import 'katex/dist/katex.min.css';
 
 const mean = ref([0]);
 const stdDev = ref([1]);
@@ -14,10 +14,10 @@ const transformedMean = ref();
 const transformedVariance = ref();
 
 const save = ref(false);
-const saveImg = () => {
+function saveImg() {
   save.value = true;
 }
-const back = () => {
+function back() {
   save.value = false;
 }
 
@@ -44,22 +44,21 @@ const transformedFormula = computed(() => {
   return `X \\sim N(${transformedMean.toFixed(2)}, ${transformedVariance.toFixed(2)})`;
 });
 
-
 const katexMainFormula = ref<HTMLElement | null>(null);
 const katexTransformedFormula = ref<HTMLElement | null>(null);
 
-const renderFormula = () => {
+function renderFormula() {
   if (katexMainFormula.value) {
     katex.render(latexFormula.value, katexMainFormula.value, {
-      throwOnError: false
+      throwOnError: false,
     });
   }
   if (katexTransformedFormula.value) {
     katex.render(transformedFormula.value, katexTransformedFormula.value, {
-      throwOnError: false
+      throwOnError: false,
     });
   }
-};
+}
 
 onMounted(() => {
   renderFormula();
@@ -105,105 +104,109 @@ $$
 
 **线性变换保留了正态分布的钟形曲线形状，只是改变了其位置和尺度。**
 `
-
 </script>
 
 <template>
-
-  <experiment-board title="二项分布" :tags="[]">
+  <ExperimentBoard title="二项分布" :tags="[]">
     <template #experiment>
-      <distribution-diagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance" :a="a" :b="b"
-        :show-history="save" />
+      <DistributionDiagram
+        class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance" :a="a" :b="b"
+        :show-history="save"
+      />
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
         <div class="w-full flex items-center justify-center">
           <div>
-            <button v-if="!save" @click="saveImg" class="btn mr-5">显示历史图像模式</button>
+            <button v-if="!save" class="btn mr-5" @click="saveImg">
+              显示历史图像模式
+            </button>
             <div>
-              <button v-if="save" @click="back" class="btn mr-5">返回</button>
+              <button v-if="save" class="btn mr-5" @click="back">
+                返回
+              </button>
             </div>
           </div>
-          <div ref="katexMainFormula" class="text-xl mr-5"></div>
-          <div ref="katexTransformedFormula" class="text-xl ml-5"></div>
+          <div ref="katexMainFormula" class="text-xl mr-5" />
+          <div ref="katexTransformedFormula" class="text-xl ml-5" />
         </div>
         <div class="grid grid-cols-2 gap-5 p-5">
           <div class="flex flex-col flex-1 items-center justify-center space-y-3">
             <p>Mean</p>
             <InputNumber v-model.number="mean[0]" fluid :min-fraction-digits="1" />
-            <Slider :min="-5" :max="5" :step="0.1" v-model="mean" class="w-full" />
+            <Slider v-model="mean" :min="-5" :max="5" :step="0.1" class="w-full" />
           </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-3">
             <p>Variance</p>
             <InputNumber v-model.number="stdDev[0]" fluid :min-fraction-digits="1" />
-            <Slider :min="0.1" :max="5" :step="0.1" v-model="stdDev" class="w-full" />
+            <Slider v-model="stdDev" :min="0.1" :max="5" :step="0.1" class="w-full" />
           </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-3">
             <p> a </p>
             <InputNumber v-model.number="a[0]" fluid :invalid="a[0] === 0" :min-fraction-digits="1" />
-            <Slider :min="-2" :max="2" :step="0.1" v-model="a" class="w-full" />
+            <Slider v-model="a" :min="-2" :max="2" :step="0.1" class="w-full" />
           </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-3">
             <p> b </p>
             <InputNumber v-model.number="b[0]" fluid :min-fraction-digits="1" />
-            <Slider :min="-5" :max="5" :step="0.1" v-model="b" class="w-5/6" />
+            <Slider v-model="b" :min="-5" :max="5" :step="0.1" class="w-5/6" />
           </div>
         </div>
       </div>
     </template>
     <template #conclusion>
       <div class="w-full h-full p-5">
-        <div v-html="toMarkdown(content)" class="prose-sm max-w-none text-base-content"></div>
+        <div class="prose-sm max-w-none" v-html="toMarkdown(content)" />
       </div>
     </template>
-  </experiment-board>
+  </ExperimentBoard>
 
-  <!--  <Splitter class="mb-8 h-full !border-0">-->
-  <!--    <SplitterPanel class="pr-1.5">-->
-  <!--      <div class="flex-1 p-3.5 border rounded-lg flex flex-col h-full">-->
-  <!--        <div class="mb-2 font-bold">实验区</div>-->
-  <!--        <div class="h-full w-full flex flex-col">-->
-  <!--          <div class="mb-5 w-full flex-1">-->
-  <!--            <distribution-diagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance" :a="a" :b="b" />-->
-  <!--          </div>-->
-  <!--          <div class="w-full flex items-center justify-center mb-5">-->
-  <!--            <div ref="katexContainer" class="flex items-center space-x-2">-->
-  <!--              <div ref="katexMainFormula" class="inline-block mr-5 text-xl"></div>-->
-  <!--              <div ref="katexTransformedFormula" class="inline-block text-xl"></div>-->
-  <!--            </div>-->
-  <!--          </div>-->
-  <!--          <div class="flex w-full mb-5 space-x-4">-->
-  <!--            <div class="flex flex-col flex-1 items-center justify-center space-y-3">-->
-  <!--              <p>Mean</p>-->
-  <!--              <InputNumber v-model.number="mean" fluid />-->
-  <!--              <Slider :min="-5" :max="5" :step="0.1" v-model="mean" class="w-full" />-->
-  <!--            </div>-->
-  <!--            <div class="flex flex-col flex-1 items-center justify-center space-y-3">-->
-  <!--              <p>Variance</p>-->
-  <!--              <InputNumber v-model.number="stdDev" fluid />-->
-  <!--              <Slider :min="0.1" :max="5" :step="0.1" v-model="stdDev" class="w-full" />-->
-  <!--            </div>-->
-  <!--            <div class="flex flex-col flex-1 items-center justify-center space-y-3">-->
-  <!--              <p> a </p>-->
-  <!--              <InputNumber v-model.number="a" fluid :invalid="a === 0"/>-->
-  <!--              <Slider :min="-2" :max="2" :step="0.1" v-model="a" class="w-full" />-->
-  <!--            </div>-->
-  <!--            <div class="flex flex-col flex-1 items-center justify-center space-y-3">-->
-  <!--              <p> b </p>-->
-  <!--              <InputNumber v-model.number="b" fluid />-->
-  <!--              <Slider :min="-5" :max="5" :step="0.1" v-model="b" class="w-5/6" />-->
-  <!--            </div>-->
-  <!--          </div>-->
-  <!--        </div>-->
-  <!--      </div>-->
-  <!--    </SplitterPanel>-->
-  <!--    <SplitterPanel class="pr-3 pl-1.5" :size="25">-->
-  <!--      <Panel header="提示区" class="h-full overflow-auto">-->
-  <!--        <div v-html="toMarkdown(content)" class="markdown-format">-->
-  <!--        </div>-->
-  <!--      </Panel>-->
-  <!--    </SplitterPanel>-->
-  <!--  </Splitter>-->
+  <!--  <Splitter class="mb-8 h-full !border-0"> -->
+  <!--    <SplitterPanel class="pr-1.5"> -->
+  <!--      <div class="flex-1 p-3.5 border rounded-lg flex flex-col h-full"> -->
+  <!--        <div class="mb-2 font-bold">实验区</div> -->
+  <!--        <div class="h-full w-full flex flex-col"> -->
+  <!--          <div class="mb-5 w-full flex-1"> -->
+  <!--            <distribution-diagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance" :a="a" :b="b" /> -->
+  <!--          </div> -->
+  <!--          <div class="w-full flex items-center justify-center mb-5"> -->
+  <!--            <div ref="katexContainer" class="flex items-center space-x-2"> -->
+  <!--              <div ref="katexMainFormula" class="inline-block mr-5 text-xl"></div> -->
+  <!--              <div ref="katexTransformedFormula" class="inline-block text-xl"></div> -->
+  <!--            </div> -->
+  <!--          </div> -->
+  <!--          <div class="flex w-full mb-5 space-x-4"> -->
+  <!--            <div class="flex flex-col flex-1 items-center justify-center space-y-3"> -->
+  <!--              <p>Mean</p> -->
+  <!--              <InputNumber v-model.number="mean" fluid /> -->
+  <!--              <Slider :min="-5" :max="5" :step="0.1" v-model="mean" class="w-full" /> -->
+  <!--            </div> -->
+  <!--            <div class="flex flex-col flex-1 items-center justify-center space-y-3"> -->
+  <!--              <p>Variance</p> -->
+  <!--              <InputNumber v-model.number="stdDev" fluid /> -->
+  <!--              <Slider :min="0.1" :max="5" :step="0.1" v-model="stdDev" class="w-full" /> -->
+  <!--            </div> -->
+  <!--            <div class="flex flex-col flex-1 items-center justify-center space-y-3"> -->
+  <!--              <p> a </p> -->
+  <!--              <InputNumber v-model.number="a" fluid :invalid="a === 0"/> -->
+  <!--              <Slider :min="-2" :max="2" :step="0.1" v-model="a" class="w-full" /> -->
+  <!--            </div> -->
+  <!--            <div class="flex flex-col flex-1 items-center justify-center space-y-3"> -->
+  <!--              <p> b </p> -->
+  <!--              <InputNumber v-model.number="b" fluid /> -->
+  <!--              <Slider :min="-5" :max="5" :step="0.1" v-model="b" class="w-5/6" /> -->
+  <!--            </div> -->
+  <!--          </div> -->
+  <!--        </div> -->
+  <!--      </div> -->
+  <!--    </SplitterPanel> -->
+  <!--    <SplitterPanel class="pr-3 pl-1.5" :size="25"> -->
+  <!--      <Panel header="提示区" class="h-full overflow-auto"> -->
+  <!--        <div v-html="toMarkdown(content)" class="markdown-format"> -->
+  <!--        </div> -->
+  <!--      </Panel> -->
+  <!--    </SplitterPanel> -->
+  <!--  </Splitter> -->
 </template>
 
 <style scoped></style>

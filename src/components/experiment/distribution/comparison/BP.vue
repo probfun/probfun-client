@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from "vue";
-import katex from 'katex';
-import 'katex/dist/katex.min.css';
+import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { toMarkdown } from '@/utils/markdown';
-import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
+import katex from 'katex';
+import { computed, onMounted, ref, watch } from 'vue';
+import 'katex/dist/katex.min.css';
 
 const number = ref([10]);
 const probability = ref([0.1]);
@@ -15,124 +15,124 @@ const binomialContainer = ref<HTMLElement | null>(null);
 const poissonFormula = computed(() => `P(X = k) = \\frac{${lambda.value.toFixed(2)}^k e^{-${lambda.value.toFixed(2)}}}{k!}`);
 const poissonContainer = ref<HTMLElement | null>(null);
 
-const renderFormula = () => {
-    if (binomialContainer.value) {
-        katex.render(binomialFormula.value, binomialContainer.value, {
-            throwOnError: false
-        });
-    }
-    if (poissonContainer.value) {
-        katex.render(poissonFormula.value, poissonContainer.value, {
-            throwOnError: false
-        });
-    }
-};
+function renderFormula() {
+  if (binomialContainer.value) {
+    katex.render(binomialFormula.value, binomialContainer.value, {
+      throwOnError: false,
+    });
+  }
+  if (poissonContainer.value) {
+    katex.render(poissonFormula.value, poissonContainer.value, {
+      throwOnError: false,
+    });
+  }
+}
 
 onMounted(() => {
-    chartData.value = setChartData();
-    chartOptions.value = setChartOptions();
-    renderFormula();
+  chartData.value = setChartData();
+  chartOptions.value = setChartOptions();
+  renderFormula();
 });
 
 const chartData = ref();
 const chartOptions = ref();
-const setChartData = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
+function setChartData() {
+  const documentStyle = getComputedStyle(document.documentElement);
 
-    // 计算二项分布的数据
-    const labels = [];
-    const binomialData = [];
-    const poissonData = [];
-    for (let k = 0; k <= number.value[0]; k++) {
-        // 计算二项分布
-        const probabilityOfK = binomialCoefficient(number.value[0], k) *
-            Math.pow(probability.value[0], k) *
-            Math.pow(1 - probability.value[0], number.value[0] - k);
-        binomialData.push(probabilityOfK);
+  // 计算二项分布的数据
+  const labels = [];
+  const binomialData = [];
+  const poissonData = [];
+  for (let k = 0; k <= number.value[0]; k++) {
+    // 计算二项分布
+    const probabilityOfK = binomialCoefficient(number.value[0], k)
+      * probability.value[0] ** k
+      * (1 - probability.value[0]) ** (number.value[0] - k);
+    binomialData.push(probabilityOfK);
 
-        // 计算泊松分布
-        const poissonProbability = (Math.pow(lambda.value, k) * Math.exp(-lambda.value)) / factorial(k);
-        poissonData.push(poissonProbability);
+    // 计算泊松分布
+    const poissonProbability = (lambda.value ** k * Math.exp(-lambda.value)) / factorial(k);
+    poissonData.push(poissonProbability);
 
-        labels.push(k);
-    }
+    labels.push(k);
+  }
 
-    return {
-        labels: labels,
-        datasets: [
-            {
-                label: 'Binomial Distribution',
-                backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
-                borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-                data: binomialData,
-                fill: false,
-            },
-            {
-                label: 'Poisson Distribution',
-                backgroundColor: documentStyle.getPropertyValue('--p-gray-500'),
-                borderColor: documentStyle.getPropertyValue('--p-gray-500'),
-                data: poissonData,
-                fill: false,
-            }
-        ]
-    };
-};
+  return {
+    labels,
+    datasets: [
+      {
+        label: 'Binomial Distribution',
+        backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
+        borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
+        data: binomialData,
+        fill: false,
+      },
+      {
+        label: 'Poisson Distribution',
+        backgroundColor: documentStyle.getPropertyValue('--p-gray-500'),
+        borderColor: documentStyle.getPropertyValue('--p-gray-500'),
+        data: poissonData,
+        fill: false,
+      },
+    ],
+  };
+}
 
 // 计算阶乘
-const factorial = (n: number): number => {
-    return n <= 1 ? 1 : n * factorial(n - 1);
-};
+function factorial(n: number): number {
+  return n <= 1 ? 1 : n * factorial(n - 1);
+}
 
-const setChartOptions = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
-    const textColor = documentStyle.getPropertyValue('--p-text-color');
-    const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
-    const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+function setChartOptions() {
+  const documentStyle = getComputedStyle(document.documentElement);
+  const textColor = documentStyle.getPropertyValue('--p-text-color');
+  const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
+  const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
 
-    return {
-        maintainAspectRatio: false,
-        aspectRatio: 0.6,
-        plugins: {
-            legend: {
-                labels: {
-                    color: textColor
-                }
-            }
+  return {
+    maintainAspectRatio: false,
+    aspectRatio: 0.6,
+    plugins: {
+      legend: {
+        labels: {
+          color: textColor,
         },
-        scales: {
-            x: {
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder
-                }
-            },
-            y: {
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder
-                }
-            }
-        }
-    };
+      },
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+        },
+      },
+      y: {
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+        },
+      },
+    },
+  };
 }
 
 // 计算二项系数（组合数）
-const binomialCoefficient = (n: number, k: number) => {
-    let result = 1;
-    for (let i = 1; i <= k; i++) {
-        result *= (n - i + 1) / i;
-    }
-    return result;
-};
+function binomialCoefficient(n: number, k: number) {
+  let result = 1;
+  for (let i = 1; i <= k; i++) {
+    result *= (n - i + 1) / i;
+  }
+  return result;
+}
 
 // 监听 props 的变化以动态更新图像
 watch([number, probability], () => {
-    chartData.value = setChartData();
-    renderFormula();
+  chartData.value = setChartData();
+  renderFormula();
 });
 
 const content = `
@@ -225,38 +225,42 @@ $$
 </script>
 
 <template>
-    <experiment-board title="二项分布与泊松分布" :tags="[]">
-        <template #experiment>
-            <Chart type="line" :data="chartData" :options="chartOptions" class="h-full w-full" />
-        </template>
-        <template #parameter>
-            <div class="w-full h-full flex flex-col items-center justify-center">
-                <div class="w-full flex items-center justify-center mb-5">
-                    <div class="text-xl">二项分布：</div>
-                    <div ref="binomialContainer" class="text-xl"></div>
-                </div>
-                <div class="flex w-full mb-5">
-                    <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                        <p> Number of experiments </p>
-                        <InputNumber v-model.number="number[0]" />
-                        <Slider :min="1" :max="50" :step="1" v-model="number" class="w-48" />
-                    </div>
-                    <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                        <p> Probability of success </p>
-                        <InputNumber v-model.number="probability[0]" :min-fraction-digits="2" />
-                        <Slider :min="0" :max="1" :step="0.01" v-model="probability" class="w-48" />
-                    </div>
-                </div>
-                <div class="w-full flex items-center justify-center mb-5">
-                    <div class="text-xl mr-10">泊松分布：λ = np = {{ number }} * {{ probability }}={{ (number[0] * probability[0]).toFixed(2) }}</div>
-                    <div ref="poissonContainer" class="text-xl"></div>
-                </div>
-            </div>
-        </template>
-        <template #conclusion>
-            <div class="w-full h-full p-5">
-                <div v-html="toMarkdown(content)" class="prose max-w-full text-base-content"></div>
-            </div>
-        </template>
-    </experiment-board>
+  <ExperimentBoard title="二项分布与泊松分布" :tags="[]">
+    <template #experiment>
+      <Chart type="line" :data="chartData" :options="chartOptions" class="h-full w-full" />
+    </template>
+    <template #parameter>
+      <div class="w-full h-full flex flex-col items-center justify-center">
+        <div class="w-full flex items-center justify-center mb-5">
+          <div class="text-xl">
+            二项分布：
+          </div>
+          <div ref="binomialContainer" class="text-xl" />
+        </div>
+        <div class="flex w-full mb-5">
+          <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+            <p> Number of experiments </p>
+            <InputNumber v-model.number="number[0]" />
+            <Slider v-model="number" :min="1" :max="50" :step="1" class="w-48" />
+          </div>
+          <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+            <p> Probability of success </p>
+            <InputNumber v-model.number="probability[0]" :min-fraction-digits="2" />
+            <Slider v-model="probability" :min="0" :max="1" :step="0.01" class="w-48" />
+          </div>
+        </div>
+        <div class="w-full flex items-center justify-center mb-5">
+          <div class="text-xl mr-10">
+            泊松分布：λ = np = {{ number }} * {{ probability }}={{ (number[0] * probability[0]).toFixed(2) }}
+          </div>
+          <div ref="poissonContainer" class="text-xl" />
+        </div>
+      </div>
+    </template>
+    <template #conclusion>
+      <div class="w-full h-full p-5">
+        <div class="prose-sm max-w-none" v-html="toMarkdown(content)" />
+      </div>
+    </template>
+  </ExperimentBoard>
 </template>
