@@ -6,6 +6,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import 'katex/dist/katex.min.css';
 
 const lambda = ref([3]); // Poisson distribution mean (λ)
+const an = ref([1]);
 
 const save = ref(false);
 function saveImg() {
@@ -147,7 +148,12 @@ function back() {
   chartData.value.datasets = [];
 }
 
-const latexFormula = computed(() => `P(X = k) = \\frac{${lambda.value}^k e^{-${lambda.value}}}{k!}`);
+const result = computed(() => {
+  const probabilityOfK = (lambda.value[0] ** an.value[0] * Math.exp(-lambda.value[0])) / factorial(an.value[0]);
+  return probabilityOfK;
+});
+
+const latexFormula = computed(() => `P(X = ${an.value}) = \\frac{${lambda.value}^${an.value} e^{-${lambda.value}}}{${an.value}!} = ${result.value.toFixed(3)}`);
 const katexContainer = ref<HTMLElement | null>(null);
 function renderFormula() {
   if (katexContainer.value) {
@@ -168,6 +174,10 @@ watch(lambda, () => {
   chartDataO.value = setChartData();
   addNewDataset();
   chartOptions.value = setChartOptions(); // 确保 chartOptions 也更新
+  renderFormula();
+});
+
+watch(an, () => {
   renderFormula();
 });
 
@@ -228,6 +238,11 @@ $$
             <p> Mean (λ) </p>
             <InputNumber v-model.number="lambda[0]" :min-fraction-digits="1" />
             <Slider v-model="lambda" :min="0.1" :max="20" :step="0.1" class="w-48" />
+          </div>
+          <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+            <p> The actual number (k) </p>
+            <InputNumber v-model.number="an[0]" :min-fraction-digits="1" />
+            <Slider v-model="an" :min="0" :max="4 * lambda[0]" :step="1" class="w-48" />
           </div>
         </div>
       </div>
