@@ -45,6 +45,7 @@ declare module 'vue' {
     DialogScrollContent: typeof import('./src/components/ui/dialog/DialogScrollContent.vue')['default']
     DialogTitle: typeof import('./src/components/ui/dialog/DialogTitle.vue')['default']
     DialogTrigger: typeof import('./src/components/ui/dialog/DialogTrigger.vue')['default']
+    DisplayContainer: typeof import('./src/components/experiment/DisplayContainer.vue')['default']
     DistributionDiagram: typeof import('./src/components/experiment/distribution/DistributionDiagram.vue')['default']
     ExperimentBoard: typeof import('./src/components/experiment/ExperimentBoard.vue')['default']
     ExponentialDiagram: typeof import('./src/components/experiment/distribution/ExponentialDiagram.vue')['default']
