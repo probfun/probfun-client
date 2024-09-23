@@ -1,31 +1,10 @@
-import { createStore } from 'vuex';
+import type { User } from '@/api/user/userType';
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
-export default createStore({
-  state: {
-    user: null, // 存储用户信息
-  },
-  mutations: {
-    setUser(state, user) {
-      state.user = user;
-    },
-    clearUser(state) {
-      state.user = null;
-    },
-  },
-  actions: {
-    login({ commit }, user) {
-      commit('setUser', user);
-    },
-    logout({ commit }) {
-      commit('clearUser');
-    },
-  },
-  getters: {
-    isAuthenticated(state) {
-      return !!state.user;
-    },
-    getUser(state) {
-      return state.user;
-    },
-  },
+export const useUserStore = defineStore('userStore', () => {
+  const user = ref<User | null>(null);
+  return {
+    user,
+  }
 });

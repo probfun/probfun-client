@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
-import katex from 'katex';
-import 'katex/dist/katex.min.css';
+import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { toMarkdown } from '@/utils/markdown';
-import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
+import katex from 'katex';
+import { computed, onMounted, ref, watch } from 'vue';
+import 'katex/dist/katex.min.css';
 
 const katexFormula = computed(() => `
   \\begin{aligned}
@@ -13,29 +13,29 @@ const katexFormula = computed(() => `
   \\end{aligned}
 `);
 const katexContainer = ref<HTMLElement | null>(null);
-const renderFormula = () => {
+function renderFormula() {
   if (katexContainer.value) {
     katex.render(katexFormula.value, katexContainer.value, {
-      throwOnError: false
+      throwOnError: false,
     });
   }
-};
+}
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 
 // 输入变量
-const specificity = ref(0.97); // 特异度
-const sensitivity = ref(0.99); // 灵敏度
-const infectionRate = ref(0.001); // 感染率
-const population = ref(100000); // 总人数
+const specificity = ref([0.97]); // 特异度
+const sensitivity = ref([0.99]); // 灵敏度
+const infectionRate = ref([0.001]); // 感染率
+const population = ref([100000]); // 总人数
 
 // 计算结果
 const truePositiveRate = computed(() => {
-  const infectedPopulation = population.value * infectionRate.value; // 真实感染人数
-  const healthyPopulation = population.value - infectedPopulation; // 未感染人数
+  const infectedPopulation = population.value[0] * infectionRate.value[0]; // 真实感染人数
+  const healthyPopulation = population.value[0] - infectedPopulation; // 未感染人数
 
-  const truePositives = sensitivity.value * infectedPopulation; // 真阳性数量
-  const falsePositives = (1 - specificity.value) * healthyPopulation; // 假阳性数量
+  const truePositives = sensitivity.value[0] * infectedPopulation; // 真阳性数量
+  const falsePositives = (1 - specificity.value[0]) * healthyPopulation; // 假阳性数量
 
   const totalPositiveTests = truePositives + falsePositives; // 总阳性人数
 
@@ -43,14 +43,14 @@ const truePositiveRate = computed(() => {
 });
 
 const result = computed(() => {
-  const infectedPopulation = population.value * infectionRate.value; // 真实感染人数
-  const healthyPopulation = population.value - infectedPopulation; // 未感染人数
+  const infectedPopulation = population.value[0] * infectionRate.value[0]; // 真实感染人数
+  const healthyPopulation = population.value[0] - infectedPopulation; // 未感染人数
 
-  const truePositives = sensitivity.value * infectedPopulation; // 真阳性数量
-  const falsePositives = (1 - specificity.value) * healthyPopulation; // 假阳性数量
+  const truePositives = sensitivity.value[0] * infectedPopulation; // 真阳性数量
+  const falsePositives = (1 - specificity.value[0]) * healthyPopulation; // 假阳性数量
 
-  const totalPositiveTests = Math.round(truePositives + falsePositives); // 总阳性人数
-  return totalPositiveTests;
+  // 总阳性人数
+  return Math.round(truePositives + falsePositives);
 });
 
 // 饼图数据
@@ -60,12 +60,12 @@ const chartData = computed(() => ({
     {
       data: [
         1 - truePositiveRate.value,
-        truePositiveRate.value
+        truePositiveRate.value,
       ],
       backgroundColor: ['#00C4CC', '#FF7F0E'],
-      hoverBackgroundColor: ['#0097A7', '#FF570E']
-    }
-  ]
+      hoverBackgroundColor: ['#0097A7', '#FF570E'],
+    },
+  ],
 }));
 
 // 饼图选项
@@ -78,19 +78,21 @@ const chartOptions = computed(() => {
       legend: {
         labels: {
           usePointStyle: true,
-          color: textColor
-        }
-      }
-    }
+          color: textColor,
+        },
+      },
+    },
   };
 });
 
 // 初始化图形
-const drawCanvas = () => {
+function drawCanvas() {
   const canvas = canvasRef.value;
-  if (!canvas) return;
+  if (!canvas)
+    return;
   const ctx = canvas.getContext('2d');
-  if (!ctx) return;
+  if (!ctx)
+    return;
 
   // 清空画布
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -109,10 +111,10 @@ const drawCanvas = () => {
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
   }
-};
+}
 
 // 计算感染和健康人数
-const infectedDots = computed(() => 1000 * infectionRate.value * sensitivity.value + (1000 - 1000 * infectionRate.value) * (1 - specificity.value));
+const infectedDots = computed(() => 1000 * infectionRate.value[0] * sensitivity.value[0] + (1000 - 1000 * infectionRate.value[0]) * (1 - specificity.value[0]));
 
 // 监听输入变化并更新画布
 watch([specificity, sensitivity, infectionRate, population], drawCanvas);
@@ -124,23 +126,24 @@ onMounted(() => {
 
 // Markdown 内容
 const content = `
+### **概述**
 阳性检测问题是统计学和医学中的一个经典问题，涉及到如何正确解读检测结果，特别是在涉及罕见疾病或事件时。例如，当进行医学检测时，可能得到阳性或阴性的结果。然而，检测结果不一定准确，可能出现假阳性或假阴性的情况。阳性检测问题的核心在于，当检测到阳性结果时，实际患有该疾病的概率。
 
-### **模拟实验求解**
+### **实验思路**
 
 在进行模拟实验之前，我们先了解如下概念：
 
-#### 1. 灵敏度
+#### **1. 灵敏度**
 
-**灵敏度**，又称为真阳性率，是指在所有实际患病的个体中，测试能够正确识别出患病者的比例。它衡量了测试发现疾病的能力。
+灵敏度，又称为真阳性率，是指在所有实际患病的个体中，测试能够正确识别出患病者的比例。它衡量了测试发现疾病的能力。
 
 $$
 \\text{灵敏度} = \\frac{\\text{真实阳性}}{\\text{真实阳性} + \\text{假阴性}}
 $$
 
-#### 2. 特异度
+#### **2. 特异度**
 
-**特异度**，又称为真阴性率，是指在所有实际健康的个体中，测试能够正确识别出健康者的比例。它衡量了测试排除非患病者的能力。
+特异度，又称为真阴性率，是指在所有实际健康的个体中，测试能够正确识别出健康者的比例。它衡量了测试排除非患病者的能力。
 
 $$
 \\text{特异度} = \\frac{\\text{真实阴性}}{\\text{真实阴性} + \\text{假阳性}}
@@ -154,17 +157,17 @@ $$
 - 假设新冠检测的灵敏度为 $$b$$
 - 假设该地区内新冠的总感染率为 $$c$$
 
-#### 计算步骤
+计算步骤：
 
-1. **设定总人数**：假设该地区一共有 $$d$$ 人，则有 $$m = d * c$$ 人真实感染新冠，$$n = d - m$$ 人没有感染新冠。
+ **1.设定总人数**：假设该地区一共有 $$d$$ 人，则有 $$m = d * c$$ 人真实感染新冠，$$n = d - m$$ 人没有感染新冠。
 
-2. **假阳性**：由于实验特异度为 $$a$$，则在 $$n$$ 人中，有 $$n * (1 - a)$$ 人显示结果为阳性。
+**2. 假阳性**：由于实验特异度为 $$a$$，则在 $$n$$ 人中，有 $$n * (1 - a)$$ 人显示结果为阳性。
 
-3. **真阳性**：由于实验灵敏度为 $$b$$，则在 $$m$$ 个真实感染新冠的人中，有 $$b * m$$ 个人显示结果为阳性。
+**3. 真阳性**：由于实验灵敏度为 $$b$$，则在 $$m$$ 个真实感染新冠的人中，有 $$b * m$$ 个人显示结果为阳性。
 
-4. **总阳性人数**：该地区总共有 $$b * m + n * (1 - a)$$ 人核酸检测结果为阳性。
+ **4.总阳性人数**：该地区总共有 $$b * m + n * (1 - a)$$ 人核酸检测结果为阳性。
 
-5. **真实患病概率**：当核酸检测结果为阳性时，真实患新冠的概率为 $$p$$，其计算公式为：
+ **5.真实患病概率**：当核酸检测结果为阳性时，真实患新冠的概率为 $$p$$，其计算公式为：
 
 $$
 p = \\frac{b * m}{b * m + n * (1 - a)}
@@ -176,12 +179,12 @@ $$
 </script>
 
 <template>
-  <experiment-board title="阳性检测" :tags="['条件概率', '互斥事件', '独立事件']">
+  <ExperimentBoard title="阳性检测" :tags="['条件概率', '互斥事件', '独立事件']">
     <template #experiment>
       <div class="w-full flex flex-col h-full items-center p-3">
-        <canvas ref="canvasRef" width="1000" height="400" class="w-full"></canvas>
+        <canvas ref="canvasRef" width="1000" height="400" class="w-full" />
         <div class="flex items-center text-gray-500">
-          <span class="inline-block w-4 h-4 rounded-full bg-[#FF7F0E] mr-2"></span>
+          <span class="inline-block w-4 h-4 rounded-full bg-[#FF7F0E] mr-2" />
           橙色圆点代表检测结果为阳性的人，共{{ result }}人
         </div>
       </div>
@@ -192,30 +195,38 @@ $$
           <div class="flex space-x-4 justify-center items-center">
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
               <p>特异度(a)</p>
-              <InputNumber v-model.number="specificity" fluid :minFractionDigits="2" />
-              <Slider :min="0.1" :max="1.0" :step="0.01" v-model="specificity" class="w-full" />
+              <InputNumber v-model.number="specificity[0]" fluid :min-fraction-digits="2" />
+              <p>特异度(a)</p>
+              <InputNumber v-model.number="specificity[0]" fluid :min-fraction-digits="2" />
+              <Slider v-model="specificity" :min="0.1" :max="1.0" :step="0.01" class="w-full" />
             </div>
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
               <p>灵敏度(b)</p>
-              <InputNumber v-model.number="sensitivity" fluid :minFractionDigits="2" />
-              <Slider :min="0.1" :max="1.0" :step="0.01" v-model="sensitivity" class="w-full" />
+              <InputNumber v-model.number="sensitivity[0]" fluid :min-fraction-digits="2" />
+              <p>灵敏度(b)</p>
+              <InputNumber v-model.number="sensitivity[0]" fluid :min-fraction-digits="2" />
+              <Slider v-model="sensitivity" :min="0.1" :max="1.0" :step="0.01" class="w-full" />
             </div>
           </div>
           <!-- 第二个输入框组 -->
           <div class="flex space-x-4 justify-center items-center">
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
               <p>感染率(c)</p>
-              <InputNumber v-model.number="infectionRate" :minFractionDigits="2" fluid />
-              <Slider :min="0.0" :max="1.0" :step="0.001" v-model="infectionRate" class="w-full" />
+              <InputNumber v-model.number="infectionRate[0]" :min-fraction-digits="2" fluid />
+              <p>感染率(c)</p>
+              <InputNumber v-model.number="infectionRate[0]" :min-fraction-digits="2" fluid />
+              <Slider v-model="infectionRate" :min="0.0" :max="1.0" :step="0.001" class="w-full" />
             </div>
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
               <p>总人数(d)</p>
-              <InputNumber v-model.number="population" fluid />
-              <Slider :min="1000" :max="1000000" :step="1000" v-model="population" class="w-full" />
+              <InputNumber v-model.number="population[0]" fluid />
+              <p>总人数(d)</p>
+              <InputNumber v-model.number="population[0]" fluid />
+              <Slider v-model="population" :min="1000" :max="1000000" :step="1000" class="w-full" />
             </div>
           </div>
           <div class="w-full flex items-center justify-center mt-5">
-            <div ref="katexContainer" class="text-l"></div>
+            <div ref="katexContainer" class="katex-style" />
           </div>
         </div>
         <!-- 饼图区域 -->
@@ -229,12 +240,15 @@ $$
     </template>
     <template #conclusion>
       <div class="w-full h-full p-5">
-        <div v-html="toMarkdown(content)" class="prose max-w-full text-base-content"></div>
+        <div class="prose-sm max-w-none" v-html="toMarkdown(content)" />
       </div>
     </template>
-  </experiment-board>
+  </ExperimentBoard>
 </template>
 
 <style scoped>
 /* Your custom styles if needed */
+.katex-style {
+  line-height: 2.5; /* 设置较大的行间距 */
+}
 </style>

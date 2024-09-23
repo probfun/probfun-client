@@ -1,138 +1,134 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from "vue";
-import katex from 'katex';
-import 'katex/dist/katex.min.css';
+import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { toMarkdown } from '@/utils/markdown';
-import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
+import katex from 'katex';
+import { computed, onMounted, ref, watch } from 'vue';
+import 'katex/dist/katex.min.css';
 
-const number = ref(20);
-const probability = ref(0.1);
-const mean = computed(() => number.value * probability.value);
-const variance = computed(() => number.value * probability.value * (1 - probability.value));
+const number = ref([20]);
+const probability = ref([0.1]);
+const mean = computed(() => number.value[0] * probability.value[0]);
+const variance = computed(() => number.value[0] * probability.value[0] * (1 - probability.value[0]));
 const stdDev = computed(() => Math.sqrt(variance.value));
 
-const binomialFormula = computed(() => `P(X = k) = \\binom{${number.value}}{k} ${probability.value}^k (1-${probability.value})^{${number.value}-k}`);
+const binomialFormula = computed(() => `P(X = k) = \\binom{${number.value[0]}}{k} ${probability.value[0]}^k (1-${probability.value[0]})^{${number.value[0]}-k}`);
 const binomialContainer = ref<HTMLElement | null>(null);
 
 const normalFormula = computed(() => `P(X = k) \\approx \\frac{1}{\\sqrt{2\\pi ${variance.value.toFixed(2)}}} e^{-\\frac{(k - ${mean.value.toFixed(2)})^2}{2${variance.value.toFixed(2)}}}`);
 const normalContainer = ref<HTMLElement | null>(null);
 
-const renderFormula = () => {
-    if (binomialContainer.value) {
-        katex.render(binomialFormula.value, binomialContainer.value, {
-            throwOnError: false
-        });
-    }
-    if (normalContainer.value) {
-        katex.render(normalFormula.value, normalContainer.value, {
-            throwOnError: false
-        });
-    }
-};
-
-onMounted(() => {
-    chartData.value = setChartData();
-    chartOptions.value = setChartOptions();
-    renderFormula();
-});
+function renderFormula() {
+  if (binomialContainer.value) {
+    katex.render(binomialFormula.value, binomialContainer.value, {
+      throwOnError: false,
+    });
+  }
+  if (normalContainer.value) {
+    katex.render(normalFormula.value, normalContainer.value, {
+      throwOnError: false,
+    });
+  }
+}
 
 const chartData = ref();
 const chartOptions = ref();
-const setChartData = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
 
-    const labels = [];
-    const binomialData = [];
-    const normalData = [];
-    for (let k = 0; k <= number.value; k++) {
-        // 计算二项分布
-        const probabilityOfK = binomialCoefficient(number.value, k) *
-            Math.pow(probability.value, k) *
-            Math.pow(1 - probability.value, number.value - k);
-        binomialData.push(probabilityOfK);
+onMounted(() => {
+  chartData.value = setChartData();
+  chartOptions.value = setChartOptions();
+  renderFormula();
+});
 
-        // 计算正态分布
-        const normalProbability = (1 / (stdDev.value * Math.sqrt(2 * Math.PI))) * Math.exp(-Math.pow(k - mean.value, 2) / (2 * variance.value));
-        normalData.push(normalProbability);
+function setChartData() {
+  const documentStyle = getComputedStyle(document.documentElement);
 
-        labels.push(k);
-    }
+  const labels = [];
+  const binomialData = [];
+  const normalData = [];
+  for (let k = 0; k <= number.value[0]; k++) {
+    // 计算二项分布
+    const probabilityOfK = binomialCoefficient(number.value[0], k)
+      * probability.value[0] ** k
+      * (1 - probability.value[0]) ** (number.value[0] - k);
+    binomialData.push(probabilityOfK);
 
-    return {
-        labels: labels,
-        datasets: [
-            {
-                label: 'Binomial Distribution',
-                borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-                data: binomialData,
-                fill: false,
-            },
-            {
-                label: 'Normal Distribution',
-                borderColor: documentStyle.getPropertyValue('--p-gray-500'),
-                data: normalData,
-                fill: false,
-                tension: 0.4
-            }
-        ]
-    };
-};
+    // 计算正态分布
+    const normalProbability = (1 / (stdDev.value * Math.sqrt(2 * Math.PI))) * Math.exp(-((k - mean.value) ** 2) / (2 * variance.value));
+    normalData.push(normalProbability);
 
-// 计算阶乘
-const factorial = (n: number): number => {
-    return n <= 1 ? 1 : n * factorial(n - 1);
-};
+    labels.push(k);
+  }
 
-const setChartOptions = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
-    const textColor = documentStyle.getPropertyValue('--p-text-color');
-    const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
-    const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+  return {
+    labels,
+    datasets: [
+      {
+        label: 'Binomial Distribution',
+        borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
+        data: binomialData,
+        fill: false,
+      },
+      {
+        label: 'Normal Distribution',
+        borderColor: documentStyle.getPropertyValue('--p-gray-500'),
+        data: normalData,
+        fill: false,
+        tension: 0.4,
+      },
+    ],
+  };
+}
 
-    return {
-        maintainAspectRatio: false,
-        aspectRatio: 0.6,
-        plugins: {
-            legend: {
-                labels: {
-                    color: textColor
-                }
-            }
+function setChartOptions() {
+  const documentStyle = getComputedStyle(document.documentElement);
+  const textColor = documentStyle.getPropertyValue('--p-text-color');
+  const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
+  const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+
+  return {
+    maintainAspectRatio: false,
+    aspectRatio: 0.6,
+    plugins: {
+      legend: {
+        labels: {
+          color: textColor,
         },
-        scales: {
-            x: {
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder
-                }
-            },
-            y: {
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder
-                }
-            }
-        }
-    };
+      },
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+        },
+      },
+      y: {
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+        },
+      },
+    },
+  };
 }
 
 // 计算二项系数（组合数）
-const binomialCoefficient = (n: number, k: number) => {
-    let result = 1;
-    for (let i = 1; i <= k; i++) {
-        result *= (n - i + 1) / i;
-    }
-    return result;
-};
+function binomialCoefficient(n: number, k: number) {
+  let result = 1;
+  for (let i = 1; i <= k; i++) {
+    result *= (n - i + 1) / i;
+  }
+  return result;
+}
 
 // 监听 props 的变化以动态更新图像
 watch([number, probability], () => {
-    chartData.value = setChartData();
-    renderFormula();
+  chartData.value = setChartData();
+  renderFormula();
 });
 
 const content = `
@@ -185,41 +181,45 @@ $$
 </script>
 
 <template>
-    <experiment-board title="二项分布与正态分布" :tags="[]">
-        <template #experiment>
-            <Chart type="line" :data="chartData" :options="chartOptions" class="h-full w-full" />
-        </template>
-        <template #parameter>
-            <div class="w-full h-full flex flex-col items-center justify-center">
-                <div class="w-full flex items-center justify-center mb-5">
-                    <div class="text-xl">二项分布：</div>
-                    <div ref="binomialContainer" class="text-xl"></div>
-                </div>
-                <div class="flex w-full mb-5">
-                    <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                        <p> Number of experiments </p>
-                        <InputNumber v-model.number="number" />
-                        <Slider :min="20" :max="50" :step="1" v-model="number" class="w-48" />
-                    </div>
-                    <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                        <p> Probability of success </p>
-                        <InputNumber v-model.number="probability" :min-fraction-digits="2" />
-                        <Slider :min="0" :max="1" :step="0.01" v-model="probability" class="w-48" />
-                    </div>
-                </div>
-                <div class="w-full flex flex-col items-center justify-center mb-5">
-                    <div class="text-xl mb-4">正态分布：μ = np = {{ mean.toFixed(2) }}, σ² = np(1-p) = {{
-                        variance.toFixed(2) }}</div>
-                    <div ref="normalContainer" class="text-xl"></div>
-                </div>
-            </div>
-        </template>
-        <template #conclusion>
-            <div class="w-full h-full p-5">
-                <div v-html="toMarkdown(content)" class="prose max-w-full text-base-content"></div>
-            </div>
-        </template>
-    </experiment-board>
+  <ExperimentBoard title="二项分布与正态分布" :tags="[]">
+    <template #experiment>
+      <Chart type="line" :data="chartData" :options="chartOptions" class="h-full w-full" />
+    </template>
+    <template #parameter>
+      <div class="w-full h-full flex flex-col items-center justify-center">
+        <div class="w-full flex items-center justify-center mb-5">
+          <div class="text-xl">
+            二项分布：
+          </div>
+          <div ref="binomialContainer" class="text-xl" />
+        </div>
+        <div class="flex w-full mb-5">
+          <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+            <p> Number of experiments </p>
+            <InputNumber v-model.number="number[0]" />
+            <Slider v-model="number" :min="20" :max="50" :step="1" class="w-48" />
+          </div>
+          <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+            <p> Probability of success </p>
+            <InputNumber v-model.number="probability[0]" :min-fraction-digits="2" />
+            <Slider v-model="probability" :min="0" :max="1" :step="0.01" class="w-48" />
+          </div>
+        </div>
+        <div class="w-full flex flex-col items-center justify-center mb-5">
+          <div class="text-xl mb-4">
+            正态分布：μ = np = {{ mean.toFixed(2) }}, σ² = np(1-p) = {{
+              variance.toFixed(2) }}
+          </div>
+          <div ref="normalContainer" class="text-xl" />
+        </div>
+      </div>
+    </template>
+    <template #conclusion>
+      <div class="w-full h-full p-5">
+        <div class="prose-sm max-w-none" v-html="toMarkdown(content)" />
+      </div>
+    </template>
+  </ExperimentBoard>
 </template>
 
 <style scoped></style>

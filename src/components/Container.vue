@@ -1,37 +1,47 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import { Button } from '@/components/ui/button';
+import { vAutoAnimate } from '@formkit/auto-animate'
+import { h, ref } from 'vue';
 
-interface Tab {
-  id: number;
-  label: string;
-  icon?: string;
+export interface Tab {
+  id: number
+  label: string
+  icon?: any
+  name?: string
 }
 
 const props = defineProps<{
-  tabs: Tab[];
+  tabs: Tab[]
 }>();
 
 const activeTab = ref<number>(props.tabs[0].id ?? 0);
 </script>
 
 <template>
-<div class="rounded-xl bg-base-100 overflow-auto border border-primary flex flex-col">
-  <div class="w-full bg-base-200 p-1.5 flex gap-1 flex-shrink-0">
-    <button
+  <div class="rounded-lg overflow-hidden border border-primary flex flex-col">
+    <div
+      class="w-full sticky top-0 z-10 bg-secondary p-1 flex gap-1 flex-shrink-0 overflow-x-auto"
+      :style="{
+        scrollbarWidth: 'none',
+      }"
+    >
+      <Button
         v-for="tab in tabs"
         :key="tab.id"
-        class="px-2 gap-1 btn btn-sm text-base btn-ghost transition-all flex"
-        :class="tab.id === activeTab ? '' : 'opacity-60'"
+        variant="ghost"
+        size="sm"
+        class="px-2 h-auto py-1 gap-1 transition-all flex"
+        :class="tab.id === activeTab ? '!bg-background' : 'opacity-50'"
         @click="activeTab = tab.id"
-    >
-      <span v-if="tab.icon" v-html="tab.icon" class="size-5 flex items-center justify-center"></span>
-      {{ tab.label }}
-    </button>
+      >
+        <component :is="h(tab.icon)" v-if="tab.icon" class="size-4 flex text-primary items-center justify-center" />
+        {{ tab.label }}
+      </Button>
+    </div>
+    <div v-auto-animate class="flex-1 bg-card overflow-auto min-h-0">
+      <slot :active-tab="activeTab" />
+    </div>
   </div>
-  <div class="flex-1 overflow-auto">
-    <slot :activeTab="activeTab"></slot>
-  </div>
-</div>
 </template>
 
 <style scoped>
