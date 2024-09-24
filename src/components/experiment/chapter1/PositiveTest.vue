@@ -28,6 +28,10 @@ const specificity = ref([0.97]); // 特异度
 const sensitivity = ref([0.99]); // 灵敏度
 const infectionRate = ref([0.001]); // 感染率
 const population = ref([100000]); // 总人数
+const historyFalse = ref<number[]>([]);
+const historyTrue = ref<number[]>([]);
+const chartDataFalse = ref();
+const chartDataTrue = ref();
 
 // 计算结果
 const truePositiveRate = computed(() => {
@@ -53,20 +57,43 @@ const result = computed(() => {
   return Math.round(truePositives + falsePositives);
 });
 
+
 // 饼图数据
-const chartData = computed(() => ({
-  labels: ['未患病假阳性', '患病真阳性'],
-  datasets: [
-    {
-      data: [
-        1 - truePositiveRate.value,
-        truePositiveRate.value,
-      ],
-      backgroundColor: ['#00C4CC', '#FF7F0E'],
-      hoverBackgroundColor: ['#0097A7', '#FF570E'],
-    },
-  ],
-}));
+const setChartDataFalse = () => {
+  const kValues = Array.from({ length: historyFalse.value.length }, (_, i) => i + 1);
+  historyFalse.value = historyFalse.value.concat(1 - truePositiveRate.value);
+  console.log(historyFalse);
+
+  return ({
+    labels: kValues,
+    datasets: [
+      {
+        label: '未患病假阳性',
+        data: historyFalse.value,
+        fill: false,
+        backgroundColor: ['#00C4CC'],
+        hoverBackgroundColor: ['#00C4CC'],
+        tension: 0.4,
+      },
+    ],
+  });
+};
+
+const setChartDateTrue = () => {
+  const kValues = Array.from({ length: historyTrue.value.length }, (_, i) => i + 1);
+  historyTrue.value = historyTrue.value.concat(truePositiveRate.value);
+  return {
+    labels: kValues,
+    datasets: [
+      {
+        label: '患病真阳性',
+        data: historyTrue.value,
+        backgroundColor: ['#FF7F0E'],
+        hoverBackgroundColor: ['#FF570E'],
+      },
+    ],
+  }
+};
 
 // 饼图选项
 const chartOptions = computed(() => {
@@ -117,9 +144,15 @@ function drawCanvas() {
 const infectedDots = computed(() => 1000 * infectionRate.value[0] * sensitivity.value[0] + (1000 - 1000 * infectionRate.value[0]) * (1 - specificity.value[0]));
 
 // 监听输入变化并更新画布
-watch([specificity, sensitivity, infectionRate, population], drawCanvas);
+watch([specificity, sensitivity, infectionRate, population], () => {
+  chartDataFalse.value = setChartDataFalse();
+  chartDataTrue.value = setChartDateTrue();
+  drawCanvas();
+})
 
 onMounted(() => {
+  chartDataFalse.value = setChartDataFalse();
+  chartDataTrue.value = setChartDateTrue();
   drawCanvas();
   renderFormula();
 });
@@ -233,10 +266,11 @@ $$
         </div>
         <!-- 饼图区域 -->
         <div class="flex-1 flex flex-col justify-center items-center">
-          <Chart type="pie" :data="chartData" :options="chartOptions" class="" />
-          <div class="text-gray-500">
+          <Chart type="line" :data="chartDataFalse" :options="chartOptions" class="" />
+          <Chart type="line" :data="chartDataTrue" :options="chartOptions" class="" />
+          <!-- <div class="text-gray-500">
             检测结果为阳性时实际患病的概率 {{ truePositiveRate.toFixed(3) }}
-          </div>
+          </div> -->
         </div>
       </div>
     </template>
@@ -251,6 +285,7 @@ $$
 <style scoped>
 /* Your custom styles if needed */
 .katex-style {
-  line-height: 2.5; /* 设置较大的行间距 */
+  line-height: 2.5;
+  /* 设置较大的行间距 */
 }
 </style>
