@@ -167,13 +167,23 @@ $$
 
  **4.总阳性人数**：该地区总共有 $$b * m + n * (1 - a)$$ 人核酸检测结果为阳性。
 
- **5.真实患病概率**：当核酸检测结果为阳性时，真实患新冠的概率为 $$p$$，其计算公式为：
+ **5.条件概率计算**：当检测结果为阳性时，患病的真实概率是**条件概率**，可以通过**贝叶斯公式**计算：
 
 $$
-p = \\frac{b * m}{b * m + n * (1 - a)}
+P(\\text{患病} \\mid \\text{阳性结果}) = \\frac{P(\\text{阳性结果} \\mid \\text{患病}) \\times P(\\text{患病})}{P(\\text{阳性结果})}
 $$
 
-因此，当核酸检测结果为阳性时，真实患新冠的概率为 $$p$$。
+代入实际的数值，得出公式为：
+
+$$
+P(\\text{患病} \\mid \\text{阳性结果}) = \\frac{b \\times m}{b \\times m + n \\times (1 - a)}
+$$
+
+因此，当检测结果为阳性时，真实患病的概率 $$ p $$ 为：
+
+$$
+p = \\frac{b \\times m}{b \\times m + n \\times (1 - a)}
+$$
 
 `;
 </script>
@@ -196,13 +206,9 @@ $$
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
               <p>特异度(a)</p>
               <InputNumber v-model.number="specificity[0]" fluid :min-fraction-digits="2" />
-              <p>特异度(a)</p>
-              <InputNumber v-model.number="specificity[0]" fluid :min-fraction-digits="2" />
               <Slider v-model="specificity" :min="0.1" :max="1.0" :step="0.01" class="w-full" />
             </div>
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-              <p>灵敏度(b)</p>
-              <InputNumber v-model.number="sensitivity[0]" fluid :min-fraction-digits="2" />
               <p>灵敏度(b)</p>
               <InputNumber v-model.number="sensitivity[0]" fluid :min-fraction-digits="2" />
               <Slider v-model="sensitivity" :min="0.1" :max="1.0" :step="0.01" class="w-full" />
@@ -213,13 +219,9 @@ $$
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
               <p>感染率(c)</p>
               <InputNumber v-model.number="infectionRate[0]" :min-fraction-digits="2" fluid />
-              <p>感染率(c)</p>
-              <InputNumber v-model.number="infectionRate[0]" :min-fraction-digits="2" fluid />
               <Slider v-model="infectionRate" :min="0.0" :max="1.0" :step="0.001" class="w-full" />
             </div>
             <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-              <p>总人数(d)</p>
-              <InputNumber v-model.number="population[0]" fluid />
               <p>总人数(d)</p>
               <InputNumber v-model.number="population[0]" fluid />
               <Slider v-model="population" :min="1000" :max="1000000" :step="1000" class="w-full" />
