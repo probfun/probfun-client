@@ -14,7 +14,7 @@ const katexFormula = computed(() => `
   \\begin{aligned}
       &检测结果为阳性时的患病概率p \\\\
       &= \\frac{感染者中显示为阳性的人数}{实际上总的感染人数} \\\\ 
-      &= \\frac{感染者中显示为阳性的人数}{感染者中显示为阳性的人数 +检测结果为阴性的人中的感染者} \\\\ 
+      &= \\frac{感染者中显示为阳性的人数}{感染者中显示为阳性的人数 +检测结果为阴性的人中的感染人数} \\\\ 
       &= \\frac{灵敏度 * 真阳性人数}{灵敏度 * 真阳性人数 +  (1 - 特异度) *未感染新冠的人数} \\\\
       &= \\frac{\\frac{真实阳性}{真实阳性＋假阴性} * 真阳性人数}{\\frac{真实阳性}{真实阳性＋假阴性} * 真阳性人数 +  (1 - \\frac{真实阴性}{真实阴性+假阳性}) *未感染新冠的人数} \\\\
       &= \\frac{${sensitivity.value} * ${infectionRate.value}}{${sensitivity.value} * ${infectionRate.value} + (1 - ${infectionRate.value}) * (1 - ${specificity.value})} \\\\
