@@ -101,6 +101,10 @@ const specificity = ref([0.97]); // 特异度
 const sensitivity = ref([0.99]); // 灵敏度
 const infectionRate = ref([0.001]); // 感染率
 const population = ref([100000]); // 总人数
+const historyFalse = ref<number[]>([]);
+const historyTrue = ref<number[]>([]);
+const chartDataFalse = ref();
+const chartDataTrue = ref();
 
 // 计算结果
 const truePositiveRate = computed(() => {
@@ -126,20 +130,43 @@ const result = computed(() => {
   return Math.round(truePositives + falsePositives);
 });
 
+
 // 饼图数据
-const chartData = computed(() => ({
-  labels: ['未患病假阳性', '患病真阳性'],
-  datasets: [
-    {
-      data: [
-        1 - truePositiveRate.value,
-        truePositiveRate.value,
-      ],
-      backgroundColor: ['#00C4CC', '#FF7F0E'],
-      hoverBackgroundColor: ['#0097A7', '#FF570E'],
-    },
-  ],
-}));
+const setChartDataFalse = () => {
+  const kValues = Array.from({ length: historyFalse.value.length }, (_, i) => i + 1);
+  historyFalse.value = historyFalse.value.concat(1 - truePositiveRate.value);
+  console.log(historyFalse);
+
+  return ({
+    labels: kValues,
+    datasets: [
+      {
+        label: '未患病假阳性',
+        data: historyFalse.value,
+        fill: false,
+        backgroundColor: ['#00C4CC'],
+        hoverBackgroundColor: ['#00C4CC'],
+        tension: 0.4,
+      },
+    ],
+  });
+};
+
+const setChartDateTrue = () => {
+  const kValues = Array.from({ length: historyTrue.value.length }, (_, i) => i + 1);
+  historyTrue.value = historyTrue.value.concat(truePositiveRate.value);
+  return {
+    labels: kValues,
+    datasets: [
+      {
+        label: '患病真阳性',
+        data: historyTrue.value,
+        backgroundColor: ['#FF7F0E'],
+        hoverBackgroundColor: ['#FF570E'],
+      },
+    ],
+  }
+};
 
 // 饼图选项
 const chartOptions = computed(() => {
@@ -190,9 +217,15 @@ function drawCanvas() {
 const infectedDots = computed(() => 1000 * infectionRate.value[0] * sensitivity.value[0] + (1000 - 1000 * infectionRate.value[0]) * (1 - specificity.value[0]));
 
 // 监听输入变化并更新画布
-watch([specificity, sensitivity, infectionRate, population], drawCanvas);
+watch([specificity, sensitivity, infectionRate, population], () => {
+  chartDataFalse.value = setChartDataFalse();
+  chartDataTrue.value = setChartDateTrue();
+  drawCanvas();
+})
 
 onMounted(() => {
+  chartDataFalse.value = setChartDataFalse();
+  chartDataTrue.value = setChartDateTrue();
   drawCanvas();
   renderFormula();
 });
@@ -242,13 +275,23 @@ $$
 
  **4.总阳性人数**：该地区总共有 $$b * m + n * (1 - a)$$ 人核酸检测结果为阳性。
 
- **5.真实患病概率**：当核酸检测结果为阳性时，真实患新冠的概率为 $$p$$，其计算公式为：
+ **5.条件概率计算**：当检测结果为阳性时，患病的真实概率是**条件概率**，可以通过**贝叶斯公式**计算：
 
 $$
-p = \\frac{b * m}{b * m + n * (1 - a)}
+P(\\text{患病} \\mid \\text{阳性结果}) = \\frac{P(\\text{阳性结果} \\mid \\text{患病}) \\times P(\\text{患病})}{P(\\text{阳性结果})}
 $$
 
-因此，当核酸检测结果为阳性时，真实患新冠的概率为 $$p$$。
+代入实际的数值，得出公式为：
+
+$$
+P(\\text{患病} \\mid \\text{阳性结果}) = \\frac{b \\times m}{b \\times m + n \\times (1 - a)}
+$$
+
+因此，当检测结果为阳性时，真实患病的概率 $$ p $$ 为：
+
+$$
+p = \\frac{b \\times m}{b \\times m + n \\times (1 - a)}
+$$
 
 `;
 </script>
@@ -303,10 +346,11 @@ $$
         
         <!-- 饼图区域 -->
         <div class="flex-1 flex flex-col justify-center items-center">
-          <Chart type="pie" :data="chartData" :options="chartOptions" class="" />
-          <div class="text-gray-500">
+          <Chart type="line" :data="chartDataFalse" :options="chartOptions" class="" />
+          <Chart type="line" :data="chartDataTrue" :options="chartOptions" class="" />
+          <!-- <div class="text-gray-500">
             检测结果为阳性时实际患病的概率 {{ truePositiveRate.toFixed(3) }}
-          </div>
+          </div> -->
         </div>
       </div>
     </template>
