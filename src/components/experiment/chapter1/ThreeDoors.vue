@@ -125,11 +125,27 @@ async function simulateGame() {
 const autoGameRound = ref([500]);
 const autoGaming = ref(false);
 
-const data = computed(() => ({
-  labels: ['换门胜率', '不换门胜率'],
+
+const dataC = ref();
+const dataNC = ref();
+
+const dataC = computed(() => ({
+  labels: ['换门胜率'],
   datasets: [
     {
-      label: '胜率',
+      label: '换门胜率',
+      data: [changeWinNum.value / (changeWinNum.value + changeLoseNum.value), notChangeWinNum.value / (notChangeWinNum.value + notChangeLoseNum.value)],
+      backgroundColor: ['#FF6384', '#36A2EB'],
+      hoverBackgroundColor: ['#FF6384', '#36A2EB'],
+    },
+  ],
+}));
+
+const dataNC = computed(() => ({
+  labels: ['不换门胜率'],
+  datasets: [
+    {
+      label: '不换门胜率',
       data: [changeWinNum.value / (changeWinNum.value + changeLoseNum.value), notChangeWinNum.value / (notChangeWinNum.value + notChangeLoseNum.value)],
       backgroundColor: ['#FF6384', '#36A2EB'],
       hoverBackgroundColor: ['#FF6384', '#36A2EB'],
@@ -417,7 +433,8 @@ const discussContent = `
           </div>
         </div>
         <div class="flex flex-1 flex-col items-center justify-center">
-          <Chart type="bar" :data="data" :options="options" class="flex-1 w-full"></Chart>
+          <Chart type="line" :data="dataC" :options="options" class="flex-1 w-full"></Chart>
+          <Chart type="line" :data="dataNC" :options="options" class="flex-1 w-full"></Chart>
           <Button @click="resetData" class="mt-3">重置数据</Button>
         </div>
       </div>
