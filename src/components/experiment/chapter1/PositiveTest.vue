@@ -4,7 +4,6 @@ import { toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue';
 import MarkdownIt from 'markdown-it';
-
 import 'katex/dist/katex.min.css'; // 引入 KaTeX CSS
 
 
@@ -17,18 +16,11 @@ const katexFormula = computed(() => `
       &= \\frac{感染者中显示为阳性的人数}{感染者中显示为阳性的人数 +检测结果为阴性的人中的感染人数} \\\\ 
       &= \\frac{灵敏度 * 真阳性人数}{灵敏度 * 真阳性人数 +  (1 - 特异度) *未感染新冠的人数} \\\\
       &= \\frac{\\frac{真实阳性}{真实阳性＋假阴性} * 真阳性人数}{\\frac{真实阳性}{真实阳性＋假阴性} * 真阳性人数 +  (1 - \\frac{真实阴性}{真实阴性+假阳性}) *未感染新冠的人数} \\\\
-      &= \\frac{${sensitivity.value} * ${infectionRate.value}}{${sensitivity.value} * ${infectionRate.value} + (1 - ${infectionRate.value}) * (1 - ${specificity.value})} \\\\
+      &= \\frac{${sensitivity.value[0]} * ${infectionRate.value[0]}}{${sensitivity.value[0]} * ${infectionRate.value[0]} + (1 - ${infectionRate.value[0]}) * (1 - ${specificity.value[0]})} \\\\
       &= ${truePositiveRate.value.toFixed(3)}
   \\end{aligned}
 `);
 
-// 渲染公式
-const renderedFormula = computed(() => {
-  return katex.renderToString(katexFormula.value, {
-    throwOnError: false, // 防止渲染错误
-    displayMode: true,   // 使用 display 模式进行公式渲染
-  });
-});
 
 // 创建 markdown-it 实例，并添加 katex 插件
 
@@ -61,13 +53,15 @@ const renderedMarkdown = computed(() => {
 
 
 const katexContainer = ref<HTMLElement | null>(null);
+
+
 const mdContainer = ref<HTMLElement | null>(null);
 const mdContainer0 = ref<HTMLElement | null>(null);
 const mdContainer1 = ref<HTMLElement | null>(null);
 const mdContainer2 = ref<HTMLElement | null>(null);
 
 
-function renderFormula() {
+const renderFormula = () => {
   if (katexContainer.value) {
     katex.render(katexFormula.value, katexContainer.value, {
       throwOnError: false,
@@ -99,7 +93,7 @@ const canvasRef = ref<HTMLCanvasElement | null>(null);
 
 // 输入变量
 const specificity = ref([0.97]); // 特异度
-const sensitivity = ref([0.99]); // 灵敏度
+const sensitivity = ref([0.95]); // 灵敏度
 const infectionRate = ref([0.001]); // 感染率
 const population = ref([100000]); // 总人数
 const historyFalse = ref<number[]>([]);
@@ -218,12 +212,13 @@ function drawCanvas() {
 // 计算感染和健康人数
 const infectedDots = computed(() => 1000 * infectionRate.value[0] * sensitivity.value[0] + (1000 - 1000 * infectionRate.value[0]) * (1 - specificity.value[0]));
 
-// 监听输入变化并更新画布
 watch([specificity, sensitivity, infectionRate, population], () => {
   chartDataFalse.value = setChartDataFalse();
   chartDataTrue.value = setChartDateTrue();
   drawCanvas();
-})
+  renderFormula(); // 在这里调用渲染公式
+});
+
 
 onMounted(() => {
   chartDataFalse.value = setChartDataFalse();
@@ -347,7 +342,8 @@ $$
 
             <!-- KaTeX 输入的公式区域 -->
             <div class="flex flex-col flex-1 items-center justify-center p-4">
-              <div ref="katexContainer" class="katex-style" />
+              
+              <div ref="katexContainer" class="text-l" />
             </div>
           </div>
 
@@ -359,7 +355,7 @@ $$
             <div class="w-full max-w-4xl">
               <Chart type="line" :data="chartDataTrue" :options="chartOptions" />
             </div>
-            
+
           </div>
         </div>
       </div>
