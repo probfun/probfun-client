@@ -12,7 +12,7 @@ export async function clickApi(actionType: string, entityType: string, entityNam
 }
 
 export async function browseApi(actionType: string, pageName: string) {
-    const result = await post<{ track: Track }>('/api/track/click', {
+    const result = await post<{ track: Track }>('/api/track/page', {
         actionType,
         pageName
     });
