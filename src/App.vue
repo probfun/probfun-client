@@ -15,7 +15,7 @@ const id = userStore.user?.uid;
 onMounted(async () => {
   if (id) {
     try {
-      await browseApi(id, 'ENTER', window.location.href);
+      await browseApi('ENTER', window.location.href);
       console.log('Page entered');
     } catch (error) {
       console.error('Error tracking page enter:', error);
@@ -27,7 +27,7 @@ onMounted(async () => {
 onBeforeUnmount(async () => {
   if (id) {
     try {
-      await browseApi(id, 'LEAVE', window.location.href);
+      await browseApi('LEAVE', window.location.href);
       console.log('Page left');
     } catch (error) {
       console.error('Error tracking page leave:', error);
@@ -40,7 +40,7 @@ watch(() => router.currentRoute.value, async (to, from) => {
   if (id) {
     if (from) {
       try {
-        await browseApi(id, 'LEAVE', from.fullPath);
+        await browseApi('LEAVE', from.fullPath);
         console.log('Left page:', from.fullPath);
       } catch (error) {
         console.error('Error tracking page leave:', error);
@@ -49,7 +49,7 @@ watch(() => router.currentRoute.value, async (to, from) => {
 
     if (to) {
       try {
-        await browseApi(id, 'ENTER', to.fullPath);
+        await browseApi('ENTER', to.fullPath);
         console.log('Entered page:', to.fullPath);
       } catch (error) {
         console.error('Error tracking page enter:', error);
