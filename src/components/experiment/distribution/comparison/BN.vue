@@ -11,10 +11,10 @@ const mean = computed(() => number.value[0] * probability.value[0]);
 const variance = computed(() => number.value[0] * probability.value[0] * (1 - probability.value[0]));
 const stdDev = computed(() => Math.sqrt(variance.value));
 
-const binomialFormula = computed(() => `P(X = k) = \\binom{${number.value[0]}}{k} ${probability.value[0]}^k (1-${probability.value[0]})^{${number.value[0]}-k}`);
+const binomialFormula = computed(() => ` \\\\P(X = k) = \\binom{${number.value[0]}}{k} ${probability.value[0]}^k (1-${probability.value[0]})^{${number.value[0]}-k}`);
 const binomialContainer = ref<HTMLElement | null>(null);
 
-const normalFormula = computed(() => `P(X = k) \\approx \\frac{1}{\\sqrt{2\\pi ${variance.value.toFixed(2)}}} e^{-\\frac{(k - ${mean.value.toFixed(2)})^2}{2${variance.value.toFixed(2)}}}`);
+const normalFormula = computed(() => `μ = np = {${ mean.value.toFixed(2)}} \\\\σ² = np(1-p) = {${variance.value.toFixed(2) }}\\\\ P(X = k) \\approx \\frac{1}{\\sqrt{2\\pi ${variance.value.toFixed(2)}}} e^{-\\frac{(k - ${mean.value.toFixed(2)})^2}{2${variance.value.toFixed(2)}}}`);
 const normalContainer = ref<HTMLElement | null>(null);
 
 function renderFormula() {
@@ -132,11 +132,11 @@ watch([number, probability], () => {
 });
 
 const content = `
-## 二项分布与正态分布的关系
+## **二项分布与正态分布的关系**
 
-### 1. 二项分布到正态分布的近似
+### **1. 二项分布到正态分布的近似**
 
-#### 条件
+### **条件**
 二项分布 $$ \\text{Binomial}(n, p) $$ 描述的是 $$ n $$ 次独立重复试验中成功次数的分布，每次成功的概率为 $$ p $$。正态分布 $$ \\text{Normal}(\\mu, \\sigma^2) $$ 是一种连续分布，描述随机变量的取值在某一均值附近的概率分布。
 
 当以下条件满足时，二项分布可以近似为正态分布：
@@ -147,7 +147,7 @@ $$
 
 在这种情况下，二项分布的成功次数 $$ X $$ 接近于正态分布。
 
-#### 数学推导
+### **数学推导**
 我们从二项分布的概率质量函数（PMF）开始：
 
 $$
@@ -170,10 +170,10 @@ $$
 
 也就是说，$$ X $$ 服从均值为 $$ np $$，方差为 $$ np(1-p) $$ 的正态分布。
 
-#### 计算简化
+### **计算简化**
 在实际应用中，当 $$ n $$ 和 $$ p $$ 满足上述条件时，计算二项分布的概率会涉及到较大的数值运算（如组合数计算），而正态分布的计算相对简单，因此这种近似可以大大简化计算过程。
 
-### 2. 两者关系的总结
+### **2. 两者关系的总结**
 - **联系**: 正态分布可以看作是二项分布在 $$ n \\to \\infty $$ 的极限情况。当试验次数很多且成功概率接近于中间值时，二项分布趋近于正态分布。
 - **近似条件**: $$ np \\text{ 和 } np(1-p) $$ 足够大。
 - **实际应用**: 正态分布常用于在样本量大时近似二项分布，尤其在二项分布的参数不极端的情况下。
@@ -189,7 +189,7 @@ $$
       <div class="w-full h-full flex flex-col items-center justify-center">
         <div class="w-full flex items-center justify-center mb-5">
           <div class="text-xl">
-            二项分布：
+            二项分布:
           </div>
           <div ref="binomialContainer" class="text-xl" />
         </div>
@@ -207,8 +207,7 @@ $$
         </div>
         <div class="w-full flex flex-col items-center justify-center mb-5">
           <div class="text-xl mb-4">
-            正态分布：μ = np = {{ mean.toFixed(2) }}, σ² = np(1-p) = {{
-              variance.toFixed(2) }}
+            正态分布：
           </div>
           <div ref="normalContainer" class="text-xl" />
         </div>
