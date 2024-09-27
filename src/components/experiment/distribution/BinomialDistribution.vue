@@ -293,7 +293,7 @@ $$
             <p> Number of success(k) </p>
             <InputNumber v-model.number="numberk[0]" />
             <Slider v-model="numberk" :min="1" :max="maxK" :step="1" class="w-48" />
-          </div>
+            </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-5">
             <p> Probability of success(p) </p>
             <InputNumber v-model.number="probability[0]" :min-fraction-digits="1" />

@@ -7,6 +7,7 @@ import 'katex/dist/katex.min.css';
 
 const probability = ref([0.5]); // Probability of success (p)
 const fixedN = ref([3]); // 固定的试验次数 n
+const numberk = ref([1]); // Number of success (k)
 
 const isChart1 = ref(true);
 const isChart2 = ref(false);
@@ -323,13 +324,45 @@ function back() {
   chartData.value.datasets = [];
 }
 
-const oneFormula = computed(() => `P(X = k) = (1 - ${probability.value[0]})^{k-1} \\cdot ${probability.value[0]}`);
+const finalResultOne = computed(() => {
+  const p = probability.value[0] ;
+  const k = numberk.value[0];
+  return Math.pow(1-p,k-1)*p;
+});
+
+const oneFormula = computed(() => {
+  const resultOne = finalResultOne.value.toFixed(15); // 保留10位小数
+  return `P(X = k) = (1 - p)^{k-1} \\cdot p = (1 - ${probability.value[0]})^{${numberk.value[0]-1}} \\cdot ${probability.value[0]} = ${resultOne}`;
+});
 const oneContainer = ref<HTMLElement | null>(null);
 
-const twoFormula = computed(() => `P(X = k) = (1 - ${probability.value[0]})^{k} \\cdot ${probability.value[0]}`);
+const finalResultTwo = computed(() => {
+  const p = probability.value[0] ;
+  const k = numberk.value[0];
+  return Math.pow(1-p,k)*p;
+});
+
+const twoFormula = computed(() => {
+  const resultTwo = finalResultTwo.value.toFixed(15); // 保留10位小数
+  return `P(X = k) = (1 - p)^{k} \\cdot p  = (1 - ${probability.value[0]})^{${numberk.value}} \\cdot ${probability.value[0]} = ${resultTwo}`;
+});
 const twoContainer = ref<HTMLElement | null>(null);
 
-const threeFormula = computed(() => `P(X > ${fixedN.value[0]} + k \\mid X > ${fixedN.value[0]}) = P(X > k) = (1 - ${probability.value[0]})^k`);
+const finalResultThree = computed(() => {
+  const p = probability.value[0] ;
+  const k = numberk.value[0];
+  return Math.pow(1-p,k);
+});
+
+const threeFormula = computed(() => {
+  const resultThree = finalResultThree.value.toFixed(20); // 保留10位小数
+  return `
+  \\begin{aligned}
+  P(X > ${fixedN.value[0]} + k \\mid X > ${fixedN.value[0]}) 
+  &= P(X > k) =(1 - p)^{k}= (1 - ${probability.value[0]})^{${numberk.value}} \\\\
+  &= ${resultThree}
+  \\end{aligned}`;
+});
 const threeContainer = ref<HTMLElement | null>(null);
 
 function renderFormula() {
@@ -361,7 +394,7 @@ onMounted(() => {
 });
 
 // 监听 probability 的变化以动态更新图像
-watch([probability, fixedN], () => {
+watch([probability, fixedN,numberk], () => {
   chartData1.value = setChartData1();
   chartData2.value = setChartData2();
   chartData3.value = setChartData3();
@@ -474,9 +507,14 @@ $$
         </div>
         <div class="flex w-full mb-5">
           <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-            <p> Probability of success </p>
+            <p> Probability of success(p) </p>
             <InputNumber v-model.number="probability[0]" :min-fraction-digits="1" />
             <Slider v-model="probability" :min="0" :max="1" :step="0.1" class="w-48" />
+          </div>
+          <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+            <p> Numbers of trial until success (include)(k) </p>
+            <InputNumber v-model.number="numberk[0]" />
+            <Slider v-model="numberk" :min="1" :max="60" :step="1" class="w-48" />
           </div>
           <div v-if="isChart3" class="flex flex-col flex-1 items-center justify-center space-y-5">
             <p> Fixed number of trial </p>
