@@ -43,14 +43,10 @@ function factor(n: number) {
 
 
 const finalResultP = computed(() => {
-  const n = number.value[0];
   const k = numberk.value[0];
-  const p = probability.value[0];
-  const probabilityOfK = (lambda.value ** numberk.value[0] * Math.exp(-lambda.value)) / factorial(numberk.value[0]);
+  const probabilityOfK = (lambda.value ** k * Math.exp(-lambda.value)) / factor(k);
   return probabilityOfK;
 });
-
-
 
 
 
