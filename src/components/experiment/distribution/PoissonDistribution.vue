@@ -153,7 +153,7 @@ const result = computed(() => {
   return probabilityOfK;
 });
 
-const latexFormula = computed(() => `P(X = ${an.value}) = \\frac{${lambda.value}^${an.value} e^{-${lambda.value}}}{${an.value}!} = ${result.value.toFixed(3)}`);
+const latexFormula = computed(() => `P(X = ${an.value}) =\\frac{{λ}^ke^{-λ}}{k!}= \\frac{${lambda.value}^${an.value} e^{-${lambda.value}}}{${an.value}!} = ${result.value.toFixed(3)}`);
 const katexContainer = ref<HTMLElement | null>(null);
 function renderFormula() {
   if (katexContainer.value) {

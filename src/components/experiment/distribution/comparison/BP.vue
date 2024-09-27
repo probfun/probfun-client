@@ -7,14 +7,79 @@ import 'katex/dist/katex.min.css';
 
 const number = ref([10]);
 const probability = ref([0.1]);
+const numberk = ref([1]);
 const lambda = computed(() => number.value[0] * probability.value[0]);
 
-const binomialFormula = computed(() => `P(X = k) = \\binom{${number.value[0]}}{k} ${probability.value[0]}^k (1-${probability.value[0]})^{${number.value[0]}-k}`);
+// 计算组合数的函数
+const BinomialCoefficient = (n: number, k: number): number => {
+  if (k > n) return 0;
+
+  const factorial = (num: number): number => {
+    return num <= 1 ? 1 : num * factorial(num - 1);
+  };
+
+  return factorial(n) / (factorial(k) * factorial(n - k));
+};
+
+// 计算最终结果
+const finalResultB = computed(() => {
+  const n = number.value[0];
+  const k = numberk.value[0];
+  const p = probability.value[0];
+  const coefficient = BinomialCoefficient(n, k);
+  return coefficient * Math.pow(p, k) * Math.pow(1 - p, n - k);
+});
+
+// 计算阶乘
+function factor(n: number) {
+  if (n === 0 || n === 1)
+    return 1;
+  let result = 1;
+  for (let i = 2; i <= n; i++) {
+    result *= i;
+  }
+  return result;
+}
+
+
+const finalResultP = computed(() => {
+  const n = number.value[0];
+  const k = numberk.value[0];
+  const p = probability.value[0];
+  const probabilityOfK = (lambda.value ** numberk.value[0] * Math.exp(-lambda.value)) / factorial(numberk.value[0]);
+  return probabilityOfK;
+});
+
+
+
+
+
+const binomialFormula = computed(() => {
+  const resultB = finalResultB.value.toFixed(10);
+  return `
+  \\begin{aligned}
+P(X = k) &= \\binom{n}{k} p^k (1-p)^{n-k} 
+         = \\binom{${number.value[0]}}{${numberk.value}} ${probability.value[0]}^${numberk.value} (1-${probability.value[0]})^{${number.value[0]}-${numberk.value}} \\\\
+         &= ${resultB}
+\\end{aligned}`;
+});
 const binomialContainer = ref<HTMLElement | null>(null);
 
-const poissonFormula = computed(() => ` λ = np = {${ number.value }} * {${ probability.value }}={{ ${(number.value[0] * probability.value[0]).toFixed(2) }}}\\\\
-P(X = k) = \\frac{${lambda.value.toFixed(2)}^k e^{-${lambda.value.toFixed(2)}}}{k!}`);
+const poissonFormula = computed(() => {
+  const resultP = finalResultP.value.toFixed(10);
+  return ` λ = np = {${number.value}} * {${probability.value}}={{ ${(number.value[0] * probability.value[0]).toFixed(2)}}}\\\\
+P(X = k) = \\frac{{λ}^ke^{-λ}}{k!} = \\frac{${lambda.value.toFixed(2)}^${numberk.value} e^{-${lambda.value.toFixed(2)}}}{${numberk.value}!} = ${resultP}`;
+});
 const poissonContainer = ref<HTMLElement | null>(null);
+
+// 计算属性，用于动态更新k的最大值
+const maxK = computed(() => number.value[0]);
+// 监视n的变化，确保k的值不大于n
+watch(number, (newVal) => {
+  if (numberk.value[0] > newVal[0]) {
+    numberk.value[0] = newVal[0];
+  }
+});
 
 function renderFormula() {
   if (binomialContainer.value) {
@@ -131,7 +196,7 @@ function binomialCoefficient(n: number, k: number) {
 }
 
 // 监听 props 的变化以动态更新图像
-watch([number, probability], () => {
+watch([number, probability, numberk], () => {
   chartData.value = setChartData();
   renderFormula();
 });
@@ -240,15 +305,21 @@ $$
         </div>
         <div class="flex w-full mb-5">
           <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-            <p> Number of experiments </p>
+            <p> Number of experiments(n) </p>
             <InputNumber v-model.number="number[0]" />
             <Slider v-model="number" :min="1" :max="50" :step="1" class="w-48" />
           </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-            <p> Probability of success </p>
+            <p> Number of success(k) </p>
+            <InputNumber v-model.number="numberk[0]" />
+            <Slider v-model="numberk" :min="1" :max="maxK" :step="1" class="w-48" />
+          </div>
+          <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+            <p> Probability of success(p) </p>
             <InputNumber v-model.number="probability[0]" :min-fraction-digits="2" />
             <Slider v-model="probability" :min="0" :max="1" :step="0.01" class="w-48" />
           </div>
+
         </div>
         <div class="w-full flex items-center justify-center mb-5">
           <div class="text-xl mr-10">
