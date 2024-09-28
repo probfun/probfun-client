@@ -3,21 +3,89 @@ import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue';
-import 'katex/dist/katex.min.css';
+import MarkdownIt from 'markdown-it';
+import 'katex/dist/katex.min.css'; // 引入 KaTeX CSS
 
+
+
+// 定义公式
 const katexFormula = computed(() => `
   \\begin{aligned}
-    p &= \\frac{b * m}{b * m + n * (1 - a)} \\\\
-      &= \\frac{${sensitivity.value} * ${infectionRate.value}}{${sensitivity.value} * ${infectionRate.value} + (1 - ${infectionRate.value}) * (1 - ${specificity.value})} \\\\
+      &检测结果为阳性时的患病概率p \\\\
+      &= \\frac{感染者中显示为阳性的人数}{实际上总的感染人数} \\\\ 
+      &= \\frac{感染者中显示为阳性的人数}{感染者中显示为阳性的人数 +检测结果为阴性的人中的感染人数} \\\\ 
+      &= \\frac{灵敏度 * 真阳性人数}{灵敏度 * 真阳性人数 +  (1 - 特异度) *未感染新冠的人数} \\\\
+      &= \\frac{\\frac{真实阳性}{真实阳性＋假阴性} * 真阳性人数}{\\frac{真实阳性}{真实阳性＋假阴性} * 真阳性人数 +  (1 - \\frac{真实阴性}{真实阴性+假阳性}) *未感染新冠的人数} \\\\
+      &= \\frac{${sensitivity.value[0]} * ${infectionRate.value[0]}}{${sensitivity.value[0]} * ${infectionRate.value[0]} + (1 - ${infectionRate.value[0]}) * (1 - ${specificity.value[0]})} \\\\
       &= ${truePositiveRate.value.toFixed(3)}
   \\end{aligned}
 `);
+
+
+// 创建 markdown-it 实例，并添加 katex 插件
+
+const md = new MarkdownIt()
+
+// 示例 Markdown 内容
+const markdownContent = ref(`
+特异度 = \\frac{真实阳性}{(真实阴性 + 假阳性)}
+`);
+
+const markdownContent0 = ref(`
+灵敏度 = \\frac{真实阴性}{(真实阳性 + 假阴性)}
+`);
+
+const markdownContent1 = ref(`
+感染率 = \\frac{感染人数}{总人数}
+
+`);
+
+const markdownContent2 = ref(`
+总人数
+`);
+
+// 渲染 Markdown 内容
+const renderedMarkdown = computed(() => {
+  return md.render(markdownContent.value, markdownContent0.value);
+  return md.render(markdownContent1.value, markdownContent2.value);
+
+});
+
+
 const katexContainer = ref<HTMLElement | null>(null);
-function renderFormula() {
+
+
+const mdContainer = ref<HTMLElement | null>(null);
+const mdContainer0 = ref<HTMLElement | null>(null);
+const mdContainer1 = ref<HTMLElement | null>(null);
+const mdContainer2 = ref<HTMLElement | null>(null);
+
+
+const renderFormula = () => {
   if (katexContainer.value) {
     katex.render(katexFormula.value, katexContainer.value, {
       throwOnError: false,
     });
+    if (mdContainer.value) {
+      katex.render(markdownContent.value, mdContainer.value, {
+        throwOnError: false,
+      });
+    }
+    if (mdContainer0.value) {
+      katex.render(markdownContent0.value, mdContainer0.value, {
+        throwOnError: false,
+      });
+    }
+    if (mdContainer1.value) {
+      katex.render(markdownContent1.value, mdContainer1.value, {
+        throwOnError: false,
+      });
+    }
+    if (mdContainer2.value) {
+      katex.render(markdownContent2.value, mdContainer2.value, {
+        throwOnError: false,
+      });
+    }
   }
 }
 
@@ -25,7 +93,7 @@ const canvasRef = ref<HTMLCanvasElement | null>(null);
 
 // 输入变量
 const specificity = ref([0.97]); // 特异度
-const sensitivity = ref([0.99]); // 灵敏度
+const sensitivity = ref([0.95]); // 灵敏度
 const infectionRate = ref([0.001]); // 感染率
 const population = ref([100000]); // 总人数
 const historyFalse = ref<number[]>([]);
@@ -68,7 +136,7 @@ const setChartDataFalse = () => {
     labels: kValues,
     datasets: [
       {
-        label: '未患病假阳性',
+        label: '假阳性概率（未患病）',
         data: historyFalse.value,
         fill: false,
         backgroundColor: ['#00C4CC'],
@@ -86,7 +154,7 @@ const setChartDateTrue = () => {
     labels: kValues,
     datasets: [
       {
-        label: '患病真阳性',
+        label: '真阳性概率（患病）',
         data: historyTrue.value,
         backgroundColor: ['#FF7F0E'],
         hoverBackgroundColor: ['#FF570E'],
@@ -101,6 +169,7 @@ const chartOptions = computed(() => {
   const textColor = documentStyle.getPropertyValue('--p-text-color');
   return {
     animation: false,
+    responsive: true,
     plugins: {
       legend: {
         labels: {
@@ -143,12 +212,13 @@ function drawCanvas() {
 // 计算感染和健康人数
 const infectedDots = computed(() => 1000 * infectionRate.value[0] * sensitivity.value[0] + (1000 - 1000 * infectionRate.value[0]) * (1 - specificity.value[0]));
 
-// 监听输入变化并更新画布
 watch([specificity, sensitivity, infectionRate, population], () => {
   chartDataFalse.value = setChartDataFalse();
   chartDataTrue.value = setChartDateTrue();
   drawCanvas();
-})
+  renderFormula(); // 在这里调用渲染公式
+});
+
 
 onMounted(() => {
   chartDataFalse.value = setChartDataFalse();
@@ -156,6 +226,8 @@ onMounted(() => {
   drawCanvas();
   renderFormula();
 });
+
+
 
 // Markdown 内容
 const content = `
@@ -232,47 +304,63 @@ $$
         </div>
       </div>
     </template>
+
     <template #parameter>
       <div class="flex justify-center items-center h-full w-full p-3">
-        <div class="flex flex-col flex-1 space-y-4 justify-center items-center">
-          <div class="flex space-x-4 justify-center items-center">
-            <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-              <p>特异度(a)</p>
-              <InputNumber v-model.number="specificity[0]" fluid :min-fraction-digits="2" />
-              <Slider v-model="specificity" :min="0.1" :max="1.0" :step="0.01" class="w-full" />
+        <div class="flex flex-col flex-1 space-y-6">
+          <div class="flex">
+            <!-- 输入框区域 -->
+            <div class="flex flex-col flex-1 space-y-4">
+              <!-- 第一个输入框组 -->
+              <div class="flex space-x-4 justify-center items-center">
+                <div class="flex flex-col flex-1 items-center space-y-3">
+                  <div class="markdown-body" ref="mdContainer" v-html="renderedMarkdown"></div>
+                  <InputNumber v-model.number="specificity[0]" fluid :min-fraction-digits="2" />
+                  <Slider v-model="specificity" :min="0.1" :max="1.0" :step="0.01" class="w-full" />
+                </div>
+                <div class="flex flex-col flex-1 items-center space-y-3">
+                  <div class="markdown-body" ref="mdContainer0" v-html="renderedMarkdown"></div>
+                  <InputNumber v-model.number="sensitivity[0]" fluid :min-fraction-digits="2" />
+                  <Slider v-model="sensitivity" :min="0.1" :max="1.0" :step="0.01" class="w-full" />
+                </div>
+              </div>
+
+              <!-- 第二个输入框组 -->
+              <div class="flex space-x-4 justify-center items-center">
+                <div class="flex flex-col flex-1 items-center space-y-3">
+                  <div class="markdown-body" ref="mdContainer1" v-html="renderedMarkdown"></div>
+                  <InputNumber v-model.number="infectionRate[0]" :min-fraction-digits="2" fluid />
+                  <Slider v-model="infectionRate" :min="0.0" :max="1.0" :step="0.001" class="w-full" />
+                </div>
+                <div class="flex flex-col flex-1 items-center space-y-3">
+                  <div class="markdown-body" ref="mdContainer2" v-html="renderedMarkdown"></div>
+                  <InputNumber v-model.number="population[0]" fluid />
+                  <Slider v-model="population" :min="1000" :max="1000000" :step="1000" class="w-full" />
+                </div>
+              </div>
             </div>
-            <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-              <p>灵敏度(b)</p>
-              <InputNumber v-model.number="sensitivity[0]" fluid :min-fraction-digits="2" />
-              <Slider v-model="sensitivity" :min="0.1" :max="1.0" :step="0.01" class="w-full" />
+
+            <!-- KaTeX 输入的公式区域 -->
+            <div class="flex flex-col flex-1 items-center justify-center p-4">
+              
+              <div ref="katexContainer" class="text-l" />
             </div>
           </div>
-          <!-- 第二个输入框组 -->
-          <div class="flex space-x-4 justify-center items-center">
-            <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-              <p>感染率(c)</p>
-              <InputNumber v-model.number="infectionRate[0]" :min-fraction-digits="2" fluid />
-              <Slider v-model="infectionRate" :min="0.0" :max="1.0" :step="0.001" class="w-full" />
+
+          <!-- 图表区域 -->
+          <div class="flex justify-center items-center space-x-4">
+            <div class="w-full max-w-4xl">
+              <Chart type="line" :data="chartDataFalse" :options="chartOptions" />
             </div>
-            <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-              <p>总人数(d)</p>
-              <InputNumber v-model.number="population[0]" fluid />
-              <Slider v-model="population" :min="1000" :max="1000000" :step="1000" class="w-full" />
+            <div class="w-full max-w-4xl">
+              <Chart type="line" :data="chartDataTrue" :options="chartOptions" />
             </div>
+
           </div>
-          <div class="w-full flex items-center justify-center mt-5">
-            <div ref="katexContainer" class="katex-style" />
-          </div>
-        </div>
-        <!-- 饼图区域 -->
-        <div class="flex-1 flex flex-col justify-center items-center">
-          <Chart type="line" :data="chartDataFalse" :options="chartOptions" class="" />
-          <Chart type="line" :data="chartDataTrue" :options="chartOptions" class="" />
-          <!-- <div class="text-gray-500">
-            检测结果为阳性时实际患病的概率 {{ truePositiveRate.toFixed(3) }}
-          </div> -->
         </div>
       </div>
+
+
     </template>
     <template #conclusion>
       <div class="w-full h-full p-5">
@@ -285,7 +373,13 @@ $$
 <style scoped>
 /* Your custom styles if needed */
 .katex-style {
-  line-height: 2.5;
+  line-height: 3.5;
   /* 设置较大的行间距 */
+}
+
+/* 使用 Tailwind CSS 自定义样式 */
+.markdown-body {
+  @apply p-4 bg-white rounded shadow;
+  /* Tailwind CSS 样式 */
 }
 </style>

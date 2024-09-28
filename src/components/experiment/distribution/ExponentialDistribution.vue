@@ -8,6 +8,7 @@ import 'katex/dist/katex.min.css';
 
 const rate = ref([2]);
 const shift = ref([1]);
+const numberx = ref([1]);
 
 const save = ref(false);
 function saveImg() {
@@ -28,10 +29,35 @@ function toggleChart2() {
   isChart2.value = true;
 }
 
-const oneFormula = computed(() => `f(x) = ${rate.value} e^{-${rate.value} x}, \\quad x \\geq 0`);
+const finalResultOne = computed(() => { 
+  const r = rate.value[0];
+  const x = numberx.value[0];
+  return Math.pow(Math.E, -r * x) * r;
+});
+
+
+
+const oneFormula = computed(() => {
+  const resultOne = finalResultOne.value.toFixed(10);
+  return `f(x) = λe^{-λx} = ${rate.value} e^{-${rate.value} \\cdot ${numberx.value}} = ${resultOne}( x \\geq 0)`;
+});
 const oneContainer = ref<HTMLElement | null>(null);
 
-const twoFormula = computed(() => `P(X > ${shift.value} + s \\mid X > t) = P(X > s) = e^{-${rate.value} s}`);
+const finalResultTwo = computed(() => { 
+  const r = rate.value[0];
+  const x = numberx.value[0];
+  return Math.pow(Math.E, -r * x) ;
+});
+
+const twoFormula = computed(() => {
+  const resultTwo = finalResultTwo.value.toFixed(20);
+  return  `
+  \\begin{aligned}
+  P(X > ${shift.value} + x \\mid X > ${shift.value}) 
+  &= P(X > x) = e^{-${rate.value} \\cdot ${numberx.value}} \\\\
+  &= ${resultTwo}
+ \\end{aligned} `;
+});
 const twoContainer = ref<HTMLElement | null>(null);
 
 function renderFormula() {
@@ -136,10 +162,15 @@ $$
         </div>
         <div class="flex w-full mb-5">
           <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-            <p> Rate parameter </p>
+            <p> Rate parameter(λ) </p>
             <InputNumber v-model.number="rate[0]" :min-fraction-digits="1" />
             <Slider v-model="rate" :min="0" :max="10" :step="0.1" class="w-48" />
           </div>
+          <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+            <p> x </p>
+            <InputNumber v-model.number="numberx[0]" />
+            <Slider v-model="numberx" :min="1" :max="10" :step="1" class="w-48" />
+            </div>
           <div v-if="isChart2" class="flex flex-col flex-1 items-center justify-center space-y-5">
             <p> Fixed number </p>
             <InputNumber v-model.number="shift[0]" :min-fraction-digits="1" />

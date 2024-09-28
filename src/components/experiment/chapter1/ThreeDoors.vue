@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, Ref, watch } from 'vue';
+import { computed, ref, Ref, watch,onMounted } from 'vue';
 import {toMarkdown} from "@/utils/markdown";
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -126,17 +126,91 @@ async function simulateGame() {
 const autoGameRound = ref([500]);
 const autoGaming = ref(false);
 
-const data = computed(() => ({
-  labels: ['换门胜率', '不换门胜率'],
-  datasets: [
-    {
-      label: '胜率',
-      data: [changeWinNum.value / (changeWinNum.value + changeLoseNum.value), notChangeWinNum.value / (notChangeWinNum.value + notChangeLoseNum.value)],
-      backgroundColor: ['#FF6384', '#36A2EB'],
-      hoverBackgroundColor: ['#FF6384', '#36A2EB'],
-    },
-  ],
-}));
+
+const dataC = ref();
+const dataNC = ref();
+const historyC = ref<number[]>([]);
+const historyNC = ref<number[]>([]);
+const chartDataC = ref();
+const chartDataNC = ref();
+
+
+const setdataC = () => {
+  const kValues = Array.from({ length: historyC.value.length }, (_, i) => i + 1);
+  // 使用 historyC 生成返回数据
+    console.log(historyC);
+
+  return ({
+    labels: kValues,
+    datasets: [
+      {
+        label: ['换门胜率'],
+        data: historyC.value,
+        fill: false,
+        backgroundColor: 'rgb(75, 192, 192)',
+        hoverBackgroundColor: ['#FF6384', '#36A2EB'],
+        tension: 0.4,
+      },
+      {
+        label: '0.66', // 辅助线的标签
+        data: kValues.map((k) => (k >= 1 && k <= 500) ? 0.66 : 0.66), // 不使用 null 值
+        fill: false, // 不填充线下面的区域
+        borderColor: documentStyle.getPropertyValue('--p-red-500') || 'red', // 设置辅助线的颜色，或者给一个备用颜色
+        borderWidth: 1, // 辅助线的宽度
+        pointRadius: 0, // 不显示数据点
+        borderDash: [10, 5], // 虚线样式
+        tension: 0 // 线的张力设置为 0，确保为直线
+      }
+    ],
+  });
+};
+
+
+const setdataNC = () => {
+  const kValues = Array.from({ length: historyC.value.length }, (_, i) => i + 1);
+  historyNC.value = historyNC.value.concat( notChangeWinNum.value / (notChangeLoseNum.value + notChangeWinNum.value));
+  historyC.value = historyC.value.concat(changeWinNum.value / (changeWinNum.value + changeLoseNum.value),);
+  console.log(historyC);
+
+  return ({
+    labels: kValues,
+    datasets: [
+      {
+        label: ['不换门胜率'],
+        data: historyNC.value,
+        fill: false,
+        backgroundColor: ['#36A2EB'],
+        hoverBackgroundColor: ['#FF6384', '#36A2EB'],
+        tension: 0.4,
+      },
+      {
+        label: '0.33', // 辅助线的标签
+        data: kValues.map((k) => (k >= 1 && k <= 500) ? 0.33 : 0.33), // 不使用 null 值
+        fill: false, // 不填充线下面的区域
+        borderColor: documentStyle.getPropertyValue('--p-red-500') || 'red', // 设置辅助线的颜色，或者给一个备用颜色
+        borderWidth: 1, // 辅助线的宽度
+        pointRadius: 0, // 不显示数据点
+        borderDash: [10, 5], // 虚线样式
+        tension: 0 // 线的张力设置为 0，确保为直线
+      }
+    ],
+  });
+};
+
+
+const documentStyle = getComputedStyle(document.documentElement);
+
+
+watch([changeWinNum, changeLoseNum, notChangeWinNum, notChangeLoseNum], () => {
+    chartDataC.value = setdataC();
+    chartDataNC.value = setdataNC();
+});
+
+
+onMounted(() => {
+  chartDataC.value = setdataC();
+  chartDataNC.value = setdataNC()
+});
 
 const options = ref({
   animation: {
@@ -418,7 +492,8 @@ const discussContent = `
           </div>
         </div>
         <div class="flex flex-1 flex-col items-center justify-center">
-          <Chart type="bar" :data="data" :options="options" class="flex-1 w-full"></Chart>
+          <Chart type="line" :data="chartDataC" :options="options" class="flex-1 w-full"></Chart>
+          <Chart type="line" :data="chartDataNC" :options="options" class="flex-1 w-full"></Chart>
           <Button @click="resetData" class="mt-3">重置数据</Button>
         </div>
       </div>
