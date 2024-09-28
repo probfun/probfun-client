@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { User } from '@/api/user/userType';
-import { fetchUserApi, putUserApi, putUserAvatarApi } from '@/api/user/userApi';
+import { putUserApi, putUserAvatarApi } from '@/api/user/userApi';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button'
 
@@ -12,7 +12,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import {
   FormControl,
@@ -27,7 +26,7 @@ import { useUserStore } from '@/store'
 
 import { Plus } from 'lucide-vue-next'
 import { useToast } from 'primevue/usetoast';
-import { onMounted, ref } from 'vue';
+import { ref, watch } from 'vue';
 
 const userStore = useUserStore();
 const toast = useToast();
@@ -84,18 +83,13 @@ async function handleFileUpload(event: Event) {
     }
   }
 }
+const isOpen = ref(false);
 
-onMounted(async () => {
-  try {
-    const result = await fetchUserApi();
-    result.user.gender = result.user.gender.toString();
-    userStore.user = result.user;
+watch(isOpen, () => {
+  if (!tempUser.value) {
     tempUser.value = userStore.user;
   }
-  catch (error) {
-    console.error('Error during fetching user:', error);
-  }
-})
+});
 </script>
 
 <template>
@@ -110,15 +104,13 @@ onMounted(async () => {
       <!--        </Badge> -->
       <!--      </div> -->
     </div>
-    <Dialog>
-      <DialogTrigger as-child>
-        <div class="flex items-center gap-2 ml-auto">
-          <Label class="text-base"> {{ userStore.user?.nickname ?? 'unknown' }}</Label>
-          <Button variant="ghost" size="icon" class="rounded-full">
-            <img :src="userStore.user?.avatarUrl || '/default-avatar.png'" class="w-8 rounded-full" alt="">
-          </Button>
-        </div>
-      </DialogTrigger>
+    <div class="flex items-center gap-2 ml-auto">
+      <Label class="text-base"> {{ userStore.user?.nickname ?? 'unknown' }}</Label>
+      <Button variant="ghost" size="icon" class="rounded-full" @click="isOpen = true">
+        <img :src="userStore.user?.avatarUrl" class="w-8 rounded-full" alt="">
+      </Button>
+    </div>
+    <Dialog v-model:open="isOpen">
       <DialogContent v-if="tempUser" class="overflow-y-auto p-10 max-w-xl">
         <DialogHeader>
           <DialogTitle>个人资料</DialogTitle>

@@ -1,213 +1,18 @@
-<template>
-  <experiment-board title="Buffon投针" :tags="['辛钦大数定律', '蒙特卡罗方法']" :discuss-tab-list="discussTabList">
-    <template #experiment>
-      <div ref="container" class="h-full overflow-hidden">
-        <div class="bg-primary">
-          <canvas ref="canvas" class="w-full h-full"></canvas>
-        </div>
-        <!-- wait 1 sec -->
-      </div>
-    </template>
-
-    <template #parameter>
-      <div class="flex w-full h-full">
-        <div class="w-1/3 flex flex-col items-start p-4">
-
-          <div class="flex items-center mb-4 w-full">
-            <label for="floorLineSpacing" class="text-left w-1/2 font-bold">针的长度</label>
-            <input type="number" id="needleLength" v-model="needleLength" class="w-1/2 border p-2 rounded-lg" min="20"
-              max="40" @input="runSimulation" />
-          </div>
-          <div class="flex items-center mb-4 w-full">
-            <label for="floorLineSpacing" class="text-left w-1/2 font-bold">线的间距</label>
-            <input type="number" id="floorLineSpacing" v-model="floorLineSpacing" class="w-1/2 border p-2 rounded-lg"
-              min="20" max="80" @input="runSimulation" />
-          </div>
-
-          <div class="flex items-center mb-4 w-full">
-            <label for="needleAmount" class="text-left w-1/2 font-bold">抛针数量</label>
-            <input type="number" id="needleAmount" v-model="needleAmount" class="w-1/2 border p-2 rounded-lg"
-              :max="5000" />
-          </div>
-
-          <div class="flex justify-between gap-4  mb-6 w-full">
-            <Button class="flex-1" @click="addNeedles" :disabled="isCalculating || isSimulating">
-              抛针
-            </Button>
-            <Button class="flex-1 gap-3" @click="isSimulating ? endSimulate() : startSimulate()">
-              {{ isSimulating ? '停止模拟' : '自动模拟' }}
-            </Button>
-          </div>
-          <div class="flex flex-col w-full gap-3">
-            <Label class="mb-2 font-bold">实验结果:</Label>
-            <div class="text-start w-full flex flex-col mb-4">
-              <Label>和线相交的针的数量：{{ hits }}</Label>
-              <div>
-                <Label class="text-start w-full h-full py-5">
-                  <p class="mb-1">估算的 Pi 值:</p>
-                  <div v-html="toMarkdown(`$\\pi = \\frac{2l}{Pd} = $ ${estimatedPi.toFixed(5)}`)"
-                    class="prose w-full text-base-content"></div>
-                </Label>
-                <Label>历史估算 Pi 值的平均值：{{ getAverageEstimatedPi().toFixed(5) }}</Label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 右边部分：图表 -->
-        <div class="w-2/3 flex flex-col items-center p-4">
-          <div class="flex-1 flex flex-col items-center justify-center w-full">
-            <chart type="line" :data="chartData" class="flex-1 w-full" :options="chartOptions" />
-            <chart type="line" :data="chartDataAver" class="flex-1 w-full" :options="chartOptions" />
-
-            <Button @click="resetData" class="mt-3">重置数据</Button>
-          </div>
-
-
-
-
-        </div>
-        <!-- <div>
-          <div class="flex items-center mb-4">
-            <label for="needleLength" class="text-left w-1/3 font-bold">针的长度</label>
-            <input
-              type="number"
-              id="needleLength"
-              v-model="needleLength"
-              class="w-2/3 border p-2 rounded-lg"
-              min="20"
-              max="40"
-              @input="runSimulation"
-            />
-          </div>
-  
-          <div class="flex items-center mb-4">
-            <label for="floorLineSpacing" class="text-left w-1/3 font-bold">线的间距</label>
-            <input
-              type="number"
-              id="floorLineSpacing"
-              v-model="floorLineSpacing"
-              class="w-2/3 border p-2 rounded-lg"
-              min="20"
-              max="80"
-              @input="runSimulation"
-            />
-          </div>
-
-          <div class="flex items-center mb-4">
-            <label for="needleAmount" class="text-left w-1/3 font-bold">抛针数量</label>
-            <input
-              type="number"
-              id="needleAmount"
-              v-model="needleAmount"
-              class="w-2/3 border p-2 rounded-lg"
-              :max="5000"
-            />
-          </div>
-
-          <div class="flex justify-between gap-2 w-full">
-            <Button
-              class="flex-1"
-              @click="addNeedles"
-              :disabled="isCalculating || isSimulating"
-            >
-              抛针
-            </Button>
-            <Button
-              class="flex-1"
-              @click="isSimulating ? endSimulate() : startSimulate()"
-            >
-              {{ isSimulating ? '停止模拟' : '自动模拟' }}
-            </Button>
-          </div>
-        </div>
-        
-        <div class="mt-5 flex flex-col">
-          <Label class="mb-2 font-bold">实验结果:</Label>
-          <div class="text-start w-full flex flex-col">
-            <Label>和线相交的针的数量：{{ hits }}</Label>
-            <div>
-              <Label class="text-start w-full h-full py-5">
-                <p class="mb-1">估算的 Pi 值:</p>
-                <div
-                  v-html="toMarkdown(`$\\pi = \\frac{2l}{Pd} = $ ${estimatedPi.toFixed(5)}`)"
-                  class="prose w-full text-base-content"
-                ></div>
-              </Label>
-              <Label>历史估算 Pi 值的平均值：{{ getAverageEstimatedPi().toFixed(5) }}</Label>
-            </div>
-          </div>
-        </div>
-        
-        <div class="flex-1 flex flex-col items-center justify-center">
-          <chart type="line" :data="chartData" class="flex-1 w-full" :options="chartOptions" />
-          <Button @click="resetData" class="mt-3">重置数据</Button>
-        </div> -->
-      </div>
-    </template>
-
-    <template #conclusion>
-      <div class="w-full h-full p-3">
-        <div v-html="toMarkdown(conclusionContent)" class="prose-sm max-w-none text-foreground"></div>
-      </div>
-    </template>
-
-    <template #discuss>
-      <div class="w-full h-full p-3">
-        <div v-html="toMarkdown(discussContent)" class="prose-sm max-w-none text-foreground"></div>
-        <table class="mb-5">
-          <thead>
-            <tr>
-              <th>方法</th>
-              <th>优点</th>
-              <th>缺点</th>
-              <th>适用场景</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>方法1</strong></td>
-              <td>数学上严密，形式上直观，尤其是通过概率密度函数和积分可以清晰地描述针与线相交的概率从而推导出π的表达式</td>
-              <td>理论上复杂，实际操作时需要积分</td>
-              <td>适合理论分析或推导π的公式</td>
-            </tr>
-            <tr>
-              <td><strong>方法2</strong></td>
-              <td>通过起点、角度生成终点，几何描述清晰直观</td>
-              <td>计算量大，特别是每次都要生成起点和终点</td>
-              <td>适合模拟或者编程实现复杂的几何问题</td>
-            </tr>
-            <tr>
-              <td><strong>方法3</strong></td>
-              <td>仅需检查两端点是否位于同一半平面，算法简洁，计算量较小，几何描述清晰直观</td>
-              <td>不容易直接推导出π的表达式</td>
-              <td>适合需要简化计算或者快速判断相交情况的场景，但不利于进一步推导π的公式</td>
-            </tr>
-          </tbody>
-        </table>
-        <div v-html="toMarkdown(discussContentt)" class="prose-sm max-w-none text-foreground"></div>
-      </div>
-    </template>
-  </experiment-board>
-</template>
-
-
-
-
 <script setup lang="ts">
-import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
-import { ref, onMounted, computed, onUnmounted, defineProps } from 'vue';
-import { toMarkdown } from "@/utils/markdown";
-import { GraduationCap, MessageCircleMore, MessagesSquare, Lightbulb, NotebookPen } from "lucide-vue-next";
+import CommentPanel from '@/components/comment/CommentPanel.vue';
+import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { toMarkdown } from '@/utils/markdown';
+import { CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, registerables, Tooltip } from 'chart.js';
 
-
+import { GraduationCap, Lightbulb, MessagesSquare, NotebookPen } from 'lucide-vue-next';
+import { computed, defineProps, onMounted, onUnmounted, ref } from 'vue';
 
 const props = defineProps<{
-  title: string;
-  tags: string[];
-  discussTabList: string[];
+  title: string
+  tags: string[]
+  discussTabList: string[]
 }>();
 
 console.log(props);
@@ -217,27 +22,28 @@ const discussTabList = [
     id: 0,
     label: '实验结论',
     name: 'conclusion',
-    icon: GraduationCap
+    icon: GraduationCap,
 
-  }, {
+  },
+  {
     id: 1,
     label: '相关讨论',
     name: 'discuss',
-    icon: Lightbulb
+    icon: Lightbulb,
   },
 
   {
     id: 2,
     label: '讨论区',
-    name: 'peapleDiscuss',
-    icon: MessagesSquare
+    name: 'comment',
+    icon: MessagesSquare,
   },
   {
     id: 3,
     label: '拓展训练',
     name: 'exercise',
-    icon: NotebookPen
-  }
+    icon: NotebookPen,
+  },
 
 ];
 
@@ -383,9 +189,9 @@ const discussContentt = `
 const isSimulating = ref(false);
 
 function resetData() {
-  hits.value = 0;
-  estimatedPi.value = 0;
-  historyEstimatedPi.value = [];
+  // hits.value = 0;
+  // estimatedPi.value = 0;
+  // historyEstimatedPi.value = [];
 }
 
 async function startSimulate() {
@@ -403,21 +209,22 @@ function endSimulate() {
 }
 
 const container = ref<HTMLDivElement | null>(null);
-let needleAmount = ref(1000);
+const needleAmount = ref(1000);
 const hits = ref(0);
 const estimatedPi = ref(0);
 const historyEstimatedPi = ref<number[]>([]);
 
+const documentStyle = getComputedStyle(document.documentElement);
 const chartData = computed(() => {
   const kValues = Array.from({ length: historyEstimatedPi.value.length }, (_, i) => i + 1);
 
-  let sum = 0, cnt = 0;
-  for (let i = 0; i < historyEstimatedPi.value.length; i++) {
-    if (Number.isFinite(historyEstimatedPi.value[i])) {
-      sum += historyEstimatedPi.value[i];
-
-    }
-  }
+  // let sum = 0;
+  // const cnt = 0;
+  // for (let i = 0; i < historyEstimatedPi.value.length; i++) {
+  //   if (Number.isFinite(historyEstimatedPi.value[i])) {
+  //     sum += historyEstimatedPi.value[i];
+  //   }
+  // }
 
   return ({
     labels: kValues,
@@ -431,15 +238,14 @@ const chartData = computed(() => {
       },
       {
         label: 'Pi = 3.14152', // 辅助线的标签
-        data: kValues.map((k) => (k >= 1 && k <= 500) ? 3.14152 : 3.14152), // 不使用 null 值
+        data: kValues.map(k => (k >= 1 && k <= 500) ? 3.14152 : 3.14152), // 不使用 null 值
         fill: false, // 不填充线下面的区域
         borderColor: documentStyle.getPropertyValue('--p-red-500') || 'red', // 设置辅助线的颜色，或者给一个备用颜色
         borderWidth: 1, // 辅助线的宽度
         pointRadius: 0, // 不显示数据点
         borderDash: [10, 5], // 虚线样式
-        tension: 0 // 线的张力设置为 0，确保为直线
-      }
-
+        tension: 0, // 线的张力设置为 0，确保为直线
+      },
 
     ],
   });
@@ -448,7 +254,8 @@ const chartData = computed(() => {
 const chartDataAver = computed(() => {
   const kValues = Array.from({ length: historyEstimatedPi.value.length }, (_, i) => i + 1);
   const averagePi = [];
-  let sum = 0, cnt = 0;
+  let sum = 0;
+  let cnt = 0;
   for (let i = 0; i < historyEstimatedPi.value.length; i++) {
     if (Number.isFinite(historyEstimatedPi.value[i])) {
       sum += historyEstimatedPi.value[i];
@@ -468,45 +275,39 @@ const chartDataAver = computed(() => {
       },
       {
         label: 'Pi = 3.14152', // 辅助线的标签
-        data: kValues.map((k) => (k >= 1 && k <= 500) ? 3.14152 : 3.14152), // 不使用 null 值
+        data: kValues.map(k => (k >= 1 && k <= 500) ? 3.14152 : 3.14152), // 不使用 null 值
         fill: false, // 不填充线下面的区域
         borderColor: documentStyle.getPropertyValue('--p-red-500') || 'red', // 设置辅助线的颜色，或者给一个备用颜色
         borderWidth: 1, // 辅助线的宽度
         pointRadius: 0, // 不显示数据点
         borderDash: [10, 5], // 虚线样式
-        tension: 0 // 线的张力设置为 0，确保为直线
-      }
+        tension: 0, // 线的张力设置为 0，确保为直线
+      },
     ],
   });
 });
-
-
-import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, Tooltip, Legend, registerables } from 'chart.js';
 // import annotationPlugin from 'chartjs-plugin-annotation';
 
 ChartJS.register(...registerables);
 ChartJS.register(LineElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-
-const documentStyle = getComputedStyle(document.documentElement);
 const textColor = documentStyle.getPropertyValue('--p-text-color');
 const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
 const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-
 const chartOptions = ref({
   animation: {
-    duration: 0 // 禁用所有动画效果
+    duration: 0, // 禁用所有动画效果
   },
   maintainAspectRatio: false,
   aspectRatio: 0.6,
   plugins: {
     legend: {
       labels: {
-        color: textColor
-      }
+        color: textColor,
+      },
     },
     annotation: {
       annotations: {
@@ -522,30 +323,30 @@ const chartOptions = ref({
             position: 'top',
             backgroundColor: 'orange',
             color: 'white',
-            padding: 4
-          }
-        }
-      }
-    }
+            padding: 4,
+          },
+        },
+      },
+    },
   },
   scales: {
     x: {
       ticks: {
-        color: textColorSecondary
+        color: textColorSecondary,
       },
       grid: {
-        color: surfaceBorder
-      }
+        color: surfaceBorder,
+      },
     },
     y: {
       ticks: {
-        color: textColorSecondary
+        color: textColorSecondary,
       },
       grid: {
-        color: surfaceBorder
+        color: surfaceBorder,
       },
-    }
-  }
+    },
+  },
 });
 
 const isCalculating = ref(false);
@@ -556,10 +357,11 @@ const needleLength = ref(30); // 默认针的长度
 const floorLineSpacing = ref(60); // 默认线的间距
 
 function runSimulation() {
-
-  if (!canvas.value) return;
+  if (!canvas.value)
+    return;
   const ctx = canvas.value.getContext('2d');
-  if (!ctx) return;
+  if (!ctx)
+    return;
   hits.value = 0;
   ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
   ctx.strokeStyle = 'white';
@@ -579,7 +381,6 @@ function runSimulation() {
     const y1 = yCenter - (needleLength.value / 2) * Math.sin(theta);
     const y2 = yCenter + (needleLength.value / 2) * Math.sin(theta);
 
-
     // 检查是否与线相交
     if (Math.floor(y1 / floorLineSpacing.value) !== Math.floor(y2 / floorLineSpacing.value)) {
       hits.value++;
@@ -588,7 +389,8 @@ function runSimulation() {
       ctx.lineTo(x2, y2);
       ctx.strokeStyle = 'red';
       ctx.stroke();
-    } else {
+    }
+    else {
       ctx.beginPath();
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
@@ -599,7 +401,6 @@ function runSimulation() {
 
   estimatedPi.value = (2 * needleLength.value * needleAmount.value) / (hits.value * floorLineSpacing.value);
   historyEstimatedPi.value = historyEstimatedPi.value.concat(estimatedPi.value);
-
 }
 
 const width = ref(0);
@@ -623,8 +424,10 @@ function resizeUpdate() {
 }
 
 function getAverageEstimatedPi() {
-  if (historyEstimatedPi.value.length === 0) return 0; // 防止数组为空时出现除以零的情况
-  let sum = 0, cnt = 0;
+  if (historyEstimatedPi.value.length === 0)
+    return 0; // 防止数组为空时出现除以零的情况
+  let sum = 0;
+  let cnt = 0;
   for (let i = 0; i < historyEstimatedPi.value.length; i++) {
     if (Number.isFinite(historyEstimatedPi.value[i])) {
       sum += historyEstimatedPi.value[i];
@@ -636,7 +439,8 @@ function getAverageEstimatedPi() {
 
 let running = false;
 async function addNeedles() {
-  if (running) return;
+  if (running)
+    return;
   running = true;
   runSimulation();
   await new Promise<void>((resolve) => {
@@ -661,9 +465,209 @@ onUnmounted(() => {
     resizeObserver.value.disconnect();
   }
 });
-
-
 </script>
+
+<template>
+  <ExperimentBoard title="Buffon投针" :tags="['辛钦大数定律', '蒙特卡罗方法']" :discuss-tab-list="discussTabList">
+    <template #experiment>
+      <div ref="container" class="h-full overflow-hidden">
+        <div class="bg-background">
+          <canvas ref="canvas" class="w-full h-full" />
+        </div>
+        <!-- wait 1 sec -->
+      </div>
+    </template>
+
+    <template #parameter>
+      <div class="flex w-full h-full">
+        <div class="w-1/3 flex flex-col items-start p-4">
+          <div class="flex items-center mb-4 w-full">
+            <label for="floorLineSpacing" class="text-left w-1/2 font-bold">针的长度</label>
+            <Input
+              id="needleLength" v-model="needleLength" type="number" class="w-1/2 border p-2 rounded-lg" min="20"
+              max="40" @input="runSimulation"
+            />
+          </div>
+          <div class="flex items-center mb-4 w-full">
+            <label for="floorLineSpacing" class="text-left w-1/2 font-bold">线的间距</label>
+            <Input
+              id="floorLineSpacing" v-model="floorLineSpacing" type="number" class="w-1/2 border p-2 rounded-lg"
+              min="20" max="80" @input="runSimulation"
+            />
+          </div>
+
+          <div class="flex items-center mb-4 w-full">
+            <label for="needleAmount" class="text-left w-1/2 font-bold">抛针数量</label>
+            <Input
+              id="needleAmount" v-model="needleAmount" type="number" class="w-1/2 border p-2 rounded-lg"
+              :max="5000"
+            />
+          </div>
+
+          <div class="flex justify-between gap-4  mb-6 w-full">
+            <Button class="flex-1" :disabled="isCalculating || isSimulating" @click="addNeedles">
+              抛针
+            </Button>
+            <Button class="flex-1 gap-3" @click="isSimulating ? endSimulate() : startSimulate()">
+              {{ isSimulating ? '停止模拟' : '自动模拟' }}
+            </Button>
+          </div>
+          <div class="flex flex-col w-full gap-3">
+            <Label class="mb-2 font-bold">实验结果:</Label>
+            <div class="text-start w-full flex flex-col mb-4">
+              <Label>和线相交的针的数量：{{ hits }}</Label>
+              <div>
+                <Label class="text-start w-full h-full py-5">
+                  <p class="mb-1">估算的 Pi 值:</p>
+                  <div
+                    class="prose w-full text-base-content"
+                    v-html="toMarkdown(`$\\pi = \\frac{2l}{Pd} = $ ${estimatedPi.toFixed(5)}`)"
+                  />
+                </Label>
+                <Label>历史估算 Pi 值的平均值：{{ getAverageEstimatedPi().toFixed(5) }}</Label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右边部分：图表 -->
+        <div class="w-2/3 flex flex-col items-center p-4">
+          <div class="flex-1 flex flex-col items-center justify-center w-full">
+            <chart type="line" :data="chartData" class="flex-1 w-full" :options="chartOptions" />
+            <chart type="line" :data="chartDataAver" class="flex-1 w-full" :options="chartOptions" />
+
+            <Button class="mt-3" @click="resetData">
+              重置数据
+            </Button>
+          </div>
+        </div>
+        <!-- <div>
+          <div class="flex items-center mb-4">
+            <label for="needleLength" class="text-left w-1/3 font-bold">针的长度</label>
+            <input
+              type="number"
+              id="needleLength"
+              v-model="needleLength"
+              class="w-2/3 border p-2 rounded-lg"
+              min="20"
+              max="40"
+              @input="runSimulation"
+            />
+          </div>
+
+          <div class="flex items-center mb-4">
+            <label for="floorLineSpacing" class="text-left w-1/3 font-bold">线的间距</label>
+            <input
+              type="number"
+              id="floorLineSpacing"
+              v-model="floorLineSpacing"
+              class="w-2/3 border p-2 rounded-lg"
+              min="20"
+              max="80"
+              @input="runSimulation"
+            />
+          </div>
+
+          <div class="flex items-center mb-4">
+            <label for="needleAmount" class="text-left w-1/3 font-bold">抛针数量</label>
+            <input
+              type="number"
+              id="needleAmount"
+              v-model="needleAmount"
+              class="w-2/3 border p-2 rounded-lg"
+              :max="5000"
+            />
+          </div>
+
+          <div class="flex justify-between gap-2 w-full">
+            <Button
+              class="flex-1"
+              @click="addNeedles"
+              :disabled="isCalculating || isSimulating"
+            >
+              抛针
+            </Button>
+            <Button
+              class="flex-1"
+              @click="isSimulating ? endSimulate() : startSimulate()"
+            >
+              {{ isSimulating ? '停止模拟' : '自动模拟' }}
+            </Button>
+          </div>
+        </div>
+
+        <div class="mt-5 flex flex-col">
+          <Label class="mb-2 font-bold">实验结果:</Label>
+          <div class="text-start w-full flex flex-col">
+            <Label>和线相交的针的数量：{{ hits }}</Label>
+            <div>
+              <Label class="text-start w-full h-full py-5">
+                <p class="mb-1">估算的 Pi 值:</p>
+                <div
+                  v-html="toMarkdown(`$\\pi = \\frac{2l}{Pd} = $ ${estimatedPi.toFixed(5)}`)"
+                  class="prose w-full text-base-content"
+                ></div>
+              </Label>
+              <Label>历史估算 Pi 值的平均值：{{ getAverageEstimatedPi().toFixed(5) }}</Label>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex-1 flex flex-col items-center justify-center">
+          <chart type="line" :data="chartData" class="flex-1 w-full" :options="chartOptions" />
+          <Button @click="resetData" class="mt-3">重置数据</Button>
+        </div> -->
+      </div>
+    </template>
+
+    <template #conclusion>
+      <div class="w-full h-full p-3">
+        <div class="prose-sm max-w-none text-foreground" v-html="toMarkdown(conclusionContent)" />
+      </div>
+    </template>
+
+    <template #comment>
+      <CommentPanel exp-id="12345" />
+    </template>
+
+    <template #discuss>
+      <div class="w-full h-full p-3">
+        <div class="prose-sm max-w-none text-foreground" v-html="toMarkdown(discussContent)" />
+        <table class="mb-5">
+          <thead>
+            <tr>
+              <th>方法</th>
+              <th>优点</th>
+              <th>缺点</th>
+              <th>适用场景</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>方法1</strong></td>
+              <td>数学上严密，形式上直观，尤其是通过概率密度函数和积分可以清晰地描述针与线相交的概率从而推导出π的表达式</td>
+              <td>理论上复杂，实际操作时需要积分</td>
+              <td>适合理论分析或推导π的公式</td>
+            </tr>
+            <tr>
+              <td><strong>方法2</strong></td>
+              <td>通过起点、角度生成终点，几何描述清晰直观</td>
+              <td>计算量大，特别是每次都要生成起点和终点</td>
+              <td>适合模拟或者编程实现复杂的几何问题</td>
+            </tr>
+            <tr>
+              <td><strong>方法3</strong></td>
+              <td>仅需检查两端点是否位于同一半平面，算法简洁，计算量较小，几何描述清晰直观</td>
+              <td>不容易直接推导出π的表达式</td>
+              <td>适合需要简化计算或者快速判断相交情况的场景，但不利于进一步推导π的公式</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="prose-sm max-w-none text-foreground" v-html="toMarkdown(discussContentt)" />
+      </div>
+    </template>
+  </ExperimentBoard>
+</template>
 
 <style scoped>
 table {

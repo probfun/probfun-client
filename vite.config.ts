@@ -25,6 +25,7 @@ export default defineConfig(({ mode }) => {
       proxy: {
         '/api': {
           target: 'http://8.154.34.171:8080',
+          // target: 'http://127.0.0.1:4523/m1/4811506-4465979-default',
           changeOrigin: true,
         },
         '/uploads': {

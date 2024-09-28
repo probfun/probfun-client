@@ -10,3 +10,9 @@ export interface User {
   grade: number
   avatarUrl: string
 }
+
+export interface UserPublic {
+  uid: string
+  nickname: string
+  avatarUrl: string
+}
