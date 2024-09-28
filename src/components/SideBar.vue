@@ -11,6 +11,7 @@ import { logout } from '@/utils/auth';
 import { Book, Bot, CircleHelp, Dices, LogOut, Star, Sun, User } from 'lucide-vue-next';
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { clickApi } from '@/api/track/trackApi';
 
 interface SideBarItem {
   label: string
@@ -23,7 +24,7 @@ const route = useRoute();
 
 const showIndex = ref(false);
 
-function toggleDrawer() {
+async function toggleDrawer() {
   showIndex.value = !showIndex.value;
 }
 
@@ -60,7 +61,14 @@ const sideBarBottomItem = ref<SideBarItem[]>([
   {
     label: '切换主题',
     icon: Sun,
-    command: () => {
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'sideBar', '切换主题', window.location.href);
+        console.log('切换主题');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
       if (document.documentElement.classList.contains('dark')) {
         document.documentElement.classList.remove('dark');
       }
@@ -77,7 +85,14 @@ const sideBarBottomItem = ref<SideBarItem[]>([
   {
     label: '登出',
     icon: LogOut,
-    command: () => {
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'sideBar', '登出', window.location.href);
+        console.log('登出');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
       logout();
       router.push('/login');
     },
@@ -89,26 +104,76 @@ const chapter1Items = [
     label: 'Buffon投针',
     icon: 'pi pi-chart-bar',
     route: '/dashboard/experiment/chapter1/buffon',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', 'Buffon投针', window.location.href);
+        console.log('Buffon投针');
+        router.push('/dashboard/experiment/chapter1/buffon');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
   },
   {
     label: '三门问题',
     icon: 'pi pi-chart-bar',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '三门问题', window.location.href);
+        console.log('三门问题');
+        router.push('/dashboard/experiment/chapter1/three-doors');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
     route: '/dashboard/experiment/chapter1/three-doors',
   },
   {
     label: '生日问题',
     icon: 'pi pi-chart-bar',
     route: '/dashboard/experiment/chapter1/birthday-problem',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '生日问题', window.location.href);
+        console.log('生日问题');
+        router.push('/dashboard/experiment/chapter1/birthday-problem');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
   },
   {
     label: '生日攻击问题',
     icon: 'pi pi-chart-bar',
     route: '/dashboard/experiment/chapter1/birthday-attack',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '生日攻击问题', window.location.href);
+        console.log('生日攻击问题');
+        router.push('/dashboard/experiment/chapter1/birthday-attack');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
   },
   {
     label: '阳性检测',
     icon: 'pi pi-chart-bar',
     route: '/dashboard/experiment/chapter1/positive-test',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '阳性检测', window.location.href);
+        console.log('阳性检测');
+        router.push('/dashboard/experiment/chapter1/positive-test');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
   },
 ];
 
@@ -117,31 +182,91 @@ const chapter2Items = [
     label: '二项分布',
     icon: 'pi pi-chart-bar',
     route: '/dashboard/experiment/binomialDistribution',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '二项分布', window.location.href);
+        console.log('二项分布');
+        router.push('/dashboard/experiment/binomialDistribution');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
   },
   {
     label: '泊松分布',
     icon: 'pi pi-chart-bar',
     route: '/dashboard/experiment/poissonDistribution',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '泊松分布', window.location.href);
+        console.log('泊松分布');
+        router.push('/dashboard/experiment/poissonDistribution');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
   },
   {
     label: '几何分布',
     icon: 'pi pi-chart-bar',
     route: '/dashboard/experiment/geometricDistribution',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '几何分布', window.location.href);
+        console.log('几何分布');
+        router.push('/dashboard/experiment/geometricDistribution');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
   },
   {
     label: '均匀分布',
     icon: 'pi pi-chart-bar',
     route: '/dashboard/experiment/evenDistribution',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '均匀分布', window.location.href);
+        console.log('均匀分布');
+        router.push('/dashboard/experiment/evenDistribution');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
   },
   {
     label: '指数分布',
     icon: 'pi pi-chart-bar',
     route: '/dashboard/experiment/exponentialDistribution',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '指数分布', window.location.href);
+        console.log('指数分布');
+        router.push('/dashboard/experiment/exponentialDistribution');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
   },
   {
     label: '正态分布',
     icon: 'pi pi-chart-bar',
     route: '/dashboard/experiment/normalDistribution',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '正态分布', window.location.href);
+        console.log('正态分布');
+        router.push('/dashboard/experiment/normalDistribution');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
   },
 ];
 
@@ -150,21 +275,61 @@ const comparisonOfDistributions = [
     label: '二项分布与泊松分布',
     icon: 'pi pi-chart-bar',
     route: '/dashboard/experiment/comparison/binomialPoisson',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '二项分布与泊松分布', window.location.href);
+        console.log('二项分布与泊松分布');
+        router.push('/dashboard/experiment/comparison/binomialPoisson');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
   },
   {
     label: '二项分布与正态分布',
     icon: 'pi pi-chart-bar',
     route: '/dashboard/experiment/comparison/binomialNormal',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '二项分布与正态分布', window.location.href);
+        console.log('二项分布与正态分布');
+        router.push('/dashboard/experiment/comparison/binomialNormal');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
   },
   {
     label: '泊松分布与指数分布',
     icon: 'pi pi-chart-bar',
     route: '/dashboard/experiment/comparison/poissonExponential',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '泊松分布与指数分布', window.location.href);
+        console.log('泊松分布与指数分布');
+        router.push('/dashboard/experiment/comparison/poissonExponential');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
   },
   {
     label: '泊松分布与正态分布',
     icon: 'pi pi-chart-bar',
     route: '/dashboard/experiment/comparison/poissonNormal',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '泊松分布与正态分布', window.location.href);
+        console.log('泊松分布与正态分布');
+        router.push('/dashboard/experiment/comparison/poissonNormal');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
   },
 ];
 </script>
@@ -183,13 +348,10 @@ const comparisonOfDistributions = [
             <TooltipProvider :delay-duration="0">
               <Tooltip>
                 <TooltipTrigger>
-                  <Button
-                    size="icon" variant="ghost" :class="cn(isActiveRoute(item.route ?? '') && 'bg-muted')"
-                    @click="() => {
-                      if (item.command) item.command();
-                      else if (item.route) router.push(item.route);
-                    }"
-                  >
+                  <Button size="icon" variant="ghost" :class="cn(isActiveRoute(item.route ?? '') && 'bg-muted')" @click="() => {
+                    if (item.command) item.command();
+                    else if (item.route) router.push(item.route);
+                  }">
                     <component :is="item.icon" class="size-5" />
                   </Button>
                 </TooltipTrigger>
@@ -207,12 +369,10 @@ const comparisonOfDistributions = [
             <TooltipProvider :delay-duration="0">
               <Tooltip>
                 <TooltipTrigger>
-                  <Button
-                    size="icon" variant="ghost" @click="() => {
-                      if (item.route) router.push(item.route);
-                      else if (item.command) item.command();
-                    }"
-                  >
+                  <Button size="icon" variant="ghost" @click="() => {
+                    if (item.route) router.push(item.route);
+                    else if (item.command) item.command();
+                  }">
                     <component :is="item.icon" class="size-5" />
                   </Button>
                 </TooltipTrigger>
@@ -252,10 +412,8 @@ const comparisonOfDistributions = [
                 </summary>
                 <ul>
                   <li v-for="item in chapter1Items" :key="item.label">
-                    <a
-                      :class="{ active: isActiveRoute(item.route) }"
-                      @click="() => { router.push(item.route); toggleDrawer(); }"
-                    >
+                    <a :class="{ active: isActiveRoute(item.route) }"
+                      @click="() => { item.command(); toggleDrawer(); }">
                       <i :class="item.icon" /> {{ item.label }}
                     </a>
                   </li>
@@ -270,10 +428,8 @@ const comparisonOfDistributions = [
                 </summary>
                 <ul>
                   <li v-for="item in chapter2Items" :key="item.label">
-                    <a
-                      :class="{ active: isActiveRoute(item.route) }"
-                      @click="() => { router.push(item.route); toggleDrawer(); }"
-                    >
+                    <a :class="{ active: isActiveRoute(item.route) }"
+                      @click="() => { item.command(); toggleDrawer(); }">
                       <i :class="item.icon" /> {{ item.label }}
                     </a>
                   </li>
@@ -282,10 +438,8 @@ const comparisonOfDistributions = [
                       <summary><i class="pi pi-chart-bar" />分布的对比</summary>
                       <ul>
                         <li v-for="item in comparisonOfDistributions" :key="item.label">
-                          <a
-                            :class="{ active: isActiveRoute(item.route) }"
-                            @click="() => { router.push(item.route); toggleDrawer(); }"
-                          >
+                          <a :class="{ active: isActiveRoute(item.route) }"
+                            @click="() => { item.command(); toggleDrawer(); }">
                             <i :class="item.icon" /> {{ item.label }}
                           </a>
                         </li>
@@ -302,5 +456,4 @@ const comparisonOfDistributions = [
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
