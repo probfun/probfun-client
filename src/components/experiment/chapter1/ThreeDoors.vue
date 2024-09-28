@@ -8,6 +8,7 @@ import {GraduationCap, MessagesSquare, Lightbulb} from "lucide-vue-next";
 import {cn} from "@/lib/utils";
 import { Slider } from '@/components/ui/slider'
 import { Input } from '@/components/ui/input'
+import { clickApi } from '@/api/track/trackApi';
 
 class Door {
   id: number;

@@ -8,6 +8,16 @@ import 'katex/dist/katex.min.css';
 
 const number = ref([1]); // Number of experiments (n)
 const probability = ref([0]); // Probability of success (p)
+const numberk = ref([1]); // Number of success (k)
+
+// 计算属性，用于动态更新k的最大值
+const maxK = computed(() => number.value[0] );
+// 监视n的变化，确保k的值不大于n
+watch(number, (newVal) => {
+  if (numberk.value[0] > newVal[0]) {
+    numberk.value[0] = newVal[0];
+  }
+});
 
 const save = ref(false);
 function saveImg() {
@@ -19,7 +29,33 @@ function back() {
   chartData.value.datasets = [];
 }
 
-const latexFormula = computed(() => `P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k} = \\binom{${number.value}}{k} ${probability.value}^k (1-${probability.value})^{${number.value}-k}`);
+// 计算组合数的函数
+const BinomialCoefficient = (n: number, k: number): number => {
+  if (k > n) return 0;
+
+  const factorial = (num: number): number => {
+    return num <= 1 ? 1 : num * factorial(num - 1);
+  };
+
+  return factorial(n) / (factorial(k) * factorial(n - k));
+};
+
+// 计算最终结果
+const finalResult = computed(() => {
+  const n = number.value[0];
+  const k = numberk.value[0];
+  const p = probability.value[0];
+  const coefficient = BinomialCoefficient(n, k);
+  return coefficient * Math.pow(p, k) * Math.pow(1 - p, n - k);
+});
+
+// 输出LaTeX公式
+const latexFormula = computed(() => {
+  const result = finalResult.value.toFixed(10); // 保留10位小数
+  return `P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k} = \\binom{${number.value}}{${numberk.value}} ${probability.value}^${numberk.value} (1-${probability.value})^{${number.value}-${numberk.value}} = ${result}`;
+});
+
+// const latexFormula = computed(() => `P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k} = \\binom{${number.value}}${numberk.value} ${probability.value}^${numberk.value} (1-${probability.value})^{${number.value}-${numberk.value}} =  ${result} `);
 const katexContainer = ref<HTMLElement | null>(null);
 
 function renderFormula() {
@@ -169,7 +205,7 @@ function setChartOptions() {
 const chartOptions = ref(setChartOptions());
 
 // 监听 number 和 probability 变化，更新图表
-watch([number, probability], () => {
+watch([number, probability,numberk], () => {
   chartDataO.value = setChartData();
   addNewDataset();
   renderFormula();
@@ -249,12 +285,17 @@ $$
         </div>
         <div class="flex w-full mb-5">
           <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-            <p> Number of experiments </p>
+            <p> Number of experiments(n) </p>
             <InputNumber v-model.number="number[0]" />
-            <Slider v-model="number" :min="1" :max="10" :step="1" class="w-48" />
+            <Slider v-model="number" :min="1" :max="14" :step="1" class="w-48" />
           </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-            <p> Probability of success </p>
+            <p> Number of success(k) </p>
+            <InputNumber v-model.number="numberk[0]" />
+            <Slider v-model="numberk" :min="1" :max="maxK" :step="1" class="w-48" />
+            </div>
+          <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+            <p> Probability of success(p) </p>
             <InputNumber v-model.number="probability[0]" :min-fraction-digits="1" />
             <Slider v-model="probability" :min="0" :max="1" :step="0.1" class="w-48" />
           </div>
