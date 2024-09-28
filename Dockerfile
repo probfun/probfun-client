@@ -1,15 +1,26 @@
-FROM node:18-alpine as builder
-WORKDIR /app
-RUN npm install -g pnpm
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install
-COPY . .
-RUN pnpm run build
+# 第一阶段：构建前端应用
+FROM node:18-alpine AS builder
 
-FROM joseluisq/static-web-server:2
-COPY --from=builder /app/dist /public
-ENV SERVER_ROOT=/public
-ENV SERVER_PORT=80
-ENV SERVER_HEALTH=true
-ENV SERVER_FALLBACK_PAGE=/public/index.html
+# 设置工作目录
+WORKDIR /app
+
+# 复制依赖文件
+COPY package.json pnpm-lock.yaml ./
+
+RUN npm install -g pnpm && pnpm install
+# 安装 pnpm 并依赖
+RUN npm install -g pnpm && pnpm install --frozen-lockfile
+
+COPY . .
+
+RUN pnpm run build
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# 暴露nginx服务端口
 EXPOSE 80
+
+# 启动nginx服务
+CMD ["nginx", "-g", "daemon off;"]
