@@ -1,30 +1,26 @@
-# 使用 Node.js 镜像
-FROM node:18 AS build
+# 第一阶段：构建前端应用
+FROM node:18-alpine AS builder
 
 # 设置工作目录
 WORKDIR /app
 
-# 复制 package.json 和 pnpm-lock.yaml
+# 复制依赖文件
 COPY package.json pnpm-lock.yaml ./
 
-# 安装 pnpm
-RUN npm install -g pnpm
+RUN npm install -g pnpm && pnpm install
+# 安装 pnpm 并依赖
+RUN npm install -g pnpm && pnpm install --frozen-lockfile
 
-# 安装依赖
-RUN pnpm install
-
-# 复制项目文件
 COPY . .
 
-# 构建 Vue 项目
 RUN pnpm run build
-
-# 使用 Nginx 提供静态文件
 FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-# 复制构建的文件
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/nginx.conf
 
-# 暴露端口
+# 暴露nginx服务端口
 EXPOSE 80
+
+# 启动nginx服务
 CMD ["nginx", "-g", "daemon off;"]
