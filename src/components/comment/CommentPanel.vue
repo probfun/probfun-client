@@ -64,14 +64,6 @@ async function send() {
 <template>
   <div v-auto-animate class="h-full w-full flex flex-col">
     <ScrollArea v-if="commentList" v-auto-animate class="h-full w-full">
-      <Accordion type="single" class="w-full" collapsible :default-value="defaultValue">
-        <AccordionItem v-for="item in accordionItems" :key="item.value" :value="item.value">
-          <AccordionTrigger>{{ item.title }}</AccordionTrigger>
-          <AccordionContent>
-            {{ item.content }}
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
       <CommentCard v-for="(item, index) in commentList" :key="item.commentId" v-model="commentList![index]" />
     </ScrollArea>
     <div v-else v-auto-animate class="h-full w-full overflow-y-auto">
