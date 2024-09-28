@@ -7,7 +7,7 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['js-big-decimal', ''],
   },
-  base: './',
+  base: '/',
   plugins: [
     vue(),
     Components({
