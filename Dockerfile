@@ -9,7 +9,7 @@ RUN pnpm run build
 FROM joseluisq/static-web-server:2
 COPY --from=builder /app/dist /public
 ENV SERVER_ROOT=/public
-ENV SERVER_PORT=8080
+ENV SERVER_PORT=8000
 ENV SERVER_HEALTH=true
 ENV SERVER_FALLBACK_PAGE=/public/index.html
-EXPOSE 8080
+EXPOSE 8000
