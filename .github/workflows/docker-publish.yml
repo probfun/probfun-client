@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - dev
 
 jobs:
   build-and-push:
@@ -16,8 +17,23 @@ jobs:
       - name: Log in to Alibaba Cloud Docker Registry
         run: echo ${{ secrets.ALIYUN_PASSWORD }} | docker login --username=${{ secrets.ALIYUN_USERNAME }} --password-stdin registry.cn-hangzhou.aliyuncs.com
 
+#      - name: Build Docker image
+#        run: docker build -t registry.cn-hangzhou.aliyuncs.com/probfun/frontend:latest .
+#
+#      - name: Push Docker image
+#        run: docker push registry.cn-hangzhou.aliyuncs.com/probfun/frontend:latest
+
+      - name: Set Docker image tag
+        id: vars
+        run: |
+          if [ "${GITHUB_REF##*/}" == "master" ]; then
+            echo "IMAGE_TAG=latest" >> $GITHUB_ENV
+          elif [ "${GITHUB_REF##*/}" == "dev" ]; then
+            echo "IMAGE_TAG=dev" >> $GITHUB_ENV
+          fi
+
       - name: Build Docker image
-        run: docker build -t registry.cn-hangzhou.aliyuncs.com/probfun/frontend:latest .
+        run: docker build -t registry.cn-hangzhou.aliyuncs.com/probfun/frontend:${{ env.IMAGE_TAG }} .
 
       - name: Push Docker image
-        run: docker push registry.cn-hangzhou.aliyuncs.com/probfun/frontend:latest
+        run: docker push registry.cn-hangzhou.aliyuncs.com/probfun/frontend:${{ env.IMAGE_TAG }}
