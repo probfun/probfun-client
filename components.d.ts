@@ -98,7 +98,7 @@ declare module 'vue' {
     SheetTitle: typeof import('./src/components/ui/sheet/SheetTitle.vue')['default']
     SheetTrigger: typeof import('./src/components/ui/sheet/SheetTrigger.vue')['default']
     SideBar: typeof import('./src/components/SideBar.vue')['default']
-    Skeleton: typeof import('primevue/skeleton')['default']
+    Skeleton: typeof import('./src/components/ui/skeleton/Skeleton.vue')['default']
     Slider: typeof import('./src/components/ui/slider/Slider.vue')['default']
     StarPanel: typeof import('./src/components/star/StarPanel.vue')['default']
     Textarea: typeof import('./src/components/ui/textarea/Textarea.vue')['default']
