@@ -386,14 +386,61 @@ const canvas = ref<HTMLCanvasElement | null>(null);
 const needleLength = ref(30); // 默认针的长度
 const floorLineSpacing = ref(60); // 默认线的间距
 
-function runSimulation() {
-  if (!canvas.value)
-    return;
+// function runSimulation() {
+//   if (!canvas.value)
+//     return;
+//   const ctx = canvas.value.getContext('2d');
+//   if (!ctx)
+//     return;
+//   hits.value = 0;
+//   ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
+//   ctx.strokeStyle = 'black';
+//   for (let y = floorLineSpacing.value; y < canvas.value.height; y += floorLineSpacing.value) {
+//     ctx.beginPath();
+//     ctx.moveTo(0, y);
+//     ctx.lineTo(canvas.value.width, y);
+//     ctx.stroke();
+//   }
+
+//   for (let i = 0; i < needleAmount.value; i++) {
+//     const xCenter = Math.random() * canvas.value.width;
+//     const yCenter = Math.random() * canvas.value.height;
+//     const theta = Math.random() * Math.PI;
+//     const x1 = xCenter - (needleLength.value / 2) * Math.cos(theta);
+//     const x2 = xCenter + (needleLength.value / 2) * Math.cos(theta);
+//     const y1 = yCenter - (needleLength.value / 2) * Math.sin(theta);
+//     const y2 = yCenter + (needleLength.value / 2) * Math.sin(theta);
+
+//     // 检查是否与线相交
+//     if (Math.floor(y1 / floorLineSpacing.value) !== Math.floor(y2 / floorLineSpacing.value)) {
+//       hits.value++;
+//       ctx.beginPath();
+//       ctx.moveTo(x1, y1);
+//       ctx.lineTo(x2, y2);
+//       ctx.strokeStyle = 'red';
+//       ctx.stroke();
+//     }
+//     else {
+//       ctx.beginPath();
+//       ctx.moveTo(x1, y1);
+//       ctx.lineTo(x2, y2);
+//       ctx.strokeStyle = 'blue';
+//       ctx.stroke();
+//     }
+//   }
+
+//   estimatedPi.value = (2 * needleLength.value * needleAmount.value) / (hits.value * floorLineSpacing.value);
+//   historyEstimatedPi.value = historyEstimatedPi.value.concat(estimatedPi.value);
+// }
+async function runSimulationStepwise() {
+  if (!canvas.value) return;
   const ctx = canvas.value.getContext('2d');
-  if (!ctx)
-    return;
+  if (!ctx) return;
+
   hits.value = 0;
   ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
+  
+  // 画出地板线
   ctx.strokeStyle = 'black';
   for (let y = floorLineSpacing.value; y < canvas.value.height; y += floorLineSpacing.value) {
     ctx.beginPath();
@@ -402,36 +449,48 @@ function runSimulation() {
     ctx.stroke();
   }
 
+  // 分批生成并显示针
   for (let i = 0; i < needleAmount.value; i++) {
-    const xCenter = Math.random() * canvas.value.width;
-    const yCenter = Math.random() * canvas.value.height;
-    const theta = Math.random() * Math.PI;
-    const x1 = xCenter - (needleLength.value / 2) * Math.cos(theta);
-    const x2 = xCenter + (needleLength.value / 2) * Math.cos(theta);
-    const y1 = yCenter - (needleLength.value / 2) * Math.sin(theta);
-    const y2 = yCenter + (needleLength.value / 2) * Math.sin(theta);
-
-    // 检查是否与线相交
-    if (Math.floor(y1 / floorLineSpacing.value) !== Math.floor(y2 / floorLineSpacing.value)) {
-      hits.value++;
-      ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
-      ctx.strokeStyle = 'red';
-      ctx.stroke();
-    }
-    else {
-      ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
-      ctx.strokeStyle = 'blue';
-      ctx.stroke();
-    }
+    const needleData = generateRandomNeedle(); // 生成随机的针数据
+    drawNeedle(ctx, needleData); // 绘制针
+    await new Promise<void>((resolve) => setTimeout(resolve, 0)); // 延迟100ms，逐步显示
   }
 
+  // 计算并显示估算的Pi值
   estimatedPi.value = (2 * needleLength.value * needleAmount.value) / (hits.value * floorLineSpacing.value);
   historyEstimatedPi.value = historyEstimatedPi.value.concat(estimatedPi.value);
 }
+
+function generateRandomNeedle() {
+  const xCenter = Math.random() * canvas.value!.width;
+  const yCenter = Math.random() * canvas.value!.height;
+  const theta = Math.random() * Math.PI;
+  const x1 = xCenter - (needleLength.value / 2) * Math.cos(theta);
+  const x2 = xCenter + (needleLength.value / 2) * Math.cos(theta);
+  const y1 = yCenter - (needleLength.value / 2) * Math.sin(theta);
+  const y2 = yCenter + (needleLength.value / 2) * Math.sin(theta);
+
+  return { x1, x2, y1, y2, yCenter };
+}
+
+function drawNeedle(ctx: CanvasRenderingContext2D, needleData: { x1: number, x2: number, y1: number, y2: number, yCenter: number }) {
+  // 检查是否与地板线相交
+  if (Math.floor(needleData.y1 / floorLineSpacing.value) !== Math.floor(needleData.y2 / floorLineSpacing.value)) {
+    hits.value++;
+    ctx.beginPath();
+    ctx.moveTo(needleData.x1, needleData.y1);
+    ctx.lineTo(needleData.x2, needleData.y2);
+    ctx.strokeStyle = 'red'; // 相交的针为红色
+    ctx.stroke();
+  } else {
+    ctx.beginPath();
+    ctx.moveTo(needleData.x1, needleData.y1);
+    ctx.lineTo(needleData.x2, needleData.y2);
+    ctx.strokeStyle = 'blue'; // 不相交的针为蓝色
+    ctx.stroke();
+  }
+}
+
 
 const width = ref(0);
 const height = ref(0);
@@ -449,7 +508,7 @@ function resizeUpdate() {
       const ctx = canvas.value?.getContext('2d');
       ctx?.scale(ratio, ratio);
     }
-    // addNeedles();
+    addNeedles();
   }
 }
 
@@ -468,6 +527,7 @@ function getAverageEstimatedPi() {
 }
 
 let running = false;
+
 async function addNeedles() {
   if (!hasClickedStart) {
     try {
@@ -481,12 +541,14 @@ async function addNeedles() {
   if (running)
     return;
   running = true;
-  runSimulation();
-  await new Promise<void>((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, 100);
-  });
+  // runSimulation();
+  // await new Promise<void>((resolve) => {
+  //   setTimeout(() => {
+  //     resolve();
+  //   }, 100);
+  // });
+  await runSimulationStepwise(); // 分步运行模拟
+
   running = false;
 }
 
@@ -524,14 +586,14 @@ onUnmounted(() => {
             <label for="floorLineSpacing" class="text-left w-1/2 font-bold">针的长度</label>
             <Input
               id="needleLength" v-model="needleLength" type="number" class="w-1/2 border p-2 rounded-lg" min="20"
-              max="40" @input="runSimulation"
+              max="40" @input="runSimulationStepwise"
             />
           </div>
           <div class="flex items-center mb-4 w-full">
             <label for="floorLineSpacing" class="text-left w-1/2 font-bold">线的间距</label>
             <Input
               id="floorLineSpacing" v-model="floorLineSpacing" type="number" class="w-1/2 border p-2 rounded-lg"
-              min="20" max="80" @input="runSimulation"
+              min="20" max="80" @input="runSimulationStepwise"
             />
           </div>
 
