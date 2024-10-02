@@ -6,6 +6,8 @@ import { onMounted, ref, watch } from 'vue';
 const props = defineProps<{
   mean: number
   stdDev: number
+  transformedMeanY: number; // 添加新的属性
+  transformedVarianceY: number; // 添加新的属性
   showHistory: boolean
 }>();
 
@@ -44,6 +46,8 @@ function drawNormalDistribution() {
   if (!calculator)
     return;
   const normalDistribution = `f(x) = \\frac{1}{${props.stdDev}\\sqrt{2\\pi}}e^{-\\frac{(x-${props.mean})^2}{2*${props.stdDev}^2}}`;
+  const normalDistributionY = `g(x) = \\frac{1}{${props.transformedVarianceY}\\sqrt{2\\pi}}e^{-\\frac{(x-${props.transformedMeanY})^2}{2*${props.transformedVarianceY}^2}}`; // 新的正态分布
+
 
   if (props.showHistory) {
     idNumber++;
@@ -55,7 +59,9 @@ function drawNormalDistribution() {
     historyExpressions.value.push(expression);
   }
 
-  calculator.setExpression({ id: 'normal_distribution', latex: normalDistribution });
+  calculator.setExpression({ id: 'normal_distribution', latex: normalDistribution, label:'f(x)' ,showLabel: true});
+  calculator.setExpression({ id: 'normal_distribution_y', latex: normalDistributionY ,label:'f(y)',showLabel: true}); // 绘制第二条线
+
 
   if (props.showHistory) {
     historyExpressions.value.forEach((expression) => {
@@ -79,7 +85,7 @@ function drawNormalDistribution() {
 }
 
 // 监听 props 的变化以动态更新图像
-watch(() => [props.mean, props.stdDev, props.showHistory], () => {
+watch(() => [props.mean, props.stdDev, props.transformedMeanY, props.transformedVarianceY,props.showHistory], () => {
   drawNormalDistribution();
 });
 </script>
