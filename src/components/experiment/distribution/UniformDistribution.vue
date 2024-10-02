@@ -19,22 +19,52 @@ function back() {
   save.value = false;
 }
 
-const latexFormula = computed(() => {
+const latexFormulaOne = computed(() => {
   const aFormatted = a.value[0] < 0 ? `(${a.value[0]})` : a.value[0];
   const bFormatted = b.value[0] < 0 ? `(${b.value[0]})` : b.value[0];
 
   return `f(x) =
+ \\begin{cases} 
+\\frac{${1}}{b - a} , & \\text{if } a \\leq x \\leq b \\\\
+0 , & \\text{otherwise}
+\\end{cases}
+ = 
+ \\begin{cases} 
+\\frac{${1}}{${bFormatted} - ${aFormatted}} , & \\text{if } ${a.value[0]} \\leq x \\leq ${bFormatted} \\\\
+0 , & \\text{otherwise}
+\\end{cases}`;
+});
+
+const latexFormulaTwo = computed(() => {
+  const aFormatted = a.value[0] < 0 ? `(${a.value[0]})` : a.value[0];
+  const bFormatted = b.value[0] < 0 ? `(${b.value[0]})` : b.value[0];
+
+  return `y = kx+m,\\\\
+  
+  f(y) =
+\\begin{cases} 
+\\frac{k}{b - a} + m, & \\text{if } a \\leq x \\leq b \\\\
+m, & \\text{otherwise}
+\\end{cases}
+=
 \\begin{cases} 
 \\frac{${k.value[0]}}{${bFormatted} - ${aFormatted}} + ${m.value[0]}, & \\text{if } ${a.value[0]} \\leq x \\leq ${bFormatted} \\\\
 0 + ${m.value[0]}, & \\text{otherwise}
 \\end{cases}`;
 });
 
-const katexContainer = ref<HTMLElement | null>(null);
+const oneContainer = ref<HTMLElement | null>(null);
+const twoContainer = ref<HTMLElement | null>(null);
+
 
 function renderFormula() {
-  if (katexContainer.value) {
-    katex.render(latexFormula.value, katexContainer.value, {
+  if (oneContainer.value) {
+    katex.render(latexFormulaOne.value, oneContainer.value, {
+      throwOnError: false,
+    });
+  }
+  if (twoContainer.value) {
+    katex.render(latexFormulaTwo.value, twoContainer.value, {
       throwOnError: false,
     });
   }
@@ -44,8 +74,8 @@ onMounted(() => {
   renderFormula();
 });
 
-watch(latexFormula, () => {
-  renderFormula();
+watch([latexFormulaOne, latexFormulaTwo], () => {
+  renderFormula();  // 这里传入回调函数
 });
 
 const content = `
@@ -110,32 +140,39 @@ $$
             </button>
           </div>
         </div>
-        <div class="w-full flex items-center justify-center mb-5">
-          <div ref="katexContainer" class="text-xl" />
+        <div class="flex flex-col items-start">
+          <div class="flex flex-col items-start">
+            <div ref="oneContainer" class="l mb-1" />
+
+          </div>
+          <div class="flex flex-col items-start mb-4"></div>
+          <div ref="twoContainer" />
         </div>
-        <div class="grid grid-cols-4 gap-5 p-5">
-          <div class="flex flex-col flex-1 items-center justify-center space-y-5 w-full">
-            <p> a </p>
-            <InputNumber v-model.number="a[0]" :invalid="a > b" :min-fraction-digits="1" fluid />
-            <Slider v-model="a" :min="-10" :max="9.9" :step="0.1" class="w-full" />
-          </div>
-          <div class="flex flex-col flex-1 items-center justify-center space-y-5 w-full">
-            <p> b </p>
-            <InputNumber v-model.number="b[0]" :min-fraction-digits="1" fluid />
-            <Slider v-model="b" :min="a[0] + 0.1" :max="10" :step="0.1" class="w-full" />
-          </div>
-          <div class="flex flex-col flex-1 items-center justify-center space-y-5 w-full">
-            <p> k </p>
-            <InputNumber v-model.number="k[0]" :min-fraction-digits="1" fluid />
-            <Slider v-model="k" :min="0.1" :max="10" :step="0.1" class="w-full" />
-          </div>
-          <div class="flex flex-col flex-1 items-center justify-center space-y-5 w-full">
-            <p> m </p>
-            <InputNumber v-model.number="m[0]" :min-fraction-digits="1" fluid />
-            <Slider v-model="m" :min="0" :max="10" :step="0.1" class="w-full" />
-          </div>
+
+      </div>
+      <div class="grid grid-cols-4 gap-2 ">
+        <div class="flex flex-col flex-1 items-center justify-center space-y-2 w-full">
+          <p> 左边界a </p>
+          <InputNumber v-model.number="a[0]" :invalid="a > b" :min-fraction-digits="1" fluid />
+          <Slider v-model="a" :min="-10" :max="9.9" :step="0.1" class="w-full" />
+        </div>
+        <div class="flex flex-col flex-1 items-center justify-center space-y-2 w-full">
+          <p> 右边界b </p>
+          <InputNumber v-model.number="b[0]" :min-fraction-digits="1" fluid />
+          <Slider v-model="b" :min="a[0] + 0.1" :max="10" :step="0.1" class="w-full" />
+        </div>
+        <div class="flex flex-col flex-1 items-center justify-center space-y-2 w-full">
+          <p> k </p>
+          <InputNumber v-model.number="k[0]" :min-fraction-digits="1" fluid />
+          <Slider v-model="k" :min="0.1" :max="10" :step="0.1" class="w-full" />
+        </div>
+        <div class="flex flex-col flex-1 items-center justify-center space-y-2 w-full">
+          <p> m </p>
+          <InputNumber v-model.number="m[0]" :min-fraction-digits="1" fluid />
+          <Slider v-model="m" :min="0" :max="10" :step="0.1" class="w-full" />
         </div>
       </div>
+      
     </template>
     <template #conclusion>
       <div class="w-full h-full p-5">

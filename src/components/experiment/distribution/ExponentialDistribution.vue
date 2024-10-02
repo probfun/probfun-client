@@ -169,7 +169,7 @@ $$
           <div class="flex flex-col flex-1 items-center justify-center space-y-5">
             <p> x </p>
             <InputNumber v-model.number="numberx[0]" />
-            <Slider v-model="numberx" :min="1" :max="10" :step="1" class="w-48" />
+            <Slider v-model="numberx" :min="1" :max="10" :step="0.2" class="w-48" />
             </div>
           <div v-if="isChart2" class="flex flex-col flex-1 items-center justify-center space-y-5">
             <p> Fixed number </p>
