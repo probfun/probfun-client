@@ -133,15 +133,15 @@ router.beforeEach((to, from, next) => {
     }
     return;
   }
-  if (to.path === '/login' || to.path === '/register') {
-    if (token) {
-      next('/dashboard');
-    }
-    else {
-      next();
-    }
-    return;
-  }
+  // if (to.path === '/login' || to.path === '/register') {
+  //   if (token) {
+  //     next('/dashboard');
+  //   }
+  //   else {
+  //     next();
+  //   }
+  //   return;
+  // }
   if (to.path === '/dashboard') {
     if (token) {
       next();

@@ -2,9 +2,6 @@ import type { User } from './userType';
 import { get, post, put } from '../request';
 
 export async function isValidApi(studentId: string) {
-  return {
-    isValid: true,
-  };
   const result = await post<{
     isValid: boolean
   }>('/api/user/valid', {

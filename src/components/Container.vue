@@ -14,7 +14,7 @@ const props = defineProps<{
   tabs: Tab[]
 }>();
 
-const activeTab = ref<number>(props.tabs[0].id ?? 0);
+const activeTab = ref<Tab>(props.tabs[0]);
 </script>
 
 <template>
@@ -31,8 +31,8 @@ const activeTab = ref<number>(props.tabs[0].id ?? 0);
         variant="ghost"
         size="sm"
         class="px-2 h-auto py-1 gap-1 transition-all flex"
-        :class="tab.id === activeTab ? '!bg-background' : 'opacity-50'"
-        @click="activeTab = tab.id"
+        :class="tab.id === activeTab.id ? '!bg-background' : 'opacity-50'"
+        @click="activeTab = tab"
       >
         <component :is="h(tab.icon)" v-if="tab.icon" class="size-4 flex text-primary items-center justify-center" />
         {{ tab.label }}
