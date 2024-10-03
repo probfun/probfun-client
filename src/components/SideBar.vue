@@ -6,12 +6,27 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { logout } from '@/utils/auth';
 import { Book, Bot, CircleHelp, Dices, LogOut, Star, Sun, User } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { clickApi } from '@/api/track/trackApi';
+import { fetchFeedbackApi } from '@/api/feedback/feedbackApi';
+import { postFeedbackApi } from '@/api/feedback/feedbackApi';
+import { Feedback } from '@/api/feedback/feedbackType';
+import { useToast } from 'primevue/usetoast';
+
+const toast = useToast();
 
 interface SideBarItem {
   label: string
@@ -21,7 +36,7 @@ interface SideBarItem {
 }
 
 const route = useRoute();
-
+const isFeedback = ref(false);
 const showIndex = ref(false);
 
 async function toggleDrawer() {
@@ -80,7 +95,9 @@ const sideBarBottomItem = ref<SideBarItem[]>([
   {
     label: '意见反馈',
     icon: CircleHelp,
-    route: '/dashboard',
+    command: () => {
+      isFeedback.value = true;
+    }
   },
   {
     label: '登出',
@@ -332,6 +349,41 @@ const comparisonOfDistributions = [
     },
   },
 ];
+
+const feedback = ref('improvement');
+const content = ref('');
+const feedbackList = ref<Feedback[] | null>(null);
+
+async function refreshFeedback() {
+  try {
+    const result = await fetchFeedbackApi();
+    feedbackList.value = result.feedback;
+    feedbackList.value.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  }
+  catch (error) {
+    console.error('Error during fetching feedbacks:', error);
+  }
+}
+onMounted(() => {
+  refreshFeedback();
+});
+
+async function sendFeedback() {
+  if (content.value === '') {
+    toast.add({ severity: 'warn', summary: '提示', detail: '意见反馈不能为空', life: 3000 });
+    return;
+  }
+  try {
+    await postFeedbackApi(feedback.value, content.value);
+    await refreshFeedback();
+    toast.add({ severity: 'success', summary: '成功', detail: '反馈成功，感谢您的支持！', life: 3000 });
+    content.value = '';
+  }
+  catch (error) {
+    console.error(error);
+    toast.add({ severity: 'error', summary: '错误', detail: error, life: 3000 });
+  }
+}
 </script>
 
 <template>
@@ -453,6 +505,41 @@ const comparisonOfDistributions = [
         </div>
       </div>
     </div>
+    <Dialog v-model:open="isFeedback">
+      <DialogContent class="overflow-y-auto p-10 max-w-xl">
+        <DialogHeader>
+          <DialogTitle>意见反馈</DialogTitle>
+          <DialogDescription>
+            感谢您对邮趣概率的支持！我们非常重视您的意见和建议，以便不断改进我们的服务。欢迎您分享以下内容：<br>
+            1. <strong>功能建议：</strong>您希望我们增加哪些新功能或改进现有功能？<br>
+            2. <strong>遇到的错误：</strong>在使用过程中，您是否遇到了任何技术或内容错误？<br>
+            3. <strong>其他建议：</strong>任何其他您觉得有价值的意见和建议，我们都欢迎您告诉我们！
+          </DialogDescription>
+        </DialogHeader>
+        <div class="flex flex-wrap gap-4 mt-5">
+          <div class="flex items-center">
+            <RadioButton v-model="feedback" inputId="feedback1" value="improvement" />
+            <label for="feedback1" class="ml-2">功能建议</label>
+          </div>
+          <div class="flex items-center">
+            <RadioButton v-model="feedback" inputId="feedback2" value="bug" />
+            <label for="feedback2" class="ml-2">遇到的错误</label>
+          </div>
+          <div class="flex items-center">
+            <RadioButton v-model="feedback" inputId="feedback3" value="other" />
+            <label for="feedback3" class="ml-2">其他建议</label>
+          </div>
+        </div>
+        <FloatLabel>
+          <Textarea v-model="content" autoResize rows="10" cols="30" placeholder="请在这里输入您的意见！" />
+        </FloatLabel>
+        <DialogFooter>
+          <DialogClose>
+            <Button @click="sendFeedback">提交意见</Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   </div>
 </template>
 
