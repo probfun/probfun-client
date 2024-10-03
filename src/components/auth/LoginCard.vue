@@ -3,31 +3,44 @@ import { loginApi } from '@/api/user/userApi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useToast } from '@/components/ui/toast';
 import { useUserStore } from '@/store';
 import { setLocalToken } from '@/utils/auth';
 import { vAutoAnimate } from '@formkit/auto-animate';
-import { useToast } from 'primevue/usetoast';
-import { ref } from 'vue';
+import { CircleAlert, CircleCheck, CircleX } from 'lucide-vue-next';
+import { useToast as useToast2 } from 'primevue/usetoast'
+import { h, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const isLoading = ref(false);
 const studentId = ref('');
 const password = ref('');
 
-const toast = useToast();
+const { toast } = useToast();
+const toast2 = useToast2();
 const router = useRouter();
 const userStore = useUserStore();
 
 // 登录函数
 async function login() {
   if (!studentId.value || !password.value) {
-    toast.add({ severity: 'warn', summary: '提示', detail: '请填写所有字段', life: 3000 });
+    toast({
+      icon: h(CircleAlert),
+      title: '提示',
+      description: '请填写所有字段',
+      variant: 'warning',
+    });
     return;
   }
 
   try {
     const data = await loginApi(studentId.value, password.value);
-    toast.add({ severity: 'success', summary: '成功', detail: '登录成功', group: 'br', life: 3000 });
+    toast({
+      icon: h(CircleCheck),
+      title: '成功',
+      description: '登录成功',
+      variant: 'success',
+    });
     const { token, ...user } = data.user;
 
     setLocalToken(token);
@@ -37,7 +50,12 @@ async function login() {
   catch (error: any) {
     console.error('Error:', error);
     const errorMessage = error.response?.data?.msg || '登录失败，请重试';
-    toast.add({ severity: 'error', summary: '错误', detail: errorMessage, life: 3000 });
+    toast({
+      icon: h(CircleX),
+      title: '错误',
+      description: errorMessage,
+      variant: 'destructive',
+    });
   }
 };
 </script>

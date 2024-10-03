@@ -26,7 +26,8 @@ import { useUserStore } from '@/store'
 
 import { Plus } from 'lucide-vue-next'
 import { useToast } from 'primevue/usetoast';
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
 const userStore = useUserStore();
 const toast = useToast();
@@ -90,19 +91,47 @@ watch(isOpen, () => {
     tempUser.value = userStore.user;
   }
 });
+
+const title = ref<string>('');
+const tags = ref<string[]>([]);
+
+const route = useRoute();
+
+function updateExperiment() {
+  const path = route.path.split('/').pop();
+  if (path === 'buffon') {
+    title.value = 'Buffon投针';
+    tags.value = ['蒙特卡罗模拟', '123', '123'];
+  }
+  // else if (path === '...') {
+  //
+  // }
+  else {
+    title.value = '未知实验';
+    tags.value = [];
+  }
+}
+
+watch(() => route.path, () => {
+  updateExperiment();
+});
+
+onMounted(() => {
+  updateExperiment();
+});
 </script>
 
 <template>
   <nav class="w-full flex py-2 px-5 z-50 border-b bg-background">
     <div class="flex items-center justify-center gap-3">
-      <!--      <Button variant="ghost" class="text-base px-2 transition-all"> -->
-      <!--        Buffon投针 -->
-      <!--      </Button> -->
-      <!--      <div class="flex gap-2 overflow-x-auto"> -->
-      <!--        <Badge v-for="item in 3" :key="item"> -->
-      <!--          {{ item }} -->
-      <!--        </Badge> -->
-      <!--      </div> -->
+      <Label class="text-lg font-bold">
+        {{ title }}
+      </Label>
+      <div class="flex gap-2 overflow-x-auto">
+        <Badge v-for="item in tags" :key="item" class="text-sm">
+          {{ item }}
+        </Badge>
+      </div>
     </div>
     <div class="flex items-center gap-2 ml-auto">
       <Label class="text-base"> {{ userStore.user?.nickname ?? 'unknown' }}</Label>

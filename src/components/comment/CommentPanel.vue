@@ -5,15 +5,16 @@ import CommentCard from '@/components/comment/CommentCard.vue';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/components/ui/toast'
 import { vAutoAnimate } from '@formkit/auto-animate';
-import { useToast } from 'primevue/usetoast';
+// import { useToast } from 'primevue/usetoast';
 import { onMounted, ref } from 'vue';
 
 const props = defineProps<{
   expId: string
 }>();
 
-const toast = useToast();
+const { toast } = useToast();
 
 const commentList = ref<Comment[] | null>(null);
 
@@ -39,23 +40,43 @@ async function send() {
   if (isSending.value)
     return;
   if (content.value === '') {
-    toast.add({ severity: 'warn', summary: '提示', detail: '评论不能为空', life: 3000 });
+    toast({
+      title: '提示',
+      description: '评论不能为空',
+      variant: 'warning',
+    });
+    // toast.add({ severity: 'warn', summary: '提示', detail: '评论不能为空', life: 3000 });
     return;
   }
   if (content.value.length > 5000) {
-    toast.add({ severity: 'warn', summary: '提示', detail: '评论过长', life: 3000 });
+    toast({
+      title: '提示',
+      description: '评论内容不能多于5000字',
+      variant: 'warning',
+    });
+    // toast.add({ severity: 'warn', summary: '提示', detail: '评论过长', life: 3000 });
     return;
   }
   try {
     isSending.value = true;
     await postCommentApi(props.expId, content.value, null);
     await refreshComment();
-    toast.add({ severity: 'success', summary: '成功', detail: '评论成功', life: 3000 });
+    toast({
+      title: '成功',
+      description: '评论成功',
+      variant: 'success',
+    })
+    // toast.add({ severity: 'success', summary: '成功', detail: '评论成功', life: 3000 });
     content.value = '';
   }
   catch (error: any) {
     console.error(error);
-    toast.add({ severity: 'error', summary: '错误', detail: '评论失败，请重试', life: 3000 });
+    toast({
+      title: '错误',
+      description: '评论失败，请重试',
+      variant: 'destructive',
+    });
+    // toast.add({ severity: 'error', summary: '错误', detail: '评论失败，请重试', life: 3000 });
   }
   isSending.value = false;
 }
@@ -84,7 +105,6 @@ async function send() {
       <Textarea
         v-model="content" placeholder="请输入要讨论的内容..." rows="3" class="resize-none transition-all"
         @keydown.enter="(event: KeyboardEvent) => {
-          console.log('111')
           if (!event.shiftKey) {
             event.preventDefault();
             if (content.trim() !== '') {

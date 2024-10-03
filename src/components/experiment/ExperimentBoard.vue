@@ -80,7 +80,7 @@ const parameterTabList = ref([{
       direction="horizontal"
       class="rounded-lg"
     >
-      <ResizablePanel id="demo-panel-2" :default-size="50" :min-size="20" :max-size="80">
+      <ResizablePanel id="demo-panel-2" :default-size="70" :min-size="20" :max-size="80">
         <ResizablePanelGroup id="demo-group-2" direction="vertical">
           <ResizablePanel id="demo-panel-3" :default-size="40">
             <div class="flex h-full items-center justify-center p-1">
@@ -100,25 +100,12 @@ const parameterTabList = ref([{
         </ResizablePanelGroup>
       </ResizablePanel>
       <ResizableHandle id="demo-handle-1" />
-      <ResizablePanel id="demo-panel-1" :default-size="50">
+      <ResizablePanel id="demo-panel-1" :default-size="30">
         <div class="flex h-full items-center justify-center p-1">
           <Container class="flex-1 h-full" :tabs="discussTabList">
             <template #default="{ activeTab }">
               <slot :name="activeTab.name" />
-              <!--              <div v-for="tab in discussTabList" :key="tab.id" class="h-full"> -->
-              <!--                <div v-if="activeTab === tab.id" class="h-full"> -->
-              <!--                  <slot :name="tab.name" /> -->
-              <!--                </div> -->
-              <!--              </div> -->
             </template>
-            <!--            <slot :name="tab.name" /> -->
-            <!--            <template #default="{ activeTab }"> -->
-            <!--              <div v-for="tab in discussTabList" :key="tab.id" class="h-full"> -->
-            <!--                <div v-if="activeTab === tab.id" class="h-full"> -->
-            <!--                  <slot :name="tab.name" /> -->
-            <!--                </div> -->
-            <!--              </div> -->
-            <!--            </template> -->
           </Container>
         </div>
       </ResizablePanel>

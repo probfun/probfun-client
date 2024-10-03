@@ -1,19 +1,20 @@
 <script setup lang="ts">
-import { isValidApi, registerApi } from '@/api/user/userApi';
+import { isValidApi, loginApi, registerApi } from '@/api/user/userApi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/components/ui/toast/use-toast'
 import { useUserStore } from '@/store';
+import { setLocalToken } from '@/utils/auth';
 import { vAutoAnimate } from '@formkit/auto-animate';
-import { useToast } from 'primevue/usetoast';
-import { ref } from 'vue';
+import { CircleAlert, CircleX } from 'lucide-vue-next';
+import { h, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-const toast = useToast();
-
 const userStore = useUserStore();
+const { toast } = useToast();
 
 const isValid = ref(false);
 const isLoading = ref(false);
@@ -34,12 +35,22 @@ async function checkValid() {
       isValid.value = true;
     }
     else {
-      toast.add({ severity: 'warn', summary: '提示', detail: '学工号无效', life: 3000 });
+      toast({
+        icon: h(CircleAlert),
+        title: '提示',
+        description: '学工号无效',
+        variant: 'warning',
+      });
     }
   }
   catch (error: any) {
     console.error('Error during validation:', error);
-    toast.add({ severity: 'error', summary: '错误', detail: '学工号校验失败，请重试', life: 3000 });
+    toast({
+      icon: h(CircleX),
+      title: '错误',
+      description: '学工号校验失败，请重试',
+      variant: 'destructive',
+    });
   }
   isLoading.value = false;
 }
@@ -48,13 +59,17 @@ async function checkValid() {
 async function register() {
   // 校验所有字段是否填写
   if (!studentId.value || !nickname.value || !password.value) {
-    toast.add({ severity: 'warn', summary: '提示', detail: '请填写所有必要信息', life: 3000 });
+    toast({
+      icon: h(CircleAlert),
+      title: '提示',
+      description: '请填写所有必要信息',
+      variant: 'warning',
+    });
     return;
   }
 
   try {
-    // 发送注册请求
-    const response = await registerApi(
+    await registerApi(
       studentId.value,
       password.value,
       nickname.value,
@@ -64,19 +79,30 @@ async function register() {
       major.value,
       school.value,
     );
-    userStore.user = response.user;
-    toast.add({ severity: 'success', summary: '成功', detail: '注册成功', life: 3000 });
-
+    const data = await loginApi(studentId.value, password.value);
+    const { token, ...user } = data.user;
+    setLocalToken(token);
+    userStore.user = user;
+    await router.push('/dashboard');
+    toast({
+      icon: h(CircleAlert),
+      title: '成功',
+      description: '注册成功',
+      variant: 'success',
+    })
     await router.push('/dashboard');
   }
   catch (error: any) {
     console.error('Error during registration:', error);
-
-    // 根据后端返回的具体错误信息进行提示
     const errorMessage = error.response?.data?.msg || '注册失败，请重试';
-    toast.add({ severity: 'error', summary: '错误', detail: errorMessage, life: 3000 });
+    toast({
+      icon: h(CircleX),
+      title: '错误',
+      description: errorMessage,
+      variant: 'destructive',
+    })
   }
-};
+}
 </script>
 
 <template>
