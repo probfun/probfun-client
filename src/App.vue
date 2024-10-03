@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { vAutoAnimate } from '@formkit/auto-animate';
+import { Toaster } from '@/components/ui/toast'
+import { vAutoAnimate } from '@formkit/auto-animate'; // 导入 API 调用
 import Toast from 'primevue/toast';
-import { browseApi } from './api/track/trackApi'; // 导入 API 调用
-import { onMounted, onBeforeUnmount, watch } from 'vue';
+import { onBeforeUnmount, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import { browseApi } from './api/track/trackApi';
 
 const router = useRouter();
 
@@ -20,7 +21,7 @@ async function enterPage() {
 async function leavePage() {
   try {
     await browseApi('LEAVE', window.location.href);
-    console.log('Leaft');
+    console.log('Leave');
   }
   catch (error) {
     console.error('Error tracking page leave:', error);
@@ -44,7 +45,7 @@ watch(
     if (to) {
       await enterPage(); // 进入新的页面
     }
-  }
+  },
 );
 </script>
 
@@ -52,5 +53,6 @@ watch(
   <div v-auto-animate class="h-full w-full">
     <router-view />
     <Toast />
+    <Toaster />
   </div>
 </template>

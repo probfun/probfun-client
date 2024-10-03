@@ -7,7 +7,6 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
 import { createApp } from 'vue'
-import '@/input.css'
 import '@/assets/index.css'
 
 const pinia = createPinia();

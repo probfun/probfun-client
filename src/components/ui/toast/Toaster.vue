@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { cn } from '@/lib/utils';
 import { isVNode } from 'vue'
-import { useToast } from './use-toast'
 import { Toast, ToastClose, ToastDescription, ToastProvider, ToastTitle, ToastViewport } from '.'
+import { useToast } from './use-toast'
 
 const { toasts } = useToast()
 </script>
@@ -9,8 +10,9 @@ const { toasts } = useToast()
 <template>
   <ToastProvider>
     <Toast v-for="toast in toasts" :key="toast.id" v-bind="toast">
-      <div class="grid gap-1">
-        <ToastTitle v-if="toast.title">
+      <component :is="toast.icon" :class="cn('size-5 mb-auto', `text-${toast.variant ?? ''}`)" />
+      <div class="grid gap-1 flex-1">
+        <ToastTitle v-if="toast.title" :class="`text-${toast.variant ?? ''}`">
           {{ toast.title }}
         </ToastTitle>
         <template v-if="toast.description">
@@ -21,7 +23,7 @@ const { toasts } = useToast()
             {{ toast.description }}
           </ToastDescription>
         </template>
-        <ToastClose />
+        <ToastClose :class="cn('transition-all', `text-${toast.variant ?? ''}-foreground`)" />
       </div>
       <component :is="toast.action" />
     </Toast>
