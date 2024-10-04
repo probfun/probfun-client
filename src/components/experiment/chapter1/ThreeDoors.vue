@@ -515,6 +515,9 @@ const discussContent = `
         <div class="prose-sm max-w-full text-foreground" v-html="toMarkdown(discussContent)"></div>
       </div>
     </template>
+    <template #comment>
+      <CommentPanel exp-id="three-doors"/>
+    </template>
   </experiment-board>
 </template>
 

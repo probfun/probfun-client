@@ -726,9 +726,7 @@ onUnmounted(() => {
         <div class="prose-sm max-w-none text-foreground" v-html="toMarkdown(conclusionContent)" />
       </div>
     </template>
-    <template #comment>
-      <CommentPanel exp-id="12345" />
-    </template>
+
 
     <template #discuss>
       <div class="w-full h-full p-3">
@@ -766,8 +764,12 @@ onUnmounted(() => {
         <div class="prose-sm max-w-none text-foreground" v-html="toMarkdown(discussContentt)" />
       </div>
     </template>
+    <template #comment>
+      <CommentPanel exp-id="buffon"/>
+    </template>
   </ExperimentBoard>
-</template>
+</template> 
+
 
 <style scoped>
 table {

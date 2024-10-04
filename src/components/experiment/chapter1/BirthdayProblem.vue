@@ -619,6 +619,11 @@ watch(bornProb, () => {
         <div class="prose-sm max-w-none text-foreground" v-html="toMarkdown(content)" />
       </div>
     </template>
+
+    
+    <template #comment>
+      <CommentPanel exp-id="birthday-problem"/>
+    </template>
   </ExperimentBoard>
 </template>
 

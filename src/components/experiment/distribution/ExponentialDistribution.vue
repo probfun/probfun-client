@@ -184,6 +184,9 @@ $$
         <div class="prose max-w-full text-base-content" v-html="toMarkdown(content)" />
       </div>
     </template>
+    <template #comment>
+      <CommentPanel exp-id="exponentialDistribution"/>
+    </template>
   </ExperimentBoard>
 </template>
 
