@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import { computed, ref, Ref, watch,onMounted } from 'vue';
-import {toMarkdown} from "@/utils/markdown";
+import type { Ref } from 'vue';
+import CommentPanel from '@/components/comment/CommentPanel.vue';
+import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import ExperimentBoard from "@/components/experiment/ExperimentBoard.vue";
-import {GraduationCap, MessagesSquare, Lightbulb} from "lucide-vue-next";
-import {cn} from "@/lib/utils";
-import { Slider } from '@/components/ui/slider'
 import { Input } from '@/components/ui/input'
-import { clickApi } from '@/api/track/trackApi';
+import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider'
+import { cn } from '@/lib/utils';
+import { toMarkdown } from '@/utils/markdown';
+import { GraduationCap, Lightbulb, MessagesSquare } from 'lucide-vue-next';
+import { onMounted, ref, watch } from 'vue';
 
+const gameState = ref<'End' | 'Select' | 'Reveal' | 'Win' | 'Lose'>('End');
 class Door {
   id: number;
   open: Ref<boolean>;
@@ -27,7 +29,8 @@ class Door {
   }
 
   toggleSelect = () => {
-    if (this.open.value || gameState.value !== 'Select') return;
+    if (this.open.value || gameState.value !== 'Select')
+      return;
     Door.selectedDoor.value = this.selected.value ? null : this;
   }
 
@@ -42,8 +45,6 @@ const doors = ref<Door[]>([
   new Door(2, false, correctDoor === 2),
   new Door(3, false, correctDoor === 3),
 ]);
-
-const gameState = ref<'End' | 'Select' | 'Reveal' | 'Win' | 'Lose'>('End');
 
 function startGame() {
   gameState.value = 'Select';
@@ -67,13 +68,12 @@ function shuffle<T>(array: T[]): T[] {
 
 function selectDoor() {
   gameState.value = 'Reveal';
-  const revealDoorId = shuffle([1, 2, 3].filter((id) => id !== correctDoor && id !== Door.selectedDoor.value!.id))[0];
+  const revealDoorId = shuffle([1, 2, 3].filter(id => id !== correctDoor && id !== Door.selectedDoor.value!.id))[0];
   doors.value[revealDoorId - 1].openDoor();
 }
 
 // 新增一个状态变量来存储用户选择的策略
 const selectedStrategy = ref<'never' | 'always' | 'random'>('never');
-
 
 const changeWinNum = ref(0);
 const changeLoseNum = ref(0);
@@ -82,25 +82,30 @@ const notChangeLoseNum = ref(0);
 
 function gameResult(change: boolean) {
   if (change) {
-    Door.selectedDoor.value = doors.value.find((door) => !door.open && door.id !== Door.selectedDoor.value!.id) as unknown as Door;
+    Door.selectedDoor.value = doors.value.find(door => !door.open && door.id !== Door.selectedDoor.value!.id) as unknown as Door;
   }
   Door.selectedDoor.value?.openDoor();
   if (Door.selectedDoor.value!.correct) {
     gameState.value = 'Win';
     change ? changeWinNum.value++ : notChangeWinNum.value++;
-  } else {
+  }
+  else {
     gameState.value = 'Lose';
     change ? changeLoseNum.value++ : notChangeLoseNum.value++;
   }
   Door.selectedDoor.value = null;
 }
 
+const autoGameRound = ref([500]);
+const autoGaming = ref(false);
+
 async function simulateGame() {
-  const wait = async (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+  const wait = async (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
   autoGaming.value = true;
   const waitTime = 1000 / autoGameRound.value[0];
   for (let i = 0; i < autoGameRound.value[0]; i++) {
-    if (!autoGaming.value) return;
+    if (!autoGaming.value)
+      return;
     startGame();
     await wait(waitTime);
     Door.selectedDoor.value = doors.value[Math.floor(Math.random() * 3)] as unknown as Door;
@@ -109,11 +114,13 @@ async function simulateGame() {
     await wait(waitTime);
 
     let change: boolean;
-    if (selectedStrategy.value === "never") {
+    if (selectedStrategy.value === 'never') {
       change = false;
-    } else if (selectedStrategy.value === "always") {
+    }
+    else if (selectedStrategy.value === 'always') {
       change = true;
-    } else {
+    }
+    else {
       change = Math.random() < 0.5;
     }
 
@@ -123,22 +130,19 @@ async function simulateGame() {
   autoGaming.value = false;
 }
 
-const autoGameRound = ref([500]);
-const autoGaming = ref(false);
-
-
-const dataC = ref();
-const dataNC = ref();
+// const dataC = ref();
+// const dataNC = ref();
 const historyC = ref<number[]>([]);
 const historyNC = ref<number[]>([]);
 const chartDataC = ref();
 const chartDataNC = ref();
 
+const documentStyle = getComputedStyle(document.documentElement);
 
-const setdataC = () => {
+function setdataC() {
   const kValues = Array.from({ length: historyC.value.length }, (_, i) => i + 1);
   // 使用 historyC 生成返回数据
-    console.log(historyC);
+  console.log(historyC);
 
   return ({
     labels: kValues,
@@ -153,23 +157,22 @@ const setdataC = () => {
       },
       {
         label: '0.66', // 辅助线的标签
-        data: kValues.map((k) => (k >= 1 && k <= 500) ? 0.66 : 0.66), // 不使用 null 值
+        data: kValues.map(k => (k >= 1 && k <= 500) ? 0.66 : 0.66), // 不使用 null 值
         fill: false, // 不填充线下面的区域
         borderColor: documentStyle.getPropertyValue('--p-red-500') || 'red', // 设置辅助线的颜色，或者给一个备用颜色
         borderWidth: 1, // 辅助线的宽度
         pointRadius: 0, // 不显示数据点
         borderDash: [10, 5], // 虚线样式
-        tension: 0 // 线的张力设置为 0，确保为直线
-      }
+        tension: 0, // 线的张力设置为 0，确保为直线
+      },
     ],
   });
-};
+}
 
-
-const setdataNC = () => {
+function setdataNC() {
   const kValues = Array.from({ length: historyC.value.length }, (_, i) => i + 1);
-  historyNC.value = historyNC.value.concat( notChangeWinNum.value / (notChangeLoseNum.value + notChangeWinNum.value));
-  historyC.value = historyC.value.concat(changeWinNum.value / (changeWinNum.value + changeLoseNum.value),);
+  historyNC.value = historyNC.value.concat(notChangeWinNum.value / (notChangeLoseNum.value + notChangeWinNum.value));
+  historyC.value = historyC.value.concat(changeWinNum.value / (changeWinNum.value + changeLoseNum.value));
   console.log(historyC);
 
   return ({
@@ -185,27 +188,22 @@ const setdataNC = () => {
       },
       {
         label: '0.33', // 辅助线的标签
-        data: kValues.map((k) => (k >= 1 && k <= 500) ? 0.33 : 0.33), // 不使用 null 值
+        data: kValues.map(k => (k >= 1 && k <= 500) ? 0.33 : 0.33), // 不使用 null 值
         fill: false, // 不填充线下面的区域
         borderColor: documentStyle.getPropertyValue('--p-red-500') || 'red', // 设置辅助线的颜色，或者给一个备用颜色
         borderWidth: 1, // 辅助线的宽度
         pointRadius: 0, // 不显示数据点
         borderDash: [10, 5], // 虚线样式
-        tension: 0 // 线的张力设置为 0，确保为直线
-      }
+        tension: 0, // 线的张力设置为 0，确保为直线
+      },
     ],
   });
-};
-
-
-const documentStyle = getComputedStyle(document.documentElement);
-
+}
 
 watch([changeWinNum, changeLoseNum, notChangeWinNum, notChangeLoseNum], () => {
-    chartDataC.value = setdataC();
-    chartDataNC.value = setdataNC();
+  chartDataC.value = setdataC();
+  chartDataNC.value = setdataNC();
 });
-
 
 onMounted(() => {
   chartDataC.value = setdataC();
@@ -214,7 +212,7 @@ onMounted(() => {
 
 const options = ref({
   animation: {
-    duration: 0
+    duration: 0,
   },
   responsive: true,
   maintainAspectRatio: false,
@@ -222,9 +220,9 @@ const options = ref({
     y: {
       beginAtZero: true,
       min: 0,
-      max: 1
+      max: 1,
     },
-  }
+  },
 });
 
 function resetData() {
@@ -235,25 +233,25 @@ function resetData() {
 }
 
 const discussTabList = [
-    
-    {
-      id: 0,
-      label: '实验结论',
-      name: 'conclusion',
-      icon: GraduationCap
-    },
-    {
-      id: 1,
-      label: '相关讨论',
-      name: 'discuss',
-      icon: Lightbulb
-    },
-    {
-      id: 2,
-      label: '讨论区',
-      name: 'PeopleDiscuss',
-      icon: MessagesSquare
-    }
+
+  {
+    id: 0,
+    label: '实验结论',
+    name: 'conclusion',
+    icon: GraduationCap,
+  },
+  {
+    id: 1,
+    label: '相关讨论',
+    name: 'discuss',
+    icon: Lightbulb,
+  },
+  {
+    id: 2,
+    label: '讨论区',
+    name: 'comment',
+    icon: MessagesSquare,
+  },
 ];
 
 const conclusionContent = `
@@ -370,65 +368,89 @@ const discussContent = `
 当参赛者一开始选择羊B时（$\\frac{1}{3}$概率），主持人必然选择羊A，若参赛者更换选择，则必然赢得汽车。
 
 `;
-
 </script>
 
 <template>
-  <experiment-board title="三门问题" :tags="['条件概率', '贝叶斯定理']" :discuss-tab-list="discussTabList" >
+  <ExperimentBoard title="三门问题" :tags="['条件概率', '贝叶斯定理']" :discuss-tab-list="discussTabList">
     <template #experiment>
-      <div ref="container" class="h-full w-full relative flex flex-col items-center justify-center">
-<!--        <div class="relative p-5 flex flex-col items-center rounded-lg border-2 mb-3">-->
-          <div
-              class="h-full w-full absolute top-0 left-0 bg-black bg-opacity-70 flex justify-center items-center z-10"
-              v-if="gameState === 'End'">
-            <Button @click="startGame">开始游戏</Button>
-          </div>
-          <div class="font-bold text-xl mb-6 h-8 text-center flex items-center">
-            <p v-if="gameState === 'Select'">请选择一扇门！</p>
-            <p v-if="gameState === 'Reveal'">
-              主持人打开了一扇错误的门！<br>
-              你是否选择换一扇门？
-            </p>
-            <p v-if="gameState === 'Win'">
-              恭喜你，你赢得了汽车！
-            </p>
-            <p v-if="gameState === 'Lose'">
-              很遗憾，你没有赢得汽车。
-            </p>
-          </div>
+      <div class="h-full w-full relative flex flex-col items-center justify-center">
+        <!--        <div class="relative p-5 flex flex-col items-center rounded-lg border-2 mb-3"> -->
+        <div
+          v-if="gameState === 'End'"
+          class="h-full w-full absolute top-0 left-0 bg-black bg-opacity-70 flex justify-center items-center z-10"
+        >
+          <Button @click="startGame">
+            开始游戏
+          </Button>
+        </div>
+        <div class="font-bold text-xl mb-6 h-8 text-center flex items-center">
+          <p v-if="gameState === 'Select'">
+            请选择一扇门！
+          </p>
+          <p v-if="gameState === 'Reveal'">
+            主持人打开了一扇错误的门！<br>
+            你是否选择换一扇门？
+          </p>
+          <p v-if="gameState === 'Win'">
+            恭喜你，你赢得了汽车！
+          </p>
+          <p v-if="gameState === 'Lose'">
+            很遗憾，你没有赢得汽车。
+          </p>
+        </div>
 
-          <div class="w-full flex justify-rounded mb-3 max-w-lg">
-            <div v-for="door in doors" :key="door.id" class="relative cursor-pointer -mx-5"
-                 @click="door.toggleSelect">
-              <img :src="`/three-doors/door_${door.open ? 'open' : 'close_2'}.png`" alt=""
-                   class="hover:scale-[101%] hover:drop-shadow-[0_0_10px_rgba(155,155,138,1)] transition-all" />
-              <div
-                  class="absolute w-full h-full top-0 left-0 flex justify-center items-center pointer-events-none text-gray-200"
-                  v-if="door.selected">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                     stroke="currentColor" class="size-16">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                </svg>
-              </div>
-              <div
-                  class="absolute w-full h-full top-0 left-0 flex justify-center items-center pointer-events-none z-10"
-                  v-if="door.open">
-                <img src="/three-doors/car_kaizousya.png" alt="" v-if="door.correct" />
-                <img src="/three-doors/animal_markhor.png" alt="" v-else />
-              </div>
+        <div class="w-full flex justify-rounded mb-3 max-w-lg">
+          <div
+            v-for="door in doors" :key="door.id" class="relative cursor-pointer -mx-5"
+            @click="door.toggleSelect"
+          >
+            <img
+              :src="`/three-doors/door_${door.open ? 'open' : 'close_2'}.png`" alt=""
+              class="hover:scale-[101%] hover:drop-shadow-[0_0_10px_rgba(155,155,138,1)] transition-all"
+            >
+            <div
+              v-if="door.selected"
+              class="absolute w-full h-full top-0 left-0 flex justify-center items-center pointer-events-none text-gray-200"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="size-16"
+              >
+                <path
+                  stroke-linecap="round" stroke-linejoin="round"
+                  d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                />
+              </svg>
+            </div>
+            <div
+              v-if="door.open"
+              class="absolute w-full h-full top-0 left-0 flex justify-center items-center pointer-events-none z-10"
+            >
+              <img v-if="door.correct" src="/three-doors/car_kaizousya.png" alt="">
+              <img v-else src="/three-doors/animal_markhor.png" alt="">
             </div>
           </div>
-          <div class="h-8">
-            <Button :disabled="Door.selectedDoor.value == null" @click="selectDoor"
-                    v-if="gameState === 'Select'">选择</Button>
-            <div class="w-full flex space-x-5 justify-center" v-if="gameState === 'Reveal'">
-              <Button @click="gameResult(false)">不换门</Button>
-              <Button @click="gameResult(true)">换门</Button>
-            </div>
-            <Button @click="startGame" v-if="gameState === 'Win' || gameState === 'Lose'">重新开始</Button>
+        </div>
+        <div class="h-8">
+          <Button
+            v-if="gameState === 'Select'" :disabled="Door.selectedDoor.value == null"
+            @click="selectDoor"
+          >
+            选择
+          </Button>
+          <div v-if="gameState === 'Reveal'" class="w-full flex space-x-5 justify-center">
+            <Button @click="gameResult(false)">
+              不换门
+            </Button>
+            <Button @click="gameResult(true)">
+              换门
+            </Button>
           </div>
-<!--        </div>-->
+          <Button v-if="gameState === 'Win' || gameState === 'Lose'" @click="startGame">
+            重新开始
+          </Button>
+        </div>
+        <!--        </div> -->
       </div>
     </template>
 
@@ -437,36 +459,43 @@ const discussContent = `
         <div class="flex flex-col items-center flex-1">
           <div class="font-bold h-full justify-center items-center mb-4 gap-3 flex flex-col">
             <Label class="flex w-full font-bold text-left">模拟轮数</Label>
-            <Input class="" :min="1" :max="1000" v-model="autoGameRound[0]" />
+            <Input v-model="autoGameRound[0]" class="" :min="1" :max="1000" />
 
-            <Slider class="" v-model="autoGameRound" />
+            <Slider v-model="autoGameRound" class="" />
           </div>
           <div class="flex justify-center gap-2 w-full">
-            <Button class="" @click="() => {
-              autoGaming ? autoGaming = false : simulateGame();
-            }"> {{ autoGaming ? '终止模拟' : '开始模拟' }}</Button>
+            <Button
+              class="" @click="() => {
+                autoGaming ? autoGaming = false : simulateGame();
+              }"
+            >
+              {{ autoGaming ? '终止模拟' : '开始模拟' }}
+            </Button>
           </div>
 
           <div class="flex flex-col mt-5">
             <Label class="font-bold mb-2 justify-center">选择换门策略：</Label>
             <div class="flex space-x-3">
               <Button
-                  :class="cn('transition-all', selectedStrategy !== 'never' && 'opacity-60')"
-                  @click="selectedStrategy = 'never'">
+                :class="cn('transition-all', selectedStrategy !== 'never' && 'opacity-60')"
+                @click="selectedStrategy = 'never'"
+              >
                 每次都不换门
               </Button>
               <Button
-                  :class="cn('transition-all', selectedStrategy !== 'always' && 'opacity-60')"
-                  @click="selectedStrategy = 'always'">
-                  每次都换门
+                :class="cn('transition-all', selectedStrategy !== 'always' && 'opacity-60')"
+                @click="selectedStrategy = 'always'"
+              >
+                每次都换门
               </Button>
               <Button
-                  :class="cn('transition-all', selectedStrategy !== 'random' && 'opacity-60')"
-                  @click="selectedStrategy = 'random'">
+                :class="cn('transition-all', selectedStrategy !== 'random' && 'opacity-60')"
+                @click="selectedStrategy = 'random'"
+              >
                 随机换门
               </Button>
             </div>
-        </div>
+          </div>
           <div class="mt-5 flex flex-col">
             <Label class="mb-2 font-bold">实验结果:</Label>
             <div class="grid grid-cols-2 gap-y-4 gap-x-10 justify-between">
@@ -492,33 +521,35 @@ const discussContent = `
           </div>
         </div>
         <div class="flex flex-1 flex-col items-center justify-center">
-          <Chart type="line" :data="chartDataC" :options="options" class="flex-1 w-full"></Chart>
-          <Chart type="line" :data="chartDataNC" :options="options" class="flex-1 w-full"></Chart>
-          <Button @click="resetData" class="mt-3">重置数据</Button>
+          <Chart type="line" :data="chartDataC" :options="options" class="flex-1 w-full" />
+          <Chart type="line" :data="chartDataNC" :options="options" class="flex-1 w-full" />
+          <Button class="mt-3" @click="resetData">
+            重置数据
+          </Button>
         </div>
       </div>
     </template>
 
     <template #conclusion>
       <div class="w-full h-full p-3">
-        <div class="prose-sm max-w-full text-foreground" v-html="toMarkdown(conclusionContent)"></div>
+        <div class="prose-sm max-w-full text-foreground" v-html="toMarkdown(conclusionContent)" />
       </div>
     </template>
 
     <template #change>
       <div class="w-full h-full p-3">
-        <div class="prose-sm max-w-full text-foreground" v-html="toMarkdown(explanationContent)"></div>
+        <div class="prose-sm max-w-full text-foreground" v-html="toMarkdown(explanationContent)" />
       </div>
     </template>
     <template #discuss>
       <div class="w-full h-full p-3">
-        <div class="prose-sm max-w-full text-foreground" v-html="toMarkdown(discussContent)"></div>
+        <div class="prose-sm max-w-full text-foreground" v-html="toMarkdown(discussContent)" />
       </div>
     </template>
     <template #comment>
-      <CommentPanel exp-id="three-doors"/>
+      <CommentPanel exp-id="three-doors" />
     </template>
-  </experiment-board>
+  </ExperimentBoard>
 </template>
 
 <style scoped></style>

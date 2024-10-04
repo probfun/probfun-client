@@ -101,79 +101,79 @@ function updateExperiment() {
   const path = route.path.split('/').pop();
   if (path === 'buffon') {
     title.value = 'Buffon投针';
-    tags.value = ['蒙特卡罗模拟', '辛钦大数定律', '几何概率、概率密度、条件概率','独立事件'];
+    tags.value = ['蒙特卡罗模拟', '辛钦大数定律', '几何概率、概率密度、条件概率', '独立事件'];
   }
   else if (path === 'three-doors') {
-    title.value ='三门问题';
-    tags.value =['贝叶斯定理','条件概率','全概率公式','独立事件'];
+    title.value = '三门问题';
+    tags.value = ['贝叶斯定理', '条件概率', '全概率公式', '独立事件'];
   }
   else if (path === 'birthday-problem') {
-    title.value ='生日问题';
-    tags.value =['蒙特卡罗模拟','排列组合','互补事件的概率','均匀分布','大数定律'];
+    title.value = '生日问题';
+    tags.value = ['蒙特卡罗模拟', '排列组合', '互补事件的概率', '均匀分布', '大数定律'];
   }
-   else if (path === 'birthday-attack') {
-  title.value ='生日攻击问题';
-  tags.value =['蒙特卡罗模拟','生日问题','条件概率','泰勒展开','独立事件的联合概率'];
+  else if (path === 'birthday-attack') {
+    title.value = '生日攻击问题';
+    tags.value = ['蒙特卡罗模拟', '生日问题', '条件概率', '泰勒展开', '独立事件的联合概率'];
   }
-   else if (path === 'positive-test') {
-  title.value ='阳性检测';
-  tags.value =['条件概率','互斥事件','独立事件'];
+  else if (path === 'positive-test') {
+    title.value = '阳性检测';
+    tags.value = ['条件概率', '互斥事件', '独立事件'];
   }
-   else if (path === 'binomialDistribution') {
-  title.value ='二项分布';
-  tags.value =['X~B(n,p)'];
+  else if (path === 'binomialDistribution') {
+    title.value = '二项分布';
+    tags.value = ['X~B(n,p)'];
   }
-   else if (path === 'poissonDistribution') {
-  title.value ='泊松分布';
-  tags.value =['X~P(λ)'];
+  else if (path === 'poissonDistribution') {
+    title.value = '泊松分布';
+    tags.value = ['X~P(λ)'];
   }
-   else if (path === 'geometricDistribution') {
-  title.value ='几何分布';
-  tags.value =['X~GE(p)'];
+  else if (path === 'geometricDistribution') {
+    title.value = '几何分布';
+    tags.value = ['X~GE(p)'];
   }
-   else if (path === 'evenDistribution') {
-  title.value ='均匀分布';
-  tags.value =['X~U(a,b)'];
+  else if (path === 'evenDistribution') {
+    title.value = '均匀分布';
+    tags.value = ['X~U(a,b)'];
   }
-   else if (path === 'exponentialDistribution') {
-  title.value ='指数分布';
-  tags.value =['X~E(λ)'];
+  else if (path === 'exponentialDistribution') {
+    title.value = '指数分布';
+    tags.value = ['X~E(λ)'];
   }
-   else if (path === 'normalDistribution') {
-  title.value ='正态分布';
-  tags.value =['X~N(μ,σ²)'];
+  else if (path === 'normalDistribution') {
+    title.value = '正态分布';
+    tags.value = ['X~N(μ,σ²)'];
   }
-   else if (path === 'binomialPoisson') {
-  title.value ='二项分布与泊松分布';
-  tags.value =['np=λ，n很大，p很小，λ固定时近似'];
+  else if (path === 'binomialPoisson') {
+    title.value = '二项分布与泊松分布';
+    tags.value = ['np=λ，n很大，p很小，λ固定时近似'];
   }
-   else if (path === 'binomialNormal') {
-  title.value ='二项分布与正态分布';
-  tags.value =['np和np(1-p)足够大，即n→∞时近似'];
+  else if (path === 'binomialNormal') {
+    title.value = '二项分布与正态分布';
+    tags.value = ['np和np(1-p)足够大，即n→∞时近似'];
   }
-   else if (path === 'poissonExponential') {
-  title.value ='泊松分布与指数分布';
-  tags.value =['泊松分布：事件的数量','指数分布：事件之间的时间间隔','公交车悖论'];
+  else if (path === 'poissonExponential') {
+    title.value = '泊松分布与指数分布';
+    tags.value = ['泊松分布：事件的数量', '指数分布：事件之间的时间间隔', '公交车悖论'];
   }
-   else if (path === 'poissonNormal') {
-  title.value ='泊松分布与正态分布';
-  tags.value =['λ较大，泊松分布可近似为均值和方差均为λ的正态分布'];
+  else if (path === 'poissonNormal') {
+    title.value = '泊松分布与正态分布';
+    tags.value = ['λ较大，泊松分布可近似为均值和方差均为λ的正态分布'];
   }
-   else if (path === '') {
-  title.value ='';
-  tags.value =[''];
+  else if (path === '') {
+    title.value = '';
+    tags.value = [''];
   }
-   else if (path === '') {
-  title.value ='';
-  tags.value =[''];
+  else if (path === '') {
+    title.value = '';
+    tags.value = [''];
   }
-   else if (path === '') {
-  title.value ='';
-  tags.value =[''];
+  else if (path === '') {
+    title.value = '';
+    tags.value = [''];
   }
   // else if (path === '') {
-  //title.value ='';
-  //tags.value =[''];
+  // title.value ='';
+  // tags.value =[''];
   // }
   else {
     title.value = '邮趣概率';
@@ -191,13 +191,13 @@ onMounted(() => {
 </script>
 
 <template>
-  <nav class="w-full flex py-2 px-5 z-50 border-b bg-background">
-    <div class="flex items-center justify-center gap-3">
-      <Label class="text-lg font-bold">
+  <nav class="w-full flex py-2 px-5 z-50 border-b bg-background gap-2">
+    <div class="flex items-center justify-center gap-3 overflow-x-hidden">
+      <Label class="text-lg font-bold shrink-0">
         {{ title }}
       </Label>
-      <div class="flex gap-2 overflow-x-auto">
-        <Badge v-for="item in tags" :key="item" class="text-sm">
+      <div class="flex gap-2 overflow-x-auto px-2">
+        <Badge v-for="item in tags" :key="item" class="text-sm shrink-0">
           {{ item }}
         </Badge>
       </div>

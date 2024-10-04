@@ -1,16 +1,16 @@
-import type { Comment } from './commentType';
+import type { CommentWithParent } from './commentType';
 import { del, get, post } from '../request';
 
 export async function fetchCommentApi(expId: string) {
   const result = await get<{
-    comments: Comment[]
+    comments: CommentWithParent[]
   }>(`/api/comment/${expId}`);
   return result.data;
 }
 
 export async function postCommentApi(expId: string, content: string, parentId: string | null) {
   const result = await post<{
-    comment: Comment
+    comment: CommentWithParent
   }>(`/api/comment/${expId}`, {
     content,
     parentId,
