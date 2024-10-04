@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "typeRoots": ["./node_modules/@types", "./src/types"],
     "types": ["vite/client"],
     "target": "esnext",
     "module": "esnext",

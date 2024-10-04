@@ -8,5 +8,12 @@ export interface Comment {
   likes: number
   liked: boolean
   expId: string
-  parentId: string
+}
+
+export interface CommentWithParent extends Comment {
+  parentId: string | null
+}
+
+export interface CommentWithChild extends Comment {
+  childComments: CommentWithChild[]
 }
