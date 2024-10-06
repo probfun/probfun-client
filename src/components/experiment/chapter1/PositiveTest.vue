@@ -353,6 +353,9 @@ $$
         <div class="prose-sm max-w-none" v-html="toMarkdown(content)" />
       </div>
     </template>
+    <template #comment>
+      <CommentPanel exp-id="positive-test"/>
+    </template>
   </ExperimentBoard>
 </template>
 

@@ -608,12 +608,17 @@ watch(bornProb, () => {
             </div>
         </template>
 
-        <template #conclusion>
-            <div class="p-5">
-                <div class="prose-sm max-w-none text-foreground" v-html="toMarkdown(content)" />
-            </div>
-        </template>
-    </ExperimentBoard>
+    <template #conclusion>
+      <div class="p-5">
+        <div class="prose-sm max-w-none text-foreground" v-html="toMarkdown(content)" />
+      </div>
+    </template>
+
+    
+    <template #comment>
+      <CommentPanel exp-id="birthday-problem"/>
+    </template>
+  </ExperimentBoard>
 </template>
 
 <style scoped></style>

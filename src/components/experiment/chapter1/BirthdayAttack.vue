@@ -32,8 +32,13 @@ const content = `
         <div class="prose-sm max-w-none text-foreground" v-html="toMarkdown(content)" />
       </div>
     </template>
+
+    <template #comment>
+      <CommentPanel exp-id="birthday-attack"/>
+    </template>
   </ExperimentBoard>
 </template>
+
 
 <style scoped>
 

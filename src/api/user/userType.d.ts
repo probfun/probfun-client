@@ -15,4 +15,5 @@ export interface UserPublic {
   uid: string
   nickname: string
   avatarUrl: string
+  studentId: string
 }

@@ -529,6 +529,9 @@ $$
         <div class="prose max-w-full" v-html="toMarkdown(content)" />
       </div>
     </template>
+    <template #comment>
+      <CommentPanel exp-id="geometricDistribution"/>
+    </template>
   </ExperimentBoard>
 </template>
 
