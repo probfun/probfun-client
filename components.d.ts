@@ -29,7 +29,6 @@ declare module 'vue' {
     BinomialDistribution: typeof import('./src/components/experiment/distribution/BinomialDistribution.vue')['default']
     BirthdayAttack: typeof import('./src/components/experiment/chapter1/BirthdayAttack.vue')['default']
     BirthdayProblem: typeof import('./src/components/experiment/chapter1/BirthdayProblem.vue')['default']
-    'BirthdayProblem()': typeof import('./src/components/experiment/chapter1/BirthdayProblem().vue')['default']
     BN: typeof import('./src/components/experiment/distribution/comparison/BN.vue')['default']
     BP: typeof import('./src/components/experiment/distribution/comparison/BP.vue')['default']
     BuffonNeedle: typeof import('./src/components/experiment/chapter1/BuffonNeedle.vue')['default']

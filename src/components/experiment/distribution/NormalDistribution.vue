@@ -14,6 +14,7 @@ const transformedMean = ref();
 const transformedVariance = ref();
 const transformedMeanY = ref();
 const transformedVarianceY = ref();
+const lineShow = ref(false);
 
 const save = ref(false);
 function saveImg() {
@@ -24,8 +25,8 @@ function back() {
 }
 
 const latexFormula = computed(() => {
-  transformedMean.value =  mean.value[0] ;
-  transformedVariance.value =  stdDev.value[0];
+  transformedMean.value = mean.value[0];
+  transformedVariance.value = stdDev.value[0];
 
   const meanVal = transformedMean.value.toFixed(1);
   const varianceVal = transformedVariance.value.toFixed(2);
@@ -106,7 +107,7 @@ onMounted(() => {
   renderFormula();
 });
 
-watch([latexFormula, latexFormulaY,transformedFormula,transformedFormulaY], () => {
+watch([latexFormula, latexFormulaY, transformedFormula, transformedFormulaY], () => {
   renderFormula();
 });
 
@@ -153,19 +154,12 @@ $$
     <template #experiment>
       <!-- <DistributionDiagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance" :a="a" :b="b"
         :show-history="save" /> -->
-        
-  <DistributionDiagram
-    class="flex-1 h-full"
-    :mean="transformedMean"
-    :std-dev="transformedVariance"
-    :transformed-mean-y="transformedMeanY"
-    :transformed-variance-y="transformedVarianceY" 
-    :show-history="save"
-    line1-color="red"
-    line2-color="blue"
-  />
 
-</template>
+      <DistributionDiagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance"
+        :transformed-mean-y="transformedMeanY" :transformed-variance-y="transformedVarianceY" :show-history="save"
+        :line-show="lineShow" line1-color="red" line2-color="blue" />
+
+    </template>
 
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
@@ -174,18 +168,26 @@ $$
             <button v-if="!save" class="btn mr-5" @click="saveImg">
               显示历史图像模式
             </button>
-            <div>
-              <button v-if="save" class="btn mr-5" @click="back">
-                返回
-              </button>
+            <div v-if="save" class="mr-5 flex flex-col items-center">
+              <div class="flex items-center justify-center mb-5">
+                <div class="mr-2">显示线性变化的历史图像模式</div>
+                <label class="swap">
+                  <input type="checkbox" />
+                  <div class="swap-on" @click="lineShow = true">ON</div>
+                  <div class="swap-off" @click="lineShow = false">OFF</div>
+                </label>
+              </div>
+              <div>
+                <button class="btn mr-5" @click="back">返回</button>
+              </div>
             </div>
           </div>
           <div class="flex flex-col items-start mb-1">
             <div class="flex flex-col items-start mb-4">
-            <div ref="katexTransformedFormula" class="l mb-2" />
-            <div ref="katexMainFormula" class="text-xl " />
-          </div>
-          <div class="flex flex-col items-start mb-4"></div>
+              <div ref="katexTransformedFormula" class="l mb-2" />
+              <div ref="katexMainFormula" class="text-xl " />
+            </div>
+            <div class="flex flex-col items-start mb-4"></div>
             <div ref="katexTransformedFormulaY" class=" mb-2" />
             <div ref="katexMainFormulaY" class="text-xl " />
 
@@ -222,7 +224,7 @@ $$
       </div>
     </template>
     <template #comment>
-      <CommentPanel exp-id="normalDistribution"/>
+      <CommentPanel exp-id="normalDistribution" />
     </template>
   </ExperimentBoard>
 

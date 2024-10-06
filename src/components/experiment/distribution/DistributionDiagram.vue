@@ -8,7 +8,8 @@ const props = defineProps<{
   stdDev: number
   transformedMeanY: number; // 添加新的属性
   transformedVarianceY: number; // 添加新的属性
-  showHistory: boolean
+  showHistory: boolean;
+  lineShow: boolean;
 }>();
 
 declare const Desmos: any;
@@ -50,17 +51,25 @@ function drawNormalDistribution() {
 
 
   if (props.showHistory) {
-    idNumber++;
-    const expression = {
+    idNumber = idNumber + 2;
+    const expression1 = {
       id: `history_${idNumber}`,
       latex: `f(x) = \\frac{1}{${props.stdDev}\\sqrt{2\\pi}}e^{-\\frac{(x-${props.mean})^2}{2*${props.stdDev}^2}}`,
       color: Desmos.Colors.BLUE,
     };
-    historyExpressions.value.push(expression);
+    historyExpressions.value.push(expression1);
+    if (props.lineShow) {
+      const expression2 = {
+        id: `history_${idNumber + 1}`,
+        latex: `g(x) = \\frac{1}{${props.transformedVarianceY}\\sqrt{2\\pi}}e^{-\\frac{(x-${props.transformedMeanY})^2}{2*${props.transformedVarianceY}^2}}`,
+        color: Desmos.Colors.GREEN,
+      };
+      historyExpressions.value.push(expression2);
+    }
   }
 
-  calculator.setExpression({ id: 'normal_distribution', latex: normalDistribution, label:'f(x)' ,showLabel: true});
-  calculator.setExpression({ id: 'normal_distribution_y', latex: normalDistributionY ,label:'f(y)',showLabel: true}); // 绘制第二条线
+  calculator.setExpression({ id: 'normal_distribution', latex: normalDistribution, label: 'f(x)', showLabel: true });
+  calculator.setExpression({ id: 'normal_distribution_y', latex: normalDistributionY, label: 'f(y)', showLabel: true }); // 绘制第二条线
 
 
   if (props.showHistory) {
@@ -85,7 +94,7 @@ function drawNormalDistribution() {
 }
 
 // 监听 props 的变化以动态更新图像
-watch(() => [props.mean, props.stdDev, props.transformedMeanY, props.transformedVarianceY,props.showHistory], () => {
+watch(() => [props.mean, props.stdDev, props.transformedMeanY, props.transformedVarianceY, props.showHistory], () => {
   drawNormalDistribution();
 });
 </script>
