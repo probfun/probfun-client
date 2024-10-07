@@ -22,6 +22,7 @@ function saveImg() {
 }
 function back() {
   save.value = false;
+  lineShow.value = false;
 }
 
 const latexFormula = computed(() => {
