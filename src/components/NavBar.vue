@@ -145,7 +145,7 @@ function updateExperiment() {
   }
   else if (path === 'binomialPoisson') {
     title.value = '二项分布与泊松分布';
-    tags.value = ['np=λ，n很大，p很小，λ固定时近似'];
+    tags.value = ['泊松近似定理:np=λ，n很大，p很小，λ固定时近似'];
   }
   else if (path === 'binomialNormal') {
     title.value = '二项分布与正态分布';
