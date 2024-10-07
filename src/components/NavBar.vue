@@ -203,7 +203,7 @@ onMounted(() => {
       </div>
     </div>
     <div class="flex items-center gap-2 ml-auto">
-      <Label class="text-base"> {{ userStore.user?.nickname ?? 'unknown' }}</Label>
+      <Label class="text-base font-bold hover:underline underline-offset-4"> {{ userStore.user?.nickname ?? 'unknown' }}</Label>
       <Button variant="ghost" size="icon" class="rounded-full" @click="isOpen = true">
         <img :src="userStore.user?.avatarUrl" class="w-8 rounded-full" alt="">
       </Button>

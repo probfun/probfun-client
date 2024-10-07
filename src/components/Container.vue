@@ -38,7 +38,7 @@ const activeTab = ref<Tab>(props.tabs[0]);
         {{ tab.label }}
       </Button>
     </div>
-    <div v-auto-animate class="flex-1 bg-card overflow-hidden">
+    <div v-auto-animate class="flex-1 bg-card overflow-auto">
       <slot :active-tab="activeTab" />
     </div>
   </div>

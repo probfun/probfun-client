@@ -10,7 +10,8 @@ import {
 } from '@/components/ui/card'
 import { Label } from '@/components/ui/label';
 import { toMarkdown } from '@/utils/markdown';
-import { LineChart } from 'echarts/charts' // 引入 GridComponent 用于折线图布局
+import { CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, registerables, Tooltip } from 'chart.js'; // 引入 GridComponent 用于折线图布局
+import { LineChart } from 'echarts/charts'
 import {
   GridComponent,
   LegendComponent,
@@ -20,9 +21,7 @@ import {
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { GraduationCap, Lightbulb, MessagesSquare, NotebookPen } from 'lucide-vue-next';
-import { computed, defineProps, onMounted, onUnmounted, ref } from 'vue';
-
-import VChart from 'vue-echarts';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 defineProps<{
   title: string
@@ -40,168 +39,83 @@ const needleAmount = ref(1000);
 const hits = ref(0);
 const estimatedPi = ref(0);
 const historyEstimatedPi = ref<number[]>([]);
-const kValues = computed(() =>
-  Array.from({ length: historyEstimatedPi.value.length }, (_, i) => i + 1),
-);
 
 const textColor = documentStyle.getPropertyValue('--p-text-color');
 const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
 const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
 
-const optionAvg = computed(() => {
-  const kValues = Array.from({ length: historyEstimatedPi.value.length }, (_, i) => i + 1);
-  const averagePi = [];
-  let sum = 0;
-  let cnt = 0;
-  for (let i = 0; i < historyEstimatedPi.value.length; i++) {
-    if (Number.isFinite(historyEstimatedPi.value[i])) {
-      sum += historyEstimatedPi.value[i];
-      averagePi[i] = sum / ++cnt;
-    }
-  }
-  return {
-    xAxis: {
-      type: 'category', // 类目轴
-      data: kValues, // k 值作为横轴标签
-      axisLabel: {
-        color: textColorSecondary, // X 轴刻度颜色
-      },
-      axisLine: {
-        lineStyle: {
-          color: surfaceBorder, // X 轴网格线颜色
-        },
-      },
-    },
-    yAxis: {
-      type: 'value', // 数值轴
-      axisLabel: {
-        color: textColorSecondary, // Y 轴刻度颜色
-      },
-      axisLine: {
-        lineStyle: {
-          color: surfaceBorder, // Y 轴网格线颜色
-        },
-      },
-    },
-    series: [
-      {
-        name: '估算的 Pi 值',
-        type: 'line', // 折线图
-        data: averagePi, // Pi 值的数据
-        lineStyle: {
-          color: 'rgb(75, 192, 192)', // 线条颜色
-        },
-        smooth: true, // 等效于 tension: 0.4 的平滑效果
-      },
-      {
-        name: 'Pi = 3.14152',
-        type: 'line',
-        data: kValues.map(() => 3.14152), // 用常量 3.14152 来填充数据
-        lineStyle: {
-          color: 'red', // 辅助线颜色（根据 documentStyle 的设置）
-          width: 1, // 辅助线宽度
-          type: 'dashed', // 虚线样式
-        },
-        showSymbol: false, // 不显示数据点
-        smooth: false, // 直线（等效于 tension: 0）
-      },
-    ],
-    markLine: {
-      silent: true, // 禁止鼠标交互
-      data: [
-        {
-          yAxis: 3.14152,
-          lineStyle: {
-            color: 'orange', // 橘红色
-            width: 2,
-            type: 'dashed', // 虚线样式
-          },
-          label: {
-            show: true,
-            formatter: 'π ≈ 3.14152',
-            position: 'top',
-            backgroundColor: 'orange',
-            color: 'black',
-            padding: [4, 4, 4, 4],
-          },
-        },
-      ],
-    },
-  };
-});
-
-const option = computed(() => {
-  const kValues = Array.from({ length: historyEstimatedPi.value.length }, (_, i) => i + 1);
-  return {
-    xAxis: {
-      type: 'category', // 类目轴
-      data: kValues, // k 值作为横轴标签
-      axisLabel: {
-        color: textColorSecondary, // X 轴刻度颜色
-      },
-      axisLine: {
-        lineStyle: {
-          color: surfaceBorder, // X 轴网格线颜色
-        },
-      },
-    },
-    yAxis: {
-      type: 'value', // 数值轴
-      axisLabel: {
-        color: textColorSecondary, // Y 轴刻度颜色
-      },
-      axisLine: {
-        lineStyle: {
-          color: surfaceBorder, // Y 轴网格线颜色
-        },
-      },
-    },
-    series: [
-      {
-        name: '估算的 Pi 值',
-        type: 'line', // 折线图
-        data: historyEstimatedPi.value, // Pi 值的数据
-        lineStyle: {
-          color: 'rgb(75, 192, 192)', // 线条颜色
-        },
-        smooth: true, // 等效于 tension: 0.4 的平滑效果
-      },
-      {
-        name: 'Pi = 3.14152',
-        type: 'line',
-        data: kValues.map(() => 3.14152), // 用常量 3.14152 来填充数据
-        lineStyle: {
-          color: 'red', // 辅助线颜色（根据 documentStyle 的设置）
-          width: 1, // 辅助线宽度
-          type: 'dashed', // 虚线样式
-        },
-        showSymbol: false, // 不显示数据点
-        smooth: false, // 直线（等效于 tension: 0）
-      },
-    ],
-    markLine: {
-      silent: true, // 禁止鼠标交互
-      data: [
-        {
-          yAxis: 3.14152,
-          lineStyle: {
-            color: 'orange', // 橘红色
-            width: 2,
-            type: 'dashed', // 虚线样式
-          },
-          label: {
-            show: true,
-            formatter: 'π ≈ 3.14152',
-            position: 'top',
-            backgroundColor: 'orange',
-            color: 'black',
-            padding: [4, 4, 4, 4],
-          },
-        },
-      ],
-    },
-  };
-});
+// const option = computed(() => {
+//   const kValues = Array.from({ length: historyEstimatedPi.value.length }, (_, i) => i + 1);
+//   return {
+//     xAxis: {
+//       type: 'category', // 类目轴
+//       data: kValues, // k 值作为横轴标签
+//       axisLabel: {
+//         color: textColorSecondary, // X 轴刻度颜色
+//       },
+//       axisLine: {
+//         lineStyle: {
+//           color: surfaceBorder, // X 轴网格线颜色
+//         },
+//       },
+//     },
+//     yAxis: {
+//       type: 'value', // 数值轴
+//       axisLabel: {
+//         color: textColorSecondary, // Y 轴刻度颜色
+//       },
+//       axisLine: {
+//         lineStyle: {
+//           color: surfaceBorder, // Y 轴网格线颜色
+//         },
+//       },
+//     },
+//     series: [
+//       {
+//         name: '估算的 Pi 值',
+//         type: 'line', // 折线图
+//         data: historyEstimatedPi.value, // Pi 值的数据
+//         lineStyle: {
+//           color: 'rgb(75, 192, 192)', // 线条颜色
+//         },
+//         smooth: true, // 等效于 tension: 0.4 的平滑效果
+//       },
+//       {
+//         name: 'Pi = 3.14152',
+//         type: 'line',
+//         data: kValues.map(() => 3.14152), // 用常量 3.14152 来填充数据
+//         lineStyle: {
+//           color: 'red', // 辅助线颜色（根据 documentStyle 的设置）
+//           width: 1, // 辅助线宽度
+//           type: 'dashed', // 虚线样式
+//         },
+//         showSymbol: false, // 不显示数据点
+//         smooth: false, // 直线（等效于 tension: 0）
+//       },
+//     ],
+//     markLine: {
+//       silent: true, // 禁止鼠标交互
+//       data: [
+//         {
+//           yAxis: 3.14152,
+//           lineStyle: {
+//             color: 'orange', // 橘红色
+//             width: 2,
+//             type: 'dashed', // 虚线样式
+//           },
+//           label: {
+//             show: true,
+//             formatter: 'π ≈ 3.14152',
+//             position: 'top',
+//             backgroundColor: 'orange',
+//             color: 'black',
+//             padding: [4, 4, 4, 4],
+//           },
+//         },
+//       ],
+//     },
+//   };
+// });
 
 let hasClickedStart = false;
 const discussTabList = [
@@ -383,9 +297,9 @@ async function resetData() {
   catch (error) {
     console.error('Error tracking button click:', error);
   }
-  // hits.value = 0;
-  // estimatedPi.value = 0;
-  // historyEstimatedPi.value = [];
+  hits.value = 0;
+  estimatedPi.value = 0;
+  historyEstimatedPi.value = [];
 }
 
 async function startSimulate() {
@@ -553,7 +467,7 @@ function resizeUpdate() {
       const ctx = canvas.value?.getContext('2d');
       ctx?.scale(ratio, ratio);
     }
-    addNeedles();
+    // addNeedles();
   }
 }
 
@@ -598,12 +512,136 @@ onMounted(() => {
     resizeObserver.value = new ResizeObserver(resizeUpdate);
     resizeObserver.value.observe(container.value);
   }
+  addNeedles();
 });
 
 onUnmounted(() => {
   if (resizeObserver.value) {
     resizeObserver.value.disconnect();
   }
+});
+
+const chartData = computed(() => {
+  const kValues = Array.from({ length: historyEstimatedPi.value.length }, (_, i) => i + 1);
+  // let sum = 0;
+  // const cnt = 0;
+  // for (let i = 0; i < historyEstimatedPi.value.length; i++) {
+  //   if (Number.isFinite(historyEstimatedPi.value[i])) {
+  //     sum += historyEstimatedPi.value[i];
+  //   }
+  // }
+  return ({
+    labels: kValues,
+    datasets: [
+      {
+        label: '估算的 Pi 值',
+        data: historyEstimatedPi.value,
+        fill: false,
+        borderColor: 'rgb(75, 192, 192)', // 浅绿色
+        tension: 0.4,
+      },
+      {
+        label: 'Pi = 3.14152', // 辅助线的标签
+        data: kValues.map(k => (k >= 1 && k <= 500) ? 3.14152 : 3.14152), // 不使用 null 值
+        fill: false, // 不填充线下面的区域
+        borderColor: documentStyle.getPropertyValue('--p-red-500') || 'red', // 设置辅助线的颜色，或者给一个备用颜色
+        borderWidth: 1, // 辅助线的宽度
+        pointRadius: 0, // 不显示数据点
+        borderDash: [10, 5], // 虚线样式
+        tension: 0, // 线的张力设置为 0，确保为直线
+      },
+    ],
+  });
+});
+
+const chartDataAver = computed(() => {
+  const kValues = Array.from({ length: historyEstimatedPi.value.length }, (_, i) => i + 1);
+  const averagePi = [];
+  let sum = 0;
+  let cnt = 0;
+  for (let i = 0; i < historyEstimatedPi.value.length; i++) {
+    if (Number.isFinite(historyEstimatedPi.value[i])) {
+      sum += historyEstimatedPi.value[i];
+      averagePi[i] = sum / ++cnt;
+    }
+  }
+  return ({
+    labels: kValues,
+    datasets: [
+      {
+        label: '平均估算的 Pi 值',
+        data: averagePi,
+        fill: false,
+        borderColor: 'rgb(54, 162, 235)', // 蓝色
+        tension: 0.4,
+      },
+      {
+        label: 'Pi = 3.14152', // 辅助线的标签
+        data: kValues.map(k => (k >= 1 && k <= 500) ? 3.14152 : 3.14152), // 不使用 null 值
+        fill: false, // 不填充线下面的区域
+        borderColor: documentStyle.getPropertyValue('--p-red-500') || 'red', // 设置辅助线的颜色，或者给一个备用颜色
+        borderWidth: 1, // 辅助线的宽度
+        pointRadius: 0, // 不显示数据点
+        borderDash: [10, 5], // 虚线样式
+        tension: 0, // 线的张力设置为 0，确保为直线
+      },
+    ],
+  });
+});
+// import annotationPlugin from 'chartjs-plugin-annotation';
+ChartJS.register(...registerables);
+ChartJS.register(LineElement, CategoryScale, LinearScale, Tooltip, Legend);
+ChartJS.register(LineElement, CategoryScale, LinearScale, Tooltip, Legend);
+const chartOptions = ref({
+  animation: {
+    duration: 0, // 禁用所有动画效果
+  },
+  maintainAspectRatio: false,
+  aspectRatio: 0.6,
+  plugins: {
+    legend: {
+      labels: {
+        color: textColor,
+      },
+    },
+    annotation: {
+      annotations: {
+        line1: {
+          type: 'line',
+          yMin: 3.14152,
+          yMax: 3.14152,
+          borderColor: 'orange', // 橘红色
+          borderWidth: 2,
+          borderDash: [10, 5], // 虚线样式
+          label: {
+            content: 'π ≈ 3.14152',
+            position: 'top',
+            backgroundColor: 'orange',
+            color: 'black',
+            padding: 4,
+          },
+        },
+      },
+    },
+  },
+  scales: {
+    x: {
+      ticks: {
+        color: textColorSecondary,
+      },
+      grid: {
+        color: surfaceBorder,
+      },
+    },
+    y: {
+      ticks: {
+        color: textColorSecondary,
+      },
+      grid: {
+        color: surfaceBorder,
+      },
+    },
+  },
 });
 </script>
 
@@ -659,20 +697,25 @@ onUnmounted(() => {
           </Card>
 
           <Card class="w-full flex-1">
-            <CardContent class="grid w-full h-full gap-3 p-3">
+            <CardContent class="flex flex-col justify-center w-full h-full gap-3 p-3">
               <!--              <Label class="mb-2 font-bold">实验结果:</Label> -->
-              <div>
-                <Label>和线相交的针的数量：{{ hits }}</Label>
+              <div class="flex gap-2 items-center">
+                <Label class="font-bold flex-shrink-0">和线相交的针的数量：</Label>
+                <Label class="font-bold"> {{ hits }} </Label>
               </div>
-              <div>
+              <div class="flex gap-2 items-center">
                 <Label class="text-start w-full h-full py-5">
-                  <p class="mb-1">估算的 Pi 值:</p>
+                  <p class="mb-1 font-bold">估算的 Pi 值:</p>
                   <div
-                    class="prose w-full text-base-content"
+                    class="prose w-full text-foreground font-bold"
                     v-html="toMarkdown(`$\\pi = \\frac{2l}{Pd} = $ ${estimatedPi.toFixed(5)}`)"
                   />
                 </Label>
-                <Label>历史估算 Pi 值的平均值：{{ getAverageEstimatedPi().toFixed(5) }}</Label>
+              </div>
+
+              <div class="flex gap-2 items-center">
+                <Label class="font-bold">历史估算 Pi 值的平均值：</Label>
+                <Label class="font-bold">{{ getAverageEstimatedPi().toFixed(5) }}</Label>
               </div>
             </CardContent>
           </Card>
@@ -680,11 +723,11 @@ onUnmounted(() => {
         <div class="flex-1 h-full flex">
           <Card class="w-full h-full">
             <CardContent class="flex flex-col justify-center items-center h-full gap-2 w-full p-3">
-              <VChart class="flex-1" :option="option" autoresize />
+              <!--              <VChart class="flex-1" :option="option" autoresize /> -->
               <!--              <VChart class="flex-1" :option="optionAvg" autoresize /> -->
               <!--              <VChart class="flex-1" :option="data" autoresize /> -->
-              <!--              <chart type="line" :data="chartData" class="flex-1 w-full" :options="chartOptions" /> -->
-              <!--              <chart type="line" :data="chartDataAver" class="flex-1 w-full" :options="chartOptions" /> -->
+              <chart type="line" :data="chartData" class="flex-1 w-full" :options="chartOptions" />
+              <chart type="line" :data="chartDataAver" class="flex-1 w-full" :options="chartOptions" />
               <Button @click="resetData">
                 重置数据
               </Button>
