@@ -3,13 +3,13 @@ import type { Ref } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Slider } from '@/components/ui/slider'
 import { cn } from '@/lib/utils';
 import { toMarkdown } from '@/utils/markdown';
 import { GraduationCap, Lightbulb, MessagesSquare } from 'lucide-vue-next';
 import { onMounted, ref, watch } from 'vue';
+import { conclusionContent, discussContent, explanationContent } from './content';
 
 const gameState = ref<'End' | 'Select' | 'Reveal' | 'Win' | 'Lose'>('End');
 class Door {
@@ -253,128 +253,12 @@ const discussTabList = [
     icon: MessagesSquare,
   },
 ];
-
-const conclusionContent = `
-### **问题简述**
-
-这是一个猜奖问题，游戏规则和过程如下：
-
-有三扇关闭着的门，主持人将两只羊和一台车随机地放门后。选择一扇门，门后的奖品归你。
-
-首先你选择一扇门，确定选择后点击“选择”按钮，然后主持人会打开未被选择的门中后面有羊的一扇，替你排除一扇门。现在你可以选择换门或者不换门。假如你想赢得车，你会选择换门还是不换门呢？
-
-
-### **实验思路**
-我们假设三扇门分别是 A、B、C，选手最初的选择是门 A，主持人打开的是门 B，那么问题就变成了求解：
-
-$$
-P(\\text{汽车在A门}∣\\text{最初选择A门，主持人打开B门})
-$$
-
-$$
-P(\\text{汽车在C门}∣\\text{最初选择A门，主持人打开B门})
-$$
-
-$$
-P(\\text{汽车在B门}∣\\text{最初选择A门，主持人打开B门})
-$$
-
-接下来，由贝叶斯公式可得：
-
-$$
-P(\\text{汽车在A门}∣\\text{最初选择A门，主持人打开B门}) =
-\\frac{P(\\text{最初选择A门，主持人打开B门}∣\\text{汽车在A门})P(\\text{汽车在A门})}{P(\\text{最初选择A门，主持人打开B门})}
-$$
-
-$$
-P(\\text{汽车在B门}∣\\text{最初选择A门，主持人打开B门}) =
-\\frac{P(\\text{最初选择A门，主持人打开B门}∣\\text{汽车在B门})P(\\text{汽车在B门})}{P(\\text{最初选择A门，主持人打开B门})}
-$$
-
-$$
-P(\\text{汽车在C门}∣\\text{最初选择A门，主持人打开B门}) =
-\\frac{P(\\text{最初选择A门，主持人打开B门}∣\\text{汽车在C门})P(\\text{汽车在C门})}{P(\\text{最初选择A门，主持人打开B门})}
-$$
-
-接下来让我们逐步求解，首先易得：
-
-$$
-P(\\text{汽车在A门}) = P(\\text{汽车在B门}) = P(\\text{汽车在C门}) = \\frac{1}{3}
-$$
-
-至此，我们计算一下最终结果：
-
-$$
-P(\\text{汽车在A门}∣\\text{最初选择A门，主持人打开B门}) =
-\\frac{\\frac{1}{2} \\cdot \\frac{1}{3}}{\\frac{1}{2}} = \\frac{1}{3}
-$$
-
-$$
-P(\\text{汽车在B门}∣\\text{最初选择A门，主持人打开B门}) =
-\\frac{0 \\cdot \\frac{1}{3}}{\\frac{1}{2}} = 0
-$$
-
-$$
-P(\\text{汽车在C门}∣\\text{最初选择A门，主持人打开B门}) =
-\\frac{1 \\cdot \\frac{1}{3}}{\\frac{1}{2}} = \\frac{2}{3}
-$$
-
----
-
-这部分内容推导了在选择门 A 后，主持人打开门 B 时，汽车在各个门后的概率。最终结果显示，汽车在门 C 后的概率是最高的，即 $\\frac{2}{3}$，而在门 A 后的概率是 $\\frac{1}{3}$。
-
-### **结论**
-综上所述,我们可以得到在假设最初选择A门,主持人打开B门的前提下,汽车在C门的概率最高,概率为2/3.故此时参赛者应该选择换成C门.
-`
-
-const explanationContent = `
-`;
-
-const discussContent = ` 
-### **换门争议**
-
-关于三门问题，两种答案（换门还是不换门获得车的概率更大）争执已久。归纳起来，可以是：
-
-既然主持人排除了一个错误选项，那么原始问题就变成了二选一的新问题，此时选哪个都一样，中奖概率都是 $\\frac{1}{2}$。因此答案是「否」。
-
-三扇门的中奖概率都是 $\\frac{1}{3}$，参赛者选中的门的中奖概率自然也是 $\\frac{1}{3}$；而主持人选择的门打开后，$\\frac{1}{3}$就「跑到」另一扇门上去了，所以另一扇门的中奖概率是$\\frac{2}{3}$ 。因此答案是「是」。
-
-
-
-根据贝叶斯公式，目标后验概率为$$P(\\text{A}|{B'})$$ = $\\frac{1}{3P({B'})}$。因此，以上两种答案对应边缘概率$$P({B'})$$分别是$\\frac{2}{3}$和1。这又对应了两种假设：
-
-主持人并不知道门后的情况，随机选择后恰好门后是羊；特别地，主持人不知道参赛者选择的门后的情况，因而主持人的选择没有带来新的信息量,即$$P({B'}) ={\\frac{2}{3}}$$。
-
-主持人知道门后的情况，因此选择的门后边必然是羊；特别地，主持人知道参赛者选择的门后的情况，因而主持人的选择带来了新的信息量。即$$P({B'}) = 1 $$。
-
-这两种假设即是长期持续的争论是因为「节目主持人开启剩下两扇门的其中一扇」，并没有体现出主持人事先是否知道门后的情况；因而两种理解都算是可以接受的。
-
----
-
-### **争议理解**
-
-尽管在原始问题中，有「文字游戏」的嫌疑，但由于「露出其中一只山羊」的保证，事实上主持人的选择就变成了确定性的结论，因而带来了信息量。以概率论的角度来描述，即是 $$P({B'}) = 1 $$。
-
-因此，三门问题的答案，应当是「换另一扇门会增加参赛者赢得汽车的机会（概率从$\\frac{1}{3}$增加到 $\\frac{2}{3}$）」。
-
-此外，也可以使用枚举法来理解：
-
-根据题目，参赛者需要在三扇门中进行选择，而门后共有一台汽车和两只羊。不妨将其设为汽车和羊A 及羊B。那么，若参赛者在主持人展示一只羊之后更改选择，则获胜的概率为 $\\frac{2}{3}$（失败的概率则是 $\\frac{1}{3}$）。所有可能的情况枚举如下：
-
-当参赛者一开始选择汽车时（$\\frac{1}{3}$概率），不论主持人选择羊A 还是羊B，若参赛者更换选择，都不能赢得汽车。
-
-当参赛者一开始选择羊A时（$\\frac{1}{3}$概率），主持人必然选择羊B，若参赛者更换选择，则必然赢得汽车。
-
-当参赛者一开始选择羊B时（$\\frac{1}{3}$概率），主持人必然选择羊A，若参赛者更换选择，则必然赢得汽车。
-
-`;
 </script>
 
 <template>
   <ExperimentBoard title="三门问题" :tags="['条件概率', '贝叶斯定理']" :discuss-tab-list="discussTabList">
     <template #experiment>
       <div class="h-full w-full relative flex flex-col items-center justify-center">
-        <!--        <div class="relative p-5 flex flex-col items-center rounded-lg border-2 mb-3"> -->
         <div
           v-if="gameState === 'End'"
           class="h-full w-full absolute top-0 left-0 bg-black bg-opacity-70 flex justify-center items-center z-10"
@@ -426,8 +310,8 @@ const discussContent = `
               v-if="door.open"
               class="absolute w-full h-full top-0 left-0 flex justify-center items-center pointer-events-none z-10"
             >
-              <img v-if="door.correct" src="/three-doors/car_kaizousya.png" alt="">
-              <img v-else src="/three-doors/animal_markhor.png" alt="">
+              <img v-if="door.correct" class="size-36" src="/three-doors/car_kaizousya.png" alt="">
+              <img v-else class="size-36" src="/three-doors/animal_markhor.png" alt="">
             </div>
           </div>
         </div>
@@ -455,27 +339,37 @@ const discussContent = `
     </template>
 
     <template #parameter>
-      <div class="p-5 items-center flex min-w-full min-h-full overflow-x-auto justify-center gap-3">
-        <div class="flex flex-col items-center flex-1">
-          <div class="font-bold h-full justify-center items-center mb-4 gap-3 flex flex-col">
-            <Label class="flex w-full font-bold text-left">模拟轮数</Label>
-            <Input v-model="autoGameRound[0]" class="" :min="1" :max="1000" />
-
-            <Slider v-model="autoGameRound" class="" />
-          </div>
-          <div class="flex justify-center gap-2 w-full">
-            <Button
-              class="" @click="() => {
-                autoGaming ? autoGaming = false : simulateGame();
-              }"
-            >
-              {{ autoGaming ? '终止模拟' : '开始模拟' }}
-            </Button>
-          </div>
-
-          <div class="flex flex-col mt-5">
-            <Label class="font-bold mb-2 justify-center">选择换门策略：</Label>
-            <div class="flex space-x-3">
+      <div class="p-2 grid grid-cols-2 w-full h-full gap-2">
+        <div class="flex flex-col gap-2">
+          <Card class="flex-1 flex flex-col">
+            <CardHeader class="p-4">
+              <CardTitle>
+                模拟轮数
+              </CardTitle>
+            </CardHeader>
+            <CardContent class="flex flex-col items-center p-4 pt-0 flex-1">
+              <div class="font-bold h-full justify-center items-center mb-4 gap-3 flex flex-col">
+                <Input v-model="autoGameRound[0]" class="" :min="1" :max="1000" />
+                <Slider v-model="autoGameRound" class="" />
+              </div>
+              <div class="flex justify-center gap-2 w-full">
+                <Button
+                  class="" @click="() => {
+                    autoGaming ? autoGaming = false : simulateGame();
+                  }"
+                >
+                  {{ autoGaming ? '终止模拟' : '开始模拟' }}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+          <Card class="flex-1 flex flex-col">
+            <CardHeader class="p-4">
+              <CardTitle>
+                换门策略
+              </CardTitle>
+            </CardHeader>
+            <CardContent class="flex flex-wrap justify-around gap-2 items-center flex-1">
               <Button
                 :class="cn('transition-all', selectedStrategy !== 'never' && 'opacity-60')"
                 @click="selectedStrategy = 'never'"
@@ -494,39 +388,52 @@ const discussContent = `
               >
                 随机换门
               </Button>
-            </div>
-          </div>
-          <div class="mt-5 flex flex-col">
-            <Label class="mb-2 font-bold">实验结果:</Label>
-            <div class="grid grid-cols-2 gap-y-4 gap-x-10 justify-between">
-              <Label class="flex items-center flex-shrink-0">
-                换门胜利次数： {{ changeWinNum }}
-              </Label>
-              <Label class="flex items-center flex-shrink-0">
-                换门失败次数： {{ changeLoseNum }}
-              </Label>
-              <Label class="flex items-center flex-shrink-0">
-                不换门胜利次数： {{ notChangeWinNum }}
-              </Label>
-              <Label class="flex items-center flex-shrink-0">
-                不换门失败次数： {{ notChangeLoseNum }}
-              </Label>
-              <Label class="flex items-center flex-shrink-0">
-                不换门胜率： {{ (notChangeWinNum / (notChangeWinNum + notChangeLoseNum)).toFixed(2) }}
-              </Label>
-              <Label class="flex items-center flex-shrink-0">
-                换门胜率： {{ (changeWinNum / (changeWinNum + changeLoseNum)).toFixed(2) }}
-              </Label>
-            </div>
-          </div>
+            </CardContent>
+          </card>
+          <Card class="flex-1">
+            <CardHeader class="p-4">
+              <CardTitle>
+                实验结果
+              </CardTitle>
+            </CardHeader>
+            <CardContent class="flex items-center flex-col">
+              <div class="grid grid-cols-2 gap-y-4 gap-x-10 justify-between">
+                <Label class="flex items-center flex-shrink-0">
+                  换门胜利次数： {{ changeWinNum }}
+                </Label>
+                <Label class="flex items-center flex-shrink-0">
+                  换门失败次数： {{ changeLoseNum }}
+                </Label>
+                <Label class="flex items-center flex-shrink-0">
+                  不换门胜利次数： {{ notChangeWinNum }}
+                </Label>
+                <Label class="flex items-center flex-shrink-0">
+                  不换门失败次数： {{ notChangeLoseNum }}
+                </Label>
+                <Label class="flex items-center flex-shrink-0">
+                  不换门胜率： {{ (notChangeWinNum / (notChangeWinNum + notChangeLoseNum)).toFixed(2) }}
+                </Label>
+                <Label class="flex items-center flex-shrink-0">
+                  换门胜率： {{ (changeWinNum / (changeWinNum + changeLoseNum)).toFixed(2) }}
+                </Label>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-        <div class="flex flex-1 flex-col items-center justify-center">
-          <Chart type="line" :data="chartDataC" :options="options" class="flex-1 w-full" />
-          <Chart type="line" :data="chartDataNC" :options="options" class="flex-1 w-full" />
-          <Button class="mt-3" @click="resetData">
-            重置数据
-          </Button>
-        </div>
+        <Card class="h-full flex flex-col">
+          <CardHeader class="p-4">
+            <CardTitle>
+              实验结果
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="flex flex-1 flex-col  items-center justify-center">
+            <Chart type="line" :data="chartDataC" :options="options" class="flex-1 w-full" />
+            <Chart type="line" :data="chartDataNC" :options="options" class="flex-1 w-full" />
+            <Button class="mt-3" @click="resetData">
+              重置数据
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     </template>
 
