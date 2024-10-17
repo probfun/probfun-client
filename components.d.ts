@@ -68,6 +68,7 @@ declare module 'vue' {
     FormLabel: typeof import('./src/components/ui/form/FormLabel.vue')['default']
     FormMessage: typeof import('./src/components/ui/form/FormMessage.vue')['default']
     GeometricDistribution: typeof import('./src/components/experiment/distribution/GeometricDistribution.vue')['default']
+    HomePage: typeof import('./src/components/home/HomePage.vue')['default']
     HoverCard: typeof import('./src/components/ui/hover-card/HoverCard.vue')['default']
     HoverCardContent: typeof import('./src/components/ui/hover-card/HoverCardContent.vue')['default']
     HoverCardTrigger: typeof import('./src/components/ui/hover-card/HoverCardTrigger.vue')['default']

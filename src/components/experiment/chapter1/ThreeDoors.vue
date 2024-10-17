@@ -73,7 +73,7 @@ function selectDoor() {
 }
 
 // 新增一个状态变量来存储用户选择的策略
-const selectedStrategy = ref<'never' | 'always' | 'random'>('never');
+const selectedStrategy = ref<'never' | 'always' | 'random'>('random');
 
 const changeWinNum = ref(0);
 const changeLoseNum = ref(0);

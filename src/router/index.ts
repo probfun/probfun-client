@@ -14,6 +14,7 @@ import StarPanel from '@/components/star/StarPanel.vue';
 import UserPanel from '@/components/user/UserPanel.vue';
 import AuthPage from '@/pages/AuthPage.vue';
 import DashBoard from '@/pages/DashBoard.vue';
+import HomePage from '@/components/home/HomePage.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
 const router = createRouter({
@@ -37,6 +38,10 @@ const router = createRouter({
       path: '/dashboard',
       component: DashBoard,
       children: [
+        {
+          path: '/dashboard/home',
+          component: HomePage,
+        },
         {
           path: '/dashboard/experiment/chapter1/buffon',
           component: BuffonNeedle,

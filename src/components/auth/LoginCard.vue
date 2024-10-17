@@ -45,7 +45,7 @@ async function login() {
 
     setLocalToken(token);
     userStore.user = user;
-    await router.push('/dashboard');
+    await router.push('/dashboard/home');
   }
   catch (error: any) {
     console.error('Error:', error);

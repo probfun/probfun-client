@@ -384,13 +384,17 @@ async function sendFeedback() {
     toast.add({ severity: 'error', summary: '错误', detail: error, life: 3000 });
   }
 }
+
+function goHome(){
+  router.push('/dashboard/home')
+}
 </script>
 
 <template>
   <div>
     <aside class="h-full border-r flex flex-col relative bg-background z-40">
       <div class="p-2 border-b flex">
-        <Button size="icon">
+        <Button size="icon" @click="goHome()">
           <Dices class="size-5" />
         </Button>
       </div>
