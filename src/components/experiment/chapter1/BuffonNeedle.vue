@@ -290,30 +290,12 @@ const discussContentt = `
 const isSimulating = ref(false);
 
 async function resetData() {
-  try {
-    await clickApi('CLICK', 'button', '重置数据', window.location.href);
-    console.log('重置数据');
-  }
-  catch (error) {
-    console.error('Error tracking button click:', error);
-  }
   hits.value = 0;
   estimatedPi.value = 0;
   historyEstimatedPi.value = [];
 }
 
 async function startSimulate() {
-  if (!isSimulating.value && !hasClickedStart) {
-    hasClickedStart = true;
-    try {
-      await clickApi('CLICK', 'button', '自动模拟', window.location.href);
-      console.log('自动模拟');
-    }
-    catch (error) {
-      console.error('Error tracking button click:', error);
-    }
-  }
-
   isSimulating.value = true;
   while (true) {
     if (!isSimulating.value) {
@@ -326,13 +308,6 @@ async function startSimulate() {
 }
 
 async function endSimulate() {
-  try {
-    await clickApi('CLICK', 'button', '停止模拟', window.location.href);
-    console.log('停止模拟');
-  }
-  catch (error) {
-    console.error('Error tracking button click:', error);
-  }
   isSimulating.value = false;
 }
 
@@ -488,15 +463,6 @@ function getAverageEstimatedPi() {
 let running = false;
 
 async function addNeedles() {
-  if (!hasClickedStart) {
-    try {
-      await clickApi('CLICK', 'button', '抛针', window.location.href);
-      console.log('抛针');
-    }
-    catch (error) {
-      console.error('Error tracking button click:', error);
-    }
-  }
   if (running)
     return;
   running = true;
