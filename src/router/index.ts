@@ -36,6 +36,7 @@ const router = createRouter({
     },
     {
       path: '/dashboard',
+      redirect: '/dashboard/home',
       component: DashBoard,
       children: [
         {
