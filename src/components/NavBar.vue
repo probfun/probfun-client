@@ -3,7 +3,7 @@ import type { User } from '@/api/user/userType';
 import { putUserApi, putUserAvatarApi } from '@/api/user/userApi';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button'
-
+import 'primeicons/primeicons.css'
 import {
   Dialog,
   DialogClose,
@@ -21,13 +21,16 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Label } from '@/components/ui/label'
-
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { useUserStore } from '@/store'
 
 import { Plus } from 'lucide-vue-next'
 import { useToast } from 'primevue/usetoast';
 import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
+
+import Badge from 'primevue/badge';
+import OverlayBadge from 'primevue/overlaybadge';
 
 const userStore = useUserStore();
 const toast = useToast();
@@ -188,11 +191,13 @@ watch(() => route.path, () => {
 onMounted(() => {
   updateExperiment();
 });
+
+const hasMessage = ref('true')
 </script>
 
 <template>
   <nav class="w-full flex py-2 px-5 z-50 border-b bg-background gap-2">
-    <div class="flex items-center justify-center gap-3 overflow-x-hidden">
+    <div class="flex items-center  justify-center gap-3 overflow-x-hidden">
       <Label class="text-lg font-bold shrink-0">
         {{ title }}
       </Label>
@@ -203,7 +208,21 @@ onMounted(() => {
       </div>
     </div>
     <div class="flex items-center gap-2 ml-auto">
-      <Label class="text-base font-bold hover:underline underline-offset-4"> {{ userStore.user?.nickname ?? 'unknown' }}</Label>
+      <div class="relative flex items-center justify-items-center ml-auto mr-2 hover:scale-110 top-[3px]">
+        <HoverCard>
+          <HoverCardTrigger>
+            <OverlayBadge value="2" size="small" severity="danger">
+              <i class="pi pi-bell" style="font-size: 1.5rem" />
+            </OverlayBadge>
+          </HoverCardTrigger>
+          <HoverCardContent>
+            消息消息消息消息消息
+          </HoverCardContent>
+        </HoverCard>
+      </div>
+
+      <Label class="text-base font-bold hover:underline underline-offset-4"> {{ userStore.user?.nickname ?? 'unknown'
+        }}</Label>
       <Button variant="ghost" size="icon" class="rounded-full" @click="isOpen = true">
         <img :src="userStore.user?.avatarUrl" class="w-8 rounded-full" alt="">
       </Button>
@@ -236,10 +255,8 @@ onMounted(() => {
                 <FormItem>
                   <FormLabel>昵称</FormLabel>
                   <FormControl>
-                    <Input
-                      v-bind="componentField" v-model="tempUser.nickname" type="text" placeholder=""
-                      class="transition-all"
-                    />
+                    <Input v-bind="componentField" v-model="tempUser.nickname" type="text" placeholder=""
+                      class="transition-all" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -277,10 +294,8 @@ onMounted(() => {
               <FormItem>
                 <FormLabel>学院</FormLabel>
                 <FormControl>
-                  <Input
-                    v-bind="componentField" v-model="tempUser.school" type="text" placeholder=""
-                    class="transition-all"
-                  />
+                  <Input v-bind="componentField" v-model="tempUser.school" type="text" placeholder=""
+                    class="transition-all" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -290,10 +305,8 @@ onMounted(() => {
               <FormItem>
                 <FormLabel>专业</FormLabel>
                 <FormControl>
-                  <Input
-                    v-bind="componentField" v-model="tempUser.major" type="text" placeholder=""
-                    class="transition-all"
-                  />
+                  <Input v-bind="componentField" v-model="tempUser.major" type="text" placeholder=""
+                    class="transition-all" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -303,10 +316,8 @@ onMounted(() => {
               <FormItem>
                 <FormLabel>邮箱</FormLabel>
                 <FormControl>
-                  <Input
-                    v-bind="componentField" v-model="tempUser.email" type="email" placeholder=""
-                    class="transition-all"
-                  />
+                  <Input v-bind="componentField" v-model="tempUser.email" type="email" placeholder=""
+                    class="transition-all" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -316,10 +327,8 @@ onMounted(() => {
               <FormItem>
                 <FormLabel>手机号</FormLabel>
                 <FormControl>
-                  <Input
-                    v-bind="componentField" v-model="tempUser.phone" type="text" placeholder=""
-                    class="transition-all"
-                  />
+                  <Input v-bind="componentField" v-model="tempUser.phone" type="text" placeholder=""
+                    class="transition-all" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -331,11 +340,9 @@ onMounted(() => {
             <div class="flex justify-center items-start">
               <Avatar class="size-32 relative">
                 <AvatarImage :src="tempUser.avatarUrl" alt="avatar" />
-                <Button
-                  variant="ghost"
+                <Button variant="ghost"
                   class="absolute top-0 left-0 size-32 rounded-full opacity-0 transition-all hover:opacity-100 hover:bg-opacity-30 hover:bg-black"
-                  @click="triggerFileUpload"
-                >
+                  @click="triggerFileUpload">
                   <div class="flex flex-col items-center text-background">
                     <Plus class="size-6" />
                     <div class="font-semibold">

@@ -15,7 +15,7 @@ const router = useRouter();
     <div class="m-3">
         <div class="mb-2 text-xl font-bold">💥热门实验</div>
         <div class="flex">
-            <Card class="w-1/4 h-1/3 flex-col">
+            <Card class="w-1/4 grid">
                 <CardHeader class="p-4">
                     <CardTitle>正态分布</CardTitle>
                     <img src="/public/homePage/normalDistribution.png">
@@ -30,7 +30,7 @@ const router = useRouter();
                 </CardFooter>
             </Card>
 
-            <Card class="w-1/4 h-1/3 flex-col mx-2">
+            <Card class="w-1/4 flex-col mx-2 grid">
                 <CardHeader class="p-4">
                     <CardTitle>泊松分布</CardTitle>
                     <img src="/public/homePage/poissonDistribution.png">
@@ -45,7 +45,7 @@ const router = useRouter();
                 </CardFooter>
             </Card>
 
-            <Card class="w-1/4 h-1/3 flex-col mr-2">
+            <Card class="w-1/4 flex-col mr-2 grid">
                 <CardHeader class="p-4">
                     <CardTitle>三门问题</CardTitle>
                     <img src="/public/homePage/threeDoors.png">
@@ -60,7 +60,7 @@ const router = useRouter();
                 </CardFooter>
             </Card>
 
-            <Card class="w-1/4 h-1/3 flex-col">
+            <Card class="w-1/4 flex-col grid">
                 <CardHeader class="p-4">
                     <CardTitle>Buffon投针</CardTitle>
                     <img src="/public/homePage/buffonNeedle.png">
