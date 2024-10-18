@@ -75,6 +75,7 @@ const router = useRouter();
                 </CardFooter>
             </Card>
         </div>
+        
     </div>
     <div class="m-3">
         <div class="mb-2 text-xl font-bold">🔍思维导图</div>
