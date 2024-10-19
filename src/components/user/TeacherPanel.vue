@@ -19,7 +19,8 @@ import Row from 'primevue/row';                   // optional
 import { useUserStore } from '@/store'
 
 const userStore = useUserStore();
-const value = ref(`班级公告`);
+const inputValue = ref(``);
+const placeholderText = '请输入公告内容...'
 const defaultValue = 'item-1'
 const accordionItems = [
     { value: 'item-1', title: '10月10日班级公告', content: '用了三个组件库思密达，非常的混乱思密达' },
@@ -132,10 +133,10 @@ const star = ref([
                     <span class="text-base font-semibold">教工号：{{ userStore.user?.studentId }}</span>
                 </div>
             </div>
-            <div class="card items-center">
+            <div class="card w-full items-center">
                 <Panel>
                     <template #header>
-                        <div class="flex items-center gap-2">
+                        <div class="flex justify-center gap-2">
                             <span class="font-bold">班级公告</span>
                         </div>
                     </template>
@@ -147,7 +148,7 @@ const star = ref([
                             </span>
                         </div>
                     </template>
-                    <Textarea v-model="value" rows="8" cols="72" style="resize: none" />
+                    <Textarea v-model="inputValue" rows="8" cols="1000" style="resize: none" class = "w-full"  :placeholder="placeholderText" />
                 </Panel>
             </div>
             <Panel header="已发布公告" class="mx-1 my-3 h-full overflow-auto">
