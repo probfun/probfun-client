@@ -76,10 +76,8 @@ declare module 'vue' {
     InputNumber: typeof import('primevue/inputnumber')['default']
     Label: typeof import('./src/components/ui/label/Label.vue')['default']
     LoginCard: typeof import('./src/components/auth/LoginCard.vue')['default']
-    Menu: typeof import('primevue/menu')['default']
     NavBar: typeof import('./src/components/NavBar.vue')['default']
     NormalDistribution: typeof import('./src/components/experiment/distribution/NormalDistribution.vue')['default']
-    Panel: typeof import('primevue/panel')['default']
     PE: typeof import('./src/components/experiment/distribution/comparison/PE.vue')['default']
     PN: typeof import('./src/components/experiment/distribution/comparison/PN.vue')['default']
     PoissonDistribution: typeof import('./src/components/experiment/distribution/PoissonDistribution.vue')['default']
@@ -134,6 +132,5 @@ declare module 'vue' {
     TooltipTrigger: typeof import('./src/components/ui/tooltip/TooltipTrigger.vue')['default']
     UniformDiagram: typeof import('./src/components/experiment/distribution/UniformDiagram.vue')['default']
     UniformDistribution: typeof import('./src/components/experiment/distribution/UniformDistribution.vue')['default']
-    UserPanel: typeof import('./src/components/user/UserPanel.vue')['default']
   }
 }

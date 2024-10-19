@@ -47,8 +47,8 @@ const accordionItems = [
             <div class="exp flex mt-2">
                 <Card class="w-1/2 grid mr-2">
                     <CardHeader class="p-4">
-                        <CardTitle>近一个月点击次数最多的实验</CardTitle>
-                        <CardDescription>正态分布</CardDescription>
+                        <CardTitle class="text-l text-black-500">近一个月点击次数最多的实验</CardTitle>
+                        <CardDescription class="text-lg text-blue-600 font-bold">正态分布</CardDescription>
                     </CardHeader>
                     <CardFooter class="flex items-center justify-between gap-2 p-3 pt-0">
                         <router-link class="w-full" to="/dashboard/experiment/normalDistribution">
@@ -58,8 +58,8 @@ const accordionItems = [
                 </Card>
                 <Card class="w-1/2 grid">
                     <CardHeader class="p-4">
-                        <CardTitle>正态分布</CardTitle>
-                        <CardDescription>近一个月获得评论最多的实验</CardDescription>
+                        <CardTitle class="text-l text-black-500">近一个月获得评论最多的实验</CardTitle>
+                        <CardDescription class="text-lg text-blue-600 font-bold">正态分布</CardDescription>
                     </CardHeader>
                     <CardFooter class="flex items-center justify-between gap-2 p-3 pt-0">
                         <router-link class="w-full" to="/dashboard/experiment/normalDistribution">
@@ -71,8 +71,8 @@ const accordionItems = [
             <div class="exp flex mt-2">
                 <Card class="w-1/2 grid mr-2">
                     <CardHeader class="p-4">
-                        <CardTitle>正态分布</CardTitle>
-                        <CardDescription>近一个月浏览时间最长的实验</CardDescription>
+                        <CardTitle class="text-l text-black-500">近一个月浏览时间最长的实验</CardTitle>
+                        <CardDescription class="text-lg text-blue-600 font-bold">正态分布</CardDescription>
                     </CardHeader>
                     <CardFooter class="flex items-center justify-between gap-2 p-3 pt-0">
                         <router-link class="w-full" to="/dashboard/experiment/normalDistribution">
@@ -82,8 +82,8 @@ const accordionItems = [
                 </Card>
                 <Card class="w-1/2 grid">
                     <CardHeader class="p-4">
-                        <CardTitle>正态分布</CardTitle>
-                        <CardDescription>近一个月班级收藏最多的实验</CardDescription>
+                        <CardTitle class="text-l text-black-500">近一个月班级收藏最多的实验</CardTitle>
+                        <CardDescription class="text-lg text-blue-600 font-bold">正态分布</CardDescription>
                     </CardHeader>
                     <CardFooter class="flex items-center justify-between gap-2 p-3 pt-0">
                         <router-link class="w-full" to="/dashboard/experiment/normalDistribution">
@@ -164,8 +164,8 @@ const accordionItems = [
             <div class="flex mt-5 h-1/2">
                 <Card class="w-1/2 grid mr-3">
                     <CardHeader class="p-4">
-                        <CardTitle>正态分布</CardTitle>
-                        <CardDescription>近一个月您点击最多的实验</CardDescription>
+                        <CardTitle>近一个月您点击最多的实验</CardTitle>
+                        <CardDescription class="text-lg text-blue-600 font-bold">正态分布</CardDescription>
                         <img src="/public/homePage/normalDistribution.png">
                     </CardHeader>
                     <CardContent class="grid gap-2 p-3">
@@ -180,8 +180,8 @@ const accordionItems = [
 
                 <Card class="w-1/2 flex-col mr-2 grid">
                     <CardHeader class="p-4">
-                        <CardTitle>三门问题</CardTitle>
-                        <CardDescription>近一个月您浏览时间最长的实验</CardDescription>
+                        <CardTitle>近一个月您浏览时间最长的实验</CardTitle>
+                        <CardDescription class="text-lg text-blue-600 font-bold">三门问题</CardDescription>
                         <img src="/public/homePage/threeDoors.png">
                     </CardHeader>
                     <CardContent class="grid gap-2 p-3">
