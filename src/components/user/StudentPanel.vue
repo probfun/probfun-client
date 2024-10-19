@@ -14,9 +14,9 @@ import {
     AccordionContent,
     AccordionItem,
     AccordionTrigger
-} from '@/components/ui/accordion'
-import Button from 'primevue/button';
-import { useUserStore } from '@/store'
+} from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
+import { useUserStore } from '@/store';
 
 const userStore = useUserStore();
 const defaultValue = 'item-1'
