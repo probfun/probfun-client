@@ -29,7 +29,7 @@ import { useToast } from 'primevue/usetoast';
 import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
-import Badge from 'primevue/badge';
+import { Badge } from '@/components/ui/badge';
 import OverlayBadge from 'primevue/overlaybadge';
 
 const userStore = useUserStore();

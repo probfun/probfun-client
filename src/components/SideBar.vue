@@ -385,7 +385,7 @@ async function sendFeedback() {
   }
 }
 
-function goHome(){
+function goHome() {
   router.push('/dashboard/home')
 }
 </script>
@@ -466,11 +466,12 @@ function goHome(){
                 <summary class="font-bold">
                   <i class="pi pi-bookmark" /> 第一章
                 </summary>
-                <ul>
-                  <li v-for="item in chapter1Items" :key="item.label">
+                <ul class="sapce-y-1">
+                  <li v-for="(item,index) in chapter1Items" :key="item.label">
                     <a :class="{ active: isActiveRoute(item.route) }"
                       @click="() => { item.command(); toggleDrawer(); }">
-                      <i :class="item.icon" /> {{ item.label }}
+                      <i :class="item.icon" /> 
+                      1.{{ index +1 }}-{{ item.label }}
                     </a>
                   </li>
                 </ul>
@@ -482,21 +483,23 @@ function goHome(){
                 <summary class="font-bold">
                   <i class="pi pi-bookmark" /> 第二章
                 </summary>
-                <ul>
-                  <li v-for="item in chapter2Items" :key="item.label">
+                <ul class ="sapce-y-1">
+                  <li v-for="(item,index) in chapter2Items" :key="item.label">
                     <a :class="{ active: isActiveRoute(item.route) }"
                       @click="() => { item.command(); toggleDrawer(); }">
-                      <i :class="item.icon" /> {{ item.label }}
+                      <i :class="item.icon" /> 
+                      2.{{ index +1 }}-{{ item.label }}
                     </a>
                   </li>
                   <li>
                     <details open>
-                      <summary><i class="pi pi-chart-bar" />分布的对比</summary>
-                      <ul>
-                        <li v-for="item in comparisonOfDistributions" :key="item.label">
+                      <summary><i class="pi pi-chart-bar" />2.7-分布的对比</summary>
+                      <ul class ="sapce-y-1">
+                        <li v-for="(item,index) in comparisonOfDistributions" :key="item.label">
                           <a :class="{ active: isActiveRoute(item.route) }"
                             @click="() => { item.command(); toggleDrawer(); }">
-                            <i :class="item.icon" /> {{ item.label }}
+                            <i/> 
+                            2.7.{{ index +1 }}-{{ item.label }}
                           </a>
                         </li>
                       </ul>
