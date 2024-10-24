@@ -62,10 +62,10 @@ async function login() {
 
 <template>
   <div v-auto-animate class="rounded-lg w-full max-w-sm items-center ">
-    <h1 class="text-center text-3xl font-bold mb-4">
+    <h1 class="text-center text-3xl font-bold mb-4 select-none">
       嗨！别来无恙啊
     </h1>
-    <div class="text-center text-muted-foreground">
+    <div class="text-center text-muted-foreground select-none">
       我们需要你的学工号和密码以继续。
     </div>
 
@@ -78,7 +78,7 @@ async function login() {
 
     <div class="w-full grid gap-4 mb-6">
       <div class="grid gap-2">
-        <Label for="password"> 密码 </Label>
+        <Label for="password" > 密码 </Label>
         <Input id="password" v-model="password" type="password" class="transition-all" placeholder="" />
       </div>
     </div>

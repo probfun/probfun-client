@@ -5,7 +5,7 @@ import { Dices } from 'lucide-vue-next';
 
 <template>
   <div class="h-full w-full flex">
-    <div class="w-[61.8%] lg:flex items-center justify-center bg-primary border-r hidden">
+    <div class="w-[61.8%] lg:flex items-center justify-center bg-primary border-r hidden select-none">
       <div class="w-full h-full flex flex-col items-center justify-center text-background">
         <!--        <img src="/src/assets/Frame%208.svg" alt="logo" class="w-48 mb-12" /> -->
         <Dices class="size-28 mb-4 hover:scale-105 hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.3)] transition-all" />
