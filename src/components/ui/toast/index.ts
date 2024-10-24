@@ -20,10 +20,10 @@ export const toastVariants = cva(
       variant: {
         default: 'border bg-background text-foreground',
         destructive:
-                    'destructive group border-destructive bg-[#fdf3f3] text-foreground',
-        success: 'success group border-success bg-[#f1fef4] text-foreground',
-        info: 'info group border-info bg-[#f1f6ff] text-foreground',
-        warning: 'warning group border-warning bg-[#fdfde9] text-foreground',
+                    'destructive group border-destructive bg-[#fdf3f3] text-destructive',
+        success: 'success group border-success bg-[#f1fef4] text-success',
+        info: 'info group border-info bg-[#f1f6ff] text-info',
+        warning: 'warning group border-warning bg-[#fdfde9] text-warning',
       },
     },
     defaultVariants: {

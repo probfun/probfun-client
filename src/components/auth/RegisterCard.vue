@@ -4,17 +4,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useToast } from '@/components/ui/toast/use-toast'
 import { useUserStore } from '@/store';
 import { setLocalToken } from '@/utils/auth';
+import { error, success, warning } from '@/utils/toast';
 import { vAutoAnimate } from '@formkit/auto-animate';
-import { CircleAlert, CircleX } from 'lucide-vue-next';
-import { h, ref } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const userStore = useUserStore();
-const { toast } = useToast();
 
 const isValid = ref(false);
 const isLoading = ref(false);
@@ -31,26 +29,19 @@ async function checkValid() {
   try {
     isLoading.value = true;
     const response = await isValidApi(studentId.value);
-    if (response.isValid) {
+    if (response.isValid === 0) {
       isValid.value = true;
     }
+    else if (response.isValid === 1) {
+      warning('学工号已被注册');
+    }
     else {
-      toast({
-        icon: h(CircleAlert),
-        title: '提示',
-        description: '学工号无效',
-        variant: 'warning',
-      });
+      warning('学工号无效');
     }
   }
-  catch (error: any) {
-    console.error('Error during validation:', error);
-    toast({
-      icon: h(CircleX),
-      title: '错误',
-      description: '学工号校验失败，请重试',
-      variant: 'destructive',
-    });
+  catch (e: any) {
+    console.error('Error during validation:', e);
+    error('学工号校验失败，请重试');
   }
   isLoading.value = false;
 }
@@ -59,12 +50,7 @@ async function checkValid() {
 async function register() {
   // 校验所有字段是否填写
   if (!studentId.value || !nickname.value || !password.value) {
-    toast({
-      icon: h(CircleAlert),
-      title: '提示',
-      description: '请填写所有必要信息',
-      variant: 'warning',
-    });
+    warning('请填写所有必要信息');
     return;
   }
 
@@ -84,29 +70,28 @@ async function register() {
     setLocalToken(token);
     userStore.user = user;
     await router.push('/dashboard');
-    toast({
-      icon: h(CircleAlert),
-      title: '成功',
-      description: '注册成功',
-      variant: 'success',
-    })
+    success('注册成功');
     await router.push('/dashboard');
   }
-  catch (error: any) {
-    console.error('Error during registration:', error);
-    const errorMessage = error.response?.data?.msg || '注册失败，请重试';
-    toast({
-      icon: h(CircleX),
-      title: '错误',
-      description: errorMessage,
-      variant: 'destructive',
-    })
+  catch (e: any) {
+    console.error('Error during registration:', e);
+    error('注册失败');
   }
 }
 </script>
 
 <template>
-  <div v-auto-animate class="rounded-lg w-full max-w-sm items-center">
+  <form
+    v-auto-animate class="rounded-lg w-full max-w-sm items-center" @submit.prevent="() => {
+      console.log(isValid);
+      if (isValid) {
+        register();
+      }
+      else {
+        checkValid();
+      }
+    }"
+  >
     <h1 class="text-center text-3xl font-bold mb-4">
       让我们从创建账号开始
     </h1>
@@ -121,20 +106,20 @@ async function register() {
     <div v-auto-animate class="w-full my-4">
       <div class="grid gap-2">
         <Label v-if="isValid" for="studentId"> 学工号 </Label>
-        <Input id="studentId" v-model="studentId" class="transition-all" placeholder="请输入学工号" :disabled="isValid" />
+        <Input id="studentId" v-model="studentId" class="transition-all" placeholder="请输入学工号" :disabled="isValid" required />
       </div>
     </div>
 
     <div v-if="isValid" class="w-full grid gap-4 mb-6">
       <div class="grid gap-2">
         <Label for="password"> 密码 </Label>
-        <Input id="password" v-model="password" type="password" class="transition-all" placeholder="" />
+        <Input id="password" v-model="password" type="password" class="transition-all" placeholder="" required />
       </div>
 
       <div class="grid grid-cols-2 gap-4">
         <div class="grid gap-2">
           <Label for="nickname"> 昵称 </Label>
-          <Input id="nickname" v-model="nickname" class="transition-all" placeholder="" />
+          <Input id="nickname" v-model="nickname" class="transition-all" placeholder="" required />
         </div>
 
         <div class="grid gap-2">
@@ -183,34 +168,32 @@ async function register() {
 
     <div v-auto-animate class="flex gap-4">
       <Button
-        :disabled="isLoading" class="w-full" @click="() => {
-          if (isValid) {
-            isValid = false;
-            password = '';
-            nickname = '';
-            gender = '0';
-            email = '';
-            phone = '';
-            major = '';
-            school = '';
-          }
-          else {
-            checkValid();
-          }
+        v-if="isValid"
+        type="button" class="w-full" :disabled="isLoading" @click="() => {
+          isValid = false;
+          password = '';
+          nickname = '';
+          gender = '0';
+          email = '';
+          phone = '';
+          major = '';
+          school = '';
         }"
       >
-        {{ isValid ? '上一步' : '下一步' }}
+        上一步
       </Button>
-
-      <Button v-if="isValid" class="w-full" :disabled="isLoading" @click="register">
-        注册
+      <Button
+        type="submit"
+        :disabled="isLoading" class="w-full"
+      >
+        {{ isValid ? '注册' : '下一步' }}
       </Button>
     </div>
 
     <Label class="w-full flex justify-center mt-5">
       已有账号？点击此处<router-link to="/login" class="underline underline-offset-4 hover:text-primary transition-all font-medium px-1"> 登录 </router-link>
     </Label>
-  </div>
+  </form>
 </template>
 
 <style scoped>

@@ -36,11 +36,10 @@ const router = createRouter({
     },
     {
       path: '/dashboard',
-      redirect: '/dashboard/home',
       component: DashBoard,
       children: [
         {
-          path: '/dashboard/home',
+          path: '/dashboard',
           component: HomePage,
         },
         {

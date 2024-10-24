@@ -10,9 +10,9 @@ const { toasts } = useToast()
 <template>
   <ToastProvider>
     <Toast v-for="toast in toasts" :key="toast.id" v-bind="toast">
-      <component :is="toast.icon" :class="cn('size-5 mb-auto', `text-${toast.variant ?? ''}`)" />
+      <component :is="toast.icon" :class="cn('size-5 mt-0.5 mb-auto')" />
       <div class="grid gap-1 flex-1">
-        <ToastTitle v-if="toast.title" :class="`text-${toast.variant ?? ''}`">
+        <ToastTitle v-if="toast.title">
           {{ toast.title }}
         </ToastTitle>
         <template v-if="toast.description">
@@ -23,7 +23,7 @@ const { toasts } = useToast()
             {{ toast.description }}
           </ToastDescription>
         </template>
-        <ToastClose :class="cn('transition-all', `text-${toast.variant ?? ''}-foreground`)" />
+        <ToastClose class="transition-all" />
       </div>
       <component :is="toast.action" />
     </Toast>

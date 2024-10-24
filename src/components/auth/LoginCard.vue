@@ -3,59 +3,39 @@ import { loginApi } from '@/api/user/userApi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/toast';
 import { useUserStore } from '@/store';
 import { setLocalToken } from '@/utils/auth';
+import { error, success, warning } from '@/utils/toast';
 import { vAutoAnimate } from '@formkit/auto-animate';
-import { CircleAlert, CircleCheck, CircleX } from 'lucide-vue-next';
-import { useToast as useToast2 } from 'primevue/usetoast'
-import { h, ref } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const isLoading = ref(false);
 const studentId = ref('');
 const password = ref('');
 
-const { toast } = useToast();
-const toast2 = useToast2();
 const router = useRouter();
 const userStore = useUserStore();
 
 // 登录函数
 async function login() {
   if (!studentId.value || !password.value) {
-    toast({
-      icon: h(CircleAlert),
-      title: '提示',
-      description: '请填写所有字段',
-      variant: 'warning',
-    });
+    warning('请填写所有字段');
     return;
   }
 
   try {
     const data = await loginApi(studentId.value, password.value);
-    toast({
-      icon: h(CircleCheck),
-      title: '成功',
-      description: '登录成功',
-      variant: 'success',
-    });
+    success('登录成功');
     const { token, ...user } = data.user;
 
     setLocalToken(token);
     userStore.user = user;
-    await router.push('/dashboard/home');
+    await router.push('/dashboard');
   }
-  catch (error: any) {
-    console.error('Error:', error);
-    const errorMessage = error.response?.data?.msg || '登录失败，请重试';
-    toast({
-      icon: h(CircleX),
-      title: '错误',
-      description: errorMessage,
-      variant: 'destructive',
-    });
+  catch (e: any) {
+    console.error('Error:', e);
+    error('登录失败，请重试');
   }
 };
 </script>
@@ -78,7 +58,7 @@ async function login() {
 
     <div class="w-full grid gap-4 mb-6">
       <div class="grid gap-2">
-        <Label for="password" > 密码 </Label>
+        <Label for="password"> 密码 </Label>
         <Input id="password" v-model="password" type="password" class="transition-all" placeholder="" required />
       </div>
     </div>

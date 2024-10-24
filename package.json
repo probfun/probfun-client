@@ -29,6 +29,7 @@
     "markdown": "^0.5.0",
     "markdown-it": "^14.1.0",
     "markdown-it-katex": "^2.0.3",
+    "openai": "^4.68.4",
     "pinia": "^2.2.2",
     "pinia-plugin-persistedstate": "^4.0.1",
     "primeicons": "^7.0.0",

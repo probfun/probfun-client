@@ -1,5 +1,12 @@
 const animate = require('tailwindcss-animate')
 
+function round(num) {
+  return num
+    .toFixed(7)
+    .replace(/(\.\d*[1-9])0+$/, '$1')
+    .replace(/\.0$/, '')
+}
+const em = (px, base) => `${round(px / base)}em`
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ['class'],
@@ -102,21 +109,31 @@ module.exports = {
       typography: () => ({
         DEFAULT: {
           css: {
-            color: 'inherit', // 禁用默认颜色，使用继承的颜色
-            a: {
+            'color': 'inherit', // 禁用默认颜色，使用继承的颜色
+            'a': {
               'color': 'inherit', // 链接颜色也继承
               '&:hover': {
                 color: 'inherit', // 禁用 hover 的颜色
               },
             },
-            h1: { color: 'inherit' },
-            h2: { color: 'inherit' },
-            h3: { color: 'inherit' },
-            h4: { color: 'inherit' },
-            h5: { color: 'inherit' },
-            h6: { color: 'inherit' },
-            strong: { color: 'inherit' },
-            code: { color: 'inherit' },
+            'h1': { color: 'inherit' },
+            'h2': { color: 'inherit' },
+            'h3': { color: 'inherit' },
+            'h4': { color: 'inherit' },
+            'h5': { color: 'inherit' },
+            'h6': { color: 'inherit' },
+            'strong': { color: 'inherit' },
+            'code': { color: 'inherit' },
+            'p': {
+              marginTop: em(5, 16),
+              marginBottom: em(5, 16),
+            },
+            'ol > li::marker': {
+              color: 'inherit',
+            },
+            'ul > li::marker': {
+              color: 'inherit',
+            },
           },
         },
       }),

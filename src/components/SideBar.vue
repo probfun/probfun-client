@@ -111,7 +111,7 @@ const sideBarBottomItem = ref<SideBarItem[]>([
         console.error('Error tracking button click:', error);
       }
       logout();
-      router.push('/login');
+      await router.push('/login');
     },
   },
 ]);
@@ -125,7 +125,7 @@ const chapter1Items = [
       try {
         await clickApi('CLICK', 'catalogue', 'Buffon投针', window.location.href);
         console.log('Buffon投针');
-        router.push('/dashboard/experiment/chapter1/buffon');
+        await router.push('/dashboard/experiment/chapter1/buffon');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -386,7 +386,7 @@ async function sendFeedback() {
 }
 
 function goHome() {
-  router.push('/dashboard/home')
+  router.push('/dashboard')
 }
 </script>
 
@@ -471,11 +471,13 @@ function goHome() {
                   <i class="pi pi-bookmark" /> 第一章
                 </summary>
                 <ul class="sapce-y-1">
-                  <li v-for="(item,index) in chapter1Items" :key="item.label">
-                    <a :class="{ active: isActiveRoute(item.route) }"
-                      @click="() => { item.command(); toggleDrawer(); }">
+                  <li v-for="(item, index) in chapter1Items" :key="item.label">
+                    <a
+                      :class="{ active: isActiveRoute(item.route) }"
+                      @click="() => { item.command(); toggleDrawer(); }"
+                    >
                       <i :class="item.icon" />
-                      1.{{ index +1 }}-{{ item.label }}
+                      1.{{ index + 1 }}-{{ item.label }}
                     </a>
                   </li>
                 </ul>
@@ -487,23 +489,27 @@ function goHome() {
                 <summary class="font-bold">
                   <i class="pi pi-bookmark" /> 第二章
                 </summary>
-                <ul class ="sapce-y-1">
-                  <li v-for="(item,index) in chapter2Items" :key="item.label">
-                    <a :class="{ active: isActiveRoute(item.route) }"
-                      @click="() => { item.command(); toggleDrawer(); }">
+                <ul class="sapce-y-1">
+                  <li v-for="(item, index) in chapter2Items" :key="item.label">
+                    <a
+                      :class="{ active: isActiveRoute(item.route) }"
+                      @click="() => { item.command(); toggleDrawer(); }"
+                    >
                       <i :class="item.icon" />
-                      2.{{ index +1 }}-{{ item.label }}
+                      2.{{ index + 1 }}-{{ item.label }}
                     </a>
                   </li>
                   <li>
                     <details open>
                       <summary><i class="pi pi-chart-bar" />2.7-分布的对比</summary>
-                      <ul class ="sapce-y-1">
-                        <li v-for="(item,index) in comparisonOfDistributions" :key="item.label">
-                          <a :class="{ active: isActiveRoute(item.route) }"
-                            @click="() => { item.command(); toggleDrawer(); }">
-                            <i/>
-                            2.7.{{ index +1 }}-{{ item.label }}
+                      <ul class="sapce-y-1">
+                        <li v-for="(item, index) in comparisonOfDistributions" :key="item.label">
+                          <a
+                            :class="{ active: isActiveRoute(item.route) }"
+                            @click="() => { item.command(); toggleDrawer(); }"
+                          >
+                            <i />
+                            2.7.{{ index + 1 }}-{{ item.label }}
                           </a>
                         </li>
                       </ul>
