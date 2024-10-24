@@ -7,6 +7,8 @@ export interface Comment {
   content: string
   likes: number
   liked: boolean
+  chosen: boolean
+  pinned: boolean
   expId: string
 }
 

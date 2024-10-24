@@ -3,7 +3,7 @@ import { get, post, put } from '../request';
 
 export async function isValidApi(studentId: string) {
   const result = await post<{
-    isValid: boolean
+    isValid: number
   }>('/api/user/valid', {
     studentId,
   });

@@ -61,7 +61,7 @@ async function login() {
 </script>
 
 <template>
-  <div v-auto-animate class="rounded-lg w-full max-w-sm items-center ">
+  <form v-auto-animate class="rounded-lg w-full max-w-sm items-center " @submit.prevent="login">
     <h1 class="text-center text-3xl font-bold mb-4 select-none">
       嗨！别来无恙啊
     </h1>
@@ -72,21 +72,20 @@ async function login() {
     <div v-auto-animate class="w-full my-4">
       <div class="grid gap-2">
         <Label for="studentId"> 学工号 </Label>
-        <Input id="studentId" v-model="studentId" class="transition-all" placeholder="" />
+        <Input id="studentId" v-model="studentId" class="transition-all" placeholder="" required />
       </div>
     </div>
 
     <div class="w-full grid gap-4 mb-6">
       <div class="grid gap-2">
         <Label for="password" > 密码 </Label>
-        <Input id="password" v-model="password" type="password" class="transition-all" placeholder="" />
+        <Input id="password" v-model="password" type="password" class="transition-all" placeholder="" required />
       </div>
     </div>
 
     <Button
-      :disabled="isLoading" class="w-full" @click="() => {
-        login();
-      }"
+      type="submit"
+      :disabled="isLoading" class="w-full"
     >
       登录
     </Button>
@@ -94,7 +93,7 @@ async function login() {
     <Label class="w-full flex justify-center mt-5">
       还没有账号？点击此处<router-link to="/register" class="underline underline-offset-4 hover:text-primary transition-all font-medium px-1"> 注册 </router-link>
     </Label>
-  </div>
+  </form>
 </template>
 
 <style scoped>

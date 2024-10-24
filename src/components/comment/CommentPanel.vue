@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import type { Comment, CommentWithChild, CommentWithParent } from '@/api/comment/commentType'
-import { deleteCommentApi, fetchCommentApi, postCommentApi } from '@/api/comment/commentApi';
+import {
+  chooseCommentApi,
+  deleteCommentApi,
+  fetchCommentApi,
+  pinCommentApi,
+  postCommentApi,
+} from '@/api/comment/commentApi';
 import CommentCard from '@/components/comment/CommentCard.vue';
 import {
   AlertDialog,
@@ -139,7 +145,7 @@ async function send() {
 
 <template>
   <div v-auto-animate class="h-full w-full flex flex-col">
-    <ScrollArea v-if="commentList" ref="scrollArea" v-auto-animate class="h-full w-full">
+    <ScrollArea v-if="commentList && commentList.length !== 0" ref="scrollArea" v-auto-animate class="h-full w-full">
       <CommentCard
         v-for="(item, index) in commentList" :key="item.commentId" v-model="commentList![index]" @reply="(comment) => {
           reply(comment);
@@ -148,8 +154,53 @@ async function send() {
           isOpen = true;
           readyToDeleteComment = comment;
         }"
+        @pin="async (comment) => {
+          try {
+            await pinCommentApi(comment.commentId);
+            await refreshComment();
+            toast({
+              icon: CircleCheck,
+              title: '成功',
+              description: '置顶成功',
+              variant: 'success',
+            });
+          }
+          catch (error: any) {
+            console.error('Error during deleting comment:', error);
+            toast({
+              icon: CircleX,
+              title: '错误',
+              description: '置顶失败，请重试',
+              variant: 'destructive',
+            });
+          }
+        }"
+        @choose="async (comment) => {
+          try {
+            await chooseCommentApi(comment.commentId);
+            await refreshComment();
+            toast({
+              icon: CircleCheck,
+              title: '成功',
+              description: '精选成功',
+              variant: 'success',
+            });
+          }
+          catch (error: any) {
+            console.error('Error during deleting comment:', error);
+            toast({
+              icon: CircleX,
+              title: '错误',
+              description: '精选失败，请重试',
+              variant: 'destructive',
+            });
+          }
+        }"
       />
     </ScrollArea>
+    <div v-else-if="commentList" class="flex items-center text-sm justify-center h-full text-muted-foreground">
+      这里暂无评论
+    </div>
     <div v-else v-auto-animate class="h-full w-full overflow-y-auto">
       <div v-for="item in 10" :key="item" class="border-y pt-4 px-4 transition-all hover:bg-secondary/50 hover:border-primary flex gap-2">
         <Skeleton class="mt-1 rounded-full size-8" />

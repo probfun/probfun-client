@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
 import { toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue'
@@ -325,21 +329,21 @@ function back() {
 }
 
 const finalResultOne = computed(() => {
-  const p = probability.value[0] ;
+  const p = probability.value[0];
   const k = numberk.value[0];
-  return Math.pow(1-p,k-1)*p;
+  return (1 - p) ** (k - 1) * p;
 });
 
 const oneFormula = computed(() => {
   const resultOne = finalResultOne.value.toFixed(15); // 保留10位小数
-  return `P(X = k) = (1 - p)^{k-1} \\cdot p = (1 - ${probability.value[0]})^{${numberk.value[0]-1}} \\cdot ${probability.value[0]} = ${resultOne}`;
+  return `P(X = k) = (1 - p)^{k-1} \\cdot p = (1 - ${probability.value[0]})^{${numberk.value[0] - 1}} \\cdot ${probability.value[0]} = ${resultOne}`;
 });
 const oneContainer = ref<HTMLElement | null>(null);
 
 const finalResultTwo = computed(() => {
-  const p = probability.value[0] ;
+  const p = probability.value[0];
   const k = numberk.value[0];
-  return Math.pow(1-p,k)*p;
+  return (1 - p) ** k * p;
 });
 
 const twoFormula = computed(() => {
@@ -349,9 +353,9 @@ const twoFormula = computed(() => {
 const twoContainer = ref<HTMLElement | null>(null);
 
 const finalResultThree = computed(() => {
-  const p = probability.value[0] ;
+  const p = probability.value[0];
   const k = numberk.value[0];
-  return Math.pow(1-p,k);
+  return (1 - p) ** k;
 });
 
 const threeFormula = computed(() => {
@@ -394,7 +398,7 @@ onMounted(() => {
 });
 
 // 监听 probability 的变化以动态更新图像
-watch([probability, fixedN,numberk], () => {
+watch([probability, fixedN, numberk], () => {
   chartData1.value = setChartData1();
   chartData2.value = setChartData2();
   chartData3.value = setChartData3();
@@ -459,7 +463,7 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard title="二项分布" :tags="[]">
+  <ExperimentBoard>
     <template #experiment>
       <Chart
         v-if="isChart1 && !save" type="line" :data="chartData1" :options="chartOptions1"
@@ -473,64 +477,88 @@ $$
       <Chart v-if="isChart3" type="line" :data="chartData3" :options="chartOptions3" class="h-full w-full" />
     </template>
     <template #parameter>
-      <div class="w-full h-full flex flex-col items-center justify-center">
-        <div v-if="isChart1">
-          <button v-if="!save" class="btn mb-5" @click="saveImg">
-            显示历史图像模式
-          </button>
-          <div>
-            <button v-if="save" class="btn mb-5 mr-2" @click="back">
-              返回
-            </button>
-          </div>
-        </div>
-        <div class="w-full flex items-center justify-center mb-5">
-          <div class="dropdown">
-            <div tabindex="0" role="button" class="btn m-1">
-              点我切换
+      <div class="w-full h-full flex flex-col items-center justify-center gap-3 p-3">
+        <Card class="w-full">
+          <CardHeader>
+            <CardTitle>几何分布公式</CardTitle>
+          </CardHeader>
+          <CardContent class="flex w-full justify-center">
+            <div v-show="isChart1" ref="oneContainer" class="text-base" />
+            <div v-show="isChart2" ref="twoContainer" class="text-base" />
+            <div v-show="isChart3" ref="threeContainer" class="text-base" />
+          </CardContent>
+        </Card>
+        <Card class="w-full flex-1 flex flex-col">
+          <CardHeader>
+            <CardTitle>
+              参数调整
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="flex-1 flex flex-col justify-center items-center gap-5">
+            <div class="dropdown ">
+              <Button tabindex="0" role="button" class="m-1">
+                点我切换
+              </Button>
+              <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                <li @click="toggleChart1">
+                  <a>直到第一次成功的次数</a>
+                </li>
+                <li @click="toggleChart2">
+                  <a>第一次成功前的失败次数</a>
+                </li>
+                <li @click="toggleChart3">
+                  <a>几何分布的无记忆性</a>
+                </li>
+              </ul>
             </div>
-            <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-              <li @click="toggleChart1">
-                <a>直到第一次成功的次数</a>
-              </li>
-              <li @click="toggleChart2">
-                <a>第一次成功前的失败次数</a>
-              </li>
-              <li @click="toggleChart3">
-                <a>几何分布的无记忆性</a>
-              </li>
-            </ul>
-          </div>
-          <div v-show="isChart1" ref="oneContainer" class="text-xl" />
-          <div v-show="isChart2" ref="twoContainer" class="text-xl" />
-          <div v-show="isChart3" ref="threeContainer" class="text-xl" />
-        </div>
-        <div class="flex w-full mb-5">
-          <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-            <p> Probability of success(p) </p>
-            <InputNumber v-model.number="probability[0]" :min-fraction-digits="1" />
-            <Slider v-model="probability" :min="0" :max="1" :step="0.1" class="w-48" />
-          </div>
-          <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-            <p> Numbers of trial until success (include)(k) </p>
-            <InputNumber v-model.number="numberk[0]" />
-            <Slider v-model="numberk" :min="1" :max="60" :step="1" class="w-48" />
-          </div>
-          <div v-if="isChart3" class="flex flex-col flex-1 items-center justify-center space-y-5">
-            <p> Fixed number of trial </p>
-            <InputNumber v-model.number="fixedN[0]" />
-            <Slider v-model="fixedN" :min="0" :max="9" :step="1" class="w-48" />
-          </div>
-        </div>
+            <div class="flex gap-4 pb-8 w-full">
+              <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+                <Label> 成功概率 (p) </Label>
+                <div class="max-w-xl space-y-3">
+                  <Input v-model="probability[0]" type="number" />
+                  <Slider v-model="probability" :min="0" :max="1" :step="0.1" />
+                </div>
+              </div>
+              <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+                <Label> 成功前的尝试次数（包含） (k) </Label>
+                <div class="max-w-xl space-y-3">
+                  <Input v-model="numberk[0]" type="number" />
+                  <Slider v-model="numberk" :min="1" :max="60" :step="1" />
+                </div>
+              </div>
+              <div v-if="isChart3" class="flex flex-col flex-1 items-center justify-center space-y-5">
+                <Label> 固定实验次数 </Label>
+                <div class="max-w-xl space-y-3">
+                  <Input v-model="fixedN[0]" type="number" />
+                  <Slider v-model="fixedN" :min="0" :max="9" :step="1" />
+                </div>
+              </div>
+            </div>
+            <div v-if="isChart1" class="flex gap-2 items-center justify-center">
+              <Checkbox
+                id="terms" @update:checked="(checked: boolean) => {
+                  if (checked) {
+                    saveImg();
+                  }
+                  else {
+                    back();
+                  }
+                  console.log(checked)
+                }"
+              />
+              <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </template>
     <template #conclusion>
       <div class="w-full h-full p-5">
-        <div class="prose max-w-full" v-html="toMarkdown(content)" />
+        <div class="prose-sm max-w-none" v-html="toMarkdown(content)" />
       </div>
     </template>
     <template #comment>
-      <CommentPanel exp-id="geometricDistribution"/>
+      <CommentPanel exp-id="geometricDistribution" />
     </template>
   </ExperimentBoard>
 </template>

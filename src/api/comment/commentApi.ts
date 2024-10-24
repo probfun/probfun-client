@@ -30,3 +30,17 @@ export async function deleteCommentApi(commentId: string) {
   const result = await del<object>(`/api/comment/${commentId}`);
   return result.data;
 }
+
+export async function chooseCommentApi(commentId: string) {
+  const result = await post<{
+    chosen: boolean
+  }>(`/api/comment/${commentId}/choose`);
+  return result.data;
+}
+
+export async function pinCommentApi(commentId: string) {
+  const result = await post<{
+    pinned: boolean
+  }>(`/api/comment/${commentId}/pin`);
+  return result.data;
+}

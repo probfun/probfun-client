@@ -488,13 +488,13 @@ watch(bornProb, () => {
     <template #parameter>
       <div class="w-full h-full flex justify-around gap-3 p-3">
         <!--        <div class="flex flex-col justify-around gap-3 items-center w-full h-full max-w-lg"> -->
-        <Card class="w-1/3">
+        <Card class="w-1/3 flex flex-col">
           <CardHeader class="p-4">
             <CardTitle>
               参数调整
             </CardTitle>
           </CardHeader>
-          <CardContent class="p-4 flex flex-col gap-8 justify-center">
+          <CardContent class="p-4 flex flex-col gap-8 justify-center items-center flex-1">
             <div class="w-full flex flex-col items-center justify-center gap-2">
               <div class="flex flex-col w-full gap-2">
                 <Label for="people" class="flex-shrink-0 font-bold text-left">人数：</Label>

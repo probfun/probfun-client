@@ -6,13 +6,15 @@ import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/store';
 import { vAutoAnimate } from '@formkit/auto-animate';
-import { Heart, MessageCircle, Trash2 } from 'lucide-vue-next';
+import { ArrowUpFromLine, Heart, MessageCircle, Sparkles, Trash2 } from 'lucide-vue-next';
 import { format } from 'timeago.js';
 import { ref } from 'vue';
 
 const emit = defineEmits<{
   reply: [CommentWithChild]
   delete: [CommentWithChild]
+  choose: [CommentWithChild]
+  pin: [CommentWithChild]
 }>();
 
 const comment = defineModel<CommentWithChild>();
@@ -53,22 +55,32 @@ const isOpen = ref(false);
           {{ comment.content }}
         </div>
 
-        <div class="py-1 flex text-muted-foreground gap-5 -mx-1">
-          <div class="flex items-center -space-x-0.5">
+        <div class="py-1 flex text-muted-foreground gap-2 -mx-1">
+          <div class="flex items-center -space-x-0.5 mr-2">
             <Button :id="`like-${comment.commentId}`" variant="ghost" size="icon" :class="cn('rounded-full size-8 hover:text-red-500', comment.liked && '!text-red-500')" @click.stop="like">
               <Heart class="size-4" :fill="comment.liked ? 'currentColor' : 'none'" />
             </Button>
-            <Label :for="`like-${comment.commentId}`"> {{ comment.likes }} </Label>
+            <Label :for="`like-${comment.commentId}`"> {{ comment.likes > 99 ? '99+' : comment.likes }} </Label>
           </div>
-          <div class="flex items-center -space-x-0.5">
+          <div class="flex items-center -space-x-0.5 mr-2">
             <Button :id="`reply-${comment.commentId}`" variant="ghost" size="icon" class="rounded-full size-8 hover:text-primary" @click.stop="isOpen = !isOpen">
               <MessageCircle class="size-4" />
             </Button>
-            <Label :for="`reply-${comment.commentId}`"> {{ comment.childComments.length }} </Label>
+            <Label :for="`reply-${comment.commentId}`"> {{ comment.childComments.length > 99 ? '99+' : comment.childComments.length }} </Label>
           </div>
-          <div v-if="comment.user.uid === useUserStore().user?.uid" class="flex items-center -space-x-0.5">
+          <div v-if="comment.user.uid === useUserStore().user?.uid || useUserStore().user?.role !== 0" class="flex items-center -space-x-0.5">
             <Button variant="ghost" size="icon" class="rounded-full size-8 hover:text-destructive" @click.stop="emit('delete', comment)">
               <Trash2 class="size-4" />
+            </Button>
+          </div>
+          <div v-if="useUserStore().user?.role !== 0" class="flex items-center">
+            <Button variant="ghost" size="icon" :class="cn('rounded-full size-8 hover:text-green-500', comment.pinned && '!text-green-500')" @click.stop="emit('pin', comment)">
+              <ArrowUpFromLine class="size-4" />
+            </Button>
+          </div>
+          <div v-if="useUserStore().user?.role !== 0" class="flex items-center">
+            <Button variant="ghost" size="icon" :class="cn('rounded-full size-8 hover:text-orange-500', comment.chosen && '!text-orange-500')" @click.stop="emit('choose', comment)">
+              <Sparkles class="size-4" />
             </Button>
           </div>
         </div>

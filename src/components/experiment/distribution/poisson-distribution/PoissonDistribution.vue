@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label'
+import { Slider } from '@/components/ui/slider';
 import { toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue'
@@ -219,32 +223,55 @@ $$
       <Chart v-if="save" type="line" :data="chartData" :options="chartOptions" class="h-full w-full" />
     </template>
     <template #parameter>
-      <div class="w-full h-full flex flex-col items-center justify-center">
-        <div>
-          <button v-if="!save" class="btn mb-5" @click="saveImg">
-            显示历史图像模式
-          </button>
-          <div>
-            <button v-if="save" class="btn mb-5 mr-2" @click="back">
-              返回
-            </button>
-          </div>
-        </div>
-        <div class="w-full flex items-center justify-center mb-5">
-          <div ref="katexContainer" class="text-xl" />
-        </div>
-        <div class="flex w-full mb-5">
-          <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-            <p> Mean (λ) </p>
-            <InputNumber v-model.number="lambda[0]" :min-fraction-digits="1" />
-            <Slider v-model="lambda" :min="0.1" :max="20" :step="0.1" class="w-48" />
-          </div>
-          <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-            <p> The actual number (k) </p>
-            <InputNumber v-model.number="an[0]" :min-fraction-digits="1" />
-            <Slider v-model="an" :min="0" :max="4 * lambda[0]" :step="1" class="w-48" />
-          </div>
-        </div>
+      <div class="w-full h-full flex flex-col items-center justify-center p-3 gap-3">
+        <Card class="w-full">
+          <CardHeader>
+            <CardTitle>二项分布公式</CardTitle>
+          </CardHeader>
+          <CardContent class="flex w-full justify-center">
+            <div ref="katexContainer" class="text-base" />
+          </CardContent>
+        </Card>
+        <Card class="w-full flex-1 flex flex-col">
+          <CardHeader>
+            <CardTitle>
+              参数调整
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="flex-1 flex flex-col justify-center gap-5">
+            <div class="flex gap-4 pb-8">
+              <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+                <Label> 均值 (λ) </Label>
+                <div class="max-w-xl space-y-3">
+                  <Input v-model="lambda[0]" :min-fraction-digits="1" />
+                  <Slider v-model="lambda" :min="0" :max="20" :step="0.1" />
+                </div>
+              </div>
+              <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+                <Label> 实际数字 (k) </Label>
+                <div class="max-w-xl space-y-3">
+                  <Input v-model="an[0]" :min-fraction-digits="1" />
+                  <Slider v-model="an" :min="0" :max="4 * lambda[0]" :step="1" />
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-2 items-center justify-center">
+              <Checkbox
+                id="terms" @update:checked="(checked: boolean) => {
+                  if (checked) {
+                    saveImg();
+                  }
+                  else {
+                    back();
+                  }
+                  console.log(checked)
+                }"
+              />
+              <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </template>
     <template #conclusion>
@@ -253,7 +280,7 @@ $$
       </div>
     </template>
     <template #comment>
-      <CommentPanel exp-id="poissonDistribution"/>
+      <CommentPanel exp-id="poissonDistribution" />
     </template>
   </ExperimentBoard>
 </template>

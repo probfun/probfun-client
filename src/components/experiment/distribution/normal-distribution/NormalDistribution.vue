@@ -71,15 +71,11 @@ const transformedFormulaY = computed(() => {
   return `Y = aX+b \\sim N(aμ+b,a^2σ^2) \\sim N(${transformedMeanY.toFixed(2)}, ${transformedVarianceY.toFixed(2)})<绿色>`;
 });
 
-
-
-
 const katexMainFormula = ref<HTMLElement | null>(null);
 const katexMainFormulaY = ref<HTMLElement | null>(null);
 
 const katexTransformedFormula = ref<HTMLElement | null>(null);
 const katexTransformedFormulaY = ref<HTMLElement | null>(null);
-
 
 function renderFormula() {
   if (katexMainFormula.value) {
@@ -156,14 +152,15 @@ $$
       <!-- <DistributionDiagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance" :a="a" :b="b"
         :show-history="save" /> -->
 
-      <DistributionDiagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance"
+      <DistributionDiagram
+        class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance"
         :transformed-mean-y="transformedMeanY" :transformed-variance-y="transformedVarianceY" :show-history="save"
-        :line-show="lineShow" line1-color="red" line2-color="blue" />
-
+        :line-show="lineShow" line1-color="red" line2-color="blue"
+      />
     </template>
 
     <template #parameter>
-      <div class="w-full h-full flex flex-col items-center justify-center">
+      <div class="w-full flex flex-col items-center justify-center min-h-full">
         <div class="w-full flex items-center justify-center">
           <div>
             <button v-if="!save" class="btn mr-5" @click="saveImg">
@@ -171,15 +168,19 @@ $$
             </button>
             <div v-if="save" class="mr-5 flex flex-col items-center">
               <div class="flex items-center justify-center mb-5">
-                <div class="mr-2">显示线性变化的历史图像模式</div>
+                <div class="mr-2">
+                  显示线性变化的历史图像模式
+                </div>
                 <label class="swap">
-                  <input type="checkbox" />
+                  <input type="checkbox">
                   <div class="swap-on" @click="lineShow = true">ON</div>
                   <div class="swap-off" @click="lineShow = false">OFF</div>
                 </label>
               </div>
               <div>
-                <button class="btn mr-5" @click="back">返回</button>
+                <button class="btn mr-5" @click="back">
+                  返回
+                </button>
               </div>
             </div>
           </div>
@@ -188,12 +189,10 @@ $$
               <div ref="katexTransformedFormula" class="l mb-2" />
               <div ref="katexMainFormula" class="text-xl " />
             </div>
-            <div class="flex flex-col items-start mb-4"></div>
+            <div class="flex flex-col items-start mb-4" />
             <div ref="katexTransformedFormulaY" class=" mb-2" />
             <div ref="katexMainFormulaY" class="text-xl " />
-
           </div>
-
         </div>
         <div class="grid grid-cols-2 gap-5 p-5">
           <div class="flex flex-col flex-1 items-center justify-center space-y-3">
@@ -206,7 +205,7 @@ $$
             <InputNumber v-model.number="stdDev[0]" fluid :min-fraction-digits="1" />
             <Slider v-model="stdDev" :min="0.1" :max="10" :step="0.05" class="w-full" />
           </div>
-          <div class="flex flex-col flex-1 items-center justify-center space-y-3">
+          <div class="flex flex-col flex-1 font-sm items-center justify-center space-y-3">
             <p> a </p>
             <InputNumber v-model.number="a[0]" fluid :invalid="a[0] === 0" :min-fraction-digits="1" />
             <Slider v-model="a" :min="-10" :max="10" :step="0.1" class="w-full" />
@@ -228,7 +227,6 @@ $$
       <CommentPanel exp-id="normalDistribution" />
     </template>
   </ExperimentBoard>
-
 </template>
 
 <style scoped></style>

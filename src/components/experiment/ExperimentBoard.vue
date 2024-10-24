@@ -12,14 +12,6 @@ import { ref } from 'vue';
 
 //
 defineProps({
-  title: {
-    type: String,
-    required: true,
-  },
-  tags: {
-    type: Array as PropType<string[]>,
-    required: true,
-  },
   discussTabList: {
     type: Array as PropType<Tab[]>,
     required: false,

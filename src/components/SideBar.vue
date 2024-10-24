@@ -1,11 +1,9 @@
 <script setup lang="ts">
+import type { Feedback } from '@/api/feedback/feedbackType';
+
+import { fetchFeedbackApi, postFeedbackApi } from '@/api/feedback/feedbackApi';
+import { clickApi } from '@/api/track/trackApi';
 import { Button } from '@/components/ui/button';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
 import {
   Dialog,
   DialogClose,
@@ -15,16 +13,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils';
 import { logout } from '@/utils/auth';
 import { Book, Bot, CircleHelp, Dices, LogOut, Star, Sun, User } from 'lucide-vue-next';
+import { useToast } from 'primevue/usetoast';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { clickApi } from '@/api/track/trackApi';
-import { fetchFeedbackApi } from '@/api/feedback/feedbackApi';
-import { postFeedbackApi } from '@/api/feedback/feedbackApi';
-import { Feedback } from '@/api/feedback/feedbackType';
-import { useToast } from 'primevue/usetoast';
 
 const toast = useToast();
 
@@ -97,7 +97,7 @@ const sideBarBottomItem = ref<SideBarItem[]>([
     icon: CircleHelp,
     command: () => {
       isFeedback.value = true;
-    }
+    },
   },
   {
     label: '登出',
@@ -404,10 +404,12 @@ function goHome() {
             <TooltipProvider :delay-duration="0">
               <Tooltip>
                 <TooltipTrigger>
-                  <Button size="icon" variant="ghost" :class="cn(isActiveRoute(item.route ?? '') && 'bg-muted')" @click="() => {
-                    if (item.command) item.command();
-                    else if (item.route) router.push(item.route);
-                  }">
+                  <Button
+                    size="icon" variant="ghost" :class="cn(isActiveRoute(item.route ?? '') && 'bg-muted')" @click="() => {
+                      if (item.command) item.command();
+                      else if (item.route) router.push(item.route);
+                    }"
+                  >
                     <component :is="item.icon" class="size-5" />
                   </Button>
                 </TooltipTrigger>
@@ -425,10 +427,12 @@ function goHome() {
             <TooltipProvider :delay-duration="0">
               <Tooltip>
                 <TooltipTrigger>
-                  <Button size="icon" variant="ghost" @click="() => {
-                    if (item.route) router.push(item.route);
-                    else if (item.command) item.command();
-                  }">
+                  <Button
+                    size="icon" variant="ghost" @click="() => {
+                      if (item.route) router.push(item.route);
+                      else if (item.command) item.command();
+                    }"
+                  >
                     <component :is="item.icon" class="size-5" />
                   </Button>
                 </TooltipTrigger>
@@ -470,7 +474,7 @@ function goHome() {
                   <li v-for="(item,index) in chapter1Items" :key="item.label">
                     <a :class="{ active: isActiveRoute(item.route) }"
                       @click="() => { item.command(); toggleDrawer(); }">
-                      <i :class="item.icon" /> 
+                      <i :class="item.icon" />
                       1.{{ index +1 }}-{{ item.label }}
                     </a>
                   </li>
@@ -479,7 +483,7 @@ function goHome() {
             </li>
             <!-- 第二章 -->
             <li>
-              <details>
+              <details open>
                 <summary class="font-bold">
                   <i class="pi pi-bookmark" /> 第二章
                 </summary>
@@ -487,7 +491,7 @@ function goHome() {
                   <li v-for="(item,index) in chapter2Items" :key="item.label">
                     <a :class="{ active: isActiveRoute(item.route) }"
                       @click="() => { item.command(); toggleDrawer(); }">
-                      <i :class="item.icon" /> 
+                      <i :class="item.icon" />
                       2.{{ index +1 }}-{{ item.label }}
                     </a>
                   </li>
@@ -498,7 +502,7 @@ function goHome() {
                         <li v-for="(item,index) in comparisonOfDistributions" :key="item.label">
                           <a :class="{ active: isActiveRoute(item.route) }"
                             @click="() => { item.command(); toggleDrawer(); }">
-                            <i/> 
+                            <i/>
                             2.7.{{ index +1 }}-{{ item.label }}
                           </a>
                         </li>
@@ -525,24 +529,26 @@ function goHome() {
         </DialogHeader>
         <div class="flex flex-wrap gap-4 mt-5">
           <div class="flex items-center">
-            <RadioButton v-model="feedback" inputId="feedback1" value="improvement" />
+            <RadioButton v-model="feedback" input-id="feedback1" value="improvement" />
             <label for="feedback1" class="ml-2">功能建议</label>
           </div>
           <div class="flex items-center">
-            <RadioButton v-model="feedback" inputId="feedback2" value="bug" />
+            <RadioButton v-model="feedback" input-id="feedback2" value="bug" />
             <label for="feedback2" class="ml-2">遇到的错误</label>
           </div>
           <div class="flex items-center">
-            <RadioButton v-model="feedback" inputId="feedback3" value="other" />
+            <RadioButton v-model="feedback" input-id="feedback3" value="other" />
             <label for="feedback3" class="ml-2">其他建议</label>
           </div>
         </div>
         <FloatLabel>
-          <Textarea v-model="content" autoResize rows="10" cols="30" placeholder="请在这里输入您的意见！" />
+          <Textarea v-model="content" auto-resize rows="10" cols="30" placeholder="请在这里输入您的意见！" />
         </FloatLabel>
         <DialogFooter>
           <DialogClose>
-            <Button @click="sendFeedback">提交意见</Button>
+            <Button @click="sendFeedback">
+              提交意见
+            </Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>

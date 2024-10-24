@@ -3,7 +3,6 @@ import type { User } from '@/api/user/userType';
 import { putUserApi, putUserAvatarApi } from '@/api/user/userApi';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button'
-import 'primeicons/primeicons.css'
 import {
   Dialog,
   DialogClose,
@@ -20,17 +19,21 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Label } from '@/components/ui/label'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import { Label } from '@/components/ui/label'
 import { useUserStore } from '@/store'
-
 import { Plus } from 'lucide-vue-next'
+
+import Badge from 'primevue/badge';
+import OverlayBadge from 'primevue/overlaybadge';
 import { useToast } from 'primevue/usetoast';
 import { onMounted, ref, watch } from 'vue';
+
 import { useRoute } from 'vue-router';
 
 import { Badge } from '@/components/ui/badge';
 import OverlayBadge from 'primevue/overlaybadge';
+import 'primeicons/primeicons.css'
 
 const userStore = useUserStore();
 const toast = useToast();
@@ -191,8 +194,6 @@ watch(() => route.path, () => {
 onMounted(() => {
   updateExperiment();
 });
-
-const hasMessage = ref('true')
 </script>
 
 <template>
@@ -222,7 +223,7 @@ const hasMessage = ref('true')
       </div>
 
       <Label class="text-base font-bold hover:underline underline-offset-4"> {{ userStore.user?.nickname ?? 'unknown'
-        }}</Label>
+      }}</Label>
       <Button variant="ghost" size="icon" class="rounded-full" @click="isOpen = true">
         <img :src="userStore.user?.avatarUrl" class="w-8 rounded-full" alt="">
       </Button>
@@ -255,8 +256,10 @@ const hasMessage = ref('true')
                 <FormItem>
                   <FormLabel>昵称</FormLabel>
                   <FormControl>
-                    <Input v-bind="componentField" v-model="tempUser.nickname" type="text" placeholder=""
-                      class="transition-all" />
+                    <Input
+                      v-bind="componentField" v-model="tempUser.nickname" type="text" placeholder=""
+                      class="transition-all"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -294,8 +297,10 @@ const hasMessage = ref('true')
               <FormItem>
                 <FormLabel>学院</FormLabel>
                 <FormControl>
-                  <Input v-bind="componentField" v-model="tempUser.school" type="text" placeholder=""
-                    class="transition-all" />
+                  <Input
+                    v-bind="componentField" v-model="tempUser.school" type="text" placeholder=""
+                    class="transition-all"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -305,8 +310,10 @@ const hasMessage = ref('true')
               <FormItem>
                 <FormLabel>专业</FormLabel>
                 <FormControl>
-                  <Input v-bind="componentField" v-model="tempUser.major" type="text" placeholder=""
-                    class="transition-all" />
+                  <Input
+                    v-bind="componentField" v-model="tempUser.major" type="text" placeholder=""
+                    class="transition-all"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -316,8 +323,10 @@ const hasMessage = ref('true')
               <FormItem>
                 <FormLabel>邮箱</FormLabel>
                 <FormControl>
-                  <Input v-bind="componentField" v-model="tempUser.email" type="email" placeholder=""
-                    class="transition-all" />
+                  <Input
+                    v-bind="componentField" v-model="tempUser.email" type="email" placeholder=""
+                    class="transition-all"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -327,8 +336,10 @@ const hasMessage = ref('true')
               <FormItem>
                 <FormLabel>手机号</FormLabel>
                 <FormControl>
-                  <Input v-bind="componentField" v-model="tempUser.phone" type="text" placeholder=""
-                    class="transition-all" />
+                  <Input
+                    v-bind="componentField" v-model="tempUser.phone" type="text" placeholder=""
+                    class="transition-all"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -340,9 +351,11 @@ const hasMessage = ref('true')
             <div class="flex justify-center items-start">
               <Avatar class="size-32 relative">
                 <AvatarImage :src="tempUser.avatarUrl" alt="avatar" />
-                <Button variant="ghost"
+                <Button
+                  variant="ghost"
                   class="absolute top-0 left-0 size-32 rounded-full opacity-0 transition-all hover:opacity-100 hover:bg-opacity-30 hover:bg-black"
-                  @click="triggerFileUpload">
+                  @click="triggerFileUpload"
+                >
                   <div class="flex flex-col items-center text-background">
                     <Plus class="size-6" />
                     <div class="font-semibold">
