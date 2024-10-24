@@ -2,6 +2,7 @@
 import type { User } from '@/api/user/userType';
 import { putUserApi, putUserAvatarApi } from '@/api/user/userApi';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -22,17 +23,13 @@ import {
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { Label } from '@/components/ui/label'
 import { useUserStore } from '@/store'
-import { Plus } from 'lucide-vue-next'
 
-import Badge from 'primevue/badge';
-import OverlayBadge from 'primevue/overlaybadge';
+import { Plus } from 'lucide-vue-next'
 import { useToast } from 'primevue/usetoast';
+
 import { onMounted, ref, watch } from 'vue';
 
 import { useRoute } from 'vue-router';
-
-import { Badge } from '@/components/ui/badge';
-import OverlayBadge from 'primevue/overlaybadge';
 import 'primeicons/primeicons.css'
 
 const userStore = useUserStore();
