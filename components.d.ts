@@ -88,7 +88,6 @@ declare module 'vue' {
     HoverCard: typeof import('./src/components/ui/hover-card/HoverCard.vue')['default']
     HoverCardContent: typeof import('./src/components/ui/hover-card/HoverCardContent.vue')['default']
     HoverCardTrigger: typeof import('./src/components/ui/hover-card/HoverCardTrigger.vue')['default']
-    Image: typeof import('primevue/image')['default']
     Input: typeof import('./src/components/ui/input/Input.vue')['default']
     InputNumber: typeof import('primevue/inputnumber')['default']
     Label: typeof import('./src/components/ui/label/Label.vue')['default']
@@ -151,6 +150,5 @@ declare module 'vue' {
     TooltipTrigger: typeof import('./src/components/ui/tooltip/TooltipTrigger.vue')['default']
     UniformDiagram: typeof import('./src/components/experiment/distribution/UniformDiagram.vue')['default']
     UniformDistribution: typeof import('./src/components/experiment/distribution/UniformDistribution.vue')['default']
-    UserPanel: typeof import('./src/components/user/UserPanel.vue')['default']
   }
 }
