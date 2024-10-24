@@ -10,67 +10,6 @@ const number = ref([1]); // Number of experiments (n)
 const probability = ref([0]); // Probability of success (p)
 const numberk = ref([1]); // Number of success (k)
 
-// 计算属性，用于动态更新k的最大值
-const maxK = computed(() => number.value[0] );
-// 监视n的变化，确保k的值不大于n
-watch(number, (newVal) => {
-  if (numberk.value[0] > newVal[0]) {
-    numberk.value[0] = newVal[0];
-  }
-});
-
-const save = ref(false);
-function saveImg() {
-  save.value = true;
-}
-function back() {
-  save.value = false;
-  chartData.value.labels = [];
-  chartData.value.datasets = [];
-}
-
-// 计算组合数的函数
-const BinomialCoefficient = (n: number, k: number): number => {
-  if (k > n) return 0;
-
-  const factorial = (num: number): number => {
-    return num <= 1 ? 1 : num * factorial(num - 1);
-  };
-
-  return factorial(n) / (factorial(k) * factorial(n - k));
-};
-
-// 计算最终结果
-const finalResult = computed(() => {
-  const n = number.value[0];
-  const k = numberk.value[0];
-  const p = probability.value[0];
-  const coefficient = BinomialCoefficient(n, k);
-  return coefficient * Math.pow(p, k) * Math.pow(1 - p, n - k);
-});
-
-// 输出LaTeX公式
-const latexFormula = computed(() => {
-  const result = finalResult.value.toFixed(10); // 保留10位小数
-  return `P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k} = \\binom{${number.value}}{${numberk.value}} ${probability.value}^${numberk.value} (1-${probability.value})^{${number.value}-${numberk.value}} = ${result}`;
-});
-
-// const latexFormula = computed(() => `P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k} = \\binom{${number.value}}${numberk.value} ${probability.value}^${numberk.value} (1-${probability.value})^{${number.value}-${numberk.value}} =  ${result} `);
-const katexContainer = ref<HTMLElement | null>(null);
-
-function renderFormula() {
-  if (katexContainer.value) {
-    katex.render(latexFormula.value, katexContainer.value, {
-      throwOnError: false,
-    });
-  }
-}
-
-onMounted(() => {
-  chartDataO.value = setChartData();
-  chartOptions.value = setChartOptions();
-});
-
 const chartDataO = ref();
 function setChartData() {
   const documentStyle = getComputedStyle(document.documentElement);
@@ -148,7 +87,6 @@ function addNewDataset() {
     return;
   }
 
-  // 更新 chartData，添加新的 dataset
   chartData.value.labels = labels;
   chartData.value.datasets.push({
     label: `n=${number.value[0]}, p=${probability.value[0]}`,
@@ -158,6 +96,68 @@ function addNewDataset() {
     fill: false,
   });
 }
+
+// 计算属性，用于动态更新k的最大值
+const maxK = computed(() => number.value[0]);
+// 监视n的变化，确保k的值不大于n
+watch(number, (newVal) => {
+  if (numberk.value[0] > newVal[0]) {
+    numberk.value[0] = newVal[0];
+  }
+});
+
+const save = ref(false);
+function saveImg() {
+  save.value = true;
+}
+function back() {
+  save.value = false;
+  chartData.value.labels = [];
+  chartData.value.datasets = [];
+}
+
+// 计算组合数的函数
+function BinomialCoefficient(n: number, k: number): number {
+  if (k > n)
+    return 0;
+
+  const factorial = (num: number): number => {
+    return num <= 1 ? 1 : num * factorial(num - 1);
+  };
+
+  return factorial(n) / (factorial(k) * factorial(n - k));
+}
+
+// 计算最终结果
+const finalResult = computed(() => {
+  const n = number.value[0];
+  const k = numberk.value[0];
+  const p = probability.value[0];
+  const coefficient = BinomialCoefficient(n, k);
+  return coefficient * p ** k * (1 - p) ** (n - k);
+}, { deep: true });
+
+// 输出LaTeX公式
+const latexFormula = computed(() => {
+  const result = finalResult.value.toFixed(10); // 保留10位小数
+  return `P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k} = \\binom{${number.value}}{${numberk.value}} ${probability.value}^${numberk.value} (1-${probability.value})^{${number.value}-${numberk.value}} = ${result}`;
+});
+
+// const latexFormula = computed(() => `P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k} = \\binom{${number.value}}${numberk.value} ${probability.value}^${numberk.value} (1-${probability.value})^{${number.value}-${numberk.value}} =  ${result} `);
+const katexContainer = ref<HTMLElement | null>(null);
+
+function renderFormula() {
+  if (katexContainer.value) {
+    katex.render(latexFormula.value, katexContainer.value, {
+      throwOnError: false,
+    });
+  }
+}
+
+onMounted(() => {
+  chartDataO.value = setChartData();
+  chartOptions.value = setChartOptions();
+});
 
 // 设置图表选项
 function setChartOptions() {
@@ -205,7 +205,7 @@ function setChartOptions() {
 const chartOptions = ref(setChartOptions());
 
 // 监听 number 和 probability 变化，更新图表
-watch([number, probability,numberk], () => {
+watch([number, probability, numberk], () => {
   chartDataO.value = setChartData();
   addNewDataset();
   renderFormula();
@@ -293,7 +293,7 @@ $$
             <p> Number of success(k) </p>
             <InputNumber v-model.number="numberk[0]" />
             <Slider v-model="numberk" :min="1" :max="maxK" :step="1" class="w-48" />
-            </div>
+          </div>
           <div class="flex flex-col flex-1 items-center justify-center space-y-5">
             <p> Probability of success(p) </p>
             <InputNumber v-model.number="probability[0]" :min-fraction-digits="1" />
@@ -308,7 +308,7 @@ $$
       </div>
     </template>
     <template #comment>
-      <CommentPanel exp-id="binomialDistribution"/>
+      <CommentPanel exp-id="binomialDistribution" />
     </template>
   </ExperimentBoard>
 </template>
