@@ -154,10 +154,20 @@ function back() {
 
 const result = computed(() => {
   const probabilityOfK = (lambda.value[0] ** an.value[0] * Math.exp(-lambda.value[0])) / factorial(an.value[0]);
-  return probabilityOfK;
+  
+  // 计算尾数和指数
+  const absValue = Math.abs(probabilityOfK);
+  const exponent = Math.floor(Math.log10(absValue)); // 获取指数
+  const mantissa = (probabilityOfK / Math.pow(10, exponent)).toFixed(3); // 计算尾数并保留5位小数
+
+  const formattedResult = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
+  return formattedResult;
 });
 
-const latexFormula = computed(() => `P(X = ${an.value}) =\\frac{{λ}^ke^{-λ}}{k!}= \\frac{${lambda.value}^${an.value} e^{-${lambda.value}}}{${an.value}!} = ${result.value.toFixed(3)}`);
+
+
+
+const latexFormula = computed(() => `P(X = ${an.value}) =\\frac{{λ}^ke^{-λ}}{k!}= \\frac{${lambda.value}^${an.value} e^{-${lambda.value}}}{${an.value}!} = ${result.value}`);
 const katexContainer = ref<HTMLElement | null>(null);
 function renderFormula() {
   if (katexContainer.value) {
@@ -244,7 +254,7 @@ $$
                 <Label> 均值 (λ) </Label>
                 <div class="max-w-xl space-y-3">
                   <Input v-model="lambda[0]" :min-fraction-digits="1" />
-                  <Slider v-model="lambda" :min="0" :max="20" :step="0.1" />
+                  <Slider v-model="lambda" :min="0" :max="100" :step="0.1" />
                 </div>
               </div>
               <div class="flex flex-col flex-1 items-center justify-center space-y-5">

@@ -38,7 +38,11 @@ const finalResultOne = computed(() => {
 
 
 const oneFormula = computed(() => {
-  const resultOne = finalResultOne.value.toFixed(10);
+  const absValue = Math.abs(finalResultOne.value);
+  const exponent = Math.floor(Math.log10(absValue)); // 获取指数
+  const mantissa = (finalResultOne.value / Math.pow(10, exponent)).toFixed(3); // 计算尾数并保留5位小数
+  const resultOne = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
+
   return `f(x) = λe^{-λx} = ${rate.value} e^{-${rate.value} \\cdot ${numberx.value}} = ${resultOne}( x \\geq 0)`;
 });
 const oneContainer = ref<HTMLElement | null>(null);
@@ -50,11 +54,17 @@ const finalResultTwo = computed(() => {
 });
 
 const twoFormula = computed(() => {
-  const resultTwo = finalResultTwo.value.toFixed(20);
+  
+
+  const absValue = Math.abs(finalResultTwo.value);
+  const exponent = Math.floor(Math.log10(absValue)); // 获取指数
+  const mantissa = (finalResultTwo.value / Math.pow(10, exponent)).toFixed(3); // 计算尾数并保留5位小数
+  const resultTwo = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
+
   return  `
   \\begin{aligned}
   P(X > ${shift.value} + x \\mid X > ${shift.value}) 
-  &= P(X > x) = e^{-${rate.value} \\cdot ${numberx.value}} \\\\
+  &= P(X > x) = e^{-${rate.value} × ${numberx.value}} \\\\
   &= ${resultTwo}
  \\end{aligned} `;
 });

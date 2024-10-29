@@ -335,7 +335,11 @@ const finalResultOne = computed(() => {
 });
 
 const oneFormula = computed(() => {
-  const resultOne = finalResultOne.value.toFixed(15); // 保留10位小数
+  const absValue = Math.abs(finalResultOne.value);
+  const exponent = Math.floor(Math.log10(absValue)); // 获取指数
+  const mantissa = (finalResultOne.value / Math.pow(10, exponent)).toFixed(3); // 计算尾数并保留5位小数
+  const resultOne = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
+
   return `P(X = k) = (1 - p)^{k-1} \\cdot p = (1 - ${probability.value[0]})^{${numberk.value[0] - 1}} \\cdot ${probability.value[0]} = ${resultOne}`;
 });
 const oneContainer = ref<HTMLElement | null>(null);
@@ -347,7 +351,14 @@ const finalResultTwo = computed(() => {
 });
 
 const twoFormula = computed(() => {
-  const resultTwo = finalResultTwo.value.toFixed(15); // 保留10位小数
+
+  const absValue = Math.abs(finalResultTwo.value);
+  const exponent = Math.floor(Math.log10(absValue)); // 获取指数
+  const mantissa = (finalResultTwo.value / Math.pow(10, exponent)).toFixed(3); // 计算尾数并保留5位小数
+  const resultTwo = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
+
+
+
   return `P(X = k) = (1 - p)^{k} \\cdot p  = (1 - ${probability.value[0]})^{${numberk.value}} \\cdot ${probability.value[0]} = ${resultTwo}`;
 });
 const twoContainer = ref<HTMLElement | null>(null);
@@ -359,12 +370,16 @@ const finalResultThree = computed(() => {
 });
 
 const threeFormula = computed(() => {
-  const resultThree = finalResultThree.value.toFixed(20); // 保留10位小数
+  const absValue = Math.abs(finalResultThree.value);
+  const exponent = Math.floor(Math.log10(absValue)); // 获取指数
+  const mantissa = (finalResultThree.value / Math.pow(10, exponent)).toFixed(3); // 计算尾数并保留5位小数
+  const resultThree = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
+
   return `
   \\begin{aligned}
   P(X > ${fixedN.value[0]} + k \\mid X > ${fixedN.value[0]}) 
-  &= P(X > k) =(1 - p)^{k}= (1 - ${probability.value[0]})^{${numberk.value}} \\\\
-  &= ${resultThree}
+  = P(X > k) =(1 - p)^{k}= (1 - ${probability.value[0]})^{${numberk.value}}
+  = ${resultThree}
   \\end{aligned}`;
 });
 const threeContainer = ref<HTMLElement | null>(null);
@@ -516,7 +531,7 @@ $$
                 <Label> 成功概率 (p) </Label>
                 <div class="max-w-xl space-y-3">
                   <Input v-model="probability[0]" type="number" />
-                  <Slider v-model="probability" :min="0" :max="1" :step="0.1" />
+                  <Slider v-model="probability" :min="0" :max="1" :step="0.05" />
                 </div>
               </div>
               <div class="flex flex-col flex-1 items-center justify-center space-y-5">

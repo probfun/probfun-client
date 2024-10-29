@@ -49,7 +49,11 @@ const finalResultP = computed(() => {
 });
 
 const binomialFormula = computed(() => {
-  const resultB = finalResultB.value.toFixed(10);
+  const absValue = Math.abs(finalResultB.value);
+  const exponent = Math.floor(Math.log10(absValue)); // 获取指数
+  const mantissa = (finalResultB.value / Math.pow(10, exponent)).toFixed(3); // 计算尾数并保留5位小数
+  const resultB = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
+
   return `
   \\begin{aligned}
 P(X = k) &= \\binom{n}{k} p^k (1-p)^{n-k} 
@@ -60,9 +64,14 @@ P(X = k) &= \\binom{n}{k} p^k (1-p)^{n-k}
 const binomialContainer = ref<HTMLElement | null>(null);
 
 const poissonFormula = computed(() => {
-  const resultP = finalResultP.value.toFixed(10);
+
+  const absValue = Math.abs(finalResultP.value);
+  const exponent = Math.floor(Math.log10(absValue)); // 获取指数
+  const mantissa = (finalResultP.value / Math.pow(10, exponent)).toFixed(3); // 计算尾数并保留5位小数
+  const resultP = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
+
   return ` λ = np = {${number.value}} * {${probability.value}}={{ ${(number.value[0] * probability.value[0]).toFixed(2)}}}\\\\
-P(X = k) = \\frac{{λ}^ke^{-λ}}{k!} = \\frac{${lambda.value.toFixed(2)}^${numberk.value} e^{-${lambda.value.toFixed(2)}}}{${numberk.value}!} = ${resultP}`;
+P(X = k) = \\frac{{λ}^ke^{-λ}}{k!} = \\frac{${lambda.value.toFixed(2)}^{${numberk.value}} e^{-${lambda.value.toFixed(2)}}}{${numberk.value}!} = ${resultP}`;
 });
 const poissonContainer = ref<HTMLElement | null>(null);
 

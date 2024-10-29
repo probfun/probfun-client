@@ -152,7 +152,10 @@ watch(
 
 // 输出LaTeX公式
 const latexFormula = computed(() => {
-  const result = finalResult.value.toFixed(10); // 保留10位小数
+  const absValue = Math.abs(finalResult.value);
+  const exponent = Math.floor(Math.log10(absValue)); // 获取指数
+  const mantissa = (finalResult.value / Math.pow(10, exponent)).toFixed(3); // 计算尾数并保留5位小数
+  const result = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
   return `P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k} = \\binom{${number.value}}{${numberk.value}} ${probability.value}^${numberk.value} (1-${probability.value})^{${number.value}-${numberk.value}} = ${result}`;
 });
 
@@ -304,7 +307,7 @@ $$
                 <Label> 试验次数 (n) </Label>
                 <div class="max-w-xl space-y-3">
                   <Input v-model="number[0]" />
-                  <Slider v-model="number" :min="1" :max="14" :step="1" />
+                  <Slider v-model="number" :min="1" :max="100" :step="1" />
                 </div>
               </div>
               <div class="flex flex-col flex-1 items-center justify-center space-y-3">
