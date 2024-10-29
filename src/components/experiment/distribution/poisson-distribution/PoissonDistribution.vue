@@ -227,7 +227,7 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard title="二项分布" :tags="[]">
+  <ExperimentBoard >
     <template #experiment>
       <Chart v-if="!save" type="line" :data="chartDataO" :options="chartOptions" class="h-full w-full" />
       <Chart v-if="save" type="line" :data="chartData" :options="chartOptions" class="h-full w-full" />

@@ -42,7 +42,7 @@ const latexFormula = computed(() => {
 
 const latexFormulaY = computed(() => {
   transformedMeanY.value = a.value[0] * mean.value[0] + b.value[0];
-  transformedVarianceY.value = a.value[0] ** 2 * stdDev.value[0] ** 2;
+  transformedVarianceY.value = a.value[0] ** 2 * stdDev.value[0] ;
 
   const meanValY = transformedMeanY.value.toFixed(2);
   const varianceValY = transformedVarianceY.value.toFixed(2);
@@ -52,7 +52,7 @@ const latexFormulaY = computed(() => {
   // 如果 varianceVal 为负数（虽然理论上方差不会是负数，但以防万一）
   const varianceDisplayY = varianceValY < 0 ? `(${varianceValY})` : varianceValY;
 
-  return `f(y) = \\frac{1}{\\sqrt{2\\pi{σ'}^2}} e^{-\\frac{(x-μ')^2}{2{σ'}^2}}=\\frac{1}{\\sqrt{2\\pi{(a^2σ^2)}}} e^{-\\frac{(x-(aμ+b))^2}{2{(a^2σ^2)}}} = \\frac{1}{\\sqrt{2\\pi\\times${varianceDisplayY}}} e^{-\\frac{(x-${meanDisplayY})^2}{2\\times${varianceDisplayY}}}`;
+  return `f(y) = \\frac{1}{\\sqrt{2\\pi{σ'}^2}} e^{-\\frac{(x-μ')^2}{2{σ'}^2}}=\\frac{1}{\\sqrt{2\\pi{(aσ)^2}}} e^{-\\frac{(x-(aμ+b))^2}{2{(aσ)^2}}} = \\frac{1}{\\sqrt{2\\pi\\times${varianceDisplayY}}} e^{-\\frac{(x-${meanDisplayY})^2}{2\\times${varianceDisplayY}}}`;
 });
 
 const transformedFormula = computed(() => {
