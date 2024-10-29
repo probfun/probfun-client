@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
+import PNDiagram from './PNDiagram.vue';
 import { toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue';
 import 'katex/dist/katex.min.css';
+import { number } from 'echarts/core';
 
 const lambda = ref([30]);
 
@@ -151,7 +153,7 @@ $$
 <template>
   <ExperimentBoard title="泊松分布与正态分布" :tags="[]">
     <template #experiment>
-      <Chart type="line" :data="chartData" :options="chartOptions" class="h-full w-full" />
+      <PNDiagram :lambda="lambda[0]"></PNDiagram>
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
@@ -182,7 +184,7 @@ $$
       </div>
     </template>
     <template #comment>
-      <CommentPanel exp-id="PN"/>
+      <CommentPanel exp-id="PN" />
     </template>
   </ExperimentBoard>
 </template>

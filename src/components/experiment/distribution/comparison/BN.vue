@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
+import BNDiagram from './BNDiagram.vue';
 import { toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue';
@@ -14,7 +15,7 @@ const stdDev = computed(() => Math.sqrt(variance.value));
 const binomialFormula = computed(() => ` \\\\P(X = k) = \\binom{${number.value[0]}}{k} ${probability.value[0]}^k (1-${probability.value[0]})^{${number.value[0]}-k}`);
 const binomialContainer = ref<HTMLElement | null>(null);
 
-const normalFormula = computed(() => `μ = np = {${ mean.value.toFixed(2)}} \\\\σ² = np(1-p) = {${variance.value.toFixed(2) }}\\\\ P(X = k) \\approx \\frac{1}{\\sqrt{2\\pi ${variance.value.toFixed(2)}}} e^{-\\frac{(k - ${mean.value.toFixed(2)})^2}{2${variance.value.toFixed(2)}}}`);
+const normalFormula = computed(() => `μ = np = {${mean.value.toFixed(2)}} \\\\σ² = np(1-p) = {${variance.value.toFixed(2)}}\\\\ P(X = k) \\approx \\frac{1}{\\sqrt{2\\pi ${variance.value.toFixed(2)}}} e^{-\\frac{(k - ${mean.value.toFixed(2)})^2}{2${variance.value.toFixed(2)}}}`);
 const normalContainer = ref<HTMLElement | null>(null);
 
 function renderFormula() {
@@ -30,104 +31,12 @@ function renderFormula() {
   }
 }
 
-const chartData = ref();
-const chartOptions = ref();
-
 onMounted(() => {
-  chartData.value = setChartData();
-  chartOptions.value = setChartOptions();
   renderFormula();
 });
 
-function setChartData() {
-  const documentStyle = getComputedStyle(document.documentElement);
-
-  const labels = [];
-  const binomialData = [];
-  const normalData = [];
-  for (let k = 0; k <= number.value[0]; k++) {
-    // 计算二项分布
-    const probabilityOfK = binomialCoefficient(number.value[0], k)
-      * probability.value[0] ** k
-      * (1 - probability.value[0]) ** (number.value[0] - k);
-    binomialData.push(probabilityOfK);
-
-    // 计算正态分布
-    const normalProbability = (1 / (stdDev.value * Math.sqrt(2 * Math.PI))) * Math.exp(-((k - mean.value) ** 2) / (2 * variance.value));
-    normalData.push(normalProbability);
-
-    labels.push(k);
-  }
-
-  return {
-    labels,
-    datasets: [
-      {
-        label: 'Binomial Distribution',
-        borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-        data: binomialData,
-        fill: false,
-      },
-      {
-        label: 'Normal Distribution',
-        borderColor: documentStyle.getPropertyValue('--p-gray-500'),
-        data: normalData,
-        fill: false,
-        tension: 0.4,
-      },
-    ],
-  };
-}
-
-function setChartOptions() {
-  const documentStyle = getComputedStyle(document.documentElement);
-  const textColor = documentStyle.getPropertyValue('--p-text-color');
-  const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
-  const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
-
-  return {
-    maintainAspectRatio: false,
-    aspectRatio: 0.6,
-    plugins: {
-      legend: {
-        labels: {
-          color: textColor,
-        },
-      },
-    },
-    scales: {
-      x: {
-        ticks: {
-          color: textColorSecondary,
-        },
-        grid: {
-          color: surfaceBorder,
-        },
-      },
-      y: {
-        ticks: {
-          color: textColorSecondary,
-        },
-        grid: {
-          color: surfaceBorder,
-        },
-      },
-    },
-  };
-}
-
-// 计算二项系数（组合数）
-function binomialCoefficient(n: number, k: number) {
-  let result = 1;
-  for (let i = 1; i <= k; i++) {
-    result *= (n - i + 1) / i;
-  }
-  return result;
-}
-
 // 监听 props 的变化以动态更新图像
 watch([number, probability], () => {
-  chartData.value = setChartData();
   renderFormula();
 });
 
@@ -183,7 +92,7 @@ $$
 <template>
   <ExperimentBoard title="二项分布与正态分布" :tags="[]">
     <template #experiment>
-      <Chart type="line" :data="chartData" :options="chartOptions" class="h-full w-full" />
+      <BNDiagram :n="number[0]" :p="probability[0]"></BNDiagram>
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
@@ -219,7 +128,7 @@ $$
       </div>
     </template>
     <template #comment>
-      <CommentPanel exp-id="BN"/>
+      <CommentPanel exp-id="BN" />
     </template>
 
   </ExperimentBoard>

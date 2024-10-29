@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
+import BPDiagram from './BPDiagram.vue';
 import { toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue';
@@ -41,14 +42,11 @@ function factor(n: number) {
   return result;
 }
 
-
 const finalResultP = computed(() => {
   const k = numberk.value[0];
   const probabilityOfK = (lambda.value ** k * Math.exp(-lambda.value)) / factor(k);
   return probabilityOfK;
 });
-
-
 
 const binomialFormula = computed(() => {
   const resultB = finalResultB.value.toFixed(10);
@@ -91,109 +89,11 @@ function renderFormula() {
 }
 
 onMounted(() => {
-  chartData.value = setChartData();
-  chartOptions.value = setChartOptions();
   renderFormula();
 });
 
-const chartData = ref();
-const chartOptions = ref();
-function setChartData() {
-  const documentStyle = getComputedStyle(document.documentElement);
-
-  // 计算二项分布的数据
-  const labels = [];
-  const binomialData = [];
-  const poissonData = [];
-  for (let k = 0; k <= number.value[0]; k++) {
-    // 计算二项分布
-    const probabilityOfK = binomialCoefficient(number.value[0], k)
-      * probability.value[0] ** k
-      * (1 - probability.value[0]) ** (number.value[0] - k);
-    binomialData.push(probabilityOfK);
-
-    // 计算泊松分布
-    const poissonProbability = (lambda.value ** k * Math.exp(-lambda.value)) / factorial(k);
-    poissonData.push(poissonProbability);
-
-    labels.push(k);
-  }
-
-  return {
-    labels,
-    datasets: [
-      {
-        label: 'Binomial Distribution',
-        backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
-        borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-        data: binomialData,
-        fill: false,
-      },
-      {
-        label: 'Poisson Distribution',
-        backgroundColor: documentStyle.getPropertyValue('--p-gray-500'),
-        borderColor: documentStyle.getPropertyValue('--p-gray-500'),
-        data: poissonData,
-        fill: false,
-      },
-    ],
-  };
-}
-
-// 计算阶乘
-function factorial(n: number): number {
-  return n <= 1 ? 1 : n * factorial(n - 1);
-}
-
-function setChartOptions() {
-  const documentStyle = getComputedStyle(document.documentElement);
-  const textColor = documentStyle.getPropertyValue('--p-text-color');
-  const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
-  const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
-
-  return {
-    maintainAspectRatio: false,
-    aspectRatio: 0.6,
-    plugins: {
-      legend: {
-        labels: {
-          color: textColor,
-        },
-      },
-    },
-    scales: {
-      x: {
-        ticks: {
-          color: textColorSecondary,
-        },
-        grid: {
-          color: surfaceBorder,
-        },
-      },
-      y: {
-        ticks: {
-          color: textColorSecondary,
-        },
-        grid: {
-          color: surfaceBorder,
-        },
-      },
-    },
-  };
-}
-
-// 计算二项系数（组合数）
-function binomialCoefficient(n: number, k: number) {
-  let result = 1;
-  for (let i = 1; i <= k; i++) {
-    result *= (n - i + 1) / i;
-  }
-  return result;
-}
-
 // 监听 props 的变化以动态更新图像
 watch([number, probability, numberk], () => {
-  chartData.value = setChartData();
   renderFormula();
 });
 
@@ -289,7 +189,7 @@ $$
 <template>
   <ExperimentBoard title="二项分布与泊松分布" :tags="[]">
     <template #experiment>
-      <Chart type="line" :data="chartData" :options="chartOptions" class="h-full w-full" />
+      <BPDiagram :n="number[0]" :p="probability[0]"></BPDiagram>
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
@@ -331,7 +231,7 @@ $$
       </div>
     </template>
     <template #comment>
-      <CommentPanel exp-id="BP"/>
+      <CommentPanel exp-id="BP" />
     </template>
   </ExperimentBoard>
 </template>
