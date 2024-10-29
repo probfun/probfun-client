@@ -12,6 +12,7 @@ import Select from 'primevue/select';
 import Avatar from 'primevue/avatar';
 import Panel from 'primevue/panel';
 import Textarea from 'primevue/textarea';
+import MultiSelect from 'primevue/multiselect';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import ColumnGroup from 'primevue/columngroup';   // optional
@@ -33,7 +34,7 @@ const products = ref([
         name: '小明',
         studentID: '2023001',
         time: '2023-10-01',
-        comment: '真好。'
+        comment: '真好。你在写什么知识时法随风倒十分士大夫'
     },
     {
         expName: '正态分布',
@@ -120,12 +121,21 @@ const star = ref([
         times: 5
     }
 ])
+const cancel = () => {
+
+}
 </script>
 
 <template>
     <div class="flex">
-        <div class="flex flex-col flex-1 p-3">
-            <span class="text-lg font-bold">2024年秋季学期</span>
+        <div class="flex flex-col flex-1 w-1/2 p-3">
+            <div class="flex mb-[-10px]">
+                <span class="text-lg font-bold">2024年秋季学期</span>
+                <div class="ml-auto">
+                    <MultiSelect v-model="selectedClass" :options="classes" optionLabel="name" filter
+                        placeholder="请选择班级" class="w-full md:w-56" />
+                </div>
+            </div>
             <div class="flex my-5">
                 <Avatar label="头" class="mr-5" size="xlarge" />
                 <div class="flex flex-col">
@@ -148,7 +158,8 @@ const star = ref([
                             </span>
                         </div>
                     </template>
-                    <Textarea v-model="inputValue" rows="8" cols="1000" style="resize: none" class = "w-full"  :placeholder="placeholderText" />
+                    <Textarea v-model="inputValue" rows="8" cols="1000" style="resize: none" class="w-full"
+                        :placeholder="placeholderText" />
                 </Panel>
             </div>
             <Panel header="已发布公告" class="mx-1 my-3 h-full overflow-auto">
@@ -162,24 +173,27 @@ const star = ref([
                 </Accordion>
             </Panel>
         </div>
-        <Separator orientation="vertical" />
-        <div class="flex flex-col flex-1 p-3">
-            <Panel header="已精选评论" class="w-full h-[30%]">
-                <DataTable :value="products" scrollable scrollHeight="150px" tableStyle="min-width: 30rem">
+        <Separator orientation="vertical"/>
+        <div class="flex flex-col flex-1 w-1/2 p-3">
+            <div style="display: flex; justify-content: space-between;" class="mb-3">
+                <Select v-model="selectedTime" :options="time" optionLabel="name" placeholder="请选择时间范围"
+                    class="w-full md:w-56" />
+            </div>
+            <Panel header="已精选评论" class="w-full h-[33%]">
+                <DataTable :value="products" scrollable scrollHeight="160px" tableStyle="min-width: 60rem">
                     <Column field="expName" header="实验名称"></Column>
                     <Column field="name" header="学生昵称"></Column>
                     <Column field="studentID" header="学工号"></Column>
                     <Column field="time" header="评论时间"></Column>
                     <Column field="comment" header="评论内容"></Column>
+                    <Column class="w-24 !text-end">
+                        <template #body>
+                            <Button @click="cancel">取消精选</Button>
+                        </template>
+                    </Column>
                 </DataTable>
             </Panel>
-            <div class="mt-3 h-2/3">
-                <div style="display: flex; justify-content: space-between;">
-                    <Select v-model="selectedClass" :options="classes" optionLabel="name" placeholder="请选择班级"
-                        class="w-full md:w-56" />
-                    <Select v-model="selectedTime" :options="time" optionLabel="name" placeholder="请选择时间范围"
-                        class="w-full md:w-56" />
-                </div>
+            <div class="h-2/3">
                 <div class="flex my-2">
                     <Panel header="各实验点击次数排行榜" class="mr-4">
                         <DataTable :value="click" scrollable scrollHeight="160px" tableStyle="min-width: 17rem">
