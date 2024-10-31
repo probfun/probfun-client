@@ -181,7 +181,7 @@ $$
       <div class="w-full h-full flex flex-row justify-center p-3 gap-3">
         <Card class="w-full h-full w-3/5 card">
           <CardHeader class = "pb-10">
-            <CardTitle>二项分布公式</CardTitle>
+            <CardTitle>均匀分布公式</CardTitle>
           </CardHeader>
           <CardContent class="flex w-full  h-full flex flex-col items-start gap-10 ">
             <div ref="oneContainer" class="text-base pb-5" />

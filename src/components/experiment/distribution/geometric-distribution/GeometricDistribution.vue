@@ -509,7 +509,7 @@ $$
               参数调整
             </CardTitle>
           </CardHeader>
-          <CardContent class="flex-1 flex flex-col justify-center items-center gap-5">
+          <CardContent class="flex-1 flex flex-col justify-center items-center gap-3">
             <div class="dropdown ">
               <Button tabindex="0" role="button" class="m-1">
                 点我切换
@@ -526,7 +526,7 @@ $$
                 </li>
               </ul>
             </div>
-            <div class="flex gap-4 pb-8 w-full">
+            <div class="flex gap-4 pb-1 w-full">
               <div class="flex flex-col flex-1 items-center justify-center space-y-5">
                 <Label> 成功概率 (p) </Label>
                 <div class="max-w-xl space-y-3">
