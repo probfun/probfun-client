@@ -42,7 +42,7 @@ const latexFormula = computed(() => {
 
 const latexFormulaY = computed(() => {
   transformedMeanY.value = a.value[0] * mean.value[0] + b.value[0];
-  transformedVarianceY.value = a.value[0] ** 2 * stdDev.value[0] ;
+  transformedVarianceY.value = a.value[0] ** 2 * stdDev.value[0];
 
   const meanValY = transformedMeanY.value.toFixed(2);
   const varianceValY = transformedVarianceY.value.toFixed(2);
@@ -60,7 +60,7 @@ const transformedFormula = computed(() => {
   const transformedMean = mean.value[0];
   const transformedVariance = stdDev.value[0];
 
-  return `X \\sim N(μ,σ^2) \\sim N(${transformedMean.toFixed(2)}, ${transformedVariance.toFixed(2)})<蓝色>`;
+  return `X \\sim N(μ,σ^2) \\sim N(${transformedMean.toFixed(2)}, ${transformedVariance.toFixed(2)})`;
 });
 
 const transformedFormulaY = computed(() => {
@@ -68,7 +68,7 @@ const transformedFormulaY = computed(() => {
   const transformedMeanY = a.value[0] * mean.value[0] + b.value[0];
   const transformedVarianceY = a.value[0] ** 2 * stdDev.value[0];
 
-  return `Y = aX+b \\sim N(aμ+b,a^2σ^2) \\sim N(${transformedMeanY.toFixed(2)}, ${transformedVarianceY.toFixed(2)})<绿色>`;
+  return `Y = aX+b \\sim N(aμ+b,a^2σ^2) \\sim N(${transformedMeanY.toFixed(2)}, ${transformedVarianceY.toFixed(2)})`;
 });
 
 const katexMainFormula = ref<HTMLElement | null>(null);
@@ -147,19 +147,16 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard title="二项分布" :tags="[]">
+  <ExperimentBoard>
     <template #experiment>
       <!-- <DistributionDiagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance" :a="a" :b="b"
         :show-history="save" /> -->
-
-      <DistributionDiagram
-        class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance"
+      <DistributionDiagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance"
         :transformed-mean-y="transformedMeanY" :transformed-variance-y="transformedVarianceY" :show-history="save"
-        :line-show="lineShow" line1-color="red" line2-color="blue"
-      />
+        :line-show="lineShow" line1-color="red" line2-color="blue" />
     </template>
 
-    <template #parameter>
+    <!-- <template #parameter>
       <div class="w-full flex flex-col items-center justify-center min-h-full">
         <div class="w-full flex items-center justify-center">
           <div>
@@ -217,7 +214,85 @@ $$
           </div>
         </div>
       </div>
+    </template> -->
+
+    <template #parameter>
+      <div class="w-full h-full flex flex-row justify-center p-3 gap-3">
+        <Card class="w-full h-full w-3/5 card">
+          <CardHeader class="pb-10">
+            <CardTitle>正态分布公式</CardTitle>
+          </CardHeader>
+          <CardContent class="flex w-full  h-full flex flex-col items-start gap-3">
+            <div class = "w-full h-1/2 space-y-5">
+            <div ref="katexTransformedFormula" class="text-base" />
+            <div ref="katexMainFormula" class="text-base  pb-5" />
+            </div>
+            <div class = "w-full h-1/2 space-y-5">
+            <div ref="katexTransformedFormulaY" class="text-base" />
+            <div ref="katexMainFormulaY" class="text-base " />
+          </div>
+          </CardContent>
+        </Card>
+        <Card class="w-full  h-full w-2/5 cardflex-1 flex flex-col">
+          <CardHeader>
+            <CardTitle>
+              参数调整
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="flex-1 flex flex-col items-center justify-center gap-5">
+            <div class="flex flex-wrap gap-10 ">
+              <div class="flex flex-col  gap-8 pb-5">
+                <div class="flex flex-col  md:w-full w-1/2 flex-1 items-center justify-center space-y-5">
+                  <Label> 均值μ </Label>
+                  <div class="max-w-xl space-y-3">
+                    <Input v-model.number="mean[0]" fluid :min-fraction-digits="1" />
+                    <Slider v-model="mean" :min="-10" :max="10" :step="0.1" class="w-full" />
+                  </div>
+                </div>
+                <div class="flex flex-col  md:w-full w-1/2 flex-1 items-center justify-center space-y-5">
+                  <Label> 方差σ^2 </Label>
+                  <div class="max-w-xl space-y-3">
+                    <Input v-model.number="stdDev[0]" fluid :min-fraction-digits="1" />
+                    <Slider v-model="stdDev" :min="0.1" :max="10" :step="0.05" class="w-full" />
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-8 pb-5">
+                <div class="flex flex-col  md:w-full w-1/2 flex-1 items-center justify-center space-y-5">
+                  <Label> a </Label>
+                  <div class="max-w-xl space-y-3">
+                    <Input v-model.number="a[0]" fluid :invalid="a[0] === 0" :min-fraction-digits="1" />
+                    <Slider v-model="a" :min="-10" :max="10" :step="0.01" class="w-full" />
+                  </div>
+                <div class="flex flex-col  md:w-full w-1/2 flex-1 items-center justify-center space-y-5">
+                  <Label> b </Label>
+                  <div class="max-w-xl space-y-3">
+                      <Input v-model.number="b[0]" fluid :min-fraction-digits="1" />
+                      <Slider v-model="b" :min="-10" :max="10" :step="0.1" class="w-5/6" />
+                  </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-2 items-center justify-center">
+              <Checkbox id="terms" @update:checked="(checked: boolean) => {
+                if (checked) {
+                  saveImg();
+                }
+                else {
+                  back();
+                }
+                console.log(checked)
+              }" />
+              <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </template>
+
+
     <template #conclusion>
       <div class="w-full h-full p-5">
         <div class="prose-sm max-w-none" v-html="toMarkdown(content)" />
