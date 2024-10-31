@@ -29,13 +29,13 @@ const drawDistributions = () => {
 
     const normal = {
         id: 'normal',
-        latex: `f(x) = \\frac{1}{\\sqrt{2\\pi} \\cdot ${Math.sqrt(props.n * props.p * (1 - props.p))}} e^{-\\frac{(x - ${props.n * props.p})^2}{2 \\cdot ${props.n * props.p * (1 - props.p)}}} \\{x > 0\\}`,
+        latex: `f(x) = \\frac{1}{\\sqrt{2\\pi} \\cdot ${Math.sqrt(props.n * props.p * (1 - props.p))}} e^{-\\frac{(x - ${props.n * props.p})^2}{2 \\cdot ${props.n * props.p * (1 - props.p)}}} \\{x >= 0\\}`,
         color: Desmos.Colors.BLUE
     };
 
     const binomial = {
         id: 'binomial',
-        latex: `f(x) = \\frac{${props.n}!}{x!((${props.n} - x)!)} ${props.p}^{x} (1 - ${props.p})^{${props.n} - x} \\{x > 0\\}`,
+        latex: `f(x) = \\frac{${props.n}!}{x!((${props.n} - x)!)} ${props.p}^{x} (1 - ${props.p})^{${props.n} - x} \\{x >= 0\\}`,
         color: Desmos.Colors.RED
     }
     calculator.setExpression(normal);

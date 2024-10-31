@@ -29,13 +29,13 @@ const drawDistributions = () => {
 
     const poisson = {
         id: 'poisson',
-        latex: `f(x) = \\frac{${props.n * props.p}^x e^{- ${props.n * props.p}}}{x!} \\{x > 0\\}`,
+        latex: `f(x) = \\frac{${props.n * props.p}^x e^{- ${props.n * props.p}}}{x!} \\{x >= 0\\}`,
         color: Desmos.Colors.BLUE
     };
 
     const binomial = {
         id: 'binomial',
-        latex: `f(x) = \\frac{${props.n}!}{x!((${props.n} - x)!)} ${props.p}^{x} (1 - ${props.p})^{${props.n} - x} \\{x > 0\\}`,
+        latex: `f(x) = \\frac{${props.n}!}{x!((${props.n} - x)!)} ${props.p}^{x} (1 - ${props.p})^{${props.n} - x} \\{x >= 0\\}`,
         color: Desmos.Colors.RED
     }
     calculator.setExpression(poisson);

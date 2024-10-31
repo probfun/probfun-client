@@ -55,14 +55,14 @@ function drawNormalDistribution() {
     const expression1 = {
       id: `history_${idNumber}`,
       latex: `f(x) = \\frac{1}{${props.stdDev}\\sqrt{2\\pi}}e^{-\\frac{(x-${props.mean})^2}{2*${props.stdDev}^2}}`,
-      color: Desmos.Colors.BLUE,
+      color: 'rgba(0, 0, 255, 0.2)',
     };
     historyExpressions.value.push(expression1);
     if (props.lineShow) {
       const expression2 = {
         id: `history_${idNumber + 1}`,
         latex: `g(x) = \\frac{1}{${props.transformedVarianceY}\\sqrt{2\\pi}}e^{-\\frac{(x-${props.transformedMeanY})^2}{2*${props.transformedVarianceY}^2}}`,
-        color: Desmos.Colors.GREEN,
+        color: 'rgba(0, 255, 0, 0.2)',
       };
       historyExpressions.value.push(expression2);
     }

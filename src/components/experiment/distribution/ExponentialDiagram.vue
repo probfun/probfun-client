@@ -61,7 +61,7 @@ function drawUniformDistribution() {
       const expression = {
         id: `history_${idNumber}`,
         latex: `f(x) = ${props.rate} e^{-${props.rate} x} \\{x >= 0\\}`,
-        color: Desmos.Colors.BLUE,
+        color: 'rgba(0, 0, 255, 0.2)',
       };
       historyExpressions.value.push(expression);
     }

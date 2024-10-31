@@ -28,13 +28,13 @@ const drawDistributions = () => {
 
     const poisson = {
         id: 'poisson',
-        latex: `f(x) = \\frac{${props.lambda}^x e^{- ${props.lambda}}}{x!} \\{x > 0\\}`,
+        latex: `f(x) = \\frac{${props.lambda}^x e^{- ${props.lambda}}}{x!} \\{x >= 0\\}`,
         color: Desmos.Colors.BLUE
     };
 
     const normal = {
         id: 'normal',
-        latex: `f(x) = \\frac{1}{\\sqrt{2\\pi \\cdot ${props.lambda}}} e^{-\\frac{(x - ${props.lambda})^2}{2 \\cdot ${props.lambda}}} \\{x > 0\\}`,
+        latex: `f(x) = \\frac{1}{\\sqrt{2\\pi \\cdot ${props.lambda}}} e^{-\\frac{(x - ${props.lambda})^2}{2 \\cdot ${props.lambda}}} \\{x >= 0\\}`,
         color: Desmos.Colors.RED
     };
     calculator.setExpression(poisson);

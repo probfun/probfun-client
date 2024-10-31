@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
+import BinomialDiagram from './BinomialDiagram.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label';
@@ -281,8 +282,7 @@ $$
 <template>
   <ExperimentBoard title="二项分布" :tags="[]">
     <template #experiment>
-      <Chart v-if="!save" type="line" :data="chartDataO" :options="chartOptions" class="h-full w-full" />
-      <Chart v-if="save" type="line" :data="chartData" :options="chartOptions" class="h-full w-full" />
+      <BinomialDiagram :n="number[0]" :p="probability[0]" :save="save"></BinomialDiagram>
     </template>
     <template #parameter>
       <div class="w-full min-h-full flex flex-col items-center justify-center p-3 gap-3">
@@ -326,17 +326,15 @@ $$
               </div>
             </div>
             <div class="flex gap-2 items-center justify-center">
-              <Checkbox
-                id="terms" @update:checked="(checked: boolean) => {
-                  if (checked) {
-                    saveImg();
-                  }
-                  else {
-                    back();
-                  }
-                  console.log(checked)
-                }"
-              />
+              <Checkbox id="terms" @update:checked="(checked: boolean) => {
+                if (checked) {
+                  saveImg();
+                }
+                else {
+                  back();
+                }
+                console.log(checked)
+              }" />
               <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
             </div>
           </CardContent>

@@ -173,7 +173,7 @@ $$
           <div class="flex flex-col flex-1 items-center justify-center space-y-5">
             <p> λ </p>
             <InputNumber v-model.number="lambda[0]" />
-            <Slider v-model="lambda" :min="30" :max="60" :step="1" class="w-48" />
+            <Slider v-model="lambda" :min="30" :max="100" :step="1" class="w-48" />
           </div>
         </div>
       </div>
