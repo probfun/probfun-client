@@ -224,14 +224,14 @@ $$
             </div>
             <div class="flex gap-4 pb-1 w-full">
               <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                <Label> 成功概率 (p) </Label>
+                <Label> 成功概率 p </Label>
                 <div class="max-w-xl space-y-3">
                   <Input v-model="probability[0]" type="number" />
                   <Slider v-model="probability" :min="0" :max="0.95" :step="0.05" />
                 </div>
               </div>
               <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                <Label> 成功前的尝试次数（包含） (k) </Label>
+                <Label> 成功前的尝试次数（包含） k </Label>
                 <div class="max-w-xl space-y-3">
                   <Input v-model="numberk[0]" type="number" />
                   <Slider v-model="numberk" :min="1" :max="60" :step="1" />

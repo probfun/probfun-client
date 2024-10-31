@@ -123,14 +123,14 @@ $$
           <CardContent class="flex-1 flex flex-col justify-center gap-5">
             <div class="flex gap-4 pb-8">
               <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                <Label> 均值 (λ) </Label>
+                <Label> 均值 λ </Label>
                 <div class="max-w-xl space-y-3">
                   <Input v-model="lambda[0]" :min-fraction-digits="1" />
                   <Slider v-model="lambda" :min="0" :max="30" :step="0.1" />
                 </div>
               </div>
               <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                <Label> 实际数字 (k) </Label>
+                <Label> 事件发生的实际次数 k </Label>
                 <div class="max-w-xl space-y-3">
                   <Input v-model="an[0]" :min-fraction-digits="1" />
                   <Slider v-model="an" :min="0" :max="4 * lambda[0]" :step="1" />

@@ -304,21 +304,21 @@ $$
           <CardContent class="flex-1 flex flex-col justify-center gap-5">
             <div class="flex gap-4 pb-8">
               <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-                <Label> 试验次数 (n) </Label>
+                <Label> 试验次数 n </Label>
                 <div class="max-w-xl space-y-3">
                   <Input v-model="number[0]" />
                   <Slider v-model="number" :min="1" :max="100" :step="1" />
                 </div>
               </div>
               <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-                <Label> 成功次数 (k) </Label>
+                <Label> 成功次数 k </Label>
                 <div class="max-w-xl space-y-3">
                   <Input v-model="numberk[0]" />
                   <Slider v-model="numberk" :min="1" :max="maxK" :step="1" />
                 </div>
               </div>
               <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-                <Label> 成功率 (p) </Label>
+                <Label> 成功率 p </Label>
                 <div class="max-w-xl space-y-3">
                   <Input v-model="probability[0]" :min-fraction-digits="1" />
                   <Slider v-model="probability" :min="0" :max="1" :step="0.1" />

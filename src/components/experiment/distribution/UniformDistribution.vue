@@ -195,8 +195,8 @@ $$
             </CardTitle>
           </CardHeader>
           <CardContent class="flex-1 flex flex-col items-center justify-center gap-5">
-            <div class="flex flex-wrap gap-4 pb-1">
-              <div class="flex flex-col  gap-4 pb-8">
+            <div class="flex flex-wrap gap-10 ">
+              <div class="flex flex-col  gap-8 pb-5">
                 <div class="flex flex-col  md:w-full w-1/2 flex-1 items-center justify-center space-y-5">
                 <Label>  左边界a </Label>
                 <div class="max-w-xl space-y-3">
@@ -212,7 +212,7 @@ $$
                 </div>
               </div>
             </div>
-            <div class="flex flex-col gap-4 pb-8">
+            <div class="flex flex-col gap-8 pb-5">
               <div class="flex flex-col  md:w-full w-1/2 flex-1 items-center justify-center space-y-5">
                 <Label> k </Label>
                 <div class="max-w-xl space-y-3">
