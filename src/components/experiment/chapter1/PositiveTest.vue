@@ -51,11 +51,11 @@ const markdownContent2 = ref(`
 
 const katexFormula = computed(() => `
   \\begin{aligned}
-      &检测结果为阳性时的患病概率p \\\\
+      &检测结果为阳性时的患病概率p \\\\ 
       &= \\frac{感染者中显示为阳性的人数}{实际上总的感染人数} \\\\
-      &= \\frac{感染者中显示为阳性的人数}{感染者中显示为阳性的人数 +检测结果为阴性的人中的感染人数} \\\\
+      &= \\frac{感染者中显示为阳性的人数}{感染者中显示为阳性的人数 +检测为阴性的人中的感染人数} \\\\
       &= \\frac{灵敏度 * 真阳性人数}{灵敏度 * 真阳性人数 +  (1 - 特异度) *未感染新冠的人数} \\\\
-      &= \\frac{\\frac{真实阳性}{真实阳性＋假阴性} * 真阳性人数}{\\frac{真实阳性}{真实阳性＋假阴性} * 真阳性人数 +  (1 - \\frac{真实阴性}{真实阴性+假阳性}) *未感染新冠的人数} \\\\
+      &= \\frac{\\frac{真实阳性}{真实阳性＋假阴性} * 真阳性人数}{\\frac{真阳性}{真阳性＋假阴性} * 真阳性人数 +  (1 - \\frac{真阴性}{真阴性+假阳性}) *未感染人数} \\\\
       &= \\frac{${sensitivity.value[0]} * ${infectionRate.value[0]}}{${sensitivity.value[0]} * ${infectionRate.value[0]} + (1 - ${infectionRate.value[0]}) * (1 - ${specificity.value[0]})} \\\\
       &= ${truePositiveRate.value.toFixed(3)}
   \\end{aligned}
@@ -296,14 +296,21 @@ $$
     </template>
 
     <template #parameter>
-      <div class="flex justify-center items-center min-h-0 min-w-0 p-3">
-        <div class="flex flex-col flex-1 space-y-6">
-          <div class="flex">
-            <!-- 输入框区域 -->
+      <div class="flex justify-center items-center min-h-0 ">
+        <div class="flex  flex-row flex-1 ">
+          <Card class="flex w-1/2 flex-col">
+        
+          <Card class = "flex flex-col space-y-5">
+            <!-- 输入框区域 -->    
+             <CardHeader class="p-4">
+              <CardTitle>
+                参数调整
+              </CardTitle>
+            </CardHeader>
             <div class="flex flex-col flex-1 space-y-4">
               <!-- 第一个输入框组 -->
               <div class="flex space-x-4 justify-center items-center">
-                <div class="flex flex-col flex-1 items-center space-y-3">
+                <div class="flex flex-col  space-x-5 flex-1 items-center space-y-3">
                   <div ref="mdContainer" class="markdown-body" v-html="renderedMarkdown" />
                   <Input v-model="specificity[0]" type="number" :min="2" />
                   <Slider v-model="specificity" :min="0.1" :max="1.0" :step="0.01" class="w-full" />
@@ -329,22 +336,31 @@ $$
                 </div>
               </div>
             </div>
-
+          </Card>
+          <Card class = "flex flex-col">
+            <CardHeader class="p-4">
+              <CardTitle>
+                计算公式
+              </CardTitle>
+            </CardHeader>
             <!-- KaTeX 输入的公式区域 -->
-            <div class="flex flex-col flex-1 items-center justify-center p-4">
-              <div ref="katexContainer" class="text-l" />
+            <div class="flex flex-col flex-1 items-center justify-center p-4 ">
+              <div ref="katexContainer" class="text-l" style="line-height: 2;"/>
+              
             </div>
-          </div>
+          </Card>
+        </Card>
+
 
           <!-- 图表区域 -->
-          <div class="flex justify-center items-center space-x-4">
+          <Card class="flex  w-1/2 flex-col justify-center items-center ">
             <div class="w-full max-w-4xl">
               <Chart type="line" :data="chartDataFalse" :options="chartOptions" />
             </div>
             <div class="w-full max-w-4xl">
               <Chart type="line" :data="chartDataTrue" :options="chartOptions" />
             </div>
-          </div>
+          </Card>
         </div>
       </div>
     </template>
