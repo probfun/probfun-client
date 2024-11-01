@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
 import { toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue';
@@ -29,6 +32,12 @@ function renderFormula() {
   }
 }
 
+const chartData = ref();
+const chartOptions = ref();
+
+const chartData2 = ref();
+const chartOptions2 = ref();
+
 onMounted(() => {
   chartData.value = setChartData();
   chartOptions.value = setChartOptions();
@@ -36,9 +45,6 @@ onMounted(() => {
   chartOptions2.value = setChartOptions2();
   renderFormula();
 });
-
-const chartData = ref();
-const chartOptions = ref();
 
 function setChartData() {
   const documentStyle = getComputedStyle(document.documentElement);
@@ -100,9 +106,6 @@ function setChartOptions() {
     },
   };
 }
-
-const chartData2 = ref();
-const chartOptions2 = ref();
 
 function setChartData2() {
   const documentStyle = getComputedStyle(document.documentElement);
@@ -181,10 +184,10 @@ watch([time], () => {
   renderFormula();
 });
 
-function toggleChart() {
-  exponential.value = !exponential.value;
-  poisson.value = !poisson.value;
-}
+// function toggleChart() {
+//   exponential.value = !exponential.value;
+//   poisson.value = !poisson.value;
+// }
 
 const content = `
 ## **泊松分布与指数分布的关系**
@@ -258,12 +261,14 @@ $$
 
 <template>
   <ExperimentBoard title="泊松分布与指数分布" :tags="[]">
-    <template #experiment class="flex w-full  flex-row">
-      <div class="w-1/2">
-        <Chart v-model="poisson" type="bar" :data="chartData2" :options="chartOptions2" class="h-full" />
-      </div>
-      <div class="w-1/2">
-        <Chart v-model="exponential" type="bar" :data="chartData" :options="chartOptions" class="h-full" />
+    <template #experiment>
+      <div class="w-full flex h-full gap-2 p-2">
+        <div class="w-1/2">
+          <Chart v-model="poisson" type="bar" :data="chartData2" :options="chartOptions2" class="h-full" />
+        </div>
+        <div class="w-1/2">
+          <Chart v-model="exponential" type="bar" :data="chartData" :options="chartOptions" class="h-full" />
+        </div>
       </div>
     </template>
 
@@ -334,7 +339,6 @@ $$
                 </div>
               </div>
             </div>
-
           </CardContent>
         </Card>
       </div>
