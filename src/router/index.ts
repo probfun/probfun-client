@@ -106,7 +106,7 @@ const router = createRouter({
         },
         {
           path: '/dashboard/info',
-          component: TeacherPanel,
+          component: StudentPanel,
         },
         {
           path: '/dashboard/ai',

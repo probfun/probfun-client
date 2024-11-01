@@ -94,7 +94,7 @@ $$
     <template #experiment>
       <BNDiagram :n="number[0]" :p="probability[0]"></BNDiagram>
     </template>
-    <template #parameter>
+    <!-- <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
         <div class="w-full flex items-center justify-center mb-5">
           <div class="text-xl">
@@ -121,7 +121,60 @@ $$
           <div ref="normalContainer" class="text-xl" />
         </div>
       </div>
+    </template> -->
+
+    <template #parameter>
+      <div class="w-full h-full flex flex-col items-center justify-center p-3 gap-3">
+      <Card  class = "w-full h-1/2 flex gap-3">
+        <Card class="w-1/2 space-y-5">
+          <CardHeader>
+            <CardTitle>二项分布公式</CardTitle>
+          </CardHeader>
+          <CardContent class="flex w-full justify-center ">
+            <div ref="binomialContainer" class="text-base" />
+          </CardContent>
+        </Card>
+        <Card class="w-1/2 gap-3 ">
+          <CardHeader>
+            <CardTitle>正态分布公式</CardTitle>
+          </CardHeader>
+          <CardContent class="flex w-full justify-center ">
+            <div ref="normalContainer" class="text-base" />
+          </CardContent>
+        </Card>
+      </Card>
+        <Card class="w-full  flex-1 flex flex-col">
+          <CardHeader>
+            <CardTitle>
+              参数调整
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="flex-1 flex flex-col justify-center ">
+            <div class="flex gap-4 pb-8">
+              <div class="flex flex-col flex-1 items-center justify-center space-y-2">
+                <Label> 实验次数n </Label>
+                <div class="max-w-xl space-y-3">
+                  <Input v-model.number="number[0]" />
+                  <Slider v-model="number" :min="20" :max="50" :step="1" class="w-48" />
+                </div>
+              </div>
+              <div class="flex flex-col flex-1 items-center justify-center space-y-2">
+                <Label> 成功概率 p </Label>
+                <div class="max-w-xl space-y-3">
+                  <Input v-model.number="probability[0]" :min-fraction-digits="2" />
+                  <Slider v-model="probability" :min="0" :max="1" :step="0.01" class="w-48" />
+                </div>
+              </div>
+
+          </div>
+
+          </CardContent>
+        </Card>
+      </div>
     </template>
+
+
+
     <template #conclusion>
       <div class="w-full h-full p-5">
         <div class="prose-sm max-w-none" v-html="toMarkdown(content)" />

@@ -155,7 +155,7 @@ $$
     <template #experiment>
       <PNDiagram :lambda="lambda[0]"></PNDiagram>
     </template>
-    <template #parameter>
+    <!-- <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
         <div class="w-full flex items-center justify-center mb-5">
           <div class="text-xl">
@@ -176,6 +176,49 @@ $$
             <Slider v-model="lambda" :min="30" :max="100" :step="1" class="w-48" />
           </div>
         </div>
+      </div>
+    </template> -->
+   
+    <template #parameter>
+      <div class="w-full h-full flex flex-col items-center justify-center p-3 gap-3">
+      <Card  class = "w-full h-1/2 flex gap-3">
+        <Card class="w-1/2 gap-3 ">
+          <CardHeader>
+            <CardTitle>泊松分布公式</CardTitle>
+          </CardHeader>
+          <CardContent class="flex w-full justify-center ">
+            <div ref="poissonContainer" class="text-base" />
+          </CardContent>
+        </Card>
+        <Card class="w-1/2 gap-3 ">
+          <CardHeader>
+            <CardTitle>正态分布公式</CardTitle>
+          </CardHeader>
+          <CardContent class="flex w-full justify-center ">
+            <div ref="normalContainer" class="text-base" />
+          </CardContent>
+        </Card>
+      </Card>
+        <Card class="w-full  flex-1 flex flex-col">
+          <CardHeader>
+            <CardTitle>
+              参数调整
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="flex-1 flex flex-col justify-center ">
+            <div class="flex gap-4 pb-8">
+              <div class="flex flex-col flex-1 items-center justify-center space-y-2">
+                <Label> λ </Label>
+                <div class="max-w-xl space-y-3">
+                  <Input v-model.number="lambda[0]" />
+                  <Slider v-model="lambda" :min="30" :max="100" :step="1" class="w-48" />
+                </div>
+              </div>
+
+          </div>
+
+          </CardContent>
+        </Card>
       </div>
     </template>
     <template #conclusion>
