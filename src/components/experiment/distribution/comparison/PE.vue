@@ -258,11 +258,16 @@ $$
 
 <template>
   <ExperimentBoard title="泊松分布与指数分布" :tags="[]">
-    <template #experiment>
-      <Chart v-if="exponential" type="bar" :data="chartData" :options="chartOptions" class="h-full w-full" />
-      <Chart v-if="poisson" type="bar" :data="chartData2" :options="chartOptions2" class="h-full w-full" />
+    <template #experiment class="flex w-full  flex-row">
+      <div class="w-1/2">
+        <Chart v-model="poisson" type="bar" :data="chartData2" :options="chartOptions2" class="h-full" />
+      </div>
+      <div class="w-1/2">
+        <Chart v-model="exponential" type="bar" :data="chartData" :options="chartOptions" class="h-full" />
+      </div>
     </template>
-    <template #parameter>
+
+    <!-- <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
         <div class="flex w-full mb-5">
           <div class="flex flex-col flex-1 items-center justify-center space-y-5">
@@ -285,14 +290,63 @@ $$
           平均每小时到达{{ lambda }}辆车
         </div>
       </div>
+    </template> -->
+
+    <template #parameter>
+      <div class="w-full h-full flex flex-col items-center justify-center p-3 gap-3">
+        <Card class="w-full h-1/2 flex gap-3">
+          <Card class="w-1/2 gap-3 ">
+            <CardHeader>
+              <CardTitle>泊松分布</CardTitle>
+            </CardHeader>
+            <CardContent class="flex w-full items-center justify-center flex-col gap-5">
+              <div ref="poissonContainer" class="text-base" />
+              <div v-if="exponential">
+                平均等车时间{{ time[0] }}分钟
+              </div>
+            </CardContent>
+          </Card>
+          <Card class="w-1/2 gap-3 ">
+            <CardHeader>
+              <CardTitle>指数分布</CardTitle>
+            </CardHeader>
+            <CardContent class="flex w-full items-center justify-center flex-col gap-5">
+              <div ref="exponentialContainer" class="text-base" />
+              <div>
+                平均每小时到达{{ lambda }}辆车
+              </div>
+            </CardContent>
+          </Card>
+        </Card>
+        <Card class="w-full  flex-1 flex flex-col">
+          <CardHeader>
+            <CardTitle>
+              参数调整
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="flex-1 flex flex-col justify-center ">
+            <div class="flex gap-4 pb-8">
+              <div class="flex flex-col flex-1 items-center justify-center space-y-2">
+                <Label> 公交车的发车间隔（min） </Label>
+                <div class="max-w-xl space-y-3">
+                  <Input v-model.number="time[0]" :min-fraction-digits="1" />
+                  <Slider v-model="time" :min="5" :max="30" :step="5" class="w-48" />
+                </div>
+              </div>
+            </div>
+
+          </CardContent>
+        </Card>
+      </div>
     </template>
+
     <template #conclusion>
       <div class="w-full h-full p-5">
         <div class="prose-sm max-w-none" v-html="toMarkdown(content)" />
       </div>
     </template>
     <template #comment>
-      <CommentPanel exp-id="PE"/>
+      <CommentPanel exp-id="PE" />
     </template>
   </ExperimentBoard>
 </template>
