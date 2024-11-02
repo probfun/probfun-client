@@ -194,8 +194,8 @@ $$
               参数调整
             </CardTitle>
           </CardHeader>
-          <CardContent class="flex-1 flex flex-col items-center justify-center gap-5">
-            <div class="flex flex-wrap gap-10 ">
+          <CardContent class="flex flex-col items-center justify-center gap-5">
+            <div class="grid grid-cols-2 gap-10 ">
               <div class="flex flex-col  gap-8 pb-5">
                 <div class="flex flex-col  md:w-full w-1/2 flex-1 items-center justify-center space-y-5">
                 <Label>  左边界a </Label>

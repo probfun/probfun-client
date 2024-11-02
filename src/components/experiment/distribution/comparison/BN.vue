@@ -155,7 +155,7 @@ $$
                 <Label> 实验次数n </Label>
                 <div class="max-w-xl space-y-3">
                   <Input v-model.number="number[0]" />
-                  <Slider v-model="number" :min="20" :max="50" :step="1" class="w-48" />
+                  <Slider v-model="number" :min="20" :max="100" :step="1" class="w-48" />
                 </div>
               </div>
               <div class="flex flex-col flex-1 items-center justify-center space-y-2">

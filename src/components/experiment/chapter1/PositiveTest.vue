@@ -296,20 +296,20 @@ $$
     </template>
 
     <template #parameter>
-      <div class="flex justify-center items-center min-h-0 ">
-        <div class="flex  flex-row flex-1 ">
-          <Card class="flex w-1/2 flex-col">
+      <div class="p-2  w-full h-full gap-4">
+        <div class="grid grid-cols-2 gap-2 ">
+          <Card class="flex flex-1 flex-col space-y-5">
         
-          <Card class = "flex flex-col space-y-5">
+          <Card class = "flex flex-col p-5">
             <!-- 输入框区域 -->    
              <CardHeader class="p-4">
               <CardTitle>
                 参数调整
               </CardTitle>
             </CardHeader>
-            <div class="flex flex-col flex-1 space-y-4">
+            <div class="flex flex-col flex-1 space-y-8">
               <!-- 第一个输入框组 -->
-              <div class="flex space-x-4 justify-center items-center">
+              <div class="flex space-x-10 justify-center items-center">
                 <div class="flex flex-col  space-x-5 flex-1 items-center space-y-3">
                   <div ref="mdContainer" class="markdown-body" v-html="renderedMarkdown" />
                   <Input v-model="specificity[0]" type="number" :min="2" />
@@ -323,7 +323,7 @@ $$
               </div>
 
               <!-- 第二个输入框组 -->
-              <div class="flex space-x-4 justify-center items-center">
+              <div class="flex space-x-10 justify-center items-center">
                 <div class="flex flex-col flex-1 items-center space-y-3">
                   <div ref="mdContainer1" class="markdown-body" v-html="renderedMarkdown" />
                   <Input v-model="infectionRate[0]" type="number" :min="2" />
@@ -344,26 +344,39 @@ $$
               </CardTitle>
             </CardHeader>
             <!-- KaTeX 输入的公式区域 -->
-            <div class="flex flex-col flex-1 items-center justify-center p-4 ">
-              <div ref="katexContainer" class="text-l" style="line-height: 2;"/>
+            <div class="flex flex-col flex-1 items-center justify-center p-4  custom-font">
+              <div ref="katexContainer" class="text-l custom-font" style="line-height: 2;"/>
               
             </div>
           </Card>
         </Card>
 
+        <Card class="h-full flex flex-col">
+          <CardHeader class="p-4">
+            <CardTitle>
+              实验结果
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="flex flex-1 flex-col  items-center justify-center">
+            <Chart type="line" :data="chartDataFalse" :options="chartOptions" class="flex-1 w-full" />
+            <Chart type="line" :data="chartDataTrue" :options="chartOptions" class="flex-1 w-full" />
 
+          </CardContent>
+        </Card>
           <!-- 图表区域 -->
-          <Card class="flex  w-1/2 flex-col justify-center items-center ">
+          <!-- <Card class="flex  w-1/2 flex-col justify-center items-center ">
             <div class="w-full max-w-4xl">
               <Chart type="line" :data="chartDataFalse" :options="chartOptions" />
             </div>
             <div class="w-full max-w-4xl">
               <Chart type="line" :data="chartDataTrue" :options="chartOptions" />
             </div>
-          </Card>
+          </Card> -->
         </div>
       </div>
     </template>
+
+
     <template #conclusion>
       <div class="w-full h-full p-5">
         <div class="prose-sm max-w-none" v-html="toMarkdown(content)" />
@@ -387,4 +400,10 @@ $$
   @apply p-4 rounded shadow;
   /* Tailwind CSS 样式 */
 }
+
+.custom-font {
+  font-family: '你的字体名称', SimHei; /* 替换为你想要的字体 */
+  font-size: 16px; /* 可以根据需要调整 */
+}
+
 </style>
