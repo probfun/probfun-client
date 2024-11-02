@@ -298,7 +298,7 @@ $$
     <template #parameter>
       <div class="p-2  w-full h-full gap-4">
         <div class="grid grid-cols-2 gap-2 ">
-          <Card class="flex flex-1 flex-col space-y-5">
+          <div class="flex flex-1 flex-col space-y-5">
         
           <Card class = "flex flex-col p-5">
             <!-- 输入框区域 -->    
@@ -349,7 +349,7 @@ $$
               
             </div>
           </Card>
-        </Card>
+        </div>
 
         <Card class="h-full flex flex-col">
           <CardHeader class="p-4">
@@ -374,6 +374,7 @@ $$
           </Card> -->
         </div>
       </div>
+
     </template>
 
 
