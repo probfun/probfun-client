@@ -18,9 +18,10 @@ import Column from 'primevue/column';
 import ColumnGroup from 'primevue/columngroup';   // optional
 import Row from 'primevue/row';                   // optional
 import { useUserStore } from '@/store'
+import { postPostApi } from '@/api/message/messageApi';
+import { useToast } from 'primevue/usetoast';
 
 const userStore = useUserStore();
-const inputValue = ref(``);
 const placeholderText = '请输入公告内容...'
 const defaultValue = 'item-1'
 const accordionItems = [
@@ -51,7 +52,7 @@ const products = ref([
         comment: '非常好。'
     },
 ]);
-const selectedClass = ref();
+const selectedClass = ref([]);
 const classes = ref([
     { name: '2023215101' },
     { name: '2023215102' },
@@ -121,8 +122,34 @@ const star = ref([
         times: 5
     }
 ])
+
+const toast = useToast();
+const title = ref('');
+const content = ref('');
+
 const cancel = () => {
 
+}
+
+async function sendPost() {
+    if (content.value === '') {
+        toast.add({ severity: 'warn', summary: '提示', detail: '班级公告不能为空', life: 3000 });
+        return;
+    }
+    if (selectedClass.value.length === 0) { // 检查是否选择了班级
+        toast.add({ severity: 'warn', summary: '提示', detail: '请选择班级', life: 3000 });
+        return;
+    }
+    title.value = selectedClass.value.join(', ');
+    try {
+        await postPostApi(title.value, content.value);
+        toast.add({ severity: 'success', summary: '成功', detail: '发布班级公告成功！', life: 3000 });
+        content.value = '';
+    }
+    catch (error) {
+        console.error(error);
+        toast.add({ severity: 'error', summary: '错误', detail: error, life: 3000 });
+    }
 }
 </script>
 
@@ -154,11 +181,11 @@ const cancel = () => {
                         <div class="flex flex-wrap items-center justify-between gap-4">
                             <div class="flex items-center gap-2"></div>
                             <span class="text-surface-500 dark:text-surface-400">
-                                <Button>发布公告</Button>
+                                <Button @click="sendPost()">发布公告</Button>
                             </span>
                         </div>
                     </template>
-                    <Textarea v-model="inputValue" rows="8" cols="1000" style="resize: none" class="w-full"
+                    <Textarea v-model="content" rows="8" cols="1000" style="resize: none" class="w-full"
                         :placeholder="placeholderText" />
                 </Panel>
             </div>
@@ -173,7 +200,7 @@ const cancel = () => {
                 </Accordion>
             </Panel>
         </div>
-        <Separator orientation="vertical"/>
+        <Separator orientation="vertical" />
         <div class="flex flex-col flex-1 w-1/2 p-3">
             <div style="display: flex; justify-content: space-between;" class="mb-3 ml-auto">
                 <Select v-model="selectedTime" :options="time" optionLabel="name" placeholder="请选择时间范围"
