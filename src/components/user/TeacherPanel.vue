@@ -24,9 +24,9 @@ const inputValue = ref(``);
 const placeholderText = '请输入公告内容...'
 const defaultValue = 'item-1'
 const accordionItems = [
-    { value: 'item-1', title: '10月10日班级公告', content: '用了三个组件库思密达，非常的混乱思密达' },
-    { value: 'item-2', title: '10月8日班级公告', content: '马上就会成为超级大牛马' },
-    { value: 'item-3', title: '10月6日班级公告', content: '真是令人激动捏' },
+    { value: 'item-1', title: '10月10日班级公告', content: 'bjgg' },
+    { value: 'item-2', title: '10月8日班级公告', content: 'bjgg' },
+    { value: 'item-3', title: '10月6日班级公告', content: 'bjgg' },
 ]
 const products = ref([
     {
@@ -175,7 +175,7 @@ const cancel = () => {
         </div>
         <Separator orientation="vertical"/>
         <div class="flex flex-col flex-1 w-1/2 p-3">
-            <div style="display: flex; justify-content: space-between;" class="mb-3">
+            <div style="display: flex; justify-content: space-between;" class="mb-3 ml-auto">
                 <Select v-model="selectedTime" :options="time" optionLabel="name" placeholder="请选择时间范围"
                     class="w-full md:w-56" />
             </div>
@@ -195,13 +195,13 @@ const cancel = () => {
             </Panel>
             <div class="h-2/3">
                 <div class="flex my-2">
-                    <Panel header="各实验点击次数排行榜" class="mr-4">
+                    <Panel header="各实验点击次数排行榜">
                         <DataTable :value="click" scrollable scrollHeight="160px" tableStyle="min-width: 17rem">
                             <Column field="expName" header="实验名称" sortable style="width: 25%"></Column>
                             <Column field="times" header="点击次数" sortable style="width: 25%"></Column>
                         </DataTable>
                     </Panel>
-                    <Panel header="各实验浏览时长排行榜">
+                    <Panel header="各实验浏览时长排行榜" class="ml-auto">
                         <DataTable :value="browse" scrollable scrollHeight="160px" tableStyle="min-width: 17rem">
                             <Column field="expName" header="实验名称" sortable style="width: 25%"></Column>
                             <Column field="time" header="浏览时长" sortable style="width: 25%"></Column>
@@ -209,13 +209,13 @@ const cancel = () => {
                     </Panel>
                 </div>
                 <div class="flex">
-                    <Panel header="各实验评论次数排行榜" class="mr-4">
+                    <Panel header="各实验评论次数排行榜">
                         <DataTable :value="comment" scrollable scrollHeight="160px" tableStyle="min-width: 17rem">
                             <Column field="expName" header="实验名称" sortable style="width: 25%"></Column>
                             <Column field="times" header="评论次数" sortable style="width: 25%"></Column>
                         </DataTable>
                     </Panel>
-                    <Panel header="各实验收藏次数排行榜" class="">
+                    <Panel header="各实验收藏次数排行榜" class="ml-auto">
                         <DataTable :value="star" scrollable scrollHeight="160px" tableStyle="min-width: 17rem">
                             <Column field="expName" header="实验名称" sortable style="width: 25%"></Column>
                             <Column field="times" header="收藏次数" sortable style="width: 25%"></Column>
