@@ -32,6 +32,9 @@ import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import 'primeicons/primeicons.css'
 
+import { fetchMessagesApi, readMessagesApi } from '@/api/message/messageApi';
+import { Message } from '@/api/message/messageType';
+
 const userStore = useUserStore();
 const toast = useToast();
 
@@ -191,6 +194,33 @@ watch(() => route.path, () => {
 onMounted(() => {
   updateExperiment();
 });
+
+const messageList = ref<Message[] | null>(null);
+const messageNumber = ref(0);
+
+async function getMessage() {
+  try {
+    const result = await fetchMessagesApi();
+    console.log(result);
+  }
+  catch (error) {
+    console.error('Error during fetching messages:', error);
+  }
+}
+
+onMounted(() => {
+  getMessage();
+})
+
+async function readMessage() {
+  try {
+    await readMessagesApi();
+    messageNumber.value = 0;
+  }
+  catch (error) {
+    console.error('Error during read messages: ', error);
+  }
+}
 </script>
 
 <template>
@@ -209,18 +239,25 @@ onMounted(() => {
       <div class="relative flex items-center justify-items-center ml-auto mr-2 hover:scale-110 top-[3px]">
         <HoverCard>
           <HoverCardTrigger>
-            <OverlayBadge value="2" size="small" severity="danger">
+            <OverlayBadge v-if="messageNumber > 0" :value="messageNumber" size="small" severity="danger">
               <i class="pi pi-bell" style="font-size: 1.5rem" />
             </OverlayBadge>
+            <i v-if="messageNumber === 0" class="pi pi-bell" style="font-size: 1.5rem" />
           </HoverCardTrigger>
-          <HoverCardContent>
-            消息消息消息消息消息
+          <HoverCardContent class="flex flex-col">
+            <div class="flex ml-auto">
+              <button class="flex text-blue-600" @click="readMessage()">全部已读</button>
+            </div>
+            <div class="flex flex-col">
+              <span>为什么一直没有消息</span>
+              <span>我要晕倒了</span>
+            </div>
           </HoverCardContent>
         </HoverCard>
       </div>
 
       <Label class="text-base font-bold hover:underline underline-offset-4"> {{ userStore.user?.nickname ?? 'unknown'
-      }}</Label>
+        }}</Label>
       <Button variant="ghost" size="icon" class="rounded-full" @click="isOpen = true">
         <img :src="userStore.user?.avatarUrl" class="w-8 rounded-full" alt="">
       </Button>
@@ -253,10 +290,8 @@ onMounted(() => {
                 <FormItem>
                   <FormLabel>昵称</FormLabel>
                   <FormControl>
-                    <Input
-                      v-bind="componentField" v-model="tempUser.nickname" type="text" placeholder=""
-                      class="transition-all"
-                    />
+                    <Input v-bind="componentField" v-model="tempUser.nickname" type="text" placeholder=""
+                      class="transition-all" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -294,10 +329,8 @@ onMounted(() => {
               <FormItem>
                 <FormLabel>学院</FormLabel>
                 <FormControl>
-                  <Input
-                    v-bind="componentField" v-model="tempUser.school" type="text" placeholder=""
-                    class="transition-all"
-                  />
+                  <Input v-bind="componentField" v-model="tempUser.school" type="text" placeholder=""
+                    class="transition-all" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -307,10 +340,8 @@ onMounted(() => {
               <FormItem>
                 <FormLabel>专业</FormLabel>
                 <FormControl>
-                  <Input
-                    v-bind="componentField" v-model="tempUser.major" type="text" placeholder=""
-                    class="transition-all"
-                  />
+                  <Input v-bind="componentField" v-model="tempUser.major" type="text" placeholder=""
+                    class="transition-all" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -320,10 +351,8 @@ onMounted(() => {
               <FormItem>
                 <FormLabel>邮箱</FormLabel>
                 <FormControl>
-                  <Input
-                    v-bind="componentField" v-model="tempUser.email" type="email" placeholder=""
-                    class="transition-all"
-                  />
+                  <Input v-bind="componentField" v-model="tempUser.email" type="email" placeholder=""
+                    class="transition-all" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -333,10 +362,8 @@ onMounted(() => {
               <FormItem>
                 <FormLabel>手机号</FormLabel>
                 <FormControl>
-                  <Input
-                    v-bind="componentField" v-model="tempUser.phone" type="text" placeholder=""
-                    class="transition-all"
-                  />
+                  <Input v-bind="componentField" v-model="tempUser.phone" type="text" placeholder=""
+                    class="transition-all" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -348,11 +375,9 @@ onMounted(() => {
             <div class="flex justify-center items-start">
               <Avatar class="size-32 relative">
                 <AvatarImage :src="tempUser.avatarUrl" alt="avatar" />
-                <Button
-                  variant="ghost"
+                <Button variant="ghost"
                   class="absolute top-0 left-0 size-32 rounded-full opacity-0 transition-all hover:opacity-100 hover:bg-opacity-30 hover:bg-black"
-                  @click="triggerFileUpload"
-                >
+                  @click="triggerFileUpload">
                   <div class="flex flex-col items-center text-background">
                     <Plus class="size-6" />
                     <div class="font-semibold">

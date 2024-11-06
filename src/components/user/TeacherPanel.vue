@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button'
 import {
@@ -18,7 +18,8 @@ import Column from 'primevue/column';
 import ColumnGroup from 'primevue/columngroup';   // optional
 import Row from 'primevue/row';                   // optional
 import { useUserStore } from '@/store'
-import { postPostApi } from '@/api/message/messageApi';
+import { fetchMessagesApi, postPostApi } from '@/api/message/messageApi';
+import { Message } from '@/api/message/messageType';
 import { useToast } from 'primevue/usetoast';
 
 const userStore = useUserStore();
@@ -126,10 +127,24 @@ const star = ref([
 const toast = useToast();
 const title = ref('');
 const content = ref('');
+const messageList = ref<Message[] | null>(null);
 
 const cancel = () => {
 
 }
+
+async function getMessage() {
+    try {
+        const result = await fetchMessagesApi();
+        messageList.value = result.messages;
+    }
+    catch (error) {
+        console.error('Error during fetching messages:', error);
+    }
+}
+onMounted(() => {
+    getMessage();
+})
 
 async function sendPost() {
     if (content.value === '') {
@@ -143,6 +158,7 @@ async function sendPost() {
     title.value = selectedClass.value.join(', ');
     try {
         await postPostApi(title.value, content.value);
+        await getMessage();
         toast.add({ severity: 'success', summary: '成功', detail: '发布班级公告成功！', life: 3000 });
         content.value = '';
     }
