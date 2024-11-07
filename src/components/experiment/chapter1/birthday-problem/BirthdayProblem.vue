@@ -321,7 +321,7 @@ const chartOptions = ref({
     x: {
       title: {
         display: true, // 显示横坐标标签
-        text: '人数', // 横坐标标签名称
+        text: '人数n', // 横坐标标签名称
         color: textColorSecondary,
       },
       ticks: {
@@ -495,27 +495,27 @@ watch(bornProb, () => {
             </CardTitle>
           </CardHeader>
           <CardContent class="p-4 flex flex-col gap-8 justify-center items-center flex-1">
-            <div class="w-full flex flex-col items-center justify-center gap-2">
+            <div class="w-full flex flex-col items-center justify-center gap-4">
               <div class="flex flex-col w-full gap-2">
-                <Label for="people" class="flex-shrink-0 font-bold text-left">人数：</Label>
+                <Label for="people" class="flex-shrink-0 font-bold text-left">人数 N：</Label>
                 <Input
                   id="people" v-model.number="peopleCount" type="number" :min="1" :max="100"
                   :disabled="isSimulating"
                 />
               </div>
-              <div class="flex w-full gap-4">
-                <Button class="w-20" :disabled="isSimulating" @click="generatePeople(peopleCount)">
+              <div class="flex w-full gap-4 items-center justify-center">
+                <Button class="w-1/3 items-center justify-center " :disabled="isSimulating" @click="generatePeople(peopleCount)">
                   生成
                 </Button>
                 <Dialog>
-                  <DialogTrigger>
+                  <DialogTrigger class = "w-fu">
                     <Button :disabled="isSimulating" class="flex-1 max-w-full" @click="visible = !visible">
                       设置出生概率
                     </Button>
                   </DialogTrigger>
                   <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>设置出生概率</DialogTitle>
+                    <DialogHeader >
+                      <DialogTitle class = "w-1/2  w-full items-center justify-center">设置出生概率</DialogTitle>
                       <DialogDescription>
                         默认每个月的出生概率相等，你可以对其进行修改。
                       </DialogDescription>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
+import PoissonDiagram from './PoissonDiagram.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label'
@@ -27,137 +28,24 @@ function factorial(n: number) {
   }
   return result;
 }
-const chartDataO = ref();
-const chartOptions = ref();
-function setChartData() {
-  const documentStyle = getComputedStyle(document.documentElement);
-
-  // 计算泊松分布的数据
-  const labels = [];
-  const data = [];
-  const maxK = Math.ceil(4 * lambda.value[0]); // 根据 λ 设置 k 的最大值
-  for (let k = 0; k <= maxK; k++) {
-    const probabilityOfK = (lambda.value[0] ** k * Math.exp(-lambda.value[0])) / factorial(k);
-    labels.push(k);
-    data.push(probabilityOfK);
-  }
-
-  return {
-    labels,
-    datasets: [
-      {
-        label: 'Poisson Distribution',
-        backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
-        borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-        data,
-      },
-    ],
-  };
-}
-const chartData = ref<{
-  labels: number[]
-  datasets: {
-    label: string
-    backgroundColor: string
-    borderColor: string
-    data: number[]
-    fill: boolean
-  }[]
-}>({
-  labels: [],
-  datasets: [],
-});
-function addNewDataset() {
-  if (!save.value) {
-    return;
-  }
-
-  const documentStyle = getComputedStyle(document.documentElement);
-  const labels = Array.from({ length: 40 }, (_, i) => i + 1);
-  const data = [];
-
-  const maxK = Math.ceil(4 * lambda.value[0]); // 根据 λ 设置 k 的最大值
-  for (let k = 0; k <= maxK; k++) {
-    const probabilityOfK = (lambda.value[0] ** k * Math.exp(-lambda.value[0])) / factorial(k);
-    data.push(probabilityOfK);
-  }
-
-  // 检查是否已经存在相同的 dataset
-  const existingDataset = chartData.value.datasets.find(
-    dataset => dataset.label === `lambda=${lambda.value[0]}`,
-  );
-
-  // 如果已经存在相同的 dataset，不添加
-  if (existingDataset) {
-    return;
-  }
-
-  // 更新 chartData，添加新的 dataset
-  chartData.value.labels = labels;
-  chartData.value.datasets.push({
-    label: `lambda=${lambda.value[0]}`,
-    backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
-    borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-    data,
-    fill: false,
-  });
-}
-function setChartOptions() {
-  const documentStyle = getComputedStyle(document.documentElement);
-  const textColor = documentStyle.getPropertyValue('--p-text-color');
-  const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
-  const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
-
-  return {
-    maintainAspectRatio: false,
-    aspectRatio: 0.8,
-    plugins: {
-      legend: {
-        labels: {
-          color: textColor,
-        },
-      },
-    },
-    scales: {
-      x: {
-        ticks: {
-          color: textColorSecondary,
-          font: {
-            weight: 500,
-          },
-        },
-        grid: {
-          display: false,
-          drawBorder: false,
-        },
-        min: 0,
-        max: 40,
-      },
-      y: {
-        ticks: {
-          color: textColorSecondary,
-        },
-        grid: {
-          color: surfaceBorder,
-          drawBorder: false,
-        },
-      },
-    },
-  };
-}
 
 function back() {
   save.value = false;
-  chartData.value.labels = [];
-  chartData.value.datasets = [];
 }
 
 const result = computed(() => {
   const probabilityOfK = (lambda.value[0] ** an.value[0] * Math.exp(-lambda.value[0])) / factorial(an.value[0]);
-  return probabilityOfK;
+
+  // 计算尾数和指数
+  const absValue = Math.abs(probabilityOfK);
+  const exponent = Math.floor(Math.log10(absValue)); // 获取指数
+  const mantissa = (probabilityOfK / Math.pow(10, exponent)).toFixed(3); // 计算尾数并保留5位小数
+
+  const formattedResult = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
+  return formattedResult;
 });
 
-const latexFormula = computed(() => `P(X = ${an.value}) =\\frac{{λ}^ke^{-λ}}{k!}= \\frac{${lambda.value}^${an.value} e^{-${lambda.value}}}{${an.value}!} = ${result.value.toFixed(3)}`);
+const latexFormula = computed(() => `P(X = ${an.value}) =\\frac{{λ}^ke^{-λ}}{k!}= \\frac{${lambda.value}^${an.value} e^{-${lambda.value}}}{${an.value}!} = ${result.value}`);
 const katexContainer = ref<HTMLElement | null>(null);
 function renderFormula() {
   if (katexContainer.value) {
@@ -168,16 +56,11 @@ function renderFormula() {
 }
 
 onMounted(() => {
-  chartDataO.value = setChartData();
-  chartOptions.value = setChartOptions();
   renderFormula();
 });
 
 // 监听 lambda 的变化以动态更新图像
 watch(lambda, () => {
-  chartDataO.value = setChartData();
-  addNewDataset();
-  chartOptions.value = setChartOptions(); // 确保 chartOptions 也更新
   renderFormula();
 });
 
@@ -217,10 +100,9 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard title="二项分布" :tags="[]">
+  <ExperimentBoard>
     <template #experiment>
-      <Chart v-if="!save" type="line" :data="chartDataO" :options="chartOptions" class="h-full w-full" />
-      <Chart v-if="save" type="line" :data="chartData" :options="chartOptions" class="h-full w-full" />
+      <PoissonDiagram :lambda="lambda[0]" :save="save"></PoissonDiagram>
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center p-3 gap-3">
@@ -241,14 +123,14 @@ $$
           <CardContent class="flex-1 flex flex-col justify-center gap-5">
             <div class="flex gap-4 pb-8">
               <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                <Label> 均值 (λ) </Label>
+                <Label> 均值 λ </Label>
                 <div class="max-w-xl space-y-3">
                   <Input v-model="lambda[0]" :min-fraction-digits="1" />
-                  <Slider v-model="lambda" :min="0" :max="20" :step="0.1" />
+                  <Slider v-model="lambda" :min="0" :max="30" :step="0.1" />
                 </div>
               </div>
               <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                <Label> 实际数字 (k) </Label>
+                <Label> 事件发生的实际次数 k </Label>
                 <div class="max-w-xl space-y-3">
                   <Input v-model="an[0]" :min-fraction-digits="1" />
                   <Slider v-model="an" :min="0" :max="4 * lambda[0]" :step="1" />
@@ -257,17 +139,15 @@ $$
             </div>
 
             <div class="flex gap-2 items-center justify-center">
-              <Checkbox
-                id="terms" @update:checked="(checked: boolean) => {
-                  if (checked) {
-                    saveImg();
-                  }
-                  else {
-                    back();
-                  }
-                  console.log(checked)
-                }"
-              />
+              <Checkbox id="terms" @update:checked="(checked: boolean) => {
+                if (checked) {
+                  saveImg();
+                }
+                else {
+                  back();
+                }
+                console.log(checked)
+              }" />
               <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
             </div>
           </CardContent>

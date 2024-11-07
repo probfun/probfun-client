@@ -17,14 +17,31 @@ import {
 } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { useUserStore } from '@/store';
+import { fetchMessagesApi } from '@/api/message/messageApi';
+import { Message } from '@/api/message/messageType';
+import { onMounted, ref } from 'vue';
 
 const userStore = useUserStore();
 const defaultValue = 'item-1'
 const accordionItems = [
-    { value: 'item-1', title: '10月10日班级公告', content: '用了三个组件库思密达，非常的混乱思密达' },
-    { value: 'item-2', title: '10月8日班级公告', content: '马上就会成为超级大牛马' },
-    { value: 'item-3', title: '10月6日班级公告', content: '真是令人激动捏' },
+    { value: 'item-1', title: '10月10日班级公告', content: 'bjgg' },
+    { value: 'item-2', title: '10月8日班级公告', content: 'bjgg' },
+    { value: 'item-3', title: '10月6日班级公告', content: 'bjgg' },
 ]
+const messageList = ref<Message[] | null>(null);
+
+async function getMessage() {
+    try {
+        const result = await fetchMessagesApi();
+        messageList.value = result.messages;
+    }
+    catch (error) {
+        console.error('Error during fetching messages:', error);
+    }
+}
+onMounted(() => {
+    getMessage();
+})
 </script>
 
 <template>

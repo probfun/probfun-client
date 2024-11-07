@@ -13,6 +13,8 @@ import UniformDistribution from '@/components/experiment/distribution/UniformDis
 import HomePage from '@/components/home/HomePage.vue';
 import StarPanel from '@/components/star/StarPanel.vue';
 import TeacherPanel from '@/components/user/TeacherPanel.vue';
+import StudentPanel from '@/components/user/StudentPanel.vue';
+
 import AuthPage from '@/pages/AuthPage.vue';
 import DashBoard from '@/pages/DashBoard.vue';
 import { createRouter, createWebHistory } from 'vue-router';

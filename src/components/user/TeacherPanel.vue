@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button'
 import {
@@ -18,15 +18,17 @@ import Column from 'primevue/column';
 import ColumnGroup from 'primevue/columngroup';   // optional
 import Row from 'primevue/row';                   // optional
 import { useUserStore } from '@/store'
+import { fetchMessagesApi, postPostApi } from '@/api/message/messageApi';
+import { Message } from '@/api/message/messageType';
+import { useToast } from 'primevue/usetoast';
 
 const userStore = useUserStore();
-const inputValue = ref(``);
 const placeholderText = '请输入公告内容...'
 const defaultValue = 'item-1'
 const accordionItems = [
-    { value: 'item-1', title: '10月10日班级公告', content: '用了三个组件库思密达，非常的混乱思密达' },
-    { value: 'item-2', title: '10月8日班级公告', content: '马上就会成为超级大牛马' },
-    { value: 'item-3', title: '10月6日班级公告', content: '真是令人激动捏' },
+    { value: 'item-1', title: '10月10日班级公告', content: 'bjgg' },
+    { value: 'item-2', title: '10月8日班级公告', content: 'bjgg' },
+    { value: 'item-3', title: '10月6日班级公告', content: 'bjgg' },
 ]
 const products = ref([
     {
@@ -51,7 +53,7 @@ const products = ref([
         comment: '非常好。'
     },
 ]);
-const selectedClass = ref();
+const selectedClass = ref([]);
 const classes = ref([
     { name: '2023215101' },
     { name: '2023215102' },
@@ -121,8 +123,49 @@ const star = ref([
         times: 5
     }
 ])
+
+const toast = useToast();
+const title = ref('');
+const content = ref('');
+const messageList = ref<Message[] | null>(null);
+
 const cancel = () => {
 
+}
+
+async function getMessage() {
+    try {
+        const result = await fetchMessagesApi();
+        messageList.value = result.messages;
+    }
+    catch (error) {
+        console.error('Error during fetching messages:', error);
+    }
+}
+onMounted(() => {
+    getMessage();
+})
+
+async function sendPost() {
+    if (content.value === '') {
+        toast.add({ severity: 'warn', summary: '提示', detail: '班级公告不能为空', life: 3000 });
+        return;
+    }
+    if (selectedClass.value.length === 0) { // 检查是否选择了班级
+        toast.add({ severity: 'warn', summary: '提示', detail: '请选择班级', life: 3000 });
+        return;
+    }
+    title.value = selectedClass.value.join(', ');
+    try {
+        await postPostApi(title.value, content.value);
+        await getMessage();
+        toast.add({ severity: 'success', summary: '成功', detail: '发布班级公告成功！', life: 3000 });
+        content.value = '';
+    }
+    catch (error) {
+        console.error(error);
+        toast.add({ severity: 'error', summary: '错误', detail: error, life: 3000 });
+    }
 }
 </script>
 
@@ -154,11 +197,11 @@ const cancel = () => {
                         <div class="flex flex-wrap items-center justify-between gap-4">
                             <div class="flex items-center gap-2"></div>
                             <span class="text-surface-500 dark:text-surface-400">
-                                <Button>发布公告</Button>
+                                <Button @click="sendPost()">发布公告</Button>
                             </span>
                         </div>
                     </template>
-                    <Textarea v-model="inputValue" rows="8" cols="1000" style="resize: none" class="w-full"
+                    <Textarea v-model="content" rows="8" cols="1000" style="resize: none" class="w-full"
                         :placeholder="placeholderText" />
                 </Panel>
             </div>
@@ -173,9 +216,9 @@ const cancel = () => {
                 </Accordion>
             </Panel>
         </div>
-        <Separator orientation="vertical"/>
+        <Separator orientation="vertical" />
         <div class="flex flex-col flex-1 w-1/2 p-3">
-            <div style="display: flex; justify-content: space-between;" class="mb-3">
+            <div style="display: flex; justify-content: space-between;" class="mb-3 ml-auto">
                 <Select v-model="selectedTime" :options="time" optionLabel="name" placeholder="请选择时间范围"
                     class="w-full md:w-56" />
             </div>
@@ -195,13 +238,13 @@ const cancel = () => {
             </Panel>
             <div class="h-2/3">
                 <div class="flex my-2">
-                    <Panel header="各实验点击次数排行榜" class="mr-4">
+                    <Panel header="各实验点击次数排行榜">
                         <DataTable :value="click" scrollable scrollHeight="160px" tableStyle="min-width: 17rem">
                             <Column field="expName" header="实验名称" sortable style="width: 25%"></Column>
                             <Column field="times" header="点击次数" sortable style="width: 25%"></Column>
                         </DataTable>
                     </Panel>
-                    <Panel header="各实验浏览时长排行榜">
+                    <Panel header="各实验浏览时长排行榜" class="ml-auto">
                         <DataTable :value="browse" scrollable scrollHeight="160px" tableStyle="min-width: 17rem">
                             <Column field="expName" header="实验名称" sortable style="width: 25%"></Column>
                             <Column field="time" header="浏览时长" sortable style="width: 25%"></Column>
@@ -209,13 +252,13 @@ const cancel = () => {
                     </Panel>
                 </div>
                 <div class="flex">
-                    <Panel header="各实验评论次数排行榜" class="mr-4">
+                    <Panel header="各实验评论次数排行榜">
                         <DataTable :value="comment" scrollable scrollHeight="160px" tableStyle="min-width: 17rem">
                             <Column field="expName" header="实验名称" sortable style="width: 25%"></Column>
                             <Column field="times" header="评论次数" sortable style="width: 25%"></Column>
                         </DataTable>
                     </Panel>
-                    <Panel header="各实验收藏次数排行榜" class="">
+                    <Panel header="各实验收藏次数排行榜" class="ml-auto">
                         <DataTable :value="star" scrollable scrollHeight="160px" tableStyle="min-width: 17rem">
                             <Column field="expName" header="实验名称" sortable style="width: 25%"></Column>
                             <Column field="times" header="收藏次数" sortable style="width: 25%"></Column>

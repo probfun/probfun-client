@@ -391,7 +391,7 @@ function goHome() {
 </script>
 
 <template>
-  <div>
+  <div class="h-full">
     <aside class="h-full border-r flex flex-col relative bg-background z-40">
       <div class="p-2 border-b flex">
         <Button size="icon" @click="goHome()">

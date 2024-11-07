@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
+import BinomialDiagram from './BinomialDiagram.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label';
@@ -152,7 +153,10 @@ watch(
 
 // 输出LaTeX公式
 const latexFormula = computed(() => {
-  const result = finalResult.value.toFixed(10); // 保留10位小数
+  const absValue = Math.abs(finalResult.value);
+  const exponent = Math.floor(Math.log10(absValue)); // 获取指数
+  const mantissa = (finalResult.value / Math.pow(10, exponent)).toFixed(3); // 计算尾数并保留5位小数
+  const result = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
   return `P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k} = \\binom{${number.value}}{${numberk.value}} ${probability.value}^${numberk.value} (1-${probability.value})^{${number.value}-${numberk.value}} = ${result}`;
 });
 
@@ -278,8 +282,7 @@ $$
 <template>
   <ExperimentBoard title="二项分布" :tags="[]">
     <template #experiment>
-      <Chart v-if="!save" type="line" :data="chartDataO" :options="chartOptions" class="h-full w-full" />
-      <Chart v-if="save" type="line" :data="chartData" :options="chartOptions" class="h-full w-full" />
+      <BinomialDiagram :n="number[0]" :p="probability[0]" :save="save"></BinomialDiagram>
     </template>
     <template #parameter>
       <div class="w-full min-h-full flex flex-col items-center justify-center p-3 gap-3">
@@ -301,21 +304,21 @@ $$
           <CardContent class="flex-1 flex flex-col justify-center gap-5">
             <div class="flex gap-4 pb-8">
               <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-                <Label> 试验次数 (n) </Label>
+                <Label> 试验次数 n </Label>
                 <div class="max-w-xl space-y-3">
                   <Input v-model="number[0]" />
-                  <Slider v-model="number" :min="1" :max="14" :step="1" />
+                  <Slider v-model="number" :min="1" :max="100" :step="1" />
                 </div>
               </div>
               <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-                <Label> 成功次数 (k) </Label>
+                <Label> 成功次数 k </Label>
                 <div class="max-w-xl space-y-3">
                   <Input v-model="numberk[0]" />
                   <Slider v-model="numberk" :min="1" :max="maxK" :step="1" />
                 </div>
               </div>
               <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-                <Label> 成功率 (p) </Label>
+                <Label> 成功率 p </Label>
                 <div class="max-w-xl space-y-3">
                   <Input v-model="probability[0]" :min-fraction-digits="1" />
                   <Slider v-model="probability" :min="0" :max="1" :step="0.1" />
@@ -323,17 +326,15 @@ $$
               </div>
             </div>
             <div class="flex gap-2 items-center justify-center">
-              <Checkbox
-                id="terms" @update:checked="(checked: boolean) => {
-                  if (checked) {
-                    saveImg();
-                  }
-                  else {
-                    back();
-                  }
-                  console.log(checked)
-                }"
-              />
+              <Checkbox id="terms" @update:checked="(checked: boolean) => {
+                if (checked) {
+                  saveImg();
+                }
+                else {
+                  back();
+                }
+                console.log(checked)
+              }" />
               <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
             </div>
           </CardContent>

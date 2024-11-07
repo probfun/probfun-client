@@ -349,7 +349,7 @@ const discussTabList = [
             </CardHeader>
             <CardContent class="flex flex-col items-center p-4 pt-0 flex-1">
               <div class="font-bold h-full justify-center items-center mb-4 gap-3 flex flex-col">
-                <Input v-model="autoGameRound[0]" class="" :min="1" :max="1000" />
+                <Input v-model="autoGameRound[0]" class="" :min="1" :max="500" />
                 <Slider v-model="autoGameRound" class="" />
               </div>
               <div class="flex justify-center gap-2 w-full">

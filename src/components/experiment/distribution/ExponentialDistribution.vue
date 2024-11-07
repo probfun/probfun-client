@@ -38,7 +38,11 @@ const finalResultOne = computed(() => {
 
 
 const oneFormula = computed(() => {
-  const resultOne = finalResultOne.value.toFixed(10);
+  const absValue = Math.abs(finalResultOne.value);
+  const exponent = Math.floor(Math.log10(absValue)); // 获取指数
+  const mantissa = (finalResultOne.value / Math.pow(10, exponent)).toFixed(3); // 计算尾数并保留5位小数
+  const resultOne = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
+
   return `f(x) = λe^{-λx} = ${rate.value} e^{-${rate.value} \\cdot ${numberx.value}} = ${resultOne}( x \\geq 0)`;
 });
 const oneContainer = ref<HTMLElement | null>(null);
@@ -50,12 +54,18 @@ const finalResultTwo = computed(() => {
 });
 
 const twoFormula = computed(() => {
-  const resultTwo = finalResultTwo.value.toFixed(20);
+  
+
+  const absValue = Math.abs(finalResultTwo.value);
+  const exponent = Math.floor(Math.log10(absValue)); // 获取指数
+  const mantissa = (finalResultTwo.value / Math.pow(10, exponent)).toFixed(3); // 计算尾数并保留5位小数
+  const resultTwo = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
+
   return  `
   \\begin{aligned}
   P(X > ${shift.value} + x \\mid X > ${shift.value}) 
-  &= P(X > x) = e^{-${rate.value} \\cdot ${numberx.value}} \\\\
-  &= ${resultTwo}
+  = P(X > x) = e^{-${rate.value} × ${numberx.value}}
+  = ${resultTwo}
  \\end{aligned} `;
 });
 const twoContainer = ref<HTMLElement | null>(null);
@@ -126,12 +136,10 @@ $$
 <template>
   <ExperimentBoard title="二项分布" :tags="[]">
     <template #experiment>
-      <ExponentialDiagram
-        class="flex-1 h-full" :rate="rate[0]" :shift="shift[0]" :show-graph="isChart1"
-        :show-history="save"
-      />
+      <ExponentialDiagram class="flex-1 h-full" :rate="rate[0]" :shift="shift[0]" :show-graph="isChart1"
+      :show-history="save"></ExponentialDiagram>
     </template>
-    <template #parameter>
+    <!-- <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
         <div v-if="isChart1">
           <button v-if="!save" class="btn mb-5" @click="saveImg">
@@ -178,7 +186,83 @@ $$
           </div>
         </div>
       </div>
+    </template> -->
+    
+    <template #parameter>
+      <div class="w-full h-full flex flex-col items-center justify-center gap-3 p-3">
+        <Card class="w-full">
+          <CardHeader>
+            <CardTitle>指数分布公式</CardTitle>
+          </CardHeader>
+          <CardContent class="flex w-full justify-center">
+            <div v-show="isChart1" ref="oneContainer" class="text-base" />
+            <div v-show="isChart2" ref="twoContainer" class="text-base" />
+          </CardContent>
+        </Card>
+
+        <Card class="w-full flex-1 flex flex-col">
+          <CardHeader>
+            <CardTitle>
+              参数调整
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="flex-1 flex flex-col justify-center items-center gap-3">
+            <div class="dropdown ">
+              <Button tabindex="0" role="button" class="m-0">
+                点我切换
+              </Button>
+              <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                <li @click="toggleChart1">
+                  <a>一般指数分布</a>
+                </li>
+                <li @click="toggleChart2">
+                  <a>指数分布的无记忆性</a>
+                </li>
+              </ul>
+            </div>
+            <div class="flex gap-4 pb-1 w-full">
+              <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+                <Label> 事件发生的速率参数λ </Label>
+                <div class="max-w-xl space-y-3">
+                  <Input v-model.number="rate[0]" :min-fraction-digits="1" />
+                  <Slider v-model="rate" :min="0" :max="10" :step="0.1" class="w-48" />
+                </div>
+              </div>
+              <div class="flex flex-col flex-1 items-center justify-center space-y-5">
+
+                <Label> 间隔/等待时间x </Label>
+                <div class="max-w-xl space-y-3">
+                  <Input v-model.number="numberx[0]" />
+                  <Slider v-model="numberx" :min="1" :max="10" :step="0.2" class="w-48" />
+                </div>
+              </div>
+
+              <div v-if="isChart2" class="flex flex-col flex-1 items-center justify-center space-y-5">
+                <Label> 固定值 </Label>
+                <div class="max-w-xl space-y-3">
+                  <Input  v-model.number="shift[0]" :min-fraction-digits="1" />
+                  <Slider v-model="shift" :min="0" :max="5" :step="0.1" class="w-48" />
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-2 items-center justify-center">
+              <Checkbox id="terms" @update:checked="(checked: boolean) => {
+                if (checked) {
+                  saveImg();
+                }
+                else {
+                  back();
+                }
+                console.log(checked)
+              }" />
+              <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </template>
+
     <template #conclusion>
       <div class="w-full h-full p-5">
         <div class="prose max-w-full text-base-content" v-html="toMarkdown(content)" />

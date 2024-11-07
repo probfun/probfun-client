@@ -124,11 +124,13 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard title="二项分布" :tags="[]">
+  <ExperimentBoard >
     <template #experiment>
       <UniformDiagram class="flex-1 h-full" :a="a[0]" :b="b[0]" :k="k[0]" :m="m[0]" :show-history="save" />
+      <Chart v-if="!save" type="line" :data="UniformDiagram" class="flex-1 h-full w-full" />
+      <Chart v-if="save" type="line" :data="UniformDiagram"  class="flex-1 h-full w-full" />
     </template>
-    <template #parameter>
+    <!-- <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
         <div>
           <button v-if="!save" class="btn mb-5" @click="saveImg">
@@ -173,7 +175,80 @@ $$
         </div>
       </div>
       
+    </template> -->
+
+    <template #parameter>
+      <div class="w-full h-full flex flex-row justify-center p-3 gap-3">
+        <Card class="w-full h-full w-3/5 card">
+          <CardHeader class = "pb-10">
+            <CardTitle>均匀分布公式</CardTitle>
+          </CardHeader>
+          <CardContent class="flex w-full  h-full flex flex-col items-start gap-10 ">
+            <div ref="oneContainer" class="text-base pb-5" />
+            <div ref="twoContainer" class="text-base " />
+          </CardContent>
+        </Card>
+        <Card class="w-full  h-full w-2/5 cardflex-1 flex flex-col">
+          <CardHeader>
+            <CardTitle>
+              参数调整
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="flex flex-col items-center justify-center gap-5">
+            <div class="grid grid-cols-2 gap-10 ">
+              <div class="flex flex-col  gap-8 pb-5">
+                <div class="flex flex-col  md:w-full w-1/2 flex-1 items-center justify-center space-y-5">
+                <Label>  左边界a </Label>
+                <div class="max-w-xl space-y-3">
+                  <Input v-model="a[0]" :invalid="a > b" :min-fraction-digits="1" fluid />
+                  <Slider v-model="a" :min="-10" :max="9.9" :step="0.1" class="w-full" />
+                </div>
+              </div>
+              <div class="flex flex-col  md:w-full w-1/2 flex-1 items-center justify-center space-y-5">
+                <Label> 右边界b </Label>
+                <div class="max-w-xl space-y-3">
+                  <Input v-model.number="b[0]" :min-fraction-digits="1" fluid />
+                  <Slider v-model="b" :min="a[0] + 0.1" :max="10" :step="0.1" class="w-full" />
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-col gap-8 pb-5">
+              <div class="flex flex-col  md:w-full w-1/2 flex-1 items-center justify-center space-y-5">
+                <Label> k </Label>
+                <div class="max-w-xl space-y-3">
+                  <Input v-model.number="k[0]" :min-fraction-digits="1" fluid />
+                  <Slider v-model="k" :min="0.1" :max="10" :step="0.1" class="w-full" />
+                </div>
+              </div>
+              <div class="flex flex-col  md:w-full w-1/2 flex-1 items-center justify-center space-y-5">
+                <Label> m </Label>
+                <div class="max-w-xl space-y-3">
+                  <Input v-model.number="m[0]" :min-fraction-digits="1" fluid />
+                  <Slider v-model="m" :min="0" :max="10" :step="0.1" class="w-full" />
+                </div>
+              </div>
+              </div>
+            </div>
+
+            <div class="flex gap-2 items-center justify-center">
+              <Checkbox
+                id="terms" @update:checked="(checked: boolean) => {
+                  if (checked) {
+                    saveImg();
+                  }
+                  else {
+                    back();
+                  }
+                  console.log(checked)
+                }"
+              />
+              <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </template>
+
     <template #conclusion>
       <div class="w-full h-full p-5">
         <div class="prose-sm max-w-none" v-html="toMarkdown(content)" />
