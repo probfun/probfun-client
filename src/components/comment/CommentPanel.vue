@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Comment, CommentWithChild, CommentWithParent } from '@/api/comment/commentType'
 import {
-  chooseCommentApi,
   deleteCommentApi,
   fetchCommentApi,
   pinCommentApi,

@@ -31,13 +31,6 @@ export async function deleteCommentApi(commentId: string) {
   return result.data;
 }
 
-export async function chooseCommentApi(commentId: string) {
-  const result = await post<{
-    chosen: boolean
-  }>(`/api/comment/${commentId}/choose`);
-  return result.data;
-}
-
 export async function pinCommentApi(commentId: string) {
   const result = await post<{
     pinned: boolean
