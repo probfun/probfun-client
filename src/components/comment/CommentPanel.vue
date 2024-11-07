@@ -175,27 +175,6 @@ async function send() {
             });
           }
         }"
-        @choose="async (comment) => {
-          try {
-            await chooseCommentApi(comment.commentId);
-            await refreshComment();
-            toast({
-              icon: CircleCheck,
-              title: '成功',
-              description: '精选成功',
-              variant: 'success',
-            });
-          }
-          catch (error: any) {
-            console.error('Error during deleting comment:', error);
-            toast({
-              icon: CircleX,
-              title: '错误',
-              description: '精选失败，请重试',
-              variant: 'destructive',
-            });
-          }
-        }"
       />
     </ScrollArea>
     <div v-else-if="commentList" class="flex items-center text-sm justify-center h-full text-muted-foreground">

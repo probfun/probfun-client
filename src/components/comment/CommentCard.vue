@@ -13,7 +13,6 @@ import { ref } from 'vue';
 const emit = defineEmits<{
   reply: [CommentWithChild]
   delete: [CommentWithChild]
-  choose: [CommentWithChild]
   pin: [CommentWithChild]
 }>();
 
@@ -76,11 +75,6 @@ const isOpen = ref(false);
           <div v-if="useUserStore().user?.role !== 0" class="flex items-center">
             <Button variant="ghost" size="icon" :class="cn('rounded-full size-8 hover:text-green-500', comment.pinned && '!text-green-500')" @click.stop="emit('pin', comment)">
               <ArrowUpFromLine class="size-4" />
-            </Button>
-          </div>
-          <div v-if="useUserStore().user?.role !== 0" class="flex items-center">
-            <Button variant="ghost" size="icon" :class="cn('rounded-full size-8 hover:text-orange-500', comment.chosen && '!text-orange-500')" @click.stop="emit('choose', comment)">
-              <Sparkles class="size-4" />
             </Button>
           </div>
         </div>
