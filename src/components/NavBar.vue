@@ -196,7 +196,7 @@ onMounted(() => {
 });
 
 const messageList = ref<Message[] | null>(null);
-const messageNumber = ref(0);
+const messageNumber = ref(2);
 
 async function getMessage() {
   try {

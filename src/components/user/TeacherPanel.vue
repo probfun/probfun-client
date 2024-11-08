@@ -8,6 +8,7 @@ import {
     AccordionItem,
     AccordionTrigger
 } from '@/components/ui/accordion';
+import Dialog from 'primevue/dialog';
 import Select from 'primevue/select';
 import Avatar from 'primevue/avatar';
 import Panel from 'primevue/panel';
@@ -53,7 +54,15 @@ const products = ref([
         comment: '非常好。'
     },
 ]);
-const selectedClass = ref([]);
+const selectedClassA = ref();
+const classesA = ref([
+    { name: '2023215101' },
+    { name: '2023215102' },
+    { name: '2023215103' },
+    { name: '2023215104' },
+    { name: '2023215105' }
+]);
+const selectedClass = ref();
 const classes = ref([
     { name: '2023215101' },
     { name: '2023215102' },
@@ -124,6 +133,7 @@ const star = ref([
     }
 ])
 
+const visible = ref(false);
 const toast = useToast();
 const title = ref('');
 const content = ref('');
@@ -175,8 +185,8 @@ async function sendPost() {
             <div class="flex mb-[-10px]">
                 <span class="text-lg font-bold">2024年秋季学期</span>
                 <div class="ml-auto">
-                    <MultiSelect v-model="selectedClass" :options="classes" optionLabel="name" filter
-                        placeholder="请选择班级" class="w-full md:w-56" />
+                    <Select v-model="selectedClassA" :options="classesA" optionLabel="name" filter placeholder="请选择班级"
+                        class="w-full md:w-56" />
                 </div>
             </div>
             <div class="flex my-5">
@@ -186,14 +196,14 @@ async function sendPost() {
                     <span class="text-base font-semibold">教工号：{{ userStore.user?.studentId }}</span>
                 </div>
             </div>
-            <div class="card w-full items-center">
+            <!-- <div class="card w-full items-center">
                 <Panel>
                     <template #header>
                         <div class="flex justify-center gap-2">
                             <span class="font-bold">班级公告</span>
                         </div>
                     </template>
-                    <template #footer>
+<template #footer>
                         <div class="flex flex-wrap items-center justify-between gap-4">
                             <div class="flex items-center gap-2"></div>
                             <span class="text-surface-500 dark:text-surface-400">
@@ -201,11 +211,10 @@ async function sendPost() {
                             </span>
                         </div>
                     </template>
-                    <Textarea v-model="content" rows="8" cols="1000" style="resize: none" class="w-full"
-                        :placeholder="placeholderText" />
-                </Panel>
-            </div>
-            <Panel header="已发布公告" class="mx-1 my-3 h-full overflow-auto">
+<Textarea v-model="content" rows="8" cols="1000" style="resize: none" class="w-full" :placeholder="placeholderText" />
+</Panel>
+</div> -->
+            <Panel header="已发布公告" class="mx-1 mt-3 mb-5 h-full overflow-auto">
                 <Accordion type="single" class="w-full" collapsible :default-value="defaultValue">
                     <AccordionItem v-for="item in accordionItems" :key="item.value" :value="item.value">
                         <AccordionTrigger class="font-semibold">{{ item.title }}</AccordionTrigger>
@@ -215,6 +224,20 @@ async function sendPost() {
                     </AccordionItem>
                 </Accordion>
             </Panel>
+            <Button label="Show" class="my-3" @click="visible = true">发布班级公告</Button>
+            <Dialog v-model:visible="visible" modal header="发布班级公告" :style="{ width: '50rem' }">
+                <span class="text-surface-500 dark:text-surface-400 block mb-8">请选择一个或多个班级，点击发布按钮发布公告。</span>
+                <div class="flex items-center gap-4 mb-4">
+                    <MultiSelect v-model="selectedClass" :options="classes" optionLabel="name" filter placeholder="请选择班级"
+                        class="w-full md:w-56" />
+                </div>
+                <div class="flex items-center gap-4 mb-8">
+                    <Textarea v-model="content" autoResize rows="10" class="w-full"/>
+                </div>
+                <div class="flex justify-end gap-2">
+                    <Button @click="sendPost()">发布公告</Button>
+                </div>
+            </Dialog>
         </div>
         <Separator orientation="vertical" />
         <div class="flex flex-col flex-1 w-1/2 p-3 overflow-auto">
