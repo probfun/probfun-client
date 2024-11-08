@@ -7,7 +7,6 @@ export interface Comment {
   content: string
   likes: number
   liked: boolean
-  chosen: boolean
   pinned: boolean
   expId: string
 }
@@ -16,6 +15,10 @@ export interface CommentWithParent extends Comment {
   parentId: string | null
 }
 
+export interface ChildComment extends Comment {
+  parentComment: Comment | null
+}
+
 export interface CommentWithChild extends Comment {
-  childComments: CommentWithChild[]
+  childComments: ChildComment[]
 }

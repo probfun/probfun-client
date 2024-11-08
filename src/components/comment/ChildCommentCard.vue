@@ -1,23 +1,21 @@
 <script setup lang="ts">
-import type { Comment, CommentWithChild } from '@/api/comment/commentType';
+import type { ChildComment, Comment } from '@/api/comment/commentType';
 import { likeCommentApi } from '@/api/comment/commentApi';
-import ChildCommentCard from '@/components/comment/ChildCommentCard.vue';
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/store';
 import { vAutoAnimate } from '@formkit/auto-animate';
-import { ArrowUpFromLine, Heart, MessageCircle, Trash2 } from 'lucide-vue-next';
+import { Heart, MessageCircle, Trash2 } from 'lucide-vue-next';
 import { format } from 'timeago.js';
 import { ref } from 'vue';
 
 const emit = defineEmits<{
   reply: [Comment]
   delete: [Comment]
-  pin: [Comment]
 }>();
 
-const comment = defineModel<CommentWithChild>();
+const comment = defineModel<ChildComment>();
 
 async function like() {
   if (!comment.value)
@@ -37,24 +35,31 @@ const isOpen = ref(false);
 
 <template>
   <div v-if="comment" v-auto-animate>
-    <div class="pt-4 px-6 transition-all hover:bg-secondary/50 flex gap-2 cursor-pointer" @click="isOpen = !isOpen">
-      <Avatar class="mt-1">
+    <div class="pt-2 px-4 transition-all hover:bg-secondary/50 flex gap-2" @click="isOpen = !isOpen">
+      <Avatar class="mt-1 size-7">
         <AvatarImage :src="comment.user.avatarUrl" alt="" />
         <AvatarFallback>{{ comment.user.nickname }}</AvatarFallback>
       </Avatar>
       <div class="flex flex-col gap-1 w-full">
-        <div class="flex items-center w-full">
-          <div class=" font-bold text-[15px] hover:underline underline-offset-4 transition-all">
+        <div class="space-x-2 flex items-center">
+          <span class=" font-bold text-[15px] cursor-pointer select-none hover:underline underline-offset-4 transition-all">
             {{ comment.user.nickname }}
-          </div>
-          <div class="text-sm text-muted-foreground ml-3">
+          </span>
+          <span class="text-sm text-muted-foreground">
             {{ comment.user.studentId }} · {{ format(comment.timestamp, 'zh_CN') }}
-          </div>
+          </span>
           <div v-if="comment.pinned">
             <Badge> 置顶 </Badge>
           </div>
         </div>
-        <div class="text-sm whitespace-pre-line leading-tight">
+        <div class="text-sm whitespace-pre-line leading-tight flex items-center gap-1">
+          <div v-if="comment.parentComment" class="flex items-center gap-0.5">
+            回复
+            <div class="hover:underline underline-offset-4 cursor-pointer">
+              {{ comment.parentComment.user.nickname }}
+            </div>
+            :
+          </div>
           {{ comment.content }}
         </div>
 
@@ -69,30 +74,20 @@ const isOpen = ref(false);
             <Button :id="`reply-${comment.commentId}`" variant="ghost" size="icon" class="rounded-full size-8 hover:text-primary" @click.stop="emit('reply', comment)">
               <MessageCircle class="size-4" />
             </Button>
-            <Label :for="`reply-${comment.commentId}`"> {{ comment.childComments.length > 99 ? '99+' : comment.childComments.length }} </Label>
+            <Label :for="`reply-${comment.commentId}`"> 回复 </Label>
           </div>
           <div v-if="comment.user.uid === useUserStore().user?.uid || useUserStore().user?.role !== 0" class="flex items-center -space-x-0.5">
             <Button variant="ghost" size="icon" class="rounded-full size-8 hover:text-destructive" @click.stop="emit('delete', comment)">
               <Trash2 class="size-4" />
             </Button>
           </div>
-          <div v-if="(useUserStore().user?.role ?? 0) !== 0" class="flex items-center">
-            <Button variant="ghost" size="icon" :class="cn('rounded-full size-8 hover:text-green-500', comment.pinned && '!text-green-500')" @click.stop="emit('pin', comment)">
-              <ArrowUpFromLine class="size-4" />
-            </Button>
-          </div>
+          <!--          <div v-if="useUserStore().user?.role !== 0" class="flex items-center"> -->
+          <!--            <Button variant="ghost" size="icon" :class="cn('rounded-full size-8 hover:text-green-500', comment.pinned && '!text-green-500')" @click.stop="emit('pin', comment)"> -->
+          <!--              <ArrowUpFromLine class="size-4" /> -->
+          <!--            </Button> -->
+          <!--          </div> -->
         </div>
       </div>
-    </div>
-    <div v-if="isOpen && comment.childComments.length">
-      <ChildCommentCard
-        v-for="(child, index) in comment.childComments" :key="child.commentId" v-model="comment.childComments[index]" class="ml-12" @reply="(thisComment) => {
-          emit('reply', thisComment);
-        }"
-        @delete="(thisComment) => {
-          emit('delete', thisComment);
-        }"
-      />
     </div>
   </div>
 </template>

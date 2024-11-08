@@ -184,7 +184,11 @@ $$
       <Card  class = "w-full h-1/2 flex gap-3">
         <Card class="w-1/2 gap-3 ">
           <CardHeader>
-            <CardTitle>泊松分布公式</CardTitle>
+            <div class = "flex  gap-5">
+            <CardTitle >泊松分布公式</CardTitle> 
+            <div class="w-10 h-1 mt-1 bg-red-500">
+            </div>
+          </div>
           </CardHeader>
           <CardContent class="flex w-full justify-center ">
             <div ref="poissonContainer" class="text-base" />
@@ -192,7 +196,11 @@ $$
         </Card>
         <Card class="w-1/2 gap-3 ">
           <CardHeader>
-            <CardTitle>正态分布公式</CardTitle>
+            <div class = "flex  gap-5">
+            <CardTitle >正态分布公式</CardTitle> 
+            <div class="w-10 h-1 mt-1 bg-blue-500">
+            </div>
+          </div>
           </CardHeader>
           <CardContent class="flex w-full justify-center ">
             <div ref="normalContainer" class="text-base" />

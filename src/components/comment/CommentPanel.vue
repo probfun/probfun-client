@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Comment, CommentWithChild, CommentWithParent } from '@/api/comment/commentType'
+import type { ChildComment, Comment, CommentWithChild, CommentWithParent } from '@/api/comment/commentType'
 import {
   deleteCommentApi,
   fetchCommentApi,
@@ -21,50 +21,64 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/components/ui/toast'
+import { error, success, warning } from '@/utils/toast';
 import { vAutoAnimate } from '@formkit/auto-animate';
-import { CircleAlert, CircleCheck, CircleX, X } from 'lucide-vue-next';
+import { X } from 'lucide-vue-next';
 import { onMounted, ref } from 'vue';
 
 const props = defineProps<{
   expId: string
 }>();
 
-const { toast } = useToast();
-
 const commentList = ref<CommentWithChild[] | null>(null);
 const scrollArea = ref<typeof ScrollArea | null>(null);
 
 function convertToCommentWithChild(comments: CommentWithParent[]): CommentWithChild[] {
-  // 存储结果
-  const commentMap: { [key: string]: CommentWithChild } = {};
-  const topLevelComments: CommentWithChild[] = [];
-
-  // 初始化所有评论到 commentMap 中
-  comments.forEach((comment) => {
-    commentMap[comment.commentId] = {
-      ...comment,
-      childComments: [],
-    };
-  });
-
-  // 遍历所有评论，构建父子关系
-  comments.forEach((comment) => {
-    if (comment.parentId === null) {
-      // 顶级评论，加入到 topLevelComments
-      topLevelComments.push(commentMap[comment.commentId]);
+  const sortedComments = comments.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+  const validCommentIds = new Set<string>();
+  const validComments: CommentWithParent[] = [];
+  for (const comment of sortedComments) {
+    if (comment.parentId === null || validCommentIds.has(comment.parentId)) {
+      validComments.push(comment);
+      validCommentIds.add(comment.commentId);
     }
-    else {
-      // 子评论，加入到对应父评论的 childComments
-      const parentComment = commentMap[comment.parentId];
-      if (parentComment) {
-        parentComment.childComments.push(commentMap[comment.commentId]);
+  }
+
+  const commentMap: Record<string, CommentWithParent> = {};
+  for (const comment of validComments) {
+    commentMap[comment.commentId] = comment;
+  }
+
+  const resultMap: Record<string, ChildComment[]> = {};
+  for (const comment of validComments) {
+    if (!comment.parentId) {
+      resultMap[comment.commentId] = [];
+    }
+  }
+
+  for (const comment of validComments) {
+    if (comment.parentId) {
+      let parent = commentMap[comment.parentId];
+      console.log(comment.parentId, parent);
+      while (parent.parentId) {
+        parent = commentMap[parent.parentId];
       }
+      resultMap[parent.commentId].push({
+        parentComment: commentMap[comment.parentId],
+        ...comment,
+      });
     }
-  });
+  }
 
-  // 返回构建好的多级嵌套的顶级评论列表
-  return topLevelComments;
+  const result: CommentWithChild[] = []
+  for (const [commentId, children] of Object.entries(resultMap)) {
+    result.push({
+      ...commentMap[commentId],
+      childComments: children,
+    });
+  }
+
+  return result;
 }
 
 async function refreshComment() {
@@ -72,7 +86,12 @@ async function refreshComment() {
     const result = await fetchCommentApi(props.expId);
     const comments = result.comments;
     commentList.value = convertToCommentWithChild(comments);
-    commentList.value.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    commentList.value.sort((a, b) => {
+      if (a.pinned === b.pinned) {
+        return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+      }
+      return a.pinned ? -1 : 1;
+    });
   }
   catch (error) {
     console.error('Error during fetching comments:', error);
@@ -87,7 +106,7 @@ const content = ref<string>('');
 const isSending = ref(false);
 
 const isOpen = ref(false);
-const readyToDeleteComment = ref<CommentWithChild | null>(null);
+const readyToDeleteComment = ref<Comment | null>(null);
 
 const replyComment = ref<Comment | null>(null);
 function reply(comment: Comment) {
@@ -98,45 +117,25 @@ async function send() {
   if (isSending.value)
     return;
   if (content.value === '') {
-    toast({
-      icon: CircleAlert,
-      title: '提示',
-      description: '评论不能为空',
-      variant: 'warning',
-    });
+    warning('评论不能为空');
     return;
   }
   if (content.value.length > 5000) {
-    toast({
-      icon: CircleAlert,
-      title: '提示',
-      description: '评论内容不能多于5000字',
-      variant: 'warning',
-    });
+    warning('评论内容不能多于5000字');
     return;
   }
   try {
     isSending.value = true;
     await postCommentApi(props.expId, content.value, replyComment.value?.commentId ?? null);
     await refreshComment();
-    toast({
-      icon: CircleCheck,
-      title: '成功',
-      description: '评论成功',
-      variant: 'success',
-    });
+    success('评论成功');
     content.value = '';
     replyComment.value = null;
     scrollArea.value?.scrollToTop();
   }
-  catch (error: any) {
-    console.error(error);
-    toast({
-      icon: CircleX,
-      title: '错误',
-      description: '评论失败，请重试',
-      variant: 'destructive',
-    });
+  catch (e: any) {
+    console.error(e);
+    error('评论失败，请重试');
   }
   isSending.value = false;
 }
@@ -155,23 +154,18 @@ async function send() {
         }"
         @pin="async (comment) => {
           try {
-            await pinCommentApi(comment.commentId);
+            const result = await pinCommentApi(comment.commentId);
+            if (result.pinned) {
+              success('置顶成功！');
+            }
+            else {
+              success('取消置顶成功！');
+            }
             await refreshComment();
-            toast({
-              icon: CircleCheck,
-              title: '成功',
-              description: '置顶成功',
-              variant: 'success',
-            });
           }
-          catch (error: any) {
-            console.error('Error during deleting comment:', error);
-            toast({
-              icon: CircleX,
-              title: '错误',
-              description: '置顶失败，请重试',
-              variant: 'destructive',
-            });
+          catch (e: any) {
+            console.error('Error during deleting comment:', e);
+            error('置顶失败，请重试');
           }
         }"
       />
@@ -238,21 +232,14 @@ async function send() {
               try {
                 await deleteCommentApi(readyToDeleteComment.commentId);
                 await refreshComment();
-                toast({
-                  icon: CircleCheck,
-                  title: '成功',
-                  description: '删除成功',
-                  variant: 'success',
-                });
+                success('删除成功！');
+                if (replyComment?.commentId === readyToDeleteComment.commentId) {
+                  replyComment = null;
+                }
               }
-              catch (error: any) {
+              catch (e: any) {
                 console.error('Error during deleting comment:', error);
-                toast({
-                  icon: CircleX,
-                  title: '错误',
-                  description: '删除失败，请重试',
-                  variant: 'destructive',
-                });
+                error('删除失败，请重试！');
               }
             }"
           >
