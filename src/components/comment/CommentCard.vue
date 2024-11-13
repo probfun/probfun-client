@@ -50,7 +50,7 @@ const isOpen = ref(false);
           <div class="text-sm text-muted-foreground ml-3">
             {{ comment.user.studentId }} · {{ format(comment.timestamp, 'zh_CN') }}
           </div>
-          <div v-if="comment.pinned">
+          <div v-if="comment.pinned" class="ml-3">
             <Badge> 置顶 </Badge>
           </div>
         </div>

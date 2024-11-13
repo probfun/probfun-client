@@ -393,19 +393,19 @@ function goHome() {
 <template>
   <div class="h-full">
     <aside class="h-full border-r flex flex-col relative bg-background z-40">
-      <div class="p-2 border-b flex">
-        <Button size="icon" @click="goHome()">
-          <Dices class="size-5" />
+      <div class="p-1.5 border-b flex">
+        <Button size="icon" class="rounded-full size-7" @click="goHome()">
+          <Dices class="size-4" />
         </Button>
       </div>
-      <div class="p-2">
-        <ul class="space-y-1">
+      <div class="p-1.5">
+        <ul class="space-y-2 flex flex-col items-center">
           <li v-for="(item, index) in sideBarItem" :key="index">
             <TooltipProvider :delay-duration="0">
               <Tooltip>
                 <TooltipTrigger>
                   <Button
-                    size="icon" variant="ghost" :class="cn(isActiveRoute(item.route ?? '') && 'bg-muted')" @click="() => {
+                    size="icon" variant="ghost" :class="cn('size-7 rounded-lg text-muted-foreground', isActiveRoute(item.route ?? '') && '!bg-muted text-foreground')" @click="() => {
                       if (item.command) item.command();
                       else if (item.route) router.push(item.route);
                     }"
