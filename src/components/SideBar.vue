@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils';
 import { logout } from '@/utils/auth';
-import { Book, Bot, CircleHelp, Dices, LogOut, Star, Sun, User } from 'lucide-vue-next';
+import { Book, Bot, CircleHelp, Dices, Home, LogOut, Star, Sun, User } from 'lucide-vue-next';
 import { useToast } from 'primevue/usetoast';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -44,11 +44,16 @@ async function toggleDrawer() {
 }
 
 function isActiveRoute(itemRoute: string) {
-  return route.path.startsWith(itemRoute);
+  return route.path === itemRoute;
 }
 
 const router = useRouter();
 const sideBarItem = ref<SideBarItem[]>([
+  {
+    label: '主页',
+    icon: Home,
+    route: '/dashboard',
+  },
   {
     label: '目录',
     icon: Book,
@@ -139,7 +144,7 @@ const chapter1Items = [
       try {
         await clickApi('CLICK', 'catalogue', '三门问题', window.location.href);
         console.log('三门问题');
-        router.push('/dashboard/experiment/chapter1/three-doors');
+        await router.push('/dashboard/experiment/chapter1/three-doors');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -155,7 +160,7 @@ const chapter1Items = [
       try {
         await clickApi('CLICK', 'catalogue', '生日问题', window.location.href);
         console.log('生日问题');
-        router.push('/dashboard/experiment/chapter1/birthday-problem');
+        await router.push('/dashboard/experiment/chapter1/birthday-problem');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -170,7 +175,7 @@ const chapter1Items = [
       try {
         await clickApi('CLICK', 'catalogue', '生日攻击问题', window.location.href);
         console.log('生日攻击问题');
-        router.push('/dashboard/experiment/chapter1/birthday-attack');
+        await router.push('/dashboard/experiment/chapter1/birthday-attack');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -185,7 +190,7 @@ const chapter1Items = [
       try {
         await clickApi('CLICK', 'catalogue', '阳性检测', window.location.href);
         console.log('阳性检测');
-        router.push('/dashboard/experiment/chapter1/positive-test');
+        await router.push('/dashboard/experiment/chapter1/positive-test');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -203,7 +208,7 @@ const chapter2Items = [
       try {
         await clickApi('CLICK', 'catalogue', '二项分布', window.location.href);
         console.log('二项分布');
-        router.push('/dashboard/experiment/binomialDistribution');
+        await router.push('/dashboard/experiment/binomialDistribution');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -218,7 +223,7 @@ const chapter2Items = [
       try {
         await clickApi('CLICK', 'catalogue', '泊松分布', window.location.href);
         console.log('泊松分布');
-        router.push('/dashboard/experiment/poissonDistribution');
+        await router.push('/dashboard/experiment/poissonDistribution');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -233,7 +238,7 @@ const chapter2Items = [
       try {
         await clickApi('CLICK', 'catalogue', '几何分布', window.location.href);
         console.log('几何分布');
-        router.push('/dashboard/experiment/geometricDistribution');
+        await router.push('/dashboard/experiment/geometricDistribution');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -248,7 +253,7 @@ const chapter2Items = [
       try {
         await clickApi('CLICK', 'catalogue', '均匀分布', window.location.href);
         console.log('均匀分布');
-        router.push('/dashboard/experiment/evenDistribution');
+        await router.push('/dashboard/experiment/evenDistribution');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -263,7 +268,7 @@ const chapter2Items = [
       try {
         await clickApi('CLICK', 'catalogue', '指数分布', window.location.href);
         console.log('指数分布');
-        router.push('/dashboard/experiment/exponentialDistribution');
+        await router.push('/dashboard/experiment/exponentialDistribution');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -278,7 +283,7 @@ const chapter2Items = [
       try {
         await clickApi('CLICK', 'catalogue', '正态分布', window.location.href);
         console.log('正态分布');
-        router.push('/dashboard/experiment/normalDistribution');
+        await router.push('/dashboard/experiment/normalDistribution');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -296,7 +301,7 @@ const comparisonOfDistributions = [
       try {
         await clickApi('CLICK', 'catalogue', '二项分布与泊松分布', window.location.href);
         console.log('二项分布与泊松分布');
-        router.push('/dashboard/experiment/comparison/binomialPoisson');
+        await router.push('/dashboard/experiment/comparison/binomialPoisson');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -311,7 +316,7 @@ const comparisonOfDistributions = [
       try {
         await clickApi('CLICK', 'catalogue', '二项分布与正态分布', window.location.href);
         console.log('二项分布与正态分布');
-        router.push('/dashboard/experiment/comparison/binomialNormal');
+        await router.push('/dashboard/experiment/comparison/binomialNormal');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -392,22 +397,28 @@ function goHome() {
 
 <template>
   <div class="h-full">
-    <aside class="h-full border-r flex flex-col relative bg-background z-40">
-      <div class="p-1.5 border-b flex">
-        <Button size="icon" class="rounded-full size-7" @click="goHome()">
-          <Dices class="size-4" />
-        </Button>
-      </div>
-      <div class="p-1.5">
+    <aside class="h-full border-r flex flex-col relative bg-background z-40 items-center gap-4 px-2 sm:py-3">
+      <Button size="icon" class="group rounded-full size-9 bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base" @click="goHome()">
+        <Dices class="size-5 group-hover:scale-110" />
+      </Button>
+      <!--      <a -->
+      <!--        href="#" -->
+      <!--        class="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base" -->
+      <!--      > -->
+      <!--        <Package2 class="h-4 w-4 transition-all group-hover:scale-110" /> -->
+      <!--        <span class="sr-only">Acme Inc</span> -->
+      <!--      </a> -->
+      <div class="">
         <ul class="space-y-2 flex flex-col items-center">
           <li v-for="(item, index) in sideBarItem" :key="index">
             <TooltipProvider :delay-duration="0">
               <Tooltip>
                 <TooltipTrigger>
                   <Button
-                    size="icon" variant="ghost" :class="cn('size-7 rounded-lg text-muted-foreground', isActiveRoute(item.route ?? '') && '!bg-muted text-foreground')" @click="() => {
+                    size="icon" variant="ghost" :class="cn('size-9 rounded-lg text-muted-foreground', isActiveRoute(item.route ?? '') && '!bg-muted text-foreground')" @click="() => {
                       if (item.command) item.command();
                       else if (item.route) router.push(item.route);
+                      if (item.label !== '目录') showIndex = false;
                     }"
                   >
                     <component :is="item.icon" class="size-5" />
@@ -421,16 +432,17 @@ function goHome() {
           </li>
         </ul>
       </div>
-      <div class="mt-auto p-2">
-        <ul class="space-y-1">
+      <div class="mt-auto">
+        <ul class="space-y-2">
           <li v-for="(item, index) in sideBarBottomItem" :key="index">
             <TooltipProvider :delay-duration="0">
               <Tooltip>
                 <TooltipTrigger>
                   <Button
-                    size="icon" variant="ghost" @click="() => {
+                    size="icon" variant="ghost" class="size-9 text-muted-foreground" @click="() => {
                       if (item.route) router.push(item.route);
                       else if (item.command) item.command();
+                      showIndex = false;
                     }"
                   >
                     <component :is="item.icon" class="size-5" />
