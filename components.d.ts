@@ -13,7 +13,6 @@ declare module 'vue' {
     AccordionTrigger: typeof import('./src/components/ui/accordion/AccordionTrigger.vue')['default']
     AiPanel: typeof import('./src/components/ai/AiPanel.vue')['default']
     AiSidebar: typeof import('./src/components/ai/AiSidebar.vue')['default']
-    AISidebar: typeof import('./src/components/ai/AISidebar.vue')['default']
     AlertDialog: typeof import('./src/components/ui/alert-dialog/AlertDialog.vue')['default']
     AlertDialogAction: typeof import('./src/components/ui/alert-dialog/AlertDialogAction.vue')['default']
     AlertDialogCancel: typeof import('./src/components/ui/alert-dialog/AlertDialogCancel.vue')['default']
@@ -79,6 +78,7 @@ declare module 'vue' {
     DialogTitle: typeof import('./src/components/ui/dialog/DialogTitle.vue')['default']
     DialogTrigger: typeof import('./src/components/ui/dialog/DialogTrigger.vue')['default']
     DisplayContainer: typeof import('./src/components/experiment/DisplayContainer.vue')['default']
+    Distribution: typeof import('./src/components/home/mindmap/distribution.vue')['default']
     DistributionDiagram: typeof import('./src/components/experiment/distribution/DistributionDiagram.vue')['default']
     DropdownMenu: typeof import('./src/components/ui/dropdown-menu/DropdownMenu.vue')['default']
     DropdownMenuCheckboxItem: typeof import('./src/components/ui/dropdown-menu/DropdownMenuCheckboxItem.vue')['default']
@@ -109,8 +109,8 @@ declare module 'vue' {
     HoverCard: typeof import('./src/components/ui/hover-card/HoverCard.vue')['default']
     HoverCardContent: typeof import('./src/components/ui/hover-card/HoverCardContent.vue')['default']
     HoverCardTrigger: typeof import('./src/components/ui/hover-card/HoverCardTrigger.vue')['default']
+    Icon: typeof import('./src/components/home/mindmap/Icon.vue')['default']
     Input: typeof import('./src/components/ui/input/Input.vue')['default']
-    InputText: typeof import('primevue/inputtext')['default']
     Label: typeof import('./src/components/ui/label/Label.vue')['default']
     LoginCard: typeof import('./src/components/auth/LoginCard.vue')['default']
     NavBar: typeof import('./src/components/NavBar.vue')['default']
@@ -173,5 +173,6 @@ declare module 'vue' {
     TooltipTrigger: typeof import('./src/components/ui/tooltip/TooltipTrigger.vue')['default']
     UniformDiagram: typeof import('./src/components/experiment/distribution/UniformDiagram.vue')['default']
     UniformDistribution: typeof import('./src/components/experiment/distribution/UniformDistribution.vue')['default']
+    DistributionMindMap: typeof import('./src/components/home/mindmap/distribution.vue')
   }
 }
