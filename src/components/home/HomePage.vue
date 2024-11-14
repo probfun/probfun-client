@@ -106,7 +106,7 @@ const mindMaps = ref([
             </Label>
           </CardContent>
           <CardFooter>
-                       <router-link class="w-full" :to="'/dashboard/mindMap'">
+                       <router-link class="w-full" :to="'/dashboard/mindMap/C1'">
             <Button class="w-full">
               进入思维导图
             </Button>
