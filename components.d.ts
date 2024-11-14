@@ -13,7 +13,6 @@ declare module 'vue' {
     AccordionTrigger: typeof import('./src/components/ui/accordion/AccordionTrigger.vue')['default']
     AiPanel: typeof import('./src/components/ai/AiPanel.vue')['default']
     AiSidebar: typeof import('./src/components/ai/AiSidebar.vue')['default']
-    AISidebar: typeof import('./src/components/ai/AISidebar.vue')['default']
     AlertDialog: typeof import('./src/components/ui/alert-dialog/AlertDialog.vue')['default']
     AlertDialogAction: typeof import('./src/components/ui/alert-dialog/AlertDialogAction.vue')['default']
     AlertDialogCancel: typeof import('./src/components/ui/alert-dialog/AlertDialogCancel.vue')['default']

@@ -196,7 +196,7 @@ onMounted(() => {
 });
 
 const messageList = ref<Message[] | null>(null);
-const messageNumber = ref(2);
+const messageNumber = ref(4);
 
 async function getMessage() {
   try {
@@ -249,8 +249,46 @@ async function readMessage() {
               <button class="flex text-blue-600" @click="readMessage()">全部已读</button>
             </div>
             <div class="flex flex-col">
-              <span>为什么一直没有消息</span>
-              <span>我要晕倒了</span>
+              <div class="flex mb-3">
+                <Avatar class="mr-2">
+                  <AvatarImage src="https://github.com/radix-vue.png" alt="@radix-vue" />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+                <div class="flex flex-col">
+                  <span>张丽华</span>
+                  <span class="content text-sm text-gray-600">老师发布了新的班级公告</span>
+                </div>
+              </div>
+              <div class="flex mb-3">
+                <Avatar class="mr-2">
+                  <AvatarImage src="https://github.com/radix-vue.png" alt="@radix-vue" />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+                <div class="flex flex-col">
+                  <span>张丽华</span>
+                  <span class="content text-sm text-gray-600">老师置顶了你的评论</span>
+                </div>
+              </div>
+              <div class="flex mb-3">
+                <Avatar class="mr-2">
+                  <AvatarImage src="https://github.com/radix-vue.png" alt="@radix-vue" />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+                <div class="flex flex-col">
+                  <span>AAA专业捡垃圾</span>
+                  <span class="content text-sm text-gray-600">回复了你的评论</span>
+                </div>
+              </div>
+              <div class="flex mb-3">
+                <Avatar class="mr-2">
+                  <AvatarImage src="https://github.com/radix-vue.png" alt="@radix-vue" />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+                <div class="flex flex-col">
+                  <span>yyj2.0</span>
+                  <span class="content text-sm text-gray-600">赞了你的评论</span>
+                </div>
+              </div>
             </div>
           </HoverCardContent>
         </HoverCard>

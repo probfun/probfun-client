@@ -232,7 +232,7 @@ async function sendPost() {
                         class="w-full md:w-56" />
                 </div>
                 <div class="flex items-center gap-4 mb-8">
-                    <Textarea v-model="content" autoResize rows="10" class="w-full"/>
+                    <Textarea v-model="content" autoResize rows="10" class="w-full" placeholder="请输入班级公告"/>
                 </div>
                 <div class="flex justify-end gap-2">
                     <Button @click="sendPost()">发布公告</Button>
