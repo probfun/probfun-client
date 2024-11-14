@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import type { Message } from '@/api/message/messageType';
 import type { User } from '@/api/user/userType';
+import { fetchMessagesApi, readMessagesApi } from '@/api/message/messageApi';
 import { putUserApi, putUserAvatarApi } from '@/api/user/userApi';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -20,23 +22,25 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+
 import { Label } from '@/components/ui/label'
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+
+import { Separator } from '@/components/ui/separator';
+
 import { useUserStore } from '@/store'
 
-import { Plus } from 'lucide-vue-next'
-import { useToast } from 'primevue/usetoast';
-
+import { error, success, warning } from '@/utils/toast';
+import { Bell, Plus } from 'lucide-vue-next'
 import { onMounted, ref, watch } from 'vue';
-
 import { useRoute } from 'vue-router';
-import 'primeicons/primeicons.css'
-
-import { fetchMessagesApi, readMessagesApi } from '@/api/message/messageApi';
-import { Message } from '@/api/message/messageType';
 
 const userStore = useUserStore();
-const toast = useToast();
 
 const isLoading = ref(false);
 const tempUser = ref<User | null>(null);
@@ -45,7 +49,7 @@ async function onSubmit() {
   if (!tempUser.value || isLoading.value)
     return;
   if (tempUser.value.nickname === '') {
-    toast.add({ severity: 'warn', summary: '提示', detail: '昵称不能为空', life: 3000 });
+    warning('昵称不能为空');
   }
   try {
     isLoading.value = true;
@@ -60,11 +64,11 @@ async function onSubmit() {
     result.user.gender = result.user.gender.toString();
     userStore.user = result.user;
     tempUser.value = userStore.user;
-    toast.add({ severity: 'success', summary: '成功', detail: '个人资料已更新', life: 3000 });
+    success('个人资料已更新');
   }
-  catch (error) {
-    console.error('Error during updating user:', error);
-    toast.add({ severity: 'error', summary: '错误', detail: '个人资料更新失败，请重试', life: 3000 });
+  catch (e) {
+    console.error('Error during updating user:', e);
+    error('个人资料更新失败，请重试');
   }
   isLoading.value = false;
 }
@@ -294,8 +298,8 @@ async function readMessage() {
         </HoverCard>
       </div>
 
-      <Label class="text-base font-bold hover:underline underline-offset-4"> {{ userStore.user?.nickname ?? 'unknown'
-        }}</Label>
+      <!--      <Label class="text-base font-bold"> {{ userStore.user?.nickname ?? 'unknown' -->
+      <!--      }}</Label> -->
       <Button variant="ghost" size="icon" class="rounded-full" @click="isOpen = true">
         <img :src="userStore.user?.avatarUrl" class="w-8 rounded-full" alt="">
       </Button>

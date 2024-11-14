@@ -3,6 +3,16 @@ import type { AiMessage, ChatBlock } from '@/components/ai/aiType';
 import type { Textarea } from '@/components/ui/textarea';
 import { aiApi } from '@/api/ai/aiApi';
 import AiSidebar from '@/components/ai/AiSidebar.vue';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button'
 import { CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ContextMenuTrigger } from '@/components/ui/context-menu';
@@ -27,6 +37,9 @@ const tx = ref<typeof Textarea | null>(null);
 const autoScroll = ref(true);
 const lastScrollTop = ref(0);
 const showScrollToBottom = ref(false);
+const tempChatTitle = ref('');
+const isEditChatTitle = ref(false);
+const isOpen = ref(false);
 
 const startMessage: AiMessage = {
   role: 'assistant',
@@ -216,9 +229,45 @@ function handleCompositionEnd() {
 <template>
   <div class="flex p-2 gap-2">
     <AiSidebar />
-    <Card class="flex-1 flex flex-col">
-      <CardHeader class="py-4 px-4">
-        <CardTitle>{{ aiStore.currentChatBlock?.chatTitle ?? '新对话' }}</CardTitle>
+    <Card class="flex-1 flex hover:border-primary flex-col transition-all duration-300">
+      <CardHeader v-auto-animate class="py-2 px-4 flex flex-row items-center h-10">
+        <CardTitle v-if="!aiStore.currentChatBlock || !isEditChatTitle">
+          {{ aiStore.currentChatBlock?.chatTitle ?? '新对话' }}
+        </CardTitle>
+        <Input
+          v-else v-model="tempChatTitle" class="h-7 max-w-xs" @blur="() => {
+            aiStore.currentChatBlock!.chatTitle = tempChatTitle;
+            isEditChatTitle = false;
+          }"
+          @keydown.enter.exact="() => {
+            if (!isComposing) {
+              aiStore.currentChatBlock!.chatTitle = tempChatTitle;
+              isEditChatTitle = false;
+            }
+          }"
+          @compositionstart="handleCompositionStart"
+          @compositionend="handleCompositionEnd"
+        />
+        <div v-if="aiStore.currentChatBlock" class="flex gap-2 ml-3">
+          <Button
+            v-if="!isEditChatTitle"
+            size="icon" variant="outline" class="size-6"
+          >
+            <PencilLine
+              class="size-4" @click="() => {
+                tempChatTitle = aiStore.currentChatBlock?.chatTitle ?? '';
+                isEditChatTitle = true;
+              }"
+            />
+          </Button>
+          <Button size="icon" variant="outline" class="size-6">
+            <Trash2
+              class="size-4 text-destructive" @click="() => {
+                isOpen = true;
+              }"
+            />
+          </Button>
+        </div>
       </CardHeader>
       <CardContent class="overflow-y-hidden border-t flex pb-0 px-0 relative flex-1">
         <div ref="scrollContainer" class="flex w-full flex-col items-center gap-3 overflow-y-auto pt-4 px-6">
@@ -286,7 +335,7 @@ function handleCompositionEnd() {
               </div>
               <ContextMenu>
                 <ContextMenuTrigger :disabled="status !== 'idle' && aiStore.currentChatBlock !== null && index === aiStore.currentChatBlock.chatList.length - 1">
-                  <div v-auto-animate class="rounded-lg bg-muted text-foreground p-3 w-full border hover:border-primary transition-all">
+                  <div v-auto-animate class="rounded-lg bg-muted text-foreground p-3 w-full border">
                     <div v-if="status === 'loading' && aiStore.currentChatBlock && index === aiStore.currentChatBlock.chatList.length - 1" class="space-y-2">
                       <Skeleton class="w-32 h-5" />
                       <Skeleton class="w-full h-5" />
@@ -372,6 +421,31 @@ function handleCompositionEnd() {
       </CardHeader>
       <CardContent class="border-t" />
     </Card>
+
+    <AlertDialog v-model:open="isOpen">
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>确定要删除该聊天吗？</AlertDialogTitle>
+          <AlertDialogDescription>
+            该操作将永久删除该聊天，并且无法撤销。
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>
+            取消
+          </AlertDialogCancel>
+          <AlertDialogAction
+            class="bg-destructive text-destructive-foreground"
+            @click="() => {
+              aiStore.chatBlockList = aiStore.chatBlockList.filter((chatBlock) => chatBlock.chatId !== aiStore.currentChatBlock?.chatId);
+              aiStore.currentChatBlock = null;
+            }"
+          >
+            确定
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   </div>
 </template>
 

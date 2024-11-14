@@ -81,7 +81,7 @@ const parameterTabList = ref([{
               </Container>
             </div>
           </ResizablePanel>
-          <ResizableHandle id="demo-handle-2" />
+          <ResizableHandle id="demo-handle-2" class="bg-transparent" />
           <ResizablePanel id="demo-panel-4" :default-size="60">
             <div class="flex h-full items-center justify-center p-1">
               <Container class="h-full w-full" :tabs="parameterTabList">
@@ -91,7 +91,7 @@ const parameterTabList = ref([{
           </ResizablePanel>
         </ResizablePanelGroup>
       </ResizablePanel>
-      <ResizableHandle id="demo-handle-1" />
+      <ResizableHandle id="demo-handle-1" class="bg-transparent" />
       <ResizablePanel id="demo-panel-1" :default-size="30">
         <div class="flex h-full items-center justify-center p-1">
           <Container class="flex-1 h-full" :tabs="discussTabList">

@@ -55,12 +55,12 @@ function handleCompositionEnd() {
 
 <template>
   <div class="sticky left-0 h-full w-72">
-    <Card class="h-full overflow-y-hidden flex flex-col">
-      <CardHeader class="py-2 px-4">
+    <Card class="h-full overflow-y-hidden flex flex-col hover:border-primary transition-all duration-300">
+      <CardHeader class="px-4 py-2">
         <CardTitle class="flex items-center">
           历史聊天
-          <Button size="icon" variant="outline" class="size-8 ml-auto" @click="switchToNewChatBlock">
-            <Plus class="size-5" />
+          <Button size="icon" variant="outline" class="size-6 ml-auto" @click="switchToNewChatBlock">
+            <Plus class="size-4" />
           </Button>
         </CardTitle>
       </CardHeader>
