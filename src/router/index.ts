@@ -19,6 +19,8 @@ import AuthPage from '@/pages/AuthPage.vue';
 import DashBoard from '@/pages/DashBoard.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
+import distriMindMap from '@/components/home/mindmap/distribution.vue';
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -115,6 +117,10 @@ const router = createRouter({
         {
           path: '/dashboard/star',
           component: StarPanel,
+        },
+        {
+          path: '/dashboard/mindmap',
+          component: distriMindMap,
         },
       ],
     },
