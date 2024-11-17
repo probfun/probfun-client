@@ -7,6 +7,9 @@ import Icon from '../Icon.vue'
 import { initialEdges, initialNodes } from './initial-elements.js'
 import { useLayout } from './useLayout'
 
+import './nodeStyles.css';
+
+
 const nodes = ref(initialNodes)
 
 const edges = ref(initialEdges)
@@ -14,6 +17,10 @@ const edges = ref(initialEdges)
 const { layout } = useLayout()
 
 const { fitView } = useVueFlow()
+
+nextTick(() => {
+  fitView(); // 调整视图以适应节点布局
+});
 
 async function layoutGraph(direction) {
   nodes.value = layout(nodes.value, edges.value, direction)
@@ -26,7 +33,7 @@ async function layoutGraph(direction) {
 
 <template>
   <div class="layout-flow">
-    <VueFlow :nodes="nodes" :edges="edges" @nodes-initialized="layoutGraph('LR')">
+    <VueFlow :nodes="nodes" :edges="edges" fit-view-on-init elevate-edges-on-select @nodes-initialized="layoutGraph('LR')" :enableNodeParenting="true">
       <Background />
 
       <Panel class="process-panel" position="top-right">
@@ -121,6 +128,9 @@ async function layoutGraph(direction) {
   height: 10px;
   animation: spin 1s linear infinite;
 }
+
+
+
 
 @keyframes spin {
   0% {
