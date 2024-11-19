@@ -108,7 +108,11 @@ const router = createRouter({
           component: () => import('@/components/experiment/distribution/comparison/PN.vue'),
         },
         {
-          path: '/dashboard/info',
+          path: '/dashboard/info0',
+          component: StudentPanel,
+        },
+        {
+          path: '/dashboard/info1',
           component: TeacherPanel,
         },
         {

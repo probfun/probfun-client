@@ -25,8 +25,10 @@ import { Book, Bot, CircleHelp, Dices, Home, LogOut, Star, Sun, User } from 'luc
 import { useToast } from 'primevue/usetoast';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useUserStore } from '@/store';
 
 const toast = useToast();
+const userStore = useUserStore();
 
 interface SideBarItem {
   label: string
@@ -73,7 +75,7 @@ const sideBarItem = ref<SideBarItem[]>([
   {
     label: '个人资料',
     icon: User,
-    route: '/dashboard/info',
+    route: userStore.user?.role === '0' ? '/dashboard/info0' : '/dashboard/info1'
   },
 ]);
 
@@ -398,7 +400,9 @@ function goHome() {
 <template>
   <div class="h-full">
     <aside class="h-full border-r flex flex-col relative bg-background z-40 items-center gap-4 px-2 sm:py-3">
-      <Button size="icon" class="group rounded-full size-9 bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base" @click="goHome()">
+      <Button size="icon"
+        class="group rounded-full size-9 bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
+        @click="goHome()">
         <Dices class="size-5 group-hover:scale-110" />
       </Button>
       <!--      <a -->
@@ -414,13 +418,13 @@ function goHome() {
             <TooltipProvider :delay-duration="0">
               <Tooltip>
                 <TooltipTrigger>
-                  <Button
-                    size="icon" variant="ghost" :class="cn('size-9 rounded-lg text-muted-foreground', isActiveRoute(item.route ?? '') && '!bg-muted text-foreground')" @click="() => {
+                  <Button size="icon" variant="ghost"
+                    :class="cn('size-9 rounded-lg text-muted-foreground', isActiveRoute(item.route ?? '') && '!bg-muted text-foreground')"
+                    @click="() => {
                       if (item.command) item.command();
                       else if (item.route) router.push(item.route);
                       if (item.label !== '目录') showIndex = false;
-                    }"
-                  >
+                    }">
                     <component :is="item.icon" class="size-5" />
                   </Button>
                 </TooltipTrigger>
@@ -438,13 +442,11 @@ function goHome() {
             <TooltipProvider :delay-duration="0">
               <Tooltip>
                 <TooltipTrigger>
-                  <Button
-                    size="icon" variant="ghost" class="size-9 text-muted-foreground" @click="() => {
-                      if (item.route) router.push(item.route);
-                      else if (item.command) item.command();
-                      showIndex = false;
-                    }"
-                  >
+                  <Button size="icon" variant="ghost" class="size-9 text-muted-foreground" @click="() => {
+                    if (item.route) router.push(item.route);
+                    else if (item.command) item.command();
+                    showIndex = false;
+                  }">
                     <component :is="item.icon" class="size-5" />
                   </Button>
                 </TooltipTrigger>
@@ -484,10 +486,8 @@ function goHome() {
                 </summary>
                 <ul class="sapce-y-1">
                   <li v-for="(item, index) in chapter1Items" :key="item.label">
-                    <a
-                      :class="{ active: isActiveRoute(item.route) }"
-                      @click="() => { item.command(); toggleDrawer(); }"
-                    >
+                    <a :class="{ active: isActiveRoute(item.route) }"
+                      @click="() => { item.command(); toggleDrawer(); }">
                       <i :class="item.icon" />
                       1.{{ index + 1 }}-{{ item.label }}
                     </a>
@@ -503,10 +503,8 @@ function goHome() {
                 </summary>
                 <ul class="sapce-y-1">
                   <li v-for="(item, index) in chapter2Items" :key="item.label">
-                    <a
-                      :class="{ active: isActiveRoute(item.route) }"
-                      @click="() => { item.command(); toggleDrawer(); }"
-                    >
+                    <a :class="{ active: isActiveRoute(item.route) }"
+                      @click="() => { item.command(); toggleDrawer(); }">
                       <i :class="item.icon" />
                       2.{{ index + 1 }}-{{ item.label }}
                     </a>
@@ -516,10 +514,8 @@ function goHome() {
                       <summary><i class="pi pi-chart-bar" />2.7-分布的对比</summary>
                       <ul class="sapce-y-1">
                         <li v-for="(item, index) in comparisonOfDistributions" :key="item.label">
-                          <a
-                            :class="{ active: isActiveRoute(item.route) }"
-                            @click="() => { item.command(); toggleDrawer(); }"
-                          >
+                          <a :class="{ active: isActiveRoute(item.route) }"
+                            @click="() => { item.command(); toggleDrawer(); }">
                             <i />
                             2.7.{{ index + 1 }}-{{ item.label }}
                           </a>
