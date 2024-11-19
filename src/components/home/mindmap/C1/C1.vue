@@ -41,13 +41,13 @@ async function layoutGraph(direction) {
       :enableNodeParenting="true"
     >      <Background />
 
-      <Panel class="process-panel" position="top-right">
+      <!-- <Panel class="process-panel" position="top-right">
         <div class="layout-panel">
           <button title="set horizontal layout" @click="layoutGraph('LR')">
             <Icon name="horizontal" />
           </button>
         </div>
-      </Panel>
+      </Panel> -->
     </VueFlow>
   </div>
 </template>
