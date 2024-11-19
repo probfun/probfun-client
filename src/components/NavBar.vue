@@ -241,17 +241,25 @@ async function readMessage() {
     </div>
     <div class="flex items-center gap-2 ml-auto">
       <div class="relative flex items-center justify-items-center ml-auto mr-2 hover:scale-110 top-[3px]">
-        <HoverCard>
-          <HoverCardTrigger>
-            <OverlayBadge v-if="messageNumber > 0" :value="messageNumber" size="small" severity="danger">
-              <i class="pi pi-bell" style="font-size: 1.5rem" />
-            </OverlayBadge>
-            <i v-if="messageNumber === 0" class="pi pi-bell" style="font-size: 1.5rem" />
-          </HoverCardTrigger>
-          <HoverCardContent class="flex flex-col">
-            <div class="flex ml-auto">
-              <button class="flex text-blue-600" @click="readMessage()">全部已读</button>
+        <Popover>
+          <PopoverTrigger>
+            <Button size="icon" class="size-8 relative text-muted-foreground" variant="ghost">
+              <Bell :stroke-width="2.5" class="size-5" />
+              <Badge
+                class="absolute right-1.5 top-0 translate-x-1/2 rounded-full min-w-4 h-4 p-0 flex items-center justify-center"
+                variant="destructive">
+                {{ messageNumber <= 99 ? messageNumber : '99+' }} </Badge>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent>
+            <div class="flex">
+              <Label class="font-bold text-base"> 我的消息 </Label>
+              <button class="flex text-blue-600 ml-auto" @click="readMessage()">
+                全部已读
+              </button>
             </div>
+            <Separator class="my-2" />
+            <div class="flex ml-auto" />
             <div class="flex flex-col">
               <div class="flex mb-3">
                 <Avatar class="mr-2">
@@ -294,8 +302,8 @@ async function readMessage() {
                 </div>
               </div>
             </div>
-          </HoverCardContent>
-        </HoverCard>
+          </PopoverContent>
+        </Popover>
       </div>
 
       <!--      <Label class="text-base font-bold"> {{ userStore.user?.nickname ?? 'unknown' -->
