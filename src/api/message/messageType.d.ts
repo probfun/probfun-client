@@ -1,4 +1,5 @@
 import type { UserPublic } from '@/api/user/userType';
+import type { Comment } from '@/api/comment/commentType';
 
 export interface LikeData {
   comment: Comment
