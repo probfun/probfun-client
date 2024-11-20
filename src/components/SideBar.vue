@@ -127,12 +127,12 @@ const chapter1Items = [
   {
     label: 'Buffon投针',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/chapter1/buffon',
+    route: '/dashboard/experiment/buffon',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', 'Buffon投针', window.location.href);
         console.log('Buffon投针');
-        await router.push('/dashboard/experiment/chapter1/buffon');
+        await router.push('/dashboard/experiment/buffon');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -146,23 +146,23 @@ const chapter1Items = [
       try {
         await clickApi('CLICK', 'catalogue', '三门问题', window.location.href);
         console.log('三门问题');
-        await router.push('/dashboard/experiment/chapter1/three-doors');
+        await router.push('/dashboard/experiment/three-doors');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
       }
     },
-    route: '/dashboard/experiment/chapter1/three-doors',
+    route: '/dashboard/experiment/three-doors',
   },
   {
     label: '生日问题',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/chapter1/birthday-problem',
+    route: '/dashboard/experiment/birthday-problem',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '生日问题', window.location.href);
         console.log('生日问题');
-        await router.push('/dashboard/experiment/chapter1/birthday-problem');
+        await router.push('/dashboard/experiment/birthday-problem');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -172,12 +172,12 @@ const chapter1Items = [
   {
     label: '生日攻击问题',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/chapter1/birthday-attack',
+    route: '/dashboard/experiment/birthday-attack',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '生日攻击问题', window.location.href);
         console.log('生日攻击问题');
-        await router.push('/dashboard/experiment/chapter1/birthday-attack');
+        await router.push('/dashboard/experiment/birthday-attack');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -187,12 +187,12 @@ const chapter1Items = [
   {
     label: '阳性检测',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/chapter1/positive-test',
+    route: '/dashboard/experiment/positive-test',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '阳性检测', window.location.href);
         console.log('阳性检测');
-        await router.push('/dashboard/experiment/chapter1/positive-test');
+        await router.push('/dashboard/experiment/positive-test');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -298,12 +298,12 @@ const comparisonOfDistributions = [
   {
     label: '二项分布与泊松分布',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/comparison/binomialPoisson',
+    route: '/dashboard/experiment/binomialPoisson',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '二项分布与泊松分布', window.location.href);
         console.log('二项分布与泊松分布');
-        await router.push('/dashboard/experiment/comparison/binomialPoisson');
+        await router.push('/dashboard/experiment/binomialPoisson');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -313,12 +313,12 @@ const comparisonOfDistributions = [
   {
     label: '二项分布与正态分布',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/comparison/binomialNormal',
+    route: '/dashboard/experiment/binomialNormal',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '二项分布与正态分布', window.location.href);
         console.log('二项分布与正态分布');
-        await router.push('/dashboard/experiment/comparison/binomialNormal');
+        await router.push('/dashboard/experiment/binomialNormal');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -328,12 +328,12 @@ const comparisonOfDistributions = [
   {
     label: '泊松分布与指数分布',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/comparison/poissonExponential',
+    route: '/dashboard/experiment/poissonExponential',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '泊松分布与指数分布', window.location.href);
         console.log('泊松分布与指数分布');
-        router.push('/dashboard/experiment/comparison/poissonExponential');
+        router.push('/dashboard/experiment/poissonExponential');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -343,12 +343,12 @@ const comparisonOfDistributions = [
   {
     label: '泊松分布与正态分布',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/comparison/poissonNormal',
+    route: '/dashboard/experiment/poissonNormal',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '泊松分布与正态分布', window.location.href);
         console.log('泊松分布与正态分布');
-        router.push('/dashboard/experiment/comparison/poissonNormal');
+        router.push('/dashboard/experiment/poissonNormal');
       }
       catch (error) {
         console.error('Error tracking button click:', error);

@@ -48,23 +48,23 @@ const router = createRouter({
           component: HomePage,
         },
         {
-          path: '/dashboard/experiment/chapter1/buffon',
+          path: '/dashboard/experiment/buffon',
           component: BuffonNeedle,
         },
         {
-          path: '/dashboard/experiment/chapter1/three-doors',
+          path: '/dashboard/experiment/three-doors',
           component: ThreeDoors,
         },
         {
-          path: '/dashboard/experiment/chapter1/positive-test',
+          path: '/dashboard/experiment/positive-test',
           component: PositiveTest,
         },
         {
-          path: '/dashboard/experiment/chapter1/birthday-attack',
+          path: '/dashboard/experiment/birthday-attack',
           component: BirthdayAttack,
         },
         {
-          path: '/dashboard/experiment/chapter1/birthday-problem',
+          path: '/dashboard/experiment/birthday-problem',
           component: BirthdayProblem,
         },
         {
@@ -92,19 +92,19 @@ const router = createRouter({
           component: () => import('@/components/experiment/distribution/ExponentialDistribution.vue'),
         },
         {
-          path: '/dashboard/experiment/comparison/binomialPoisson',
+          path: '/dashboard/experiment/binomialPoisson',
           component: () => import('@/components/experiment/distribution/comparison/BP.vue'),
         },
         {
-          path: '/dashboard/experiment/comparison/binomialNormal',
+          path: '/dashboard/experiment/binomialNormal',
           component: () => import('@/components/experiment/distribution/comparison/BN.vue'),
         },
         {
-          path: '/dashboard/experiment/comparison/poissonExponential',
+          path: '/dashboard/experiment/poissonExponential',
           component: () => import('@/components/experiment/distribution/comparison/PE.vue'),
         },
         {
-          path: '/dashboard/experiment/comparison/poissonNormal',
+          path: '/dashboard/experiment/poissonNormal',
           component: () => import('@/components/experiment/distribution/comparison/PN.vue'),
         },
         {

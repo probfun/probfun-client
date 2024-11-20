@@ -205,7 +205,7 @@ onMounted(() => {
                         三门问题是一个概率游戏，选手在三扇门中选一扇，选对得奖。主持人会揭示另一扇无奖的门，选手可以选择换或不换门。
                     </CardContent>
                     <CardFooter class="flex items-center justify-between gap-2 p-3 pt-0">
-                        <router-link class="w-full" to="/dashboard/experiment/chapter1/three-doors">
+                        <router-link class="w-full" to="/dashboard/experiment/three-doors">
                             <Button class="w-full">进入实验</Button>
                         </router-link>
                     </CardFooter>

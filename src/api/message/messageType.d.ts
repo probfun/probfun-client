@@ -33,8 +33,10 @@ export interface ChosenData {
 
 export interface Message {
   messageId: string
-  read: boolean
+  read: string
   timestamp: string
+  type: string
+  user: UserPublic
   likeData: LikeData | null
   postData: PostData | null
   replyData: ReplyData | null
