@@ -208,8 +208,13 @@ async function getMessage() {
     const result = await fetchMessagesApi();
     messageNumber.value = result.messages.length;
     for (let i = 0; i < result.messages.length; i++) {
-      messageList.value.push(result.messages[i]);
-      console.log(result.messages[i]);
+      if (result.messages[i].read == 'false') {
+        messageList.value.push(result.messages[i]);
+        console.log(result.messages[i]);
+      }
+      else {
+        messageNumber.value -= 1;
+      }
     }
     console.log("消息", messageList.value);
   }
@@ -251,7 +256,7 @@ async function readMessage() {
           <PopoverTrigger>
             <Button size="icon" class="size-8 relative text-muted-foreground" variant="ghost">
               <Bell :stroke-width="2.5" class="size-5" />
-              <Badge
+              <Badge v-if="messageNumber !== 0"
                 class="absolute right-1.5 top-0 translate-x-1/2 rounded-full min-w-4 h-4 p-0 flex items-center justify-center"
                 variant="destructive">
                 {{ messageNumber <= 99 ? messageNumber : '99+' }} </Badge>
@@ -269,11 +274,25 @@ async function readMessage() {
             <div class="flex flex-col">
               <div v-for="item in messageList" :key="item.messageId" class="flex mb-3">
                 <Avatar class="mr-2">
-                  <AvatarImage :src="item.user.avatarUrl" alt="@radix-vue" />
+                  <div v-if="item.type === 'post'">
+                    <AvatarImage :src="item.postData?.post.user.avatarUrl || ''" alt="@radix-vue" />
+                  </div>
+                  <div v-if="item.type === 'pin'">
+                    <AvatarImage :src="item.pinData?.user.avatarUrl || ''" alt="@radix-vue" />
+                  </div>
+                  <div v-if="item.type === 'reply'">
+                    <AvatarImage :src="item.replyData?.reply.user.avatarUrl || ''" alt="@radix-vue" />
+                  </div>
+                  <div v-if="item.type === 'like'">
+                    <AvatarImage :src="item.likeData?.user.avatarUrl || ''" alt="@radix-vue" />
+                  </div>
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
                 <div class="flex flex-col">
-                  <span>{{ item.user.nickname }}</span>
+                  <span v-if="item.type === 'post'">{{ item.postData?.post.user.nickname }}</span>
+                  <span v-if="item.type === 'pin'">{{ item.pinData?.user.nickname }}</span>
+                  <span v-if="item.type === 'reply'">{{ item.replyData?.reply.user.nickname }}</span>
+                  <span v-if="item.type === 'like'">{{ item.likeData?.user.nickname }}</span>
                   <span v-if="item.type === 'post'" class="content text-sm text-gray-600">老师发布了新的班级公告</span>
                   <span v-if="item.type === 'pin'" class="content text-sm text-gray-600"
                     @click="router.push(`/dashboard/experiment/${item.pinData?.comment.expId}`)">老师置顶了你的评论</span>
