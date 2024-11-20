@@ -38,7 +38,7 @@
     "tests/**/*.ts",
     "tests/**/*.tsx",
     "src/utils/mathjax.js"
-  ],
+, "src/components/diagram/diagram-test/useRunProcess.js"  ],
   "exclude": [
     "node_modules",
     "dist"
