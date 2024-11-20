@@ -71,7 +71,7 @@ const isOpen = ref(false);
             </Button>
             <Label :for="`reply-${comment.commentId}`"> {{ comment.childComments.length > 99 ? '99+' : comment.childComments.length }} </Label>
           </div>
-          <div v-if="comment.user.uid === useUserStore().user?.uid || useUserStore().user?.role !== 0" class="flex items-center -space-x-0.5">
+          <div v-if="comment.user.uid === useUserStore().user?.uid || useUserStore().user?.role !== '0'" class="flex items-center -space-x-0.5">
             <Button variant="ghost" size="icon" class="rounded-full size-8 hover:text-destructive" @click.stop="emit('delete', comment)">
               <Trash2 class="size-4" />
             </Button>
