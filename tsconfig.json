@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "outDir": "./dist", // 编译后的文件输出到 dist 文件夹
+    "rootDir": "./src", // 指定源文件的根目录
     "types": ["vite/client"],
     "target": "esnext",
     "module": "esnext",
@@ -38,6 +40,7 @@
     "src/utils/mathjax.js"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "dist"
   ]
 }
