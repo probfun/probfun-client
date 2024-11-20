@@ -27,13 +27,13 @@ const experiments = ref([
     title: '三门问题',
     description: '三门问题是一个概率游戏，选手在三扇门中选一扇，选对得奖。主持人会揭示另一扇门，选手可以选择换或不换门。',
     img: '/homePage/threeDoors.png',
-    path: '/dashboard/experiment/chapter1/three-doors',
+    path: '/dashboard/experiment/three-doors',
   },
   {
     title: 'Buffon投针',
     description: 'Buffon投针问题是一个通过随机投掷针到平行线板上，通过针与线的相交数量来估算圆周率π的几何概率实验。',
     img: '/homePage/buffonNeedle.png',
-    path: '/dashboard/experiment/chapter1/buffon',
+    path: '/dashboard/experiment/buffon',
   },
 ]);
 

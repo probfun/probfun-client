@@ -1,4 +1,5 @@
 import type { UserPublic } from '@/api/user/userType';
+import type { Comment } from '@/api/comment/commentType';
 
 export interface LikeData {
   comment: Comment
@@ -33,8 +34,10 @@ export interface ChosenData {
 
 export interface Message {
   messageId: string
-  read: boolean
+  read: string
   timestamp: string
+  type: string
+  user: UserPublic
   likeData: LikeData | null
   postData: PostData | null
   replyData: ReplyData | null

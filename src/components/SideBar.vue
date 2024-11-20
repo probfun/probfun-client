@@ -25,8 +25,10 @@ import { Book, Bot, CircleHelp, Dices, Home, LogOut, Star, Sun, User } from 'luc
 import { useToast } from 'primevue/usetoast';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useUserStore } from '@/store';
 
 const toast = useToast();
+const userStore = useUserStore();
 
 interface SideBarItem {
   label: string
@@ -73,7 +75,7 @@ const sideBarItem = ref<SideBarItem[]>([
   {
     label: '个人资料',
     icon: User,
-    route: '/dashboard/info',
+    route: userStore.user?.role === '0' ? '/dashboard/info0' : '/dashboard/info1'
   },
 ]);
 
@@ -125,12 +127,12 @@ const chapter1Items = [
   {
     label: 'Buffon投针',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/chapter1/buffon',
+    route: '/dashboard/experiment/buffon',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', 'Buffon投针', window.location.href);
         console.log('Buffon投针');
-        await router.push('/dashboard/experiment/chapter1/buffon');
+        await router.push('/dashboard/experiment/buffon');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -144,23 +146,23 @@ const chapter1Items = [
       try {
         await clickApi('CLICK', 'catalogue', '三门问题', window.location.href);
         console.log('三门问题');
-        await router.push('/dashboard/experiment/chapter1/three-doors');
+        await router.push('/dashboard/experiment/three-doors');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
       }
     },
-    route: '/dashboard/experiment/chapter1/three-doors',
+    route: '/dashboard/experiment/three-doors',
   },
   {
     label: '生日问题',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/chapter1/birthday-problem',
+    route: '/dashboard/experiment/birthday-problem',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '生日问题', window.location.href);
         console.log('生日问题');
-        await router.push('/dashboard/experiment/chapter1/birthday-problem');
+        await router.push('/dashboard/experiment/birthday-problem');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -170,12 +172,12 @@ const chapter1Items = [
   {
     label: '生日攻击问题',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/chapter1/birthday-attack',
+    route: '/dashboard/experiment/birthday-attack',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '生日攻击问题', window.location.href);
         console.log('生日攻击问题');
-        await router.push('/dashboard/experiment/chapter1/birthday-attack');
+        await router.push('/dashboard/experiment/birthday-attack');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -185,12 +187,12 @@ const chapter1Items = [
   {
     label: '阳性检测',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/chapter1/positive-test',
+    route: '/dashboard/experiment/positive-test',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '阳性检测', window.location.href);
         console.log('阳性检测');
-        await router.push('/dashboard/experiment/chapter1/positive-test');
+        await router.push('/dashboard/experiment/positive-test');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -296,12 +298,12 @@ const comparisonOfDistributions = [
   {
     label: '二项分布与泊松分布',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/comparison/binomialPoisson',
+    route: '/dashboard/experiment/binomialPoisson',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '二项分布与泊松分布', window.location.href);
         console.log('二项分布与泊松分布');
-        await router.push('/dashboard/experiment/comparison/binomialPoisson');
+        await router.push('/dashboard/experiment/binomialPoisson');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -311,12 +313,12 @@ const comparisonOfDistributions = [
   {
     label: '二项分布与正态分布',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/comparison/binomialNormal',
+    route: '/dashboard/experiment/binomialNormal',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '二项分布与正态分布', window.location.href);
         console.log('二项分布与正态分布');
-        await router.push('/dashboard/experiment/comparison/binomialNormal');
+        await router.push('/dashboard/experiment/binomialNormal');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -326,12 +328,12 @@ const comparisonOfDistributions = [
   {
     label: '泊松分布与指数分布',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/comparison/poissonExponential',
+    route: '/dashboard/experiment/poissonExponential',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '泊松分布与指数分布', window.location.href);
         console.log('泊松分布与指数分布');
-        router.push('/dashboard/experiment/comparison/poissonExponential');
+        router.push('/dashboard/experiment/poissonExponential');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -341,12 +343,12 @@ const comparisonOfDistributions = [
   {
     label: '泊松分布与正态分布',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/comparison/poissonNormal',
+    route: '/dashboard/experiment/poissonNormal',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '泊松分布与正态分布', window.location.href);
         console.log('泊松分布与正态分布');
-        router.push('/dashboard/experiment/comparison/poissonNormal');
+        router.push('/dashboard/experiment/poissonNormal');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -398,7 +400,9 @@ function goHome() {
 <template>
   <div class="h-full">
     <aside class="h-full border-r flex flex-col relative bg-background z-40 items-center gap-4 px-2 sm:py-3">
-      <Button size="icon" class="group rounded-full size-9 bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base" @click="goHome()">
+      <Button size="icon"
+        class="group rounded-full size-9 bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
+        @click="goHome()">
         <Dices class="size-5 group-hover:scale-110" />
       </Button>
       <!--      <a -->
@@ -414,13 +418,13 @@ function goHome() {
             <TooltipProvider :delay-duration="0">
               <Tooltip>
                 <TooltipTrigger>
-                  <Button
-                    size="icon" variant="ghost" :class="cn('size-9 rounded-lg text-muted-foreground', isActiveRoute(item.route ?? '') && '!bg-muted text-foreground')" @click="() => {
+                  <Button size="icon" variant="ghost"
+                    :class="cn('size-9 rounded-lg text-muted-foreground', isActiveRoute(item.route ?? '') && '!bg-muted text-foreground')"
+                    @click="() => {
                       if (item.command) item.command();
                       else if (item.route) router.push(item.route);
                       if (item.label !== '目录') showIndex = false;
-                    }"
-                  >
+                    }">
                     <component :is="item.icon" class="size-5" />
                   </Button>
                 </TooltipTrigger>
@@ -438,13 +442,11 @@ function goHome() {
             <TooltipProvider :delay-duration="0">
               <Tooltip>
                 <TooltipTrigger>
-                  <Button
-                    size="icon" variant="ghost" class="size-9 text-muted-foreground" @click="() => {
-                      if (item.route) router.push(item.route);
-                      else if (item.command) item.command();
-                      showIndex = false;
-                    }"
-                  >
+                  <Button size="icon" variant="ghost" class="size-9 text-muted-foreground" @click="() => {
+                    if (item.route) router.push(item.route);
+                    else if (item.command) item.command();
+                    showIndex = false;
+                  }">
                     <component :is="item.icon" class="size-5" />
                   </Button>
                 </TooltipTrigger>
@@ -484,10 +486,8 @@ function goHome() {
                 </summary>
                 <ul class="sapce-y-1">
                   <li v-for="(item, index) in chapter1Items" :key="item.label">
-                    <a
-                      :class="{ active: isActiveRoute(item.route) }"
-                      @click="() => { item.command(); toggleDrawer(); }"
-                    >
+                    <a :class="{ active: isActiveRoute(item.route) }"
+                      @click="() => { item.command(); toggleDrawer(); }">
                       <i :class="item.icon" />
                       1.{{ index + 1 }}-{{ item.label }}
                     </a>
@@ -503,10 +503,8 @@ function goHome() {
                 </summary>
                 <ul class="sapce-y-1">
                   <li v-for="(item, index) in chapter2Items" :key="item.label">
-                    <a
-                      :class="{ active: isActiveRoute(item.route) }"
-                      @click="() => { item.command(); toggleDrawer(); }"
-                    >
+                    <a :class="{ active: isActiveRoute(item.route) }"
+                      @click="() => { item.command(); toggleDrawer(); }">
                       <i :class="item.icon" />
                       2.{{ index + 1 }}-{{ item.label }}
                     </a>
@@ -516,10 +514,8 @@ function goHome() {
                       <summary><i class="pi pi-chart-bar" />2.7-分布的对比</summary>
                       <ul class="sapce-y-1">
                         <li v-for="(item, index) in comparisonOfDistributions" :key="item.label">
-                          <a
-                            :class="{ active: isActiveRoute(item.route) }"
-                            @click="() => { item.command(); toggleDrawer(); }"
-                          >
+                          <a :class="{ active: isActiveRoute(item.route) }"
+                            @click="() => { item.command(); toggleDrawer(); }">
                             <i />
                             2.7.{{ index + 1 }}-{{ item.label }}
                           </a>

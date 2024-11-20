@@ -38,9 +38,10 @@ import { useUserStore } from '@/store'
 import { error, success, warning } from '@/utils/toast';
 import { Bell, Plus } from 'lucide-vue-next'
 import { onMounted, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const userStore = useUserStore();
+const router = useRouter()
 
 const isLoading = ref(false);
 const tempUser = ref<User | null>(null);
@@ -199,13 +200,18 @@ onMounted(() => {
   updateExperiment();
 });
 
-const messageList = ref<Message[] | null>(null);
-const messageNumber = ref(4);
+const messageList = ref<Message[]>([]);
+const messageNumber = ref(0);
 
 async function getMessage() {
   try {
     const result = await fetchMessagesApi();
-    console.log(result);
+    messageNumber.value = result.messages.length;
+    for (let i = 0; i < result.messages.length; i++) {
+      messageList.value.push(result.messages[i]);
+      console.log(result.messages[i]);
+    }
+    console.log("消息", messageList.value);
   }
   catch (error) {
     console.error('Error during fetching messages:', error);
@@ -261,17 +267,23 @@ async function readMessage() {
             <Separator class="my-2" />
             <div class="flex ml-auto" />
             <div class="flex flex-col">
-              <div class="flex mb-3">
+              <div v-for="item in messageList" :key="item.messageId" class="flex mb-3">
                 <Avatar class="mr-2">
-                  <AvatarImage src="https://github.com/radix-vue.png" alt="@radix-vue" />
+                  <AvatarImage :src="item.user.avatarUrl" alt="@radix-vue" />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
                 <div class="flex flex-col">
-                  <span>张丽华</span>
-                  <span class="content text-sm text-gray-600">老师发布了新的班级公告</span>
+                  <span>{{ item.user.nickname }}</span>
+                  <span v-if="item.type === 'post'" class="content text-sm text-gray-600">老师发布了新的班级公告</span>
+                  <span v-if="item.type === 'pin'" class="content text-sm text-gray-600"
+                    @click="router.push(`/dashboard/experiment/${item.pinData?.comment.expId}`)">老师置顶了你的评论</span>
+                  <span v-if="item.type === 'reply'" class="content text-sm text-gray-600"
+                    @click="router.push(`/dashboard/experiment/${item.replyData?.comment.expId}`)">回复了你的评论</span>
+                  <span v-if="item.type === 'like'" class="content text-sm text-gray-600"
+                    @click="router.push(`/dashboard/experiment/${item.likeData?.comment.expId}`)">赞了你的评论</span>
                 </div>
               </div>
-              <div class="flex mb-3">
+              <!-- <div class="flex mb-3">
                 <Avatar class="mr-2">
                   <AvatarImage src="https://github.com/radix-vue.png" alt="@radix-vue" />
                   <AvatarFallback>CN</AvatarFallback>
@@ -300,7 +312,7 @@ async function readMessage() {
                   <span>yyj2.0</span>
                   <span class="content text-sm text-gray-600">赞了你的评论</span>
                 </div>
-              </div>
+              </div> -->
             </div>
           </PopoverContent>
         </Popover>

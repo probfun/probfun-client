@@ -143,19 +143,6 @@ const cancel = () => {
 
 }
 
-async function getMessage() {
-    try {
-        const result = await fetchMessagesApi();
-        messageList.value = result.messages;
-    }
-    catch (error) {
-        console.error('Error during fetching messages:', error);
-    }
-}
-onMounted(() => {
-    getMessage();
-})
-
 async function sendPost() {
     if (content.value === '') {
         toast.add({ severity: 'warn', summary: '提示', detail: '班级公告不能为空', life: 3000 });
@@ -168,7 +155,6 @@ async function sendPost() {
     title.value = selectedClass.value.join(', ');
     try {
         await postPostApi(title.value, content.value);
-        await getMessage();
         toast.add({ severity: 'success', summary: '成功', detail: '发布班级公告成功！', life: 3000 });
         content.value = '';
     }
