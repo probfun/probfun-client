@@ -24,7 +24,7 @@ nextTick(() => {
 
 async function layoutGraph(direction) {
   nodes.value = layout(nodes.value, edges.value, direction)
-
+  await nextTick();
   nextTick(() => {
     fitView()
   })
@@ -33,20 +33,21 @@ async function layoutGraph(direction) {
 
 <template>
   <div class="layout-flow">
-    <VueFlow :nodes="nodes" :edges="edges" fit-view-on-init elevate-edges-on-select @nodes-initialized="layoutGraph('LR')" :enableNodeParenting="true">
-      <Background />
+    <VueFlow
+      v-model:nodes="nodes"
+      v-model:edges="edges"
+      fit-view-on-init
+      elevate-edges-on-select
+      :enableNodeParenting="true"
+    >      <Background />
 
-      <Panel class="process-panel" position="top-right">
+      <!-- <Panel class="process-panel" position="top-right">
         <div class="layout-panel">
           <button title="set horizontal layout" @click="layoutGraph('LR')">
             <Icon name="horizontal" />
           </button>
-
-          <button title="set vertical layout" @click="layoutGraph('TB')">
-            <Icon name="vertical" />
-          </button>
         </div>
-      </Panel>
+      </Panel> -->
     </VueFlow>
   </div>
 </template>

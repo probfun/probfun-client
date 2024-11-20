@@ -8,23 +8,27 @@ import { MiniMap } from '@vue-flow/minimap'
 export const initialNodes = [
   {
     id: '1',
-    position: { x: 0, y: 0 },
+    position: { x: 800, y: 0 },
         data: {
-      label: '第一章：概率论的基本概念',
+          label: `第一章：概率论的基本概念`, // 添加多行文本 
     },
     type: 'input',  // 为节点添加类型
     style: {
-      background: '#ecf2f7', // 设置背景颜色
+     // 设置背景颜色
       border: '2px solid #80a8c9', // 设置边框
       borderRadius: '10px', // 设置圆角
-      fontSize: '14px', // 设置字体大小
+      fontSize: '20px', // 设置字体大小
       padding: '10px', // 内边距
-    },
+      width: '350px',               // 固定宽度
+      whiteSpace: 'pre-wrap',       // 允许换行
+      overflow: 'hidden',           // 隐藏超出部分
+      textAlign: 'center',          // 居中对齐
+    },draggable: false, // 禁止节点拖拽
   },
   
   {
     id: '2',
-    position,
+    position:{x:100,y:400},
     data: {
       label: '蒙特卡罗模拟',
     },
@@ -32,7 +36,7 @@ export const initialNodes = [
   },
   {
     id: '3',
-    position,
+    position:{x:300,y:400},
     data: {
       label: '独立事件',
     },
@@ -40,7 +44,7 @@ export const initialNodes = [
   },
   {
     id: '4',
-    position,
+    position:{x:500,y:400},
     data: {
       label: '条件概率（贝叶斯公式，全概率公式）',
     },
@@ -48,20 +52,15 @@ export const initialNodes = [
   },
   {
     id: '2a',
-    position: { x: 150, y: 200}, 
+    position: { x: 25, y: 20 }, 
     data: {
       label: '生日问题',
     },
     parentNode : '13',
-    style: {
-      backgroundColor: '#ffffff', // 子节点背景
-      border: '1px solid #ccc',
-      borderRadius: 5,
-    },
   },
   {
     id: '2b',
-    position: { x: 150, y: 250 }, 
+    position: { x: 225, y: 20 }, 
     data: {
       label: '生日攻击问题',
     },
@@ -77,7 +76,7 @@ export const initialNodes = [
   },
   {
     id: '2c',
-    position: { x: 150, y: 50 }, 
+    position: { x: 75, y: 50 },
     data: {
       label: '阳性检测',
     },
@@ -85,16 +84,16 @@ export const initialNodes = [
   },
   {
     id: '5',
-    position,
+    position:{x:700,y:400},
     data: {
       label: '大数定律',
     },
     type: 'output',  // 为节点添加类型
-    parentNode:'14', 
+    // parentNode:'14', 
   },
   {
     id: '6',
-    position: { x: 150, y: 100 }, 
+    position: { x: 900, y: 50 },
     data: {
       label: 'Buffon投针',
     },
@@ -103,7 +102,7 @@ export const initialNodes = [
   },
   {
     id: '7',
-    position: { x: 150, y: 150 }, 
+    position: { x: 700, y: 50 },
     data: {
       label: '三门问题',
     },
@@ -112,7 +111,7 @@ export const initialNodes = [
   },
   {
     id: '8',
-    position,
+    position:{x:900,y:400},
     data: {
       label: '几何概率、概率密度',
     },
@@ -120,7 +119,7 @@ export const initialNodes = [
     
   }, {
     id: '9',
-    position,
+    position:{x:1100,y:400},
     data: {
       label: '排列组合',
     },
@@ -128,7 +127,7 @@ export const initialNodes = [
   },
   {
     id: '10',
-    position,
+    position:{x:1300,y:400},
     data: {
       label: '条件概率',
     },
@@ -136,33 +135,44 @@ export const initialNodes = [
   },
   {
     id: '11',
-    position,
+    position:{x:1500,y:400},
     data: {
       label: '泰勒展开',
     },
+    type: 'output',  // 为节点添加类型
+
   },
   {
     id: '12',
-    position,
+    position:{x:1700,y:400},
     data: {
       label: '互补事件',
     },
     type: 'output',  // 为节点添加类型
   },
-  {
+   {
+    id: '14',
+    position: { x: 450, y: 100 },
+    // label:'实验',
+    style: { 
+       height: '150px', 
+       width: '1100px' ,
+       border: '4px solid #0069ff', 
+       borderRadius: '12px',},
+       
+  }, {
     id: '13',
-    position: { x: 150, y: 200 },
+    position: { x: 250, y: 30 },
 
-    style: { backgroundColor: 'rgba(96, 200, 245, 0.8)', height: '150px', width: '250px' },
+    style: { 
+       height: '80px', 
+       width: '400px' ,
+       border: '2px solid #9be5ff', 
+       borderRadius: '8px',
+      },
     parentNode:'14', 
   },
-  {
-    id: '14',
-    position: { x: 150, y: 0 },
-    label:'实验',
-    style: { backgroundColor: 'rgba(0, 88, 255, 0.8)', height: '150px', width: '250px' },
-       
-  },
+
 
 
 ]

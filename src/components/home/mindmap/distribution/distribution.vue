@@ -207,4 +207,9 @@ body,
 .basic-flow.dark .vue-flow__edge-text {
     fill:#fffffb
 }
+
+.light {
+  white-space: pre-line; /* 支持换行符 */
+}
+
 </style>

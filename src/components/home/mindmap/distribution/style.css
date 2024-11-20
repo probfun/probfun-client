@@ -1,0 +1,11 @@
+.custom-node {
+    white-space: pre-wrap;
+    overflow: hidden;
+    text-align: center;
+    width: 200px;
+    border: 2px solid #80a8c9;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #f9f9f9;
+  }
+  
