@@ -1,3 +1,4 @@
+import { label } from '@unovis/ts/components/axis/style';
 import { MarkerType } from '@vue-flow/core'
 
 
@@ -16,109 +17,46 @@ const defaultStyle = {
 };
 
 // 定义一个函数生成节点
-function createNode(data, position, style = {}, type = 'default', className = 'light') {
+function createNode(data, position, type = 'default', className = 'light') {
   return {
     id: (nodeIdCounter++).toString(), // 自增 id
     data,
     position,
-    style:{defaultStyle},
+    style: defaultStyle,
     type,
     class: className,
   };
 }
-
 export const initialNodes = [
-  createNode({ label: `Discrete uniform(a,b)\n R,V` }, { x: 100, y: 100 }),
-  createNode({ label: 'Zipf(α,n)' }, { x: 250, y: 0 }),
-  createNode({ label: 'Beta-binomial\n(a,b,n)' }, { x: 400, y: 100 }, { width: '300px' }), 
-  createNode({ label: 'Negative hypergeometric(n1,n2,n3)' }, {  x: 300, y: 300}),
-  createNode({ label: 'Rectangular(n)\nV' }, { x: 250, y: 0 }),
+  createNode({ label: 'Zipf(α,n)' }, { x: 0, y: 0 }),
+  createNode({ label: `Discrete uniform(a,b)\n R,V` }, { x: 300, y: 0 }),
+  createNode({ label: 'Rectangular(n)\nV' }, { x: 600, y: 0 }),
+  createNode({ label: 'Beta-binomial\n(a,b,n)' }, { x: 900, y: 0 },),
+  createNode({ label: 'Negative hypergeometric\n(n1,n2,n3)' }, { x: 1250, y: 0 },),
+  createNode({ label: 'Zeta(α)' }, { x: 0, y: 150 },),
+  createNode({ label: 'Logarithm(c)' }, { x: 150, y: 200 },),
+  createNode({ label: 'Power series(c,A(c))' }, { x: 300, y: 100 },),
+  createNode({ label: 'Poisson(μ)\nC' }, { x: 450, y: 200 },),
+  createNode({ label: 'Hypergeometric\n(n1,n2,n3)' }, { x: 1300, y: 120 },),
+  createNode({ label: 'Beta-Pascal\n(n,a,b)' }, { x: 300, y: 300 },),
+  createNode({ label: 'Gamma-Poisson(α,β)' }, { x: 300, y: 300 },),
+  createNode({ label: 'Binomial(n,p)' }, { x: 800, y: 170 },),
+  createNode({ label: 'Bernoulli(p)\nM,P,X' }, { x: 1100, y: 250 },),
+  createNode({ label: 'Geometric(p)\nF,M,V' }, { x: -200, y: 450 },),
+  createNode({ label: 'Pascal(n,p)\nCp' }, { x: 0, y: 300 },),
+  createNode({ label: 'Normal(μ,σ²)\nL' }, { x: 300, y: 300 },),
+  createNode({ label: 'Polya(n,p,β)' }, { x: 300, y: 300 },),
+  createNode({ label: 'Gamma-normal(μ，α，β)' }, { x: 300, y: 300 },),
+  createNode({ label: 'Discrete Weibull(p,β)\nV' }, { x: 300, y: 300 },),
+  createNode({ label: 'Standard normal' }, { x: 300, y: 300 },),
+  createNode({ label: 'Log normal(α，β)\nP' }, { x: 300, y: 300 },),
+  createNode({ label: 'Noncentral beta(β，γ，δ)' }, { x: 300, y: 300 },),
+  createNode({ label: 'Arctangent(λ,Φ)\nS,V' }, { x: 300, y: 300 },),
+  createNode({ label: 'Noncentral chi-square(n,δ)\nC' }, { x: 300, y: 300 },),
+  createNode({ label: 'Log gamma(α,β)' }, { x: 300, y: 300 },),
+  createNode({ label: 'Generalized gamma(α，β,γ)' }, { x: 300, y: 300 },),
 
-  {
-    id: '5',
 
-    data: { label: 'Negative hypergeometric(n1,n2,n3)' },
-    position: { x: 300, y: 300 },
-    style: {
-      whiteSpace: 'pre-wrap',       // 自动换行
-      overflow: 'hidden',           // 隐藏超出部分
-      textAlign: 'center',           // 左对齐文本
-      width: '200px',               // 设置宽度为 200px
-      // border: '2px solid #80a8c9',  // 设置边框
-      borderRadius: '8px',          // 添加圆角
-      padding: '10px',              // 内边距
-    },
-  },  {
-    id: '6',
-
-    data: { label: 'Negative hypergeometric(n1,n2,n3)' },
-    position: { x: 300, y: 300 },
-    style: {
-      whiteSpace: 'pre-wrap',       // 自动换行
-      overflow: 'hidden',           // 隐藏超出部分
-      textAlign: 'center',           // 左对齐文本
-      width: '200px',               // 设置宽度为 200px
-      // border: '2px solid #80a8c9',  // 设置边框
-      borderRadius: '8px',          // 添加圆角
-      padding: '10px',              // 内边距
-    },
-  },  {
-    id: '7',
-
-    data: { label: 'Negative hypergeometric(n1,n2,n3)' },
-    position: { x: 300, y: 300 },
-    style: {
-      whiteSpace: 'pre-wrap',       // 自动换行
-      overflow: 'hidden',           // 隐藏超出部分
-      textAlign: 'center',           // 左对齐文本
-      width: '200px',               // 设置宽度为 200px
-      // border: '2px solid #80a8c9',  // 设置边框
-      borderRadius: '8px',          // 添加圆角
-      padding: '10px',              // 内边距
-    },
-  },  {
-    id: '8',
-
-    data: { label: 'Negative hypergeometric(n1,n2,n3)' },
-    position: { x: 300, y: 300 },
-    style: {
-      whiteSpace: 'pre-wrap',       // 自动换行
-      overflow: 'hidden',           // 隐藏超出部分
-      textAlign: 'center',           // 左对齐文本
-      width: '200px',               // 设置宽度为 200px
-      // border: '2px solid #80a8c9',  // 设置边框
-      borderRadius: '8px',          // 添加圆角
-      padding: '10px',              // 内边距
-    },
-  },  {
-    id: '9',
-
-    data: { label: 'Negative hypergeometric(n1,n2,n3)' },
-    position: { x: 300, y: 300 },
-    style: {
-      whiteSpace: 'pre-wrap',       // 自动换行
-      overflow: 'hidden',           // 隐藏超出部分
-      textAlign: 'center',           // 左对齐文本
-      width: '200px',               // 设置宽度为 200px
-      // border: '2px solid #80a8c9',  // 设置边框
-      borderRadius: '8px',          // 添加圆角
-      padding: '10px',              // 内边距
-    },
-  },  {
-    id: '10',
-
-    data: { label: 'Negative hypergeometric(n1,n2,n3)' },
-    position: { x: 300, y: 300 },
-    style: {
-      whiteSpace: 'pre-wrap',       // 自动换行
-      overflow: 'hidden',           // 隐藏超出部分
-      textAlign: 'center',           // 左对齐文本
-      width: '200px',               // 设置宽度为 200px
-      // border: '2px solid #80a8c9',  // 设置边框
-      borderRadius: '8px',          // 添加圆角
-      padding: '10px',              // 内边距
-    },
-  },
 ]
 
 
@@ -133,12 +71,13 @@ const defaultEdgeOptions = {
 };
 
 // 封装创建边的函数
-function createEdge({ id, source, target, label = '', options = {} }) {
+function createEdge({ id, source, target, label = '', type, options = {} }) {
   return {
     id,
     source,
     target,
     label,
+    type:'smoothstep',
     ...defaultEdgeOptions, // 使用默认参数
     ...options,            // 自定义覆盖参数
   };
@@ -147,9 +86,128 @@ function createEdge({ id, source, target, label = '', options = {} }) {
 
 
 export const initialEdges = [
-  createEdge({ id: 'e1-2', source: '1', target: '2' }),
-  createEdge({ id: 'e2-3', source: '2', target: '3', label: 'Example' }),
-  
+  createEdge({ id: 'e1-2', source: '1', target: '2', label: 'a = 0,a = 1,b = n' }),
+  createEdge({ id: 'e2-3', source: '2', target: '3', label: 'a = 0,b = n' }),
+  createEdge({ id: 'e4-3', source: '4', target: '3', label: 'a = b = 1' }),
+  createEdge({ id: 'e4-5', source: '4', target: '5', label: 'n = n1,a = n2,b = n3' }),
+  createEdge({
+    id: 'e1-6', source: '1', target: '6', label: 'n → ∞', options: {
+      animated: true, // 单独为这条边启用动画
+      style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+    }
+  }),
+  createEdge({ id: 'e8-7', source: '8', target: '7', label: 'A(c) = -log(1-c)' }),
+  createEdge({ id: 'e8-9', source: '8', target: '9', label: 'A(c) = e^c,μ = c' }),
+  createEdge({ id: 'e8-16', source: '8', target: '16', label: 'A(c) = (1-c)^(-x),c = 1-p' }),
+  createEdge({
+    id: 'e9-12', source: '9', target: '12', label: 'μ~gamma', options: {
+      animated: true, // 单独为这条边启用动画
+      style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+    }
+  }),
+  createEdge({
+    id: 'e13-9', source: '13', target: '9', label: 'μ = np,n→∞', options: {
+      animated: true, // 单独为这条边启用动画
+      style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+    }
+  }),
+  createEdge({
+    id: 'e13-4', source: '13', target: '4', label: 'p~beta', options: {
+      animated: true, // 单独为这条边启用动画
+      style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+    }
+  }),
+  createEdge({
+    id: 'e5-13', source: '5', target: '13', label: 'p = n1/n3,n3 → ∞,n1 → ∞,n2 = n', options: {
+      animated: true, // 单独为这条边启用动画
+      style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+    }
+  }),
+  createEdge({
+    id: 'e10-13', source: '10', target: '13', label: 'p = n1/n3,n = n2,n3 → ∞', options: {
+      animated: true, // 单独为这条边启用动画
+      style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+    }
+  }),
+  createEdge({ id: 'e13-14', source: '13', target: '14', label: 'n = 1',options: {
+    animated: false, // 单独为这条边启用动画
+    style: { strokeWidth: 2, stroke: '#80a8c9' },
+    type: 'default',
+    markerEnd: { type: 'arrowclosed', color: '#80a8c9' },
+    labelStyle: { transform: 'translate(-15px, -45px)' },}
+}),
+  createEdge({ id: 'e14-13', source: '14', target: '13', label: 'ΣXi(iid)',
+    style: { strokeWidth: 2, stroke: '#f78c6c' },
+    markerEnd: { type: 'arrowclosed', color: '#f78c6c' },
+    
+  }),
+  createEdge({
+    id: 'e16-11', source: '16', target: '11', label: 'p~beta', options: {
+      animated: true, // 单独为这条边启用动画
+      style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+    }
+  }),
+  createEdge({ id: 'e12-16', source: '12', target: '16', label: 'α = (1-p)/p,β = n' }),
+  createEdge({
+    id: 'e16-9', source: '16', target: '9', label: 'n → ∞,μ = n/p', options: {
+      animated: true, // 单独为这条边启用动画
+      style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+    }
+  }),
+  createEdge({
+    id: 'e9-17', source: '9', target: '17', label: 'σ² = μ，μ → ∞', options: {
+      animated: true, // 单独为这条边启用动画
+      style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+    }
+  }),
+  createEdge({
+    id: 'e13-17', source: '13', target: '17', label: 'μ = np，σ² = np(1-p),n → ∞', options: {
+      animated: true, // 单独为这条边启用动画
+      style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+    }
+  }),
+  createEdge({ id: 'e18-13', source: '18', target: '13', label: 'β = 0' }),
+  createEdge({ id: 'e15-16', source: '15', target: '16', label: 'ΣXi(iid)',options: {
+    animated: false, // 单独为这条边启用动画
+    style: { strokeWidth: 2, stroke: '#80a8c9' },
+    type: 'default',
+    markerEnd: { type: 'arrowclosed', color: '#80a8c9' },
+    labelStyle: { transform: 'translate(-15px, -45px)' },}
+}),
+  createEdge({ id: 'e16-15', source: '16', target: '15', label: 'n = 1',
+    style: { strokeWidth: 2, stroke: '#f78c6c' },
+    markerEnd: { type: 'arrowclosed', color: '#f78c6c' }, 
+  }),
+  createEdge({
+    id: 'e16-17', source: '16', target: '17', label: 'μ = n(1-p),n → ∞', options: {
+      animated: true, // 单独为这条边启用动画
+      style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+    }
+  }),
+  createEdge({
+    id: 'e17-19', source: '17', target: '19', label: 'α ~ inverted gamma', options: {
+      animated: true, // 单独为这条边启用动画
+      style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+    }
+  }),
+  createEdge({ id: 'e20-15', source: '20', target: '15', label: 'β = 1' }),
+  createEdge({ id: 'e17-21', source: '17', target: '21', label: 'μ = 0,δ = 1 or (X-μ)/σ' }),
+  createEdge({ id: 'e21-17', source: '21', target: '17', label: 'μ+σX' }),
+  createEdge({ id: 'e22-17', source: '22', target: '17', label: 'log X',options: {
+    animated: false, // 单独为这条边启用动画
+    style: { strokeWidth: 2, stroke: '#80a8c9' },
+    type: 'default',
+    markerEnd: { type: 'arrowclosed', color: '#80a8c9' },
+    labelStyle: { transform: 'translate(-15px, -45px)' },}
+}),
+  createEdge({ id: 'e17-22', source: '17', target: '22', label: 'e^X',
+    style: { strokeWidth: 2, stroke: '#f78c6c' },
+    markerEnd: { type: 'arrowclosed', color: '#f78c6c' }, 
+  }),
+  createEdge({ id: 'e17-25', source: '17', target: '25', label: 'ΣXi²/σ²' }),
+
+
+
 ]
 
 
