@@ -118,7 +118,6 @@ declare module 'vue' {
     LoginCard: typeof import('./src/components/auth/LoginCard.vue')['default']
     NavBar: typeof import('./src/components/NavBar.vue')['default']
     NormalDistribution: typeof import('./src/components/experiment/distribution/normal-distribution/NormalDistribution.vue')['default']
-    OverlayBadge: typeof import('primevue/overlaybadge')['default']
     PE: typeof import('./src/components/experiment/distribution/comparison/PE.vue')['default']
     PN: typeof import('./src/components/experiment/distribution/comparison/PN.vue')['default']
     PNDiagram: typeof import('./src/components/experiment/distribution/comparison/PNDiagram.vue')['default']
