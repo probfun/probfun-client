@@ -34,7 +34,7 @@ export interface ChosenData {
 
 export interface Message {
   messageId: string
-  read: string
+  read: boolean
   timestamp: string
   type: string
   user: UserPublic

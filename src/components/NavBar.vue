@@ -207,8 +207,10 @@ async function getMessage() {
   try {
     const result = await fetchMessagesApi();
     messageNumber.value = result.messages.length;
+    console.log(result.messages);
+
     for (let i = 0; i < result.messages.length; i++) {
-      if (result.messages[i].read == 'false') {
+      if (result.messages[i].read === false) {
         messageList.value.push(result.messages[i]);
         console.log(result.messages[i]);
       }
@@ -290,9 +292,15 @@ async function readMessage() {
                 </Avatar>
                 <div class="flex flex-col">
                   <span v-if="item.type === 'post'">{{ item.postData?.post.user.nickname }}</span>
-                  <span v-if="item.type === 'pin'">{{ item.pinData?.user.nickname }}</span>
-                  <span v-if="item.type === 'reply'">{{ item.replyData?.reply.user.nickname }}</span>
-                  <span v-if="item.type === 'like'">{{ item.likeData?.user.nickname }}</span>
+                  <span v-if="item.type === 'pin'"
+                    @click="router.push(`/dashboard/experiment/${item.pinData?.comment.expId}`)">{{
+                      item.pinData?.user.nickname }}</span>
+                  <span v-if="item.type === 'reply'"
+                    @click="router.push(`/dashboard/experiment/${item.replyData?.comment.expId}`)">{{
+                      item.replyData?.reply.user.nickname }}</span>
+                  <span v-if="item.type === 'like'"
+                    @click="router.push(`/dashboard/experiment/${item.likeData?.comment.expId}`)">{{
+                      item.likeData?.user.nickname }}</span>
                   <span v-if="item.type === 'post'" class="content text-sm text-gray-600">老师发布了新的班级公告</span>
                   <span v-if="item.type === 'pin'" class="content text-sm text-gray-600"
                     @click="router.push(`/dashboard/experiment/${item.pinData?.comment.expId}`)">老师置顶了你的评论</span>
