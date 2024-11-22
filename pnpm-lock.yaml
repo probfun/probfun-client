@@ -196,7 +196,7 @@ importers:
         specifier: ^14.1.2
         version: 14.1.2
       '@types/node':
-        specifier: ^22.5.3
+        specifier: ^22.5.4
         version: 22.5.4
       '@vitejs/plugin-vue':
         specifier: ^5.1.3
