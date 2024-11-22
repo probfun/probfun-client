@@ -19,12 +19,12 @@ import Column from 'primevue/column';
 import ColumnGroup from 'primevue/columngroup';   // optional
 import Row from 'primevue/row';                   // optional
 import { useUserStore } from '@/store'
-import { fetchMessagesApi, postPostApi } from '@/api/message/messageApi';
-import { Message } from '@/api/message/messageType';
+import { postPostApi } from '@/api/message/messageApi';
 import { useToast } from 'primevue/usetoast';
+import { fetchPostApi } from '@/api/post/postApi';
+import { Post } from '@/api/message/messageType';
 
 const userStore = useUserStore();
-const placeholderText = '请输入公告内容...'
 const defaultValue = 'item-1'
 const accordionItems = [
     { value: 'item-1', title: '10月10日班级公告', content: 'bjgg' },
@@ -137,7 +137,6 @@ const visible = ref(false);
 const toast = useToast();
 const title = ref('');
 const content = ref('');
-const messageList = ref<Message[] | null>(null);
 
 const cancel = () => {
 
@@ -155,6 +154,7 @@ async function sendPost() {
     title.value = selectedClass.value.join(', ');
     try {
         await postPostApi(title.value, content.value);
+        await getPost();
         toast.add({ severity: 'success', summary: '成功', detail: '发布班级公告成功！', life: 3000 });
         content.value = '';
     }
@@ -163,6 +163,22 @@ async function sendPost() {
         toast.add({ severity: 'error', summary: '错误', detail: error, life: 3000 });
     }
 }
+
+const postList = ref<Post[] | null>(null);
+async function getPost() {
+    try {
+        const result = await fetchPostApi();
+        postList.value = result.post;
+        console.log("公告", postList.value);
+
+    }
+    catch (error) {
+        console.error('Error during fetching posts:', error);
+    }
+}
+onMounted(() => {
+    getPost();
+})
 </script>
 
 <template>
@@ -214,11 +230,11 @@ async function sendPost() {
             <Dialog v-model:visible="visible" modal header="发布班级公告" :style="{ width: '50rem' }">
                 <span class="text-surface-500 dark:text-surface-400 block mb-8">请选择一个或多个班级，点击发布按钮发布公告。</span>
                 <div class="flex items-center gap-4 mb-4">
-                    <MultiSelect v-model="selectedClass" :options="classes" optionLabel="name" filter placeholder="请选择班级"
-                        class="w-full md:w-56" />
+                    <MultiSelect v-model="selectedClass" :options="classes" optionLabel="name" filter
+                        placeholder="请选择班级" class="w-full md:w-56" />
                 </div>
                 <div class="flex items-center gap-4 mb-8">
-                    <Textarea v-model="content" autoResize rows="10" class="w-full" placeholder="请输入班级公告"/>
+                    <Textarea v-model="content" autoResize rows="10" class="w-full" placeholder="请输入班级公告" />
                 </div>
                 <div class="flex justify-end gap-2">
                     <Button @click="sendPost()">发布公告</Button>

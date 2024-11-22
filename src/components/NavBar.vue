@@ -215,6 +215,7 @@ async function getMessage() {
         console.log(result.messages[i]);
       }
       else {
+        messageList.value.push(result.messages[i]);
         messageNumber.value -= 1;
       }
     }
@@ -278,17 +279,20 @@ async function readMessage() {
                 <Avatar class="mr-2">
                   <div v-if="item.type === 'post'">
                     <AvatarImage :src="item.postData?.post.user.avatarUrl || ''" alt="@radix-vue" />
+                    <AvatarFallback>{{ item.postData?.post.user.nickname }}</AvatarFallback>
                   </div>
                   <div v-if="item.type === 'pin'">
                     <AvatarImage :src="item.pinData?.user.avatarUrl || ''" alt="@radix-vue" />
+                    <AvatarFallback>{{ item.pinData?.user.nickname }}</AvatarFallback>
                   </div>
                   <div v-if="item.type === 'reply'">
                     <AvatarImage :src="item.replyData?.reply.user.avatarUrl || ''" alt="@radix-vue" />
+                    <AvatarFallback>{{ item.replyData?.reply.user.nickname }}</AvatarFallback>
                   </div>
                   <div v-if="item.type === 'like'">
                     <AvatarImage :src="item.likeData?.user.avatarUrl || ''" alt="@radix-vue" />
+                    <AvatarFallback>{{ item.likeData?.user.nickname }}</AvatarFallback>
                   </div>
-                  <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
                 <div class="flex flex-col">
                   <span v-if="item.type === 'post'">{{ item.postData?.post.user.nickname }}</span>
@@ -309,37 +313,10 @@ async function readMessage() {
                   <span v-if="item.type === 'like'" class="content text-sm text-gray-600"
                     @click="router.push(`/dashboard/experiment/${item.likeData?.comment.expId}`)">赞了你的评论</span>
                 </div>
-              </div>
-              <!-- <div class="flex mb-3">
-                <Avatar class="mr-2">
-                  <AvatarImage src="https://github.com/radix-vue.png" alt="@radix-vue" />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-                <div class="flex flex-col">
-                  <span>张丽华</span>
-                  <span class="content text-sm text-gray-600">老师置顶了你的评论</span>
+                <div v-if="item.read === false" class="ml-auto">
+                  <span class="inline-block w-2 h-2 bg-red-600 rounded-full"></span>
                 </div>
               </div>
-              <div class="flex mb-3">
-                <Avatar class="mr-2">
-                  <AvatarImage src="https://github.com/radix-vue.png" alt="@radix-vue" />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-                <div class="flex flex-col">
-                  <span>AAA专业捡垃圾</span>
-                  <span class="content text-sm text-gray-600">回复了你的评论</span>
-                </div>
-              </div>
-              <div class="flex mb-3">
-                <Avatar class="mr-2">
-                  <AvatarImage src="https://github.com/radix-vue.png" alt="@radix-vue" />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-                <div class="flex flex-col">
-                  <span>yyj2.0</span>
-                  <span class="content text-sm text-gray-600">赞了你的评论</span>
-                </div>
-              </div> -->
             </div>
           </PopoverContent>
         </Popover>

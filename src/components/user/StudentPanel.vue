@@ -20,6 +20,8 @@ import { useUserStore } from '@/store';
 import { fetchMessagesApi } from '@/api/message/messageApi';
 import { Message } from '@/api/message/messageType';
 import { onMounted, ref } from 'vue';
+import { fetchPostApi } from '@/api/post/postApi';
+import { Post } from '@/api/message/messageType';
 
 const userStore = useUserStore();
 const defaultValue = 'item-1'
@@ -28,19 +30,21 @@ const accordionItems = [
     { value: 'item-2', title: '10月8日班级公告', content: 'bjgg' },
     { value: 'item-3', title: '10月6日班级公告', content: 'bjgg' },
 ]
-const messageList = ref<Message[] | null>(null);
 
-async function getMessage() {
+const postList = ref<Post[] | null>(null);
+async function getPost() {
     try {
-        const result = await fetchMessagesApi();
-        messageList.value = result.messages;
+        const result = await fetchPostApi();
+        postList.value = result.post;
+        console.log("公告", postList);
+        
     }
     catch (error) {
-        console.error('Error during fetching messages:', error);
+        console.error('Error during fetching posts:', error);
     }
 }
 onMounted(() => {
-    getMessage();
+    getPost();
 })
 </script>
 
