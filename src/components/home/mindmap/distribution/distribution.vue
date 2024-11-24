@@ -1,124 +1,147 @@
-<script setup>
-import { ref } from 'vue'
-import { VueFlow, useVueFlow } from '@vue-flow/core'
-import { Background } from '@vue-flow/background'
-import { ControlButton, Controls } from '@vue-flow/controls'
-import { MiniMap } from '@vue-flow/minimap'
-import { initialEdges, initialNodes } from './initial-elements.js'
-import Icon from '../Icon.vue'
+<script>
+import { ref, defineComponent } from 'vue';
+import { VueFlow, useVueFlow } from '@vue-flow/core';
+import { Background } from '@vue-flow/background';
+import { Controls, ControlButton } from '@vue-flow/controls';
+import { MiniMap } from '@vue-flow/minimap';
+import dagre from 'dagre'; // 引入 dagre
+import { initialEdges, initialNodes } from './initial-elements.js';
+import Icon from '../Icon.vue';
 
-/**
- * `useVueFlow` provides:
- * 1. a set of methods to interact with the VueFlow instance (like `fitView`, `setViewport`, `addEdges`, etc)
- * 2. a set of event-hooks to listen to VueFlow events (like `onInit`, `onNodeDragStop`, `onConnect`, etc)
- * 3. the internal state of the VueFlow instance (like `nodes`, `edges`, `viewport`, etc)
- */
-const { onInit, onNodeDragStop, onConnect, addEdges, setViewport, toObject } = useVueFlow()
+export default defineComponent({
+  components: { VueFlow, Background, Controls, MiniMap, Icon },
+  setup() {
+    const { onInit,  setViewport, toObject } = useVueFlow();
+    const nodes = ref(initialNodes);
+    const edges = ref(initialEdges);
+    const dark = ref(false);
 
-const nodes = ref(initialNodes)
+    // 随机布局
+    const updatePos = () => {
+      console.log('Shuffle Node Positions clicked!');
+      nodes.value = nodes.value.map((node) => ({
+        ...node,
+        position: {
+          x: Math.random() * 400,
+          y: Math.random() * 400,
+        },
+        dragging: false, // 重置 dragging 状态
+      }));
+    };
 
-const edges = ref(initialEdges)
 
-// our dark mode toggle flag
-const dark = ref(false)
+    // 自动布局 (使用 dagre)
+    const applyAutoLayout = () => {
+      // 设置 dagre 布局方向
+      const dagreGraph = new dagre.graphlib.Graph();
+      dagreGraph.setDefaultEdgeLabel(() => ({}));
+      dagreGraph.setGraph({ rankdir: 'LR', nodesep: 50, edgesep: 10, ranksep: 100 });
 
-/**
- * This is a Vue Flow event-hook which can be listened to from anywhere you call the composable, instead of only on the main component
- * Any event that is available as `@event-name` on the VueFlow component is also available as `onEventName` on the composable and vice versa
- *
- * onInit is called when the VueFlow viewport is initialized
- */
-onInit((vueFlowInstance) => {
-  // instance is the same as the return of `useVueFlow`
-  vueFlowInstance.fitView()
-})
+      // 添加节点到 dagre 图
+      nodes.value.forEach((node) => {
+        dagreGraph.setNode(node.id, { width: 200, height: 100 });
+      });
 
-/**
- * onNodeDragStop is called when a node is done being dragged
- *
- * Node drag events provide you with:
- * 1. the event object
- * 2. the nodes array (if multiple nodes are dragged)
- * 3. the node that initiated the drag
- * 4. any intersections with other nodes
- */
-onNodeDragStop(({ event, nodes, node }) => {
-  console.log('Node Drag Stop', { event, nodes, node })
-})
+      // 添加边到 dagre 图
+      edges.value.forEach((edge) => {
+        dagreGraph.setEdge(edge.source, edge.target);
+      });
 
-/**
- * onConnect is called when a new connection is created.
- *
- * You can add additional properties to your new edge (like a type or label) or block the creation altogether by not calling `addEdges`
- */
-onConnect((connection) => {
-  addEdges(connection)
-})
+      // 运行布局计算
+      dagre.layout(dagreGraph);
 
-/**
- * To update a node or multiple nodes, you can
- * 1. Mutate the node objects *if* you're using `v-model`
- * 2. Use the `updateNode` method (from `useVueFlow`) to update the node(s)
- * 3. Create a new array of nodes and pass it to the `nodes` ref
- */
-function updatePos() {
-  nodes.value = nodes.value.map((node) => {
+      // 更新节点位置
+      nodes.value = nodes.value.map((node) => {
+        const dagreNode = dagreGraph.node(node.id);
+        return {
+          ...node,
+          position: {
+            x: dagreNode.x,
+            y: dagreNode.y,
+          },
+          // VueFlow 特殊要求，更新布局后将 `dragging` 属性设为 false
+          dragging: false,
+        };
+      });
+    };
+
+    // 处理节点拖动停止事件
+  const handleNodeDragStop = (event) => {
+    const { node } = event;
+    console.log(`Node ${node.id} moved to new position:`, node.position);
+
+    // 更新节点的新位置到 `nodes` 数组
+    nodes.value = nodes.value.map((n) => {
+      if (n.id === node.id) {
+        return {
+          ...n,
+          position: node.position,  // 更新节点的位置
+        };
+      }
+      return n;
+    });
+  };
+    // 打印当前图形状态
+    const logToObject = () => {
+      console.log(toObject());
+    };
+
+    // 重置视图
+    const resetTransform = () => {
+      setViewport({ x: 0, y: 0, zoom: 1 });
+    };
+
+    // 切换暗模式
+    const toggleDarkMode = () => {
+      dark.value = !dark.value;
+    };
+
+    onInit((vueFlowInstance) => {
+      vueFlowInstance.fitView();
+    });
+
     return {
-      ...node,
-      position: {
-        x: Math.random() * 400,
-        y: Math.random() * 400,
-      },
-    }
-  })
-}
-
-/**
- * toObject transforms your current graph data to an easily persist-able object
- */
-function logToObject() {
-  console.log(toObject())
-}
-
-/**
- * Resets the current viewport transformation (zoom & pan)
- */
-function resetTransform() {
-  setViewport({ x: 0, y: 0, zoom: 1 })
-}
-
-function toggleDarkMode() {
-  dark.value = !dark.value
-}
+      nodes,
+      edges,
+      dark,
+      updatePos,
+      applyAutoLayout,
+      logToObject,
+      resetTransform,
+      toggleDarkMode,
+    };
+  },
+});
 </script>
 
+
+
 <template>
-  <VueFlow
-    :nodes="nodes"
-    :edges="edges"
-    :class="{ dark }"
-    class="basic-flow"
-    :default-viewport="{ zoom: 1.5 }"
-    :min-zoom="0.2"
-    :max-zoom="4"
-  >
+  <VueFlow :nodes="nodes" :edges="edges" :class="{ dark }" class="basic-flow" @nodeDragStop="handleNodeDragStop"
+    :default-viewport="{ zoom: 1.5 }" :min-zoom="0.2" :max-zoom="4">
+
+
     <Background pattern-color="#aaa" :gap="16" />
 
     <MiniMap />
 
     <Controls position="top-left">
-      <ControlButton title="Reset Transform" @click="resetTransform">
+      <Button title="Reset Transform" @click="resetTransform">
         <Icon name="reset" />
-      </ControlButton>
+      </Button>
 
-      <ControlButton title="Shuffle Node Positions" @click="updatePos">
+      <Button title="Shuffle Node Positions" @click="updatePos">
         <Icon name="update" />
-      </ControlButton>
+      </Button>
 
-      <ControlButton title="Toggle Dark Mode" @click="toggleDarkMode">
+      <Button title="Apply Auto Layout" @click="applyAutoLayout">
+        <Icon name="layout" />
+      </Button>
+
+      <Button title="Toggle Dark Mode" @click="toggleDarkMode">
         <Icon v-if="dark" name="sun" />
         <Icon v-else name="moon" />
-      </ControlButton>
+      </Button>
 
       <ControlButton title="Log `toObject`" @click="logToObject">
         <Icon name="log" />
@@ -156,60 +179,60 @@ body,
 }
 
 .basic-flow.dark {
-    background:#2d3748;
-    color:#fffffb
+  background: #2d3748;
+  color: #fffffb
 }
 
 .basic-flow.dark .vue-flow__node {
-    background:#4a5568;
-    color:#fffffb
+  background: #4a5568;
+  color: #fffffb
 }
 
 .basic-flow.dark .vue-flow__node.selected {
-    background:#333;
-    box-shadow:0 0 0 2px #2563eb
+  background: #333;
+  box-shadow: 0 0 0 2px #2563eb
 }
 
 .basic-flow .vue-flow__controls {
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:center
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center
 }
 
 .basic-flow.dark .vue-flow__controls {
-    border:1px solid #FFFFFB
+  border: 1px solid #FFFFFB
 }
 
 .basic-flow .vue-flow__controls .vue-flow__controls-button {
-    border:none;
-    border-right:1px solid #eee
+  border: none;
+  border-right: 1px solid #eee
 }
 
 .basic-flow .vue-flow__controls .vue-flow__controls-button svg {
-    height:100%;
-    width:100%
+  height: 100%;
+  width: 100%
 }
 
 .basic-flow.dark .vue-flow__controls .vue-flow__controls-button {
-    background:#333;
-    fill:#fffffb;
-    border:none
+  background: #333;
+  fill: #fffffb;
+  border: none
 }
 
 .basic-flow.dark .vue-flow__controls .vue-flow__controls-button:hover {
-    background:#4d4d4d
+  background: #4d4d4d
 }
 
 .basic-flow.dark .vue-flow__edge-textbg {
-    fill:#292524
+  fill: #292524
 }
 
 .basic-flow.dark .vue-flow__edge-text {
-    fill:#fffffb
+  fill: #fffffb
 }
 
 .light {
-  white-space: pre-line; /* 支持换行符 */
+  white-space: pre-line;
+  /* 支持换行符 */
 }
-
 </style>
