@@ -187,8 +187,8 @@ onMounted(() => {
             <div class="flex mb-[-10px]">
                 <span class="text-lg font-bold">2024年秋季学期</span>
                 <div class="ml-auto">
-                    <Select v-model="selectedClassA" :options="classesA" optionLabel="name" filter placeholder="请选择班级"
-                        class="w-full md:w-56" />
+                    <MultiSelect v-model="selectedClassA" :options="classesA" optionLabel="name" filter
+                        placeholder="请选择班级" class="w-full md:w-56" />
                 </div>
             </div>
             <div class="flex my-5">
@@ -198,24 +198,6 @@ onMounted(() => {
                     <span class="text-base font-semibold">教工号：{{ userStore.user?.studentId }}</span>
                 </div>
             </div>
-            <!-- <div class="card w-full items-center">
-                <Panel>
-                    <template #header>
-                        <div class="flex justify-center gap-2">
-                            <span class="font-bold">班级公告</span>
-                        </div>
-                    </template>
-<template #footer>
-                        <div class="flex flex-wrap items-center justify-between gap-4">
-                            <div class="flex items-center gap-2"></div>
-                            <span class="text-surface-500 dark:text-surface-400">
-                                <Button @click="sendPost()">发布公告</Button>
-                            </span>
-                        </div>
-                    </template>
-<Textarea v-model="content" rows="8" cols="1000" style="resize: none" class="w-full" :placeholder="placeholderText" />
-</Panel>
-</div> -->
             <Panel header="已发布公告" class="mx-1 mt-3 mb-5 h-full overflow-auto">
                 <Accordion type="single" class="w-full" collapsible :default-value="defaultValue">
                     <AccordionItem v-for="item in accordionItems" :key="item.value" :value="item.value">
