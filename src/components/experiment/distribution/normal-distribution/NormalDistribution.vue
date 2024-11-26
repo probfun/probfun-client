@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import CommentPanel from '@/components/comment/CommentPanel.vue';
 import DistributionDiagram from '@/components/experiment/distribution/DistributionDiagram.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
 import { toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue'
@@ -10,10 +13,10 @@ const mean = ref([0]);
 const stdDev = ref([1]);
 const a = ref([1]);
 const b = ref([0]);
-const transformedMean = ref();
-const transformedVariance = ref();
-const transformedMeanY = ref();
-const transformedVarianceY = ref();
+const transformedMean = ref(0);
+const transformedVariance = ref(0);
+const transformedMeanY = ref(0);
+const transformedVarianceY = ref(0);
 const lineShow = ref(false);
 
 const save = ref(false);
@@ -26,9 +29,6 @@ function back() {
 }
 
 const latexFormula = computed(() => {
-  transformedMean.value = mean.value[0];
-  transformedVariance.value = stdDev.value[0];
-
   const meanVal = transformedMean.value.toFixed(1);
   const varianceVal = transformedVariance.value.toFixed(2);
 
@@ -40,10 +40,17 @@ const latexFormula = computed(() => {
   return `f(x) = \\frac{1}{\\sqrt{2\\pi{σ}^2}} e^{-\\frac{(x-μ)^2}{2{σ}^2}}=\\frac{1}{\\sqrt{2\\pi\\times${varianceDisplay}}} e^{-\\frac{(x-${meanDisplay})^2}{2\\times${varianceDisplay}}}`;
 });
 
-const latexFormulaY = computed(() => {
-  transformedMeanY.value = a.value[0] * mean.value[0] + b.value[0];
-  transformedVarianceY.value = a.value[0] ** 2 * stdDev.value[0];
+watch([mean, stdDev], () => {
+  transformedMean.value = mean.value[0];
+  transformedVariance.value = stdDev.value[0];
+}, { deep: true });
 
+watch([a, b], () => {
+  transformedMean.value = a.value[0] * mean.value[0] + b.value[0];
+  transformedVariance.value = a.value[0] ** 2 * stdDev.value[0];
+}, { deep: true });
+
+const latexFormulaY = computed(() => {
   const meanValY = transformedMeanY.value.toFixed(2);
   const varianceValY = transformedVarianceY.value.toFixed(2);
 
@@ -110,7 +117,7 @@ watch([latexFormula, latexFormulaY, transformedFormula, transformedFormulaY], ()
 
 const content = `
 ## **概述**
-正态分布$（Normal Distribution）$，又称高斯分布$（Gaussian Distribution）$，是一种在统计学和自然科学中广泛应用的重要连续概率分布。
+正态分布$（Normal\\ Distribution）$，又称高斯分布$（Gaussian\\ Distribution）$，是一种在统计学和自然科学中广泛应用的重要连续概率分布。
 
 ### **正态分布的定义**
 正态分布的概率密度函数$(PDF)$的公式为：
@@ -151,9 +158,11 @@ $$
     <template #experiment>
       <!-- <DistributionDiagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance" :a="a" :b="b"
         :show-history="save" /> -->
-      <DistributionDiagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance"
+      <DistributionDiagram
+        class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance"
         :transformed-mean-y="transformedMeanY" :transformed-variance-y="transformedVarianceY" :show-history="save"
-        :line-show="lineShow" line1-color="red" line2-color="blue" />
+        :line-show="lineShow" line1-color="red" line2-color="blue"
+      />
     </template>
 
     <!-- <template #parameter>
@@ -218,22 +227,22 @@ $$
 
     <template #parameter>
       <div class="w-full h-full flex flex-row justify-center p-3 gap-3">
-        <Card class="w-full h-full w-3/5 card">
+        <Card class="h-full w-3/5 card">
           <CardHeader class="pb-10">
             <CardTitle>正态分布公式</CardTitle>
           </CardHeader>
-          <CardContent class="flex w-full  h-full flex flex-col items-start gap-3">
-            <div class = "w-full h-1/2 space-y-5">
-            <div ref="katexTransformedFormula" class="text-base" />
-            <div ref="katexMainFormula" class="text-base  pb-5" />
+          <CardContent class="w-full  h-full flex flex-col items-start gap-3">
+            <div class="w-full h-1/2 space-y-5">
+              <div ref="katexTransformedFormula" class="text-base" />
+              <div ref="katexMainFormula" class="text-base  pb-5" />
             </div>
-            <div class = "w-full h-1/2 space-y-5">
-            <div ref="katexTransformedFormulaY" class="text-base" />
-            <div ref="katexMainFormulaY" class="text-base " />
-          </div>
+            <div class="w-full h-1/2 space-y-5">
+              <div ref="katexTransformedFormulaY" class="text-base" />
+              <div ref="katexMainFormulaY" class="text-base " />
+            </div>
           </CardContent>
         </Card>
-        <Card class="w-full  h-full w-2/5 cardflex-1 flex flex-col">
+        <Card class="h-full w-2/5 cardflex-1 flex flex-col">
           <CardHeader>
             <CardTitle>
               参数调整
@@ -264,34 +273,35 @@ $$
                     <Input v-model.number="a[0]" fluid :invalid="a[0] === 0" :min-fraction-digits="1" />
                     <Slider v-model="a" :min="-10" :max="10" :step="0.01" class="w-full" />
                   </div>
-                <div class="flex flex-col  md:w-full w-1/2 flex-1 items-center justify-center space-y-5">
-                  <Label> b </Label>
-                  <div class="max-w-xl space-y-3">
+                  <div class="flex flex-col  md:w-full w-1/2 flex-1 items-center justify-center space-y-5">
+                    <Label> b </Label>
+                    <div class="max-w-xl space-y-3">
                       <Input v-model.number="b[0]" fluid :min-fraction-digits="1" />
                       <Slider v-model="b" :min="-10" :max="10" :step="0.1" class="w-5/6" />
-                  </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
             <div class="flex gap-2 items-center justify-center">
-              <Checkbox id="terms" @update:checked="(checked: boolean) => {
-                if (checked) {
-                  saveImg();
-                }
-                else {
-                  back();
-                }
-                console.log(checked)
-              }" />
+              <Checkbox
+                id="terms" @update:checked="(checked: boolean) => {
+                  if (checked) {
+                    saveImg();
+                  }
+                  else {
+                    back();
+                  }
+                  console.log(checked)
+                }"
+              />
               <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
             </div>
           </CardContent>
         </Card>
       </div>
     </template>
-
 
     <template #conclusion>
       <div class="w-full h-full p-5">
