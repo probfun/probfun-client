@@ -33,9 +33,9 @@ const latexFormula = computed(() => {
   const varianceVal = transformedVariance.value.toFixed(2);
 
   // 如果 meanVal 为负数，则添加括号
-  const meanDisplay = meanVal < 0 ? `(${meanVal})` : meanVal;
+  const meanDisplay = transformedMean.value < 0 ? `(${meanVal})` : meanVal;
   // 如果 varianceVal 为负数（虽然理论上方差不会是负数，但以防万一）
-  const varianceDisplay = varianceVal < 0 ? `(${varianceVal})` : varianceVal;
+  const varianceDisplay = transformedVariance.value < 0 ? `(${varianceVal})` : varianceVal;
 
   return `f(x) = \\frac{1}{\\sqrt{2\\pi{σ}^2}} e^{-\\frac{(x-μ)^2}{2{σ}^2}}=\\frac{1}{\\sqrt{2\\pi\\times${varianceDisplay}}} e^{-\\frac{(x-${meanDisplay})^2}{2\\times${varianceDisplay}}}`;
 });
@@ -55,9 +55,9 @@ const latexFormulaY = computed(() => {
   const varianceValY = transformedVarianceY.value.toFixed(2);
 
   // 如果 meanVal 为负数，则添加括号
-  const meanDisplayY = meanValY < 0 ? `(${meanValY})` : meanValY;
+  const meanDisplayY = transformedMeanY.value < 0 ? `(${meanValY})` : meanValY;
   // 如果 varianceVal 为负数（虽然理论上方差不会是负数，但以防万一）
-  const varianceDisplayY = varianceValY < 0 ? `(${varianceValY})` : varianceValY;
+  const varianceDisplayY = transformedVarianceY.value < 0 ? `(${varianceValY})` : varianceValY;
 
   return `f(y) = \\frac{1}{\\sqrt{2\\pi{σ'}^2}} e^{-\\frac{(x-μ')^2}{2{σ'}^2}}=\\frac{1}{\\sqrt{2\\pi{(aσ)^2}}} e^{-\\frac{(x-(aμ+b))^2}{2{(aσ)^2}}} = \\frac{1}{\\sqrt{2\\pi\\times${varianceDisplayY}}} e^{-\\frac{(x-${meanDisplayY})^2}{2\\times${varianceDisplayY}}}`;
 });
