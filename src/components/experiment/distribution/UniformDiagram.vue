@@ -40,31 +40,31 @@ function drawUniformDistribution() {
   // 绘制左侧区间 (x < a)，函数值为 0
   const leftSide = {
     id: 'left_side',
-    latex: `f_1(x) = 0 + ${props.m} \\{x < ${props.a}\\}`,
+    latex: `f_1(x) = 0 \\{x < ${props.k * props.a + props.m}\\}`,
     color: Desmos.Colors.BLUE,
   };
 
   // 绘制中间区间 (a <= x <= b)，函数值为 1 / (b - a)
   const middleSection = {
     id: 'middle_section',
-    latex: `f_2(x) = \\frac{${props.k}}{${props.b} - ${props.a}} + ${props.m} \\{${props.a} \\leq x \\leq ${props.b}\\}`,
+    latex: `f_2(x) = \\frac{1}{${props.k}(${props.b} - ${props.a})} \\{${props.k * props.a + props.m} \\leq x \\leq ${props.k * props.b + props.m}\\}`,
     color: Desmos.Colors.BLUE,
   };
 
   // 绘制右侧区间 (x > b)，函数值为 0
   const rightSide = {
     id: 'right_side',
-    latex: `f_3(x) = 0 + ${props.m} \\{x > ${props.b}\\}`,
+    latex: `f_3(x) = 0 \\{x > ${props.k * props.b + props.m}\\}`,
     color: Desmos.Colors.BLUE,
   };
 
   // 绘制 x = a 处的垂直线段
   const verticalLineA = {
     id: 'vertical_line_a',
-    latex: `\\left( ${props.a}, t \\right)`,
+    latex: `\\left( ${props.k * props.a + props.m}, t \\right)`,
     parametricDomain: {
-      min: props.m,
-      max: props.k / (props.b - props.a) + props.m,
+      min: 0,
+      max: 1 / (props.k * (props.b - props.a)),
     },
     color: Desmos.Colors.BLUE,
   };
@@ -72,10 +72,10 @@ function drawUniformDistribution() {
   // 绘制 x = b 处的垂直线段
   const verticalLineB = {
     id: 'vertical_line_b',
-    latex: `\\left( ${props.b}, t \\right)`,
+    latex: `\\left( ${props.k * props.b + props.m}, t \\right)`,
     parametricDomain: {
-      min: props.m,
-      max: props.k / (props.b - props.a) + props.m,
+      min: 0,
+      max: 1 / (props.k * (props.b - props.a)),
     },
     color: Desmos.Colors.BLUE,
   };
@@ -115,10 +115,10 @@ function drawUniformDistribution() {
 
   // 设置图形边界
   calculator.setMathBounds({
-    left: props.a - 1,
-    right: props.b + 1,
+    left: props.k * props.a + props.m - 1,
+    right: props.k * props.b + props.m + 1,
     bottom: -0.1,
-    top: props.k / (props.b - props.a) + props.m + 1,
+    top: 1 / (props.k * (props.b - props.a)) + 1,
   });
 }
 

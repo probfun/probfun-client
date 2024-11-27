@@ -1,16 +1,19 @@
 <script setup lang="ts">
+import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
-import BNDiagram from './BNDiagram.vue';
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
 import { toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue';
+import BNDiagram from './BNDiagram.vue';
 import 'katex/dist/katex.min.css';
 
 const number = ref([20]);
 const probability = ref([0.1]);
 const mean = computed(() => number.value[0] * probability.value[0]);
 const variance = computed(() => number.value[0] * probability.value[0] * (1 - probability.value[0]));
-const stdDev = computed(() => Math.sqrt(variance.value));
+// const stdDev = computed(() => Math.sqrt(variance.value));
 
 const binomialFormula = computed(() => ` \\\\P(X = k) = \\binom{${number.value[0]}}{k} ${probability.value[0]}^k (1-${probability.value[0]})^{${number.value[0]}-k}`);
 const binomialContainer = ref<HTMLElement | null>(null);
@@ -92,7 +95,7 @@ $$
 <template>
   <ExperimentBoard title="二项分布与正态分布" :tags="[]">
     <template #experiment>
-      <BNDiagram :n="number[0]" :p="probability[0]"></BNDiagram>
+      <BNDiagram :n="number[0]" :p="probability[0]" />
     </template>
     <!-- <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
@@ -125,32 +128,30 @@ $$
 
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center p-3 gap-3">
-      <Card  class = "w-full h-1/2 flex gap-3">
-        <Card class="w-1/2 space-y-5">
-          <CardHeader>
-            <div class = "flex  gap-5">
-            <CardTitle >二项分布公式</CardTitle> 
-            <div class="w-10 h-1 mt-1 bg-red-500">
-            </div>
-          </div>
-          </CardHeader>
-          <CardContent class="flex w-full justify-center ">
-            <div ref="binomialContainer" class="text-base" />
-          </CardContent>
+        <Card class="w-full h-1/2 flex gap-3">
+          <Card class="w-1/2 space-y-5">
+            <CardHeader>
+              <div class="flex  gap-5">
+                <CardTitle>二项分布公式</CardTitle>
+                <div class="w-10 h-1 mt-1 bg-red-500" />
+              </div>
+            </CardHeader>
+            <CardContent class="flex w-full justify-center ">
+              <div ref="binomialContainer" class="text-base" />
+            </CardContent>
+          </Card>
+          <Card class="w-1/2 gap-3 ">
+            <CardHeader>
+              <div class="flex  gap-5">
+                <CardTitle>正态分布公式</CardTitle>
+                <div class="w-10 h-1 mt-1 bg-blue-500" />
+              </div>
+            </CardHeader>
+            <CardContent class="flex w-full justify-center ">
+              <div ref="normalContainer" class="text-base" />
+            </CardContent>
+          </Card>
         </Card>
-        <Card class="w-1/2 gap-3 ">
-          <CardHeader>
-            <div class = "flex  gap-5">
-            <CardTitle >正态分布公式</CardTitle> 
-            <div class="w-10 h-1 mt-1 bg-blue-500">
-            </div>
-          </div>
-          </CardHeader>
-          <CardContent class="flex w-full justify-center ">
-            <div ref="normalContainer" class="text-base" />
-          </CardContent>
-        </Card>
-      </Card>
         <Card class="w-full  flex-1 flex flex-col">
           <CardHeader>
             <CardTitle>
@@ -173,15 +174,11 @@ $$
                   <Slider v-model="probability" :min="0" :max="1" :step="0.01" class="w-48" />
                 </div>
               </div>
-
-          </div>
-
+            </div>
           </CardContent>
         </Card>
       </div>
     </template>
-
-
 
     <template #conclusion>
       <div class="w-full h-full p-5">
@@ -191,7 +188,6 @@ $$
     <template #comment>
       <CommentPanel exp-id="BN" />
     </template>
-
   </ExperimentBoard>
 </template>
 

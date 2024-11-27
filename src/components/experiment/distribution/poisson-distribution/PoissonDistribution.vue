@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
-import PoissonDiagram from './PoissonDiagram.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label'
@@ -8,6 +8,7 @@ import { Slider } from '@/components/ui/slider';
 import { toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue'
+import PoissonDiagram from './PoissonDiagram.vue';
 import 'katex/dist/katex.min.css';
 
 const lambda = ref([3]); // Poisson distribution mean (λ)
@@ -39,10 +40,10 @@ const result = computed(() => {
   // 计算尾数和指数
   const absValue = Math.abs(probabilityOfK);
   const exponent = Math.floor(Math.log10(absValue)); // 获取指数
-  const mantissa = (probabilityOfK / Math.pow(10, exponent)).toFixed(3); // 计算尾数并保留5位小数
+  const mantissa = (probabilityOfK / 10 ** exponent).toFixed(3); // 计算尾数并保留5位小数
 
-  const formattedResult = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
-  return formattedResult;
+  // 形成最终的结果字符串
+  return `${mantissa} \\times 10^{${exponent}}`;
 });
 
 const latexFormula = computed(() => `P(X = ${an.value}) =\\frac{{λ}^ke^{-λ}}{k!}= \\frac{${lambda.value}^${an.value} e^{-${lambda.value}}}{${an.value}!} = ${result.value}`);
@@ -70,7 +71,7 @@ watch(an, () => {
 
 const content = `
 ## **概述**
-泊松分布$（Poisson Distribution）$ 是统计学中一种离散概率分布，用于描述在固定的时间间隔或空间区域内，事件发生的次数。它常用于建模某个事件的发生频率，特别是在平均事件发生率已知的情况下。泊松分布适用于事件发生概率相互独立的情境，并且事件发生是稀疏且随机的。
+泊松分布$（Poisson\\ Distribution）$ 是统计学中一种离散概率分布，用于描述在固定的时间间隔或空间区域内，事件发生的次数。它常用于建模某个事件的发生频率，特别是在平均事件发生率已知的情况下。泊松分布适用于事件发生概率相互独立的情境，并且事件发生是稀疏且随机的。
 
 ## **泊松分布的定义**
 
@@ -102,7 +103,7 @@ $$
 <template>
   <ExperimentBoard>
     <template #experiment>
-      <PoissonDiagram :lambda="lambda[0]" :save="save"></PoissonDiagram>
+      <PoissonDiagram :lambda="lambda[0]" :save="save" />
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center p-3 gap-3">
@@ -139,15 +140,17 @@ $$
             </div>
 
             <div class="flex gap-2 items-center justify-center">
-              <Checkbox id="terms" @update:checked="(checked: boolean) => {
-                if (checked) {
-                  saveImg();
-                }
-                else {
-                  back();
-                }
-                console.log(checked)
-              }" />
+              <Checkbox
+                id="terms" @update:checked="(checked: boolean) => {
+                  if (checked) {
+                    saveImg();
+                  }
+                  else {
+                    back();
+                  }
+                  console.log(checked)
+                }"
+              />
               <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
             </div>
           </CardContent>

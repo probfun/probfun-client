@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
-import BinomialDiagram from './BinomialDiagram.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label';
@@ -8,6 +8,7 @@ import { Slider } from '@/components/ui/slider';
 import { toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue';
+import BinomialDiagram from './BinomialDiagram.vue';
 import 'katex/dist/katex.min.css';
 
 const number = ref([1]); // Number of experiments (n)
@@ -64,6 +65,8 @@ const chartData = ref<{
   labels: [],
   datasets: [],
 });
+
+const save = ref(false);
 function addNewDataset() {
   if (!save.value) {
     return;
@@ -114,7 +117,6 @@ watch(number, (newVal) => {
   }
 });
 
-const save = ref(false);
 function saveImg() {
   save.value = true;
 }
@@ -155,9 +157,9 @@ watch(
 const latexFormula = computed(() => {
   const absValue = Math.abs(finalResult.value);
   const exponent = Math.floor(Math.log10(absValue)); // 获取指数
-  const mantissa = (finalResult.value / Math.pow(10, exponent)).toFixed(3); // 计算尾数并保留5位小数
+  const mantissa = (finalResult.value / 10 ** exponent).toFixed(3); // 计算尾数并保留5位小数
   const result = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
-  return `P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k} = \\binom{${number.value}}{${numberk.value}} ${probability.value}^${numberk.value} (1-${probability.value})^{${number.value}-${numberk.value}} = ${result}`;
+  return `P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k} = \\binom{${number.value}}{${numberk.value}} ${probability.value}^{${numberk.value}} (1-${probability.value})^{${number.value}-${numberk.value}} = ${result}`;
 });
 
 // const latexFormula = computed(() => `P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k} = \\binom{${number.value}}${numberk.value} ${probability.value}^${numberk.value} (1-${probability.value})^{${number.value}-${numberk.value}} =  ${result} `);
@@ -234,7 +236,7 @@ onMounted(() => {
 
 const content = `
 ## **概述**
-二项分布$（Binomial Distribution）$是统计学中常见的一种离散概率分布，用于描述在重复进行的独立试验中，某个事件发生的次数的分布情况。该事件通常只有两个可能的结果，分别称为“成功”和“失败”。二项分布的典型应用场景包括抛硬币、抽样检验等。
+二项分布（$$Binomial\\ Distribution$$）是统计学中常见的一种离散概率分布，用于描述在重复进行的独立试验中，某个事件发生的次数的分布情况。该事件通常只有两个可能的结果，分别称为“成功”和“失败”。二项分布的典型应用场景包括抛硬币、抽样检验等。
 
 ## **二项分布的定义**
 如果在每次试验中，事件发生的概率为 $$ p $$，那么在进行 $$ n $$ 次独立试验后，事件发生 $$ k $$ 次的概率由以下公式给出：
@@ -282,7 +284,7 @@ $$
 <template>
   <ExperimentBoard title="二项分布" :tags="[]">
     <template #experiment>
-      <BinomialDiagram :n="number[0]" :p="probability[0]" :save="save"></BinomialDiagram>
+      <BinomialDiagram :n="number[0]" :p="probability[0]" :save="save" />
     </template>
     <template #parameter>
       <div class="w-full min-h-full flex flex-col items-center justify-center p-3 gap-3">
@@ -326,15 +328,17 @@ $$
               </div>
             </div>
             <div class="flex gap-2 items-center justify-center">
-              <Checkbox id="terms" @update:checked="(checked: boolean) => {
-                if (checked) {
-                  saveImg();
-                }
-                else {
-                  back();
-                }
-                console.log(checked)
-              }" />
+              <Checkbox
+                id="terms" @update:checked="(checked: boolean) => {
+                  if (checked) {
+                    saveImg();
+                  }
+                  else {
+                    back();
+                  }
+                  console.log(checked)
+                }"
+              />
               <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
             </div>
           </CardContent>

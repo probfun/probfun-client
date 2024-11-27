@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
-import GeometricDiagram from './GeometricDiagram.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
@@ -8,6 +8,7 @@ import { Slider } from '@/components/ui/slider';
 import { toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue'
+import GeometricDiagram from './GeometricDiagram.vue';
 import 'katex/dist/katex.min.css';
 
 const probability = ref([0.5]); // Probability of success (p)
@@ -51,7 +52,7 @@ const finalResultOne = computed(() => {
 const oneFormula = computed(() => {
   const absValue = Math.abs(finalResultOne.value);
   const exponent = Math.floor(Math.log10(absValue)); // 获取指数
-  const mantissa = (finalResultOne.value / Math.pow(10, exponent)).toFixed(3); // 计算尾数并保留5位小数
+  const mantissa = (finalResultOne.value / 10 ** exponent).toFixed(3); // 计算尾数并保留5位小数
   const resultOne = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
 
   return `P(X = k) = (1 - p)^{k-1} \\cdot p = (1 - ${probability.value[0]})^{${numberk.value[0] - 1}} \\cdot ${probability.value[0]} = ${resultOne}`;
@@ -65,13 +66,10 @@ const finalResultTwo = computed(() => {
 });
 
 const twoFormula = computed(() => {
-
   const absValue = Math.abs(finalResultTwo.value);
   const exponent = Math.floor(Math.log10(absValue)); // 获取指数
-  const mantissa = (finalResultTwo.value / Math.pow(10, exponent)).toFixed(3); // 计算尾数并保留5位小数
+  const mantissa = (finalResultTwo.value / 10 ** exponent).toFixed(3); // 计算尾数并保留5位小数
   const resultTwo = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
-
-
 
   return `P(X = k) = (1 - p)^{k} \\cdot p  = (1 - ${probability.value[0]})^{${numberk.value}} \\cdot ${probability.value[0]} = ${resultTwo}`;
 });
@@ -86,7 +84,7 @@ const finalResultThree = computed(() => {
 const threeFormula = computed(() => {
   const absValue = Math.abs(finalResultThree.value);
   const exponent = Math.floor(Math.log10(absValue)); // 获取指数
-  const mantissa = (finalResultThree.value / Math.pow(10, exponent)).toFixed(3); // 计算尾数并保留5位小数
+  const mantissa = (finalResultThree.value / 10 ** exponent).toFixed(3); // 计算尾数并保留5位小数
   const resultThree = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
 
   return `
@@ -127,7 +125,7 @@ watch([probability, fixedN, numberk], () => {
 
 const content = `
 ## **概述**
-几何分布$（Geometric Distribution）$是统计学中的一种离散概率分布，用于描述在一系列独立的伯努利试验中，第一次成功发生之前的失败次数。几何分布可以用来表示成功之前进行的失败次数，或直到第一次成功所需的试验次数。
+几何分布$（Geometric\\ Distribution）$是统计学中的一种离散概率分布，用于描述在一系列独立的伯努利试验中，第一次成功发生之前的失败次数。几何分布可以用来表示成功之前进行的失败次数，或直到第一次成功所需的试验次数。
 
 ## **几何分布的定义**
 
@@ -184,8 +182,10 @@ $$
 <template>
   <ExperimentBoard>
     <template #experiment>
-      <GeometricDiagram :p="probability[0]" :n="fixedN[0]" :is-chart1="isChart1" :is-chart2="isChart2"
-        :is-chart3="isChart3" :save="save"></GeometricDiagram>
+      <GeometricDiagram
+        :p="probability[0]" :n="fixedN[0]" :is-chart1="isChart1" :is-chart2="isChart2"
+        :is-chart3="isChart3" :save="save"
+      />
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center gap-3 p-3">
@@ -246,15 +246,17 @@ $$
               </div>
             </div>
             <div v-if="isChart1" class="flex gap-2 items-center justify-center">
-              <Checkbox id="terms" @update:checked="(checked: boolean) => {
-                if (checked) {
-                  saveImg();
-                }
-                else {
-                  back();
-                }
-                console.log(checked)
-              }" />
+              <Checkbox
+                id="terms" @update:checked="(checked: boolean) => {
+                  if (checked) {
+                    saveImg();
+                  }
+                  else {
+                    back();
+                  }
+                  console.log(checked)
+                }"
+              />
               <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
             </div>
           </CardContent>

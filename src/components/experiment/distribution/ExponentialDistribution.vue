@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
 import { toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue'
@@ -29,39 +32,35 @@ function toggleChart2() {
   isChart2.value = true;
 }
 
-const finalResultOne = computed(() => { 
+const finalResultOne = computed(() => {
   const r = rate.value[0];
   const x = numberx.value[0];
-  return Math.pow(Math.E, -r * x) * r;
+  return Math.E ** (-r * x) * r;
 });
-
-
 
 const oneFormula = computed(() => {
   const absValue = Math.abs(finalResultOne.value);
   const exponent = Math.floor(Math.log10(absValue)); // 获取指数
-  const mantissa = (finalResultOne.value / Math.pow(10, exponent)).toFixed(3); // 计算尾数并保留5位小数
+  const mantissa = (finalResultOne.value / 10 ** exponent).toFixed(3); // 计算尾数并保留5位小数
   const resultOne = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
 
   return `f(x) = λe^{-λx} = ${rate.value} e^{-${rate.value} \\cdot ${numberx.value}} = ${resultOne}( x \\geq 0)`;
 });
 const oneContainer = ref<HTMLElement | null>(null);
 
-const finalResultTwo = computed(() => { 
+const finalResultTwo = computed(() => {
   const r = rate.value[0];
   const x = numberx.value[0];
-  return Math.pow(Math.E, -r * x) ;
+  return Math.E ** (-r * x);
 });
 
 const twoFormula = computed(() => {
-  
-
   const absValue = Math.abs(finalResultTwo.value);
   const exponent = Math.floor(Math.log10(absValue)); // 获取指数
-  const mantissa = (finalResultTwo.value / Math.pow(10, exponent)).toFixed(3); // 计算尾数并保留5位小数
+  const mantissa = (finalResultTwo.value / 10 ** exponent).toFixed(3); // 计算尾数并保留5位小数
   const resultTwo = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
 
-  return  `
+  return `
   \\begin{aligned}
   P(X > ${shift.value} + x \\mid X > ${shift.value}) 
   = P(X > x) = e^{-${rate.value} × ${numberx.value}}
@@ -92,7 +91,7 @@ watch([oneFormula, twoFormula], () => {
 
 const content = `
 ## **概述**
-指数分布$（Exponential Distribution）$ 是一种连续概率分布，用于描述在固定的时间间隔内，事件发生的时间间隔。它常用于建模事件发生的时间间隔，特别是当事件发生的速率已知且事件发生是独立的情况下。指数分布是泊松过程的连续时间模型，特别适用于描述无记忆性质的现象。
+指数分布$（Exponential\\ Distribution）$ 是一种连续概率分布，用于描述在固定的时间间隔内，事件发生的时间间隔。它常用于建模事件发生的时间间隔，特别是当事件发生的速率已知且事件发生是独立的情况下。指数分布是泊松过程的连续时间模型，特别适用于描述无记忆性质的现象。
 
 ## **指数分布的定义**
 
@@ -136,8 +135,10 @@ $$
 <template>
   <ExperimentBoard title="二项分布" :tags="[]">
     <template #experiment>
-      <ExponentialDiagram class="flex-1 h-full" :rate="rate[0]" :shift="shift[0]" :show-graph="isChart1"
-      :show-history="save"></ExponentialDiagram>
+      <ExponentialDiagram
+        class="flex-1 h-full" :rate="rate[0]" :shift="shift[0]" :show-graph="isChart1"
+        :show-history="save"
+      />
     </template>
     <!-- <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
@@ -187,7 +188,7 @@ $$
         </div>
       </div>
     </template> -->
-    
+
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center gap-3 p-3">
         <Card class="w-full">
@@ -229,7 +230,6 @@ $$
                 </div>
               </div>
               <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-
                 <Label> 间隔/等待时间x </Label>
                 <div class="max-w-xl space-y-3">
                   <Input v-model.number="numberx[0]" />
@@ -240,22 +240,24 @@ $$
               <div v-if="isChart2" class="flex flex-col flex-1 items-center justify-center space-y-5">
                 <Label> 固定值 </Label>
                 <div class="max-w-xl space-y-3">
-                  <Input  v-model.number="shift[0]" :min-fraction-digits="1" />
+                  <Input v-model.number="shift[0]" :min-fraction-digits="1" />
                   <Slider v-model="shift" :min="0" :max="5" :step="0.1" class="w-48" />
                 </div>
               </div>
             </div>
 
             <div class="flex gap-2 items-center justify-center">
-              <Checkbox id="terms" @update:checked="(checked: boolean) => {
-                if (checked) {
-                  saveImg();
-                }
-                else {
-                  back();
-                }
-                console.log(checked)
-              }" />
+              <Checkbox
+                id="terms" @update:checked="(checked: boolean) => {
+                  if (checked) {
+                    saveImg();
+                  }
+                  else {
+                    back();
+                  }
+                  console.log(checked)
+                }"
+              />
               <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
             </div>
           </CardContent>
@@ -265,11 +267,11 @@ $$
 
     <template #conclusion>
       <div class="w-full h-full p-5">
-        <div class="prose max-w-full text-base-content" v-html="toMarkdown(content)" />
+        <div class="prose-sm max-w-full " v-html="toMarkdown(content)" />
       </div>
     </template>
     <template #comment>
-      <CommentPanel exp-id="exponentialDistribution"/>
+      <CommentPanel exp-id="exponentialDistribution" />
     </template>
   </ExperimentBoard>
 </template>

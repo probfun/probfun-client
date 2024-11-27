@@ -179,10 +179,14 @@ function factorial(n: number) {
 }
 
 watch([time], () => {
+  if (time.value[0] < 5)
+    time.value[0] = 5;
+  if (time.value[0] > 30)
+    time.value[0] = 30;
   chartData.value = setChartData();
   chartData2.value = setChartData2();
   renderFormula();
-});
+}, { deep: true });
 
 // function toggleChart() {
 //   exponential.value = !exponential.value;
@@ -194,7 +198,7 @@ const content = `
 
 泊松分布和指数分布之间有着紧密的关系，特别是在描述随机事件的时间和数量方面。以下是两者的详细关系及相关公式：
 
-### **1. 泊松分布 $(Poisson Distribution)$**
+### **1. 泊松分布 $(Poisson\\ Distribution)$**
 
 泊松分布描述的是在固定时间内随机事件发生的次数。其概率质量函数$（PMF）$为：
 
@@ -206,7 +210,7 @@ $$
 - $$ \\lambda $$ 是单位时间内事件发生的平均次数。
 - $$ k $$ 是事件的具体发生次数（$$ k = 0, 1, 2, \\dots $$）。
 
-### **2. 指数分布 $(Exponential Distribution)$**
+### **2. 指数分布 $(Exponential\\ Distribution)$**
 
 指数分布描述的是两个连续事件之间的时间间隔。其概率密度函数$（PDF）$为：
 
@@ -217,7 +221,7 @@ $$
 - $$ t $$ 是两个事件之间的时间间隔。
 - $$ \\lambda $$ 同样表示单位时间内事件发生的平均次数（与泊松分布中的参数相同）。
 
-### **3. 泊松过程 $(Poisson Process)$**
+### **3. 泊松过程 $(Poisson\\ Process)$**
 
 泊松分布和指数分布之间的关系可以通过泊松过程来理解。泊松过程是一个描述随机事件在时间上发生的模型。
 
@@ -250,7 +254,7 @@ $$
 P(T_i > t) = e^{-\\lambda t}, \\quad t \\geq 0
 $$
 
-泊松分布的参数 $$ \\lambda $$ 是单位时间内的平均事件次数，而指数分布的参数 $$ \lambda $$ 是时间间隔的倒数。
+泊松分布的参数 $$ \\lambda $$ 是单位时间内的平均事件次数，而指数分布的参数 $$ \\lambda $$ 是时间间隔的倒数。
 
 通过这些公式，可以清晰地看到泊松分布和指数分布在描述随机事件发生过程中的紧密联系。泊松分布用于描述事件的数量，而指数分布用于描述事件之间的时间间隔，两者共同构成了泊松过程的基础。
 
@@ -334,7 +338,7 @@ $$
               <div class="flex flex-col flex-1 items-center justify-center space-y-2">
                 <Label> 公交车的发车间隔（min） </Label>
                 <div class="max-w-xl space-y-3">
-                  <Input v-model.number="time[0]" :min-fraction-digits="1" />
+                  <Input v-model="time[0]" type="number" :min="1" :max="30" />
                   <Slider v-model="time" :min="5" :max="30" :step="5" class="w-48" />
                 </div>
               </div>
