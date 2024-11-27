@@ -121,7 +121,7 @@ async function sendMessages() {
     });
 
     abortController.value = new AbortController();
-    messageInterval.value = setInterval(() => {
+    messageInterval.value = window.setInterval(() => {
       if (messageQueue.value.length > 0) {
         aiMessages[aiMessages.length - 1].content += messageQueue.value.shift()!;
         aiMessages[aiMessages.length - 1].content

@@ -1,13 +1,13 @@
 import type { AiMessage } from '@/components/ai/aiType';
 import { error } from '@/utils/toast';
-import OpenAI from 'openai';
-
-const OPENAI_KEY = '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';
-
-const openai = new OpenAI({
-  apiKey: OPENAI_KEY,
-  dangerouslyAllowBrowser: true,
-});
+// import OpenAI from 'openai';
+//
+// const OPENAI_KEY = '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';
+//
+// const openai = new OpenAI({
+//   apiKey: OPENAI_KEY,
+//   dangerouslyAllowBrowser: true,
+// });
 
 // export async function aiApi(messages: AiMessage[], receive: (message: string) => void, finish: () => void, abortController: AbortController | null = null) {
 //   const systemPrompt: {
