@@ -28,6 +28,12 @@ export default defineConfig({
         // target: 'http://127.0.0.1:4523/m1/4811506-4465979-default',
         changeOrigin: true,
       },
+      '/llm': {
+        target: 'ws://192.144.199.178',
+        ws: true,
+        // target: 'http://127.0.0.1:4523/m1/4811506-4465979-default',
+        changeOrigin: true,
+      },
       '/uploads': {
         target: 'http://192.144.199.178',
         changeOrigin: true,

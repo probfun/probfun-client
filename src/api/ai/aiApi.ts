@@ -1,4 +1,4 @@
-import type { AiMessage } from '@/components/ai/aiType';
+import type { AiMessage } from '@/api/ai/aiType';
 import { error } from '@/utils/toast';
 // import OpenAI from 'openai';
 //
@@ -49,11 +49,12 @@ import { error } from '@/utils/toast';
 
 export async function aiApi(
   messages: AiMessage[],
+  open: () => void,
   receive: (message: string) => void,
   finish: () => void,
   abortController: AbortController | null = null,
 ) {
-  const wsUrl = 'ws://127.0.0.1:8000/chat';
+  const wsUrl = `ws://${location.host}/llm/chat`;
   let websocket: WebSocket | null = null;
 
   try {
@@ -62,7 +63,7 @@ export async function aiApi(
     // WebSocket连接成功
     websocket.onopen = () => {
       console.log('WebSocket connection established');
-
+      open();
       console.log(messages);
       websocket?.send(JSON.stringify({ messages }));
     };
@@ -96,8 +97,8 @@ export async function aiApi(
         receive(`\n\n调用了工具：${data.tool}\n\n`);
       }
       if (data?.done) {
-        finish();
-        websocket?.close();
+        // finish();
+        // websocket?.close();
       }
     }
   }

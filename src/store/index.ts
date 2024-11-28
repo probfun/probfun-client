@@ -1,5 +1,5 @@
+import type { AiMessage, ChatBlock } from '@/api/ai/aiType';
 import type { User } from '@/api/user/userType';
-import type { AiMessage, ChatBlock } from '@/components/ai/aiType';
 import { defineStore } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
 import { ref } from 'vue';

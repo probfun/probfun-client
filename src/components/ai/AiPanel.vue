@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AiMessage, ChatBlock } from '@/components/ai/aiType';
+import type { AiMessage, ChatBlock } from '@/api/ai/aiType';
 import type { Textarea } from '@/components/ui/textarea';
 import { aiApi } from '@/api/ai/aiApi';
 import AiSidebar from '@/components/ai/AiSidebar.vue';
@@ -29,7 +29,7 @@ import { nextTick, onMounted, ref, watch } from 'vue'
 const message = ref('');
 const aiStore = useAiStore();
 const scrollContainer = ref<HTMLDivElement | null>(null);
-const status = ref<'idle' | 'generating' | 'loading' | 'aborted' | 'error'>('idle');
+const status = ref<'idle' | 'connecting' | 'generating' | 'loading' | 'aborted' | 'error'>('idle');
 const abortController = ref<AbortController | null>(null);
 const messageQueue = ref<string[]>([]);
 const messageInterval = ref<number | null>(null);
@@ -114,7 +114,7 @@ async function sendMessages() {
   try {
     message.value = '';
     aiMessages.push({ role: 'assistant', content: '', messageId: uuidv4() });
-    status.value = 'loading';
+    status.value = 'connecting';
     await nextTick(() => {
       scrollToBottom();
       resetTextareaHeight();
@@ -133,7 +133,7 @@ async function sendMessages() {
         scrollToBottom();
       }
     }, 30);
-    await aiApi(aiMessages, receiveMessage, finishGenerating, abortController.value);
+    await aiApi(aiMessages, () => status.value = 'loading', receiveMessage, finishGenerating, abortController.value);
   }
   catch (error: any) {
     status.value = 'error';
@@ -396,7 +396,7 @@ function handleCompositionEnd() {
             @compositionend="handleCompositionEnd"
           />
           <Button
-            size="icon" :disabled="status === 'loading' || (status === 'idle' && message.trim() === '')" class="transition-all"
+            size="icon" :disabled="status === 'connecting' || (status === 'idle' && message.trim() === '')" class="transition-all"
             @click="async () => {
               if (status === 'generating') {
                 stopGenerating();

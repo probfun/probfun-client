@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ChatBlock } from '@/components/ai/aiType';
+import type { ChatBlock } from '@/api/ai/aiType';
 import {
   AlertDialog,
   AlertDialogAction,
