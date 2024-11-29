@@ -1,5 +1,5 @@
 <script>
-import { ref, defineComponent } from 'vue';
+import { ref, defineComponent, nextTick, onMounted } from 'vue';
 import { VueFlow, useVueFlow } from '@vue-flow/core';
 import { Background } from '@vue-flow/background';
 import { Controls, ControlButton } from '@vue-flow/controls';
@@ -11,28 +11,13 @@ import Icon from '../Icon.vue';
 export default defineComponent({
   components: { VueFlow, Background, Controls, MiniMap, Icon },
   setup() {
-    const { onInit,  setViewport, toObject } = useVueFlow();
+    const { onInit, setViewport, fitView, toObject } = useVueFlow();
     const nodes = ref(initialNodes);
     const edges = ref(initialEdges);
     const dark = ref(false);
 
-    // 随机布局
-    const updatePos = () => {
-      console.log('Shuffle Node Positions clicked!');
-      nodes.value = nodes.value.map((node) => ({
-        ...node,
-        position: {
-          x: Math.random() * 400,
-          y: Math.random() * 400,
-        },
-        dragging: false, // 重置 dragging 状态
-      }));
-    };
-
-
     // 自动布局 (使用 dagre)
     const applyAutoLayout = () => {
-      // 设置 dagre 布局方向
       const dagreGraph = new dagre.graphlib.Graph();
       dagreGraph.setDefaultEdgeLabel(() => ({}));
       dagreGraph.setGraph({ rankdir: 'LR', nodesep: 50, edgesep: 10, ranksep: 100 });
@@ -59,28 +44,26 @@ export default defineComponent({
             x: dagreNode.x,
             y: dagreNode.y,
           },
-          // VueFlow 特殊要求，更新布局后将 `dragging` 属性设为 false
           dragging: false,
         };
       });
     };
 
-    // 处理节点拖动停止事件
-  const handleNodeDragStop = (event) => {
-    const { node } = event;
-    console.log(`Node ${node.id} moved to new position:`, node.position);
+    // 节点拖动事件处理
+    const handleNodeDragStop = (event) => {
+      const { node } = event;
+      console.log(`Node ${node.id} moved to new position:`, node.position);
+      nodes.value = nodes.value.map((n) => {
+        if (n.id === node.id) {
+          return {
+            ...n,
+            position: node.position,
+          };
+        }
+        return n;
+      });
+    };
 
-    // 更新节点的新位置到 `nodes` 数组
-    nodes.value = nodes.value.map((n) => {
-      if (n.id === node.id) {
-        return {
-          ...n,
-          position: node.position,  // 更新节点的位置
-        };
-      }
-      return n;
-    });
-  };
     // 打印当前图形状态
     const logToObject = () => {
       console.log(toObject());
@@ -96,15 +79,27 @@ export default defineComponent({
       dark.value = !dark.value;
     };
 
-    onInit((vueFlowInstance) => {
-      vueFlowInstance.fitView();
+        // 自定义初始视图
+        const customViewport = {
+      x: -500,  // 初始 X 坐标
+      y: 50,   // 初始 Y 坐标
+      zoom: 0.5, // 初始缩放比例
+    };
+
+    // 初始化 VueFlow 时调用自动布局并适配视图
+    onMounted(() => {
+      nextTick(() => {
+        applyAutoLayout(); // 应用自动布局
+        setViewport(customViewport);
+        // fitView(); // 调整视图以适配所有节点和边
+      });
     });
 
     return {
       nodes,
       edges,
       dark,
-      updatePos,
+      handleNodeDragStop,
       applyAutoLayout,
       logToObject,
       resetTransform,
@@ -116,36 +111,28 @@ export default defineComponent({
 
 
 
+
+
 <template>
-  <VueFlow :nodes="nodes" :edges="edges" :class="{ dark }" class="basic-flow" @nodeDragStop="handleNodeDragStop"
-    :default-viewport="{ zoom: 1.5 }" :min-zoom="0.2" :max-zoom="4">
-
-
+  <VueFlow
+    :nodes="nodes"
+    :edges="edges"
+    :class="{ dark }"
+    class="basic-flow"
+    @nodeDragStop="handleNodeDragStop"
+    :default-viewport="{ zoom: 1.5 }"
+    :min-zoom="0.2"
+    :max-zoom="4"
+  >
     <Background pattern-color="#aaa" :gap="16" />
 
     <MiniMap />
 
     <Controls position="top-left">
-      <Button title="Reset Transform" @click="resetTransform">
-        <Icon name="reset" />
-      </Button>
-
-      <Button title="Shuffle Node Positions" @click="updatePos">
-        <Icon name="update" />
-      </Button>
-
-      <Button title="Apply Auto Layout" @click="applyAutoLayout">
-        <Icon name="layout" />
-      </Button>
-
-      <Button title="Toggle Dark Mode" @click="toggleDarkMode">
+      <Button title="M" @click="toggleDarkMode">
         <Icon v-if="dark" name="sun" />
         <Icon v-else name="moon" />
       </Button>
-
-      <ControlButton title="Log `toObject`" @click="logToObject">
-        <Icon name="log" />
-      </ControlButton>
     </Controls>
   </VueFlow>
 </template>

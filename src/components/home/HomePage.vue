@@ -47,7 +47,7 @@ const mindMaps = ref([
   {
     title: '分布（第二章与第三章）',
     description: '第二章主要涉及各种一维分布相关的实验。包括6种基本分布：二项、泊松、几何、均匀、指数、 正态分布以及分布的对比：二项分布与泊松、正态分布的近似，泊松分布与指数、正态分布的近似。第三章主要涉及各种高维分布相关的实验。',
-    img: '/homePage/poissonDistribution.png',
+    img: '/homePage/distribution.png',
     path: 'dashboard/mindmap/distribution',
 
   },
@@ -75,7 +75,8 @@ const mindMaps = ref([
         💥 热门实验
       </div>
       <div class="flex gap-3 overflow-x-auto">
-        <Card v-for="(exp, index) in experiments" :key="index" class="min-w-44 flex-col flex hover:border-primary transition-all">
+        <Card v-for="(exp, index) in experiments" :key="index"
+          class="min-w-44 flex-col flex hover:border-primary transition-all">
           <CardHeader class="p-4 space-y-1">
             <CardTitle>{{ exp.title }}</CardTitle>
             <img class="border rounded-lg border-primary" :src="exp.img" alt="">
@@ -100,10 +101,13 @@ const mindMaps = ref([
         🔍 思维导图
       </div>
       <div class="flex gap-3 overflow-x-auto">
-        <Card v-for="(map, index) in mindMaps" :key="index" class="min-w-44 flex-col flex hover:border-primary transition-all">
+        <Card v-for="(map, index) in mindMaps" :key="index"
+          class="min-w-44 flex-col flex hover:border-primary transition-all basis-1/3">
           <CardHeader class="p-4 space-y-1">
             <CardTitle>{{ map.title }}</CardTitle>
-            <img class="border rounded-lg border-primary" :src="map.img" alt="">
+            <div class="h-32 w-full flex items-center justify-center border rounded-lg border-primary overflow-hidden">
+              <img class="object-cover h-full w-full" :src="map.img" alt="">
+            </div>
           </CardHeader>
           <CardContent class="flex-1">
             <Label class="line-clamp-5 leading-normal font-normal">
@@ -113,9 +117,9 @@ const mindMaps = ref([
           <CardFooter>
             <router-link class="w-full" :to="map.path">
               <Button class="w-full">
-              进入思维导图
-            </Button>
-                       </router-link>
+                进入思维导图
+              </Button>
+            </router-link>
           </CardFooter>
         </Card>
       </div>
