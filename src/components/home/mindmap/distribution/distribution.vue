@@ -79,8 +79,10 @@ export default defineComponent({
       dark.value = !dark.value;
     };
 
-        // 自定义初始视图
-        const customViewport = {
+
+
+    // 自定义初始视图
+    const customViewport = {
       x: -500,  // 初始 X 坐标
       y: 50,   // 初始 Y 坐标
       zoom: 0.5, // 初始缩放比例
@@ -95,7 +97,28 @@ export default defineComponent({
       });
     });
 
+    // 控制悬浮框的显示和位置
+    const showTooltip = ref(false); // 控制是否显示悬浮框
+    const tooltipStyle = ref({
+      position: 'absolute',
+      bottom: '50px',
+      left: '50px',
+      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+      color: 'white',
+      padding: '10px',
+      borderRadius: '5px',
+      zIndex: 1000,
+    });
+    // 切换悬浮框的显示状态
+    const toggleTooltip = () => {
+      showTooltip.value = !showTooltip.value; // 切换显示与隐藏
+    };
+
+
     return {
+      showTooltip,
+      tooltipStyle,
+      toggleTooltip,
       nodes,
       edges,
       dark,
@@ -107,6 +130,7 @@ export default defineComponent({
     };
   },
 });
+   
 </script>
 
 
@@ -114,27 +138,57 @@ export default defineComponent({
 
 
 <template>
-  <VueFlow
-    :nodes="nodes"
-    :edges="edges"
-    :class="{ dark }"
-    class="basic-flow"
-    @nodeDragStop="handleNodeDragStop"
-    :default-viewport="{ zoom: 1.5 }"
-    :min-zoom="0.2"
-    :max-zoom="4"
-  >
+  <VueFlow :nodes="nodes" :edges="edges" :class="{ dark }" class="basic-flow" @nodeDragStop="handleNodeDragStop"
+    :default-viewport="{ zoom: 1.5 }" :min-zoom="0.2" :max-zoom="4">
     <Background pattern-color="#aaa" :gap="16" />
 
     <MiniMap />
 
-    <Controls position="top-left">
-      <Button title="M" @click="toggleDarkMode">
+    <Controls position="top-left" class = "border-none">
+      <Button title="背景颜色" @click="toggleDarkMode" class = "ml-4 mr-4">
+        切换背景
         <Icon v-if="dark" name="sun" />
         <Icon v-else name="moon" />
       </Button>
+
+         <!-- 添加控制悬浮框显示的按钮 -->
+         <Button title="显示图例" @click="toggleTooltip">
+          显示图例
+        <Icon name="info" />
+      </Button>
     </Controls>
   </VueFlow>
+  <div v-if="showTooltip" :style="tooltipStyle" class="tooltip">
+    <div class="tooltip-content">
+      <div class="column">
+        <p class="highlight"><strong>Properties:</strong> </p>
+        <p><strong>C</strong> convolution</p>
+        <p><strong>F</strong> forgetfulness</p>
+        <p><strong>I</strong> inverse</p>
+        <p><strong>L</strong> linear combination</p>
+        <p><strong>M</strong> minimum</p>
+        <p><strong>P</strong> product</p>
+        <p><strong>R</strong> residual</p>
+        <p><strong>S</strong> scaling</p>
+        <p><strong>V</strong> variate generation</p>
+        <p><strong>X</strong> maximum</p>
+      </div>
+      <div class="column">
+
+        <p><strong>L → C</strong> </p>
+        <p><strong>L → S</strong> </p>
+        <p><strong>F → R</strong> </p>
+        <p class="highlight"><strong>Relationships:</strong> </p>
+        <p><strong>special cases:</strong> ——></p>
+        <p><strong>limiting:</strong>---------—></p>
+        <p><strong>bayesian:</strong>--------—></p>
+        <p><strong>transformations:</strong> <span class="highlight-text">—————></span></p>
+
+      </div>
+    </div>
+  </div>
+
+
 </template>
 
 <style scoped>
@@ -221,5 +275,47 @@ body,
 .light {
   white-space: pre-line;
   /* 支持换行符 */
+}
+
+.tooltip {
+  font-size: 14px;
+  max-width: 600px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  /* 让所有内容左对齐 */
+  user-select: none;
+}
+
+.tooltip-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  user-select: none;
+}
+
+.column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.column p {
+  margin: 0;
+}
+
+/* 对特定行文字改变颜色 */
+.highlight {
+  font-size: 20px;
+  /* 设置行颜色 */
+  user-select: none;
+}
+
+.highlight-text {
+  color: orange;
+  /* 设置部分文字颜色 */
+  user-select: none;
 }
 </style>
