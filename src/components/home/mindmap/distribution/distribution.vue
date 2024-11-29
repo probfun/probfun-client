@@ -15,6 +15,34 @@ export default defineComponent({
     const nodes = ref(initialNodes);
     const edges = ref(initialEdges);
     const dark = ref(false);
+    const searchQuery = ref(""); // 用来绑定搜索框的输入内容
+
+
+    // 搜索节点并定位
+    const searchNode = () => {
+     // 移除之前的高亮节点
+  nodes.value.forEach((node) => {
+    node.class = node.class?.replace('highlight-node', '');  // 移除之前的高亮
+  });
+
+  const node = nodes.value.find(n =>
+    n.data.label.toLowerCase().includes(searchQuery.value.toLowerCase())
+  );
+
+      if (node) {
+        // 高亮当前匹配节点
+        node.class = 'highlight-node';
+
+        // 找到匹配的节点，定位到视图中间
+        // const nodePosition = node.position;
+        // const viewport = {
+        //   x: nodePosition.x - 250,  // 将节点移到视图中心
+        //   y: nodePosition.y - 150,  // 调整Y坐标以使节点居中
+        //   zoom: 1.5  // 可调整缩放比例
+        // };
+        setViewport(viewport);
+      }
+    };
 
     // 自动布局 (使用 dagre)
     const applyAutoLayout = () => {
@@ -40,6 +68,7 @@ export default defineComponent({
         const dagreNode = dagreGraph.node(node.id);
         return {
           ...node,
+          class: node.class || '',
           position: {
             x: dagreNode.x,
             y: dagreNode.y,
@@ -127,6 +156,8 @@ export default defineComponent({
       logToObject,
       resetTransform,
       toggleDarkMode,
+      searchQuery,
+      searchNode
     };
   },
 });
@@ -138,6 +169,15 @@ export default defineComponent({
 
 
 <template>
+   <div class="search-container">
+      <input
+        type="text"
+        v-model="searchQuery"
+        @input="searchNode"
+        placeholder="搜索节点"
+        class="search-input"
+      />
+    </div>
   <VueFlow :nodes="nodes" :edges="edges" :class="{ dark }" class="basic-flow" @nodeDragStop="handleNodeDragStop"
     :default-viewport="{ zoom: 1.5 }" :min-zoom="0.2" :max-zoom="4">
     <Background pattern-color="#aaa" :gap="16" />
@@ -145,14 +185,14 @@ export default defineComponent({
     <MiniMap />
 
     <Controls position="top-left" class = "border-none">
-      <Button title="背景颜色" @click="toggleDarkMode" class = "ml-4 mr-4">
+      <Button title="背景" @click="toggleDarkMode" class = "ml-4 mr-4">
         切换背景
         <Icon v-if="dark" name="sun" />
         <Icon v-else name="moon" />
       </Button>
 
          <!-- 添加控制悬浮框显示的按钮 -->
-         <Button title="显示图例" @click="toggleTooltip">
+         <Button title="图例" @click="toggleTooltip">
           显示图例
         <Icon name="info" />
       </Button>
@@ -317,5 +357,24 @@ body,
   color: orange;
   /* 设置部分文字颜色 */
   user-select: none;
+}
+.search-container {
+  position: absolute;
+  top: 65px;
+  left: 400px;
+  z-index: 1000;
+  color:rgb(0, 0, 0);
+}
+
+.search-input {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.highlight-node {
+  border: 2px solid red !important;  /* 红色边框表示高亮 */
+  background-color: rgba(255, 0, 0, 0.1); /* 背景色轻微红色 */
 }
 </style>
