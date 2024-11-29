@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AiMessage, ChatBlock } from '@/api/ai/aiType';
+import type { Chat, ChatBlock, ChatData, ChatMessage, ReceiveData, Tool, ToolArgs } from '@/api/ai/aiType';
 import type { Textarea } from '@/components/ui/textarea';
 import { aiApi } from '@/api/ai/aiApi';
 import AiSidebar from '@/components/ai/AiSidebar.vue';
@@ -31,8 +31,8 @@ const aiStore = useAiStore();
 const scrollContainer = ref<HTMLDivElement | null>(null);
 const status = ref<'idle' | 'connecting' | 'generating' | 'loading' | 'aborted' | 'error'>('idle');
 const abortController = ref<AbortController | null>(null);
-const messageQueue = ref<string[]>([]);
-const messageInterval = ref<number | null>(null);
+// const messageQueue = ref<string[]>([]);
+// const messageInterval = ref<number | null>(null);
 const tx = ref<typeof Textarea | null>(null);
 const autoScroll = ref(true);
 const lastScrollTop = ref(0);
@@ -41,10 +41,15 @@ const tempChatTitle = ref('');
 const isEditChatTitle = ref(false);
 const isOpen = ref(false);
 
-const startMessage: AiMessage = {
-  role: 'assistant',
-  content: '我是“邮小率”，你的智能助手，专门帮助学生解决概率论实验相关的问题。如果你有关于概率论的概念、实验步骤或者具体问题需要解答，随时告诉我，我会尽力帮助你！',
-  messageId: uuidv4(),
+const startBlock: ChatBlock = {
+  role: 'ai',
+  data: [
+    {
+      type: 'text',
+      text: '我是“邮小率”，你的智能助手，专门帮助学生解决概率论实验相关的问题。如果你有关于概率论的概念、实验步骤或者具体问题需要解答，随时告诉我，我会尽力帮助你！',
+    },
+  ],
+  blockId: uuidv4(),
 };
 
 const isComposing = ref(false);
@@ -55,29 +60,39 @@ function scrollToBottom(smooth: boolean = true) {
   }
 }
 
-function addMessage(message: string) {
-  if (!aiStore.currentChatBlock) {
-    aiStore.currentChatBlock = createNewChatBlock();
-    aiStore.chatBlockList.push(aiStore.currentChatBlock);
-  }
-  const chatBlock = aiStore.currentChatBlock;
-  chatBlock.chatList.push({ role: 'user', content: message, messageId: uuidv4() });
-  chatBlock.lastChatTime = new Date().toLocaleString();
-  nextTick(() => {
-    scrollToBottom();
-  });
-}
-
-function createNewChatBlock() {
-  const newChatBlock: ChatBlock = {
-    chatList: [
-      startMessage,
+function createChat() {
+  const chat: Chat = {
+    chatBlocks: [
+      startBlock,
     ],
     chatId: uuidv4(),
     chatTitle: '概率论实验',
     lastChatTime: new Date().toLocaleString(),
   };
-  return newChatBlock;
+  return chat;
+}
+
+function createUserBlock(userMessage: string) {
+  if (!aiStore.currentChat) {
+    aiStore.currentChat = createChat();
+    aiStore.chatList.push(aiStore.currentChat);
+  }
+  const chat = aiStore.currentChat;
+  const newUserBlock: ChatBlock = {
+    role: 'user',
+    data: [
+      {
+        type: 'text',
+        text: userMessage,
+      },
+    ],
+    blockId: uuidv4(),
+  };
+  chat.chatBlocks.push(newUserBlock);
+  chat.lastChatTime = new Date().toLocaleString();
+  nextTick(() => {
+    scrollToBottom();
+  });
 }
 
 function handleScroll() {
@@ -106,14 +121,19 @@ async function sendMessages() {
   if (status.value === 'generating') {
     abortController.value?.abort();
   }
-  if (!aiStore.currentChatBlock) {
-    aiStore.currentChatBlock = createNewChatBlock();
-    aiStore.chatBlockList.push(aiStore.currentChatBlock);
+  if (!aiStore.currentChat) {
+    aiStore.currentChat = createChat();
+    aiStore.chatList.push(aiStore.currentChat);
   }
-  const aiMessages = aiStore.currentChatBlock?.chatList;
+  const chatBlocks = aiStore.currentChat?.chatBlocks;
   try {
     message.value = '';
-    aiMessages.push({ role: 'assistant', content: '', messageId: uuidv4() });
+    const newAiBlock: ChatBlock = {
+      role: 'ai',
+      data: [],
+      blockId: uuidv4(),
+    };
+    chatBlocks.push(newAiBlock);
     status.value = 'connecting';
     await nextTick(() => {
       scrollToBottom();
@@ -121,19 +141,38 @@ async function sendMessages() {
     });
 
     abortController.value = new AbortController();
-    messageInterval.value = window.setInterval(() => {
-      if (messageQueue.value.length > 0) {
-        aiMessages[aiMessages.length - 1].content += messageQueue.value.shift()!;
-        aiMessages[aiMessages.length - 1].content
-            = aiMessages[aiMessages.length - 1].content
-            .replace(/\\\[/g, '$$$')
-            .replace(/\\\]/g, '$$$')
-            .replace(/\\\(/g, '$')
-            .replace(/\\\)/g, '$');
-        scrollToBottom();
+    // messageInterval.value = window.setInterval(() => {
+    //   if (messageQueue.value.length > 0) {
+    //     aiMessages[aiMessages.length - 1].content += messageQueue.value.shift()!;
+    //     aiMessages[aiMessages.length - 1].content
+    //         = aiMessages[aiMessages.length - 1].content
+    //         .replace(/\\\[/g, '$$$')
+    //         .replace(/\\\]/g, '$$$')
+    //         .replace(/\\\(/g, '$')
+    //         .replace(/\\\)/g, '$');
+    //     scrollToBottom();
+    //   }
+    // }, 30);
+    const chatMessages: ChatMessage[] = [];
+    for (const block of chatBlocks) {
+      for (const data of block.data) {
+        if (data.type === 'text') {
+          chatMessages.push({
+            role: block.role === 'ai' ? 'assistant' : 'user',
+            content: data.text as string,
+          });
+        }
+        else if (data.type === 'tool') {
+          const args = JSON.stringify((data.tool as Tool).args);
+          chatMessages.push({
+            role: 'function',
+            name: (data.tool as Tool).name,
+            content: args,
+          });
+        }
       }
-    }, 30);
-    await aiApi(aiMessages, () => status.value = 'loading', receiveMessage, finishGenerating, abortController.value);
+    }
+    await aiApi(chatMessages, () => status.value = 'loading', receiveMessage, finishGenerating, abortController.value);
   }
   catch (error: any) {
     status.value = 'error';
@@ -145,31 +184,49 @@ function stopGenerating() {
   if (status.value === 'generating') {
     status.value = 'aborted';
     abortController.value?.abort();
-    messageQueue.value = [];
+    // messageQueue.value = [];
   }
 }
 
 async function finishGenerating() {
-  const chatBlock = aiStore.currentChatBlock;
-  if (!chatBlock) {
+  const chat = aiStore.currentChat;
+  if (!chat) {
     return;
   }
-  if (messageInterval.value) {
-    while (messageQueue.value.length > 0) {
-      await new Promise(resolve => setTimeout(resolve, 500));
-    }
-    clearInterval(messageInterval.value);
-  }
-  chatBlock.chatList[chatBlock.chatList.length - 1].content = chatBlock.chatList[chatBlock.chatList.length - 1].content.replace(/\$\$/g, '\n$$$\n');
-  chatBlock.lastChatTime = new Date().toLocaleString();
+  // const length = chat.chatBlocks.length;
+  // chat.chatBlocks[length - 1].content = chat.chatBlocks[length - 1].content.replace(/\$\$/g, '\n$$$\n');
+  chat.lastChatTime = new Date().toLocaleString();
   status.value = 'idle';
 }
 
-function receiveMessage(msg: string) {
+function receiveMessage(data: ReceiveData) {
   if (status.value === 'loading') {
     status.value = 'generating';
   }
-  messageQueue.value.push(msg);
+  const chat = aiStore.currentChat;
+  if (data.message) {
+    const message = data.message.replace(/\\\[/g, '$$$')
+      .replace(/\\\]/g, '$$$')
+      .replace(/\\\(/g, '$')
+      .replace(/\\\)/g, '$')
+      .replace(/\$\$/g, '\n$$$\n');
+
+    const chatData: ChatData = {
+      type: 'text',
+      text: message,
+    }
+    chat?.chatBlocks[chat.chatBlocks.length - 1].data.push(chatData);
+  }
+  if (data.tool) {
+    const chatData: ChatData = {
+      type: 'tool',
+      tool: {
+        name: data.tool.name,
+        args: JSON.parse(data.tool.args) as ToolArgs,
+      },
+    }
+    chat?.chatBlocks[chat.chatBlocks.length - 1].data.push(chatData);
+  }
   scrollToBottom();
 }
 
@@ -177,17 +234,23 @@ watch(status, () => {
   console.log('status:', status.value);
 })
 
-function deleteMessage(msg: AiMessage) {
-  const currentChatBlock = aiStore.currentChatBlock;
-  if (!currentChatBlock) {
+function deleteMessage(block: ChatBlock) {
+  const currentChat = aiStore.currentChat;
+  if (!currentChat) {
     return;
   }
-  currentChatBlock.chatList = currentChatBlock.chatList.filter(m => m !== msg);
+  currentChat.chatBlocks = currentChat.chatBlocks.filter(m => m !== block);
 }
 
-function copyMessage(msg: AiMessage) {
+function copyMessage(block: ChatBlock) {
   try {
-    navigator.clipboard.writeText(msg.content);
+    let message = '';
+    for (const data of block.data) {
+      if (data.type === 'text') {
+        message += `${data.text}\n`;
+      }
+    }
+    navigator.clipboard.writeText(message);
     success('复制成功');
   }
   catch (e: any) {
@@ -210,7 +273,7 @@ onMounted(() => {
   tx.value?.root.addEventListener('input', resetTextareaHeight, false);
 });
 
-watch(() => aiStore.currentChatBlock, () => {
+watch(() => aiStore.currentChat, () => {
   stopGenerating();
   nextTick(() => {
     scrollToBottom(false);
@@ -231,31 +294,31 @@ function handleCompositionEnd() {
     <AiSidebar />
     <Card class="flex-1 flex hover:border-primary flex-col transition-all duration-300">
       <CardHeader v-auto-animate class="py-2 px-4 flex flex-row items-center h-10">
-        <CardTitle v-if="!aiStore.currentChatBlock || !isEditChatTitle">
-          {{ aiStore.currentChatBlock?.chatTitle ?? '新对话' }}
+        <CardTitle v-if="!aiStore.currentChat || !isEditChatTitle">
+          {{ aiStore.currentChat?.chatTitle ?? '新对话' }}
         </CardTitle>
         <Input
           v-else v-model="tempChatTitle" class="h-7 max-w-xs" @blur="() => {
-            aiStore.currentChatBlock!.chatTitle = tempChatTitle;
+            aiStore.currentChat!.chatTitle = tempChatTitle;
             isEditChatTitle = false;
           }"
           @keydown.enter.exact="() => {
             if (!isComposing) {
-              aiStore.currentChatBlock!.chatTitle = tempChatTitle;
+              aiStore.currentChat!.chatTitle = tempChatTitle;
               isEditChatTitle = false;
             }
           }"
           @compositionstart="handleCompositionStart"
           @compositionend="handleCompositionEnd"
         />
-        <div v-if="aiStore.currentChatBlock" class="flex gap-2 ml-3">
+        <div v-if="aiStore.currentChat" class="flex gap-2 ml-3">
           <Button
             v-if="!isEditChatTitle"
             size="icon" variant="outline" class="size-6"
           >
             <PencilLine
               class="size-4" @click="() => {
-                tempChatTitle = aiStore.currentChatBlock?.chatTitle ?? '';
+                tempChatTitle = aiStore.currentChat?.chatTitle ?? '';
                 isEditChatTitle = true;
               }"
             />
@@ -271,34 +334,34 @@ function handleCompositionEnd() {
       </CardHeader>
       <CardContent class="overflow-y-hidden border-t flex pb-0 px-0 relative flex-1">
         <div ref="scrollContainer" class="flex w-full flex-col items-center gap-3 overflow-y-auto pt-4 px-6">
-          <div v-for="(msg, index) in aiStore.currentChatBlock?.chatList ?? [startMessage]" :key="msg.messageId" v-auto-animate class="flex w-full max-w-screen-md">
-            <div v-if="msg.role === 'user'" class="ml-auto">
+          <div v-for="(block, index) in aiStore.currentChat?.chatBlocks ?? [startBlock]" :key="block.blockId" v-auto-animate class="flex w-full max-w-screen-md">
+            <div v-if="block.role === 'user'" class="ml-auto">
               <ContextMenu>
                 <ContextMenuTrigger>
                   <div
                     class="rounded-lg bg-primary text-primary-foreground p-2" @dblclick="() => {
-                      message = msg.content;
-                      aiStore.currentChatBlock?.chatList.splice(index);
+                      message = block.data[0].text as string;
+                      aiStore.currentChat?.chatBlocks.splice(index);
                       stopGenerating();
                       nextTick(() => {
                         resetTextareaHeight();
                       });
                     }"
                   >
-                    <Label class="text-base whitespace-pre-line">{{ msg.content }}</Label>
+                    <Label class="text-base whitespace-pre-line">{{ block.data[0].text }}</Label>
                     <!--                  <Input v-model="msg.content" class="p-0 text-base min-w-none w-auto h-auto py-1" /> -->
                   </div>
                 </ContextMenuTrigger>
                 <ContextMenuContent>
-                  <ContextMenuItem class="flex gap-2" @click="copyMessage(msg)">
+                  <ContextMenuItem class="flex gap-2" @click="copyMessage(block)">
                     <Clipboard class="size-4" />
                     复制
                   </ContextMenuItem>
                   <ContextMenuItem
                     class="flex gap-2"
                     @click="() => {
-                      message = msg.content;
-                      aiStore.currentChatBlock?.chatList.splice(index);
+                      message = block.data[0].text as string;
+                      aiStore.currentChat?.chatBlocks.splice(index);
                       stopGenerating();
                       nextTick(() => {
                         resetTextareaHeight();
@@ -310,7 +373,7 @@ function handleCompositionEnd() {
                   </ContextMenuItem>
                   <ContextMenuItem
                     class="flex gap-2" @click="() => {
-                      aiStore.currentChatBlock?.chatList.splice(index + 1);
+                      aiStore.currentChat?.chatBlocks.splice(index + 1);
                       sendMessages();
                     }"
                   >
@@ -318,7 +381,7 @@ function handleCompositionEnd() {
                     重新发送
                   </ContextMenuItem>
                   <ContextMenuItem
-                    class="flex gap-2" @click="deleteMessage(msg)"
+                    class="flex gap-2" @click="deleteMessage(block)"
                   >
                     <Trash2 class="size-4" />
                     删除
@@ -334,34 +397,39 @@ function handleCompositionEnd() {
                 <Label class="text-base"> 邮小率 </Label>
               </div>
               <ContextMenu>
-                <ContextMenuTrigger :disabled="status !== 'idle' && aiStore.currentChatBlock !== null && index === aiStore.currentChatBlock.chatList.length - 1">
+                <ContextMenuTrigger :disabled="status !== 'idle' && aiStore.currentChat !== null && index === aiStore.currentChat.chatBlocks.length - 1">
                   <div v-auto-animate class="rounded-lg bg-muted text-foreground p-3 w-full border">
-                    <div v-if="status === 'loading' && aiStore.currentChatBlock && index === aiStore.currentChatBlock.chatList.length - 1" class="space-y-2">
+                    <div v-if="status === 'loading' && aiStore.currentChat && index === aiStore.currentChat.chatBlocks.length - 1" class="space-y-2">
                       <Skeleton class="w-32 h-5" />
                       <Skeleton class="w-full h-5" />
                       <Skeleton class="w-full h-5" />
                       <Skeleton class="w-full h-5" />
                     </div>
-                    <div v-else class="prose max-w-none" v-html="toMarkdown(msg.content)" />
+                    <div v-else class="flex flex-col gap-4">
+                      <div v-for="(data, index_) in block.data" :key="index_">
+                        <div v-if="data.type === 'text'" class="prose max-w-none" v-html="toMarkdown(data.text!)" />
+                        <Tool v-else-if="data.type === 'tool'" :name="data.tool!.name" :args="data.tool!.args" />
+                      </div>
+                    </div>
                   </div>
                 </ContextMenuTrigger>
                 <ContextMenuContent>
                   <ContextMenuItem
-                    class="flex gap-2" @click="copyMessage(msg)"
+                    class="flex gap-2" @click="copyMessage(block)"
                   >
                     <Clipboard class="size-4" />
                     复制
                   </ContextMenuItem>
                   <ContextMenuItem
                     class="flex gap-2" @click="() => {
-                      aiStore.currentChatBlock?.chatList.splice(index);
+                      aiStore.currentChat?.chatBlocks.splice(index);
                       sendMessages();
                     }"
                   >
                     <RotateCcw class="size-4" />
                     重新生成
                   </ContextMenuItem>
-                  <ContextMenuItem class="flex gap-2" @click="deleteMessage(msg)">
+                  <ContextMenuItem class="flex gap-2" @click="deleteMessage(block)">
                     <Trash2 class="size-4" />
                     删除
                   </ContextMenuItem>
@@ -386,7 +454,7 @@ function handleCompositionEnd() {
                 if (!isComposing) {
                   event.preventDefault();
                   if (status === 'idle' && message.trim() !== '') {
-                    addMessage(message);
+                    createUserBlock(message);
                     sendMessages();
                   }
                 }
@@ -402,7 +470,7 @@ function handleCompositionEnd() {
                 stopGenerating();
               }
               else if (status === 'idle') {
-                addMessage(message);
+                createUserBlock(message);
                 await sendMessages();
               }
             }"
@@ -437,8 +505,8 @@ function handleCompositionEnd() {
           <AlertDialogAction
             class="bg-destructive text-destructive-foreground"
             @click="() => {
-              aiStore.chatBlockList = aiStore.chatBlockList.filter((chatBlock) => chatBlock.chatId !== aiStore.currentChatBlock?.chatId);
-              aiStore.currentChatBlock = null;
+              aiStore.chatList = aiStore.chatList.filter((chat) => chat.chatId !== aiStore.currentChat?.chatId);
+              aiStore.currentChat = null;
             }"
           >
             确定

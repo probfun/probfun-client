@@ -1,4 +1,4 @@
-import type { AiMessage } from '@/api/ai/aiType';
+import type { ChatMessage, ReceiveChunk, ReceiveData } from '@/api/ai/aiType';
 import { error } from '@/utils/toast';
 // import OpenAI from 'openai';
 //
@@ -48,13 +48,14 @@ import { error } from '@/utils/toast';
 // }
 
 export async function aiApi(
-  messages: AiMessage[],
+  messages: ChatMessage[],
   open: () => void,
-  receive: (message: string) => void,
+  receive: (data: ReceiveData) => void,
   finish: () => void,
   abortController: AbortController | null = null,
 ) {
-  const wsUrl = `ws://${location.host}/llm/chat`;
+  // const wsUrl = `ws://${location.host}/llm/chat`;
+  const wsUrl = `ws://127.0.0.1:8000/chat`;
   let websocket: WebSocket | null = null;
 
   try {
@@ -89,17 +90,12 @@ export async function aiApi(
 
     // 接收服务端消息
     websocket.onmessage = (event) => {
-      const data = JSON.parse(event.data) as { message?: string, tool?: string, done: boolean } | null;
-      if (data?.message) {
-        receive(data.message); // 调用接收消息回调
+      const { data, done } = JSON.parse(event.data) as ReceiveChunk;
+      if (done) {
+        finish();
+        websocket?.close();
       }
-      if (data?.tool) {
-        receive(`\n\n调用了工具：${data.tool}\n\n`);
-      }
-      if (data?.done) {
-        // finish();
-        // websocket?.close();
-      }
+      receive(data);
     }
   }
   catch (e) {

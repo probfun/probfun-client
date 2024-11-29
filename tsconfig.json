@@ -38,8 +38,10 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx",
-    "src/utils/mathjax.js"
-, "src/components/diagram/diagram-test/useRunProcess.js", "src/components/diagram/diagram-test/useLayout.js"  ],
+    "src/utils/mathjax.js",
+    "src/components/diagram/diagram-test/useRunProcess.js",
+    "src/components/diagram/diagram-test/useLayout.js"
+  ],
   "exclude": [
     "node_modules",
     "dist"

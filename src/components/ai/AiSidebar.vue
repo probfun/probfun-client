@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ChatBlock } from '@/api/ai/aiType';
+import type { Chat } from '@/api/ai/aiType';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,25 +24,25 @@ import { Ellipsis, Plus } from 'lucide-vue-next';
 import { ref, watch } from 'vue';
 
 const isOpen = ref(false);
-const editChatBlock = ref<ChatBlock | null>(null);
-const readyToDeleteChatBlock = ref<ChatBlock | null>(null);
+const editChatBlock = ref<Chat | null>(null);
+const readyToDeleteChat = ref<Chat | null>(null);
 
 const aiStore = useAiStore();
 const tempChatTitle = ref('');
 const isComposing = ref(false);
 
-function switchToChatBlock(chatBlock: ChatBlock) {
-  aiStore.currentChatBlock = chatBlock;
+function switchToChatBlock(chat: Chat) {
+  aiStore.currentChat = chat;
 }
 
 function switchToNewChatBlock() {
-  aiStore.currentChatBlock = null;
+  aiStore.currentChat = null;
 }
 
-const chatBlockList = ref<ChatBlock[]>([...aiStore.chatBlockList].sort((a, b) => new Date(b.lastChatTime).getTime() - new Date(a.lastChatTime).getTime()));
+const chatBlockList = ref<Chat[]>([...aiStore.chatList].sort((a, b) => new Date(b.lastChatTime).getTime() - new Date(a.lastChatTime).getTime()));
 
-watch(() => aiStore.chatBlockList, (newChatBlockList) => {
-  chatBlockList.value = [...newChatBlockList].sort((a, b) => new Date(b.lastChatTime).getTime() - new Date(a.lastChatTime).getTime());
+watch(() => aiStore.chatList, (newChatList) => {
+  chatBlockList.value = [...newChatList].sort((a, b) => new Date(b.lastChatTime).getTime() - new Date(a.lastChatTime).getTime());
 }, { deep: true });
 function handleCompositionStart() {
   isComposing.value = true;
@@ -67,7 +67,7 @@ function handleCompositionEnd() {
       <CardContent class="px-3 py-2 border-t flex flex-col gap-1 overflow-y-auto h-full">
         <div v-for="item in chatBlockList" :key="item.chatTitle" class="flex gap-2 group">
           <Button
-            variant="ghost" :class="cn('text-left flex-1', aiStore.currentChatBlock?.chatId === item.chatId && 'bg-secondary')" @click="switchToChatBlock(item)"
+            variant="ghost" :class="cn('text-left flex-1', aiStore.currentChat?.chatId === item.chatId && 'bg-secondary')" @click="switchToChatBlock(item)"
             @dblclick="() => {
               tempChatTitle = item.chatTitle;
               editChatBlock = item;
@@ -93,7 +93,7 @@ function handleCompositionEnd() {
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger>
-              <Button :class="cn('size-6 opacity-0 group-hover:opacity-100 transition-all', aiStore.currentChatBlock?.chatId === item.chatId && 'opacity-100')" variant="outline" size="icon">
+              <Button :class="cn('size-6 opacity-0 group-hover:opacity-100 transition-all', aiStore.currentChat?.chatId === item.chatId && 'opacity-100')" variant="outline" size="icon">
                 <Ellipsis class="size-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -109,7 +109,7 @@ function handleCompositionEnd() {
               <DropdownMenuItem
                 class="!text-destructive" @click="() => {
                   isOpen = true;
-                  readyToDeleteChatBlock = item;
+                  readyToDeleteChat = item;
                 }"
               >
                 删除
@@ -129,17 +129,17 @@ function handleCompositionEnd() {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel @click="readyToDeleteChatBlock = null">
+          <AlertDialogCancel @click="readyToDeleteChat = null">
             取消
           </AlertDialogCancel>
           <AlertDialogAction
             class="bg-destructive text-destructive-foreground"
             @click="() => {
-              if (readyToDeleteChatBlock?.chatId === aiStore.currentChatBlock?.chatId) {
-                aiStore.currentChatBlock = null;
+              if (readyToDeleteChat?.chatId === aiStore.currentChat?.chatId) {
+                aiStore.currentChat = null;
               }
-              aiStore.chatBlockList = aiStore.chatBlockList.filter((chatBlock) => chatBlock.chatId !== readyToDeleteChatBlock?.chatId);
-              readyToDeleteChatBlock = null;
+              aiStore.chatList = aiStore.chatList.filter((chat) => chat.chatId !== readyToDeleteChat?.chatId);
+              readyToDeleteChat = null;
             }"
           >
             确定

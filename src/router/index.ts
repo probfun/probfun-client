@@ -3,7 +3,7 @@ import LoginCard from '@/components/auth/LoginCard.vue';
 import RegisterCard from '@/components/auth/RegisterCard.vue';
 import BirthdayProblem from '@/components/experiment/chapter1/birthday-problem/BirthdayProblem.vue';
 import BirthdayAttack from '@/components/experiment/chapter1/BirthdayAttack.vue';
-import BuffonNeedle from '@/components/experiment/chapter1/BuffonNeedle.vue';
+import BuffonNeedle from '@/components/experiment/chapter1/buffon-needle/BuffonNeedle.vue';
 import PositiveTest from '@/components/experiment/chapter1/PositiveTest.vue';
 import ThreeDoors from '@/components/experiment/chapter1/three-doors/ThreeDoors.vue';
 import GeometricDistribution from '@/components/experiment/distribution/geometric-distribution/GeometricDistribution.vue';
@@ -11,16 +11,16 @@ import NormalDistribution from '@/components/experiment/distribution/normal-dist
 import PoissonDistribution from '@/components/experiment/distribution/poisson-distribution/PoissonDistribution.vue';
 import UniformDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
 import HomePage from '@/components/home/HomePage.vue';
+import probMindMap from '@/components/home/mindmap/C1/C1.vue';
+import distriMindMap from '@/components/home/mindmap/distribution/distribution.vue';
 import StarPanel from '@/components/star/StarPanel.vue';
-import TeacherPanel from '@/components/user/TeacherPanel.vue';
-import StudentPanel from '@/components/user/StudentPanel.vue';
 
+import StudentPanel from '@/components/user/StudentPanel.vue';
+import TeacherPanel from '@/components/user/TeacherPanel.vue';
 import AuthPage from '@/pages/AuthPage.vue';
+
 import DashBoard from '@/pages/DashBoard.vue';
 import { createRouter, createWebHistory } from 'vue-router';
-
-import distriMindMap from '@/components/home/mindmap/distribution/distribution.vue';
-import probMindMap from '@/components/home/mindmap/C1/C1.vue';
 
 const router = createRouter({
   history: createWebHistory(),

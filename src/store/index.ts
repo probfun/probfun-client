@@ -1,7 +1,6 @@
-import type { AiMessage, ChatBlock } from '@/api/ai/aiType';
+import type { Chat } from '@/api/ai/aiType';
 import type { User } from '@/api/user/userType';
 import { defineStore } from 'pinia';
-import { v4 as uuidv4 } from 'uuid';
 import { ref } from 'vue';
 
 export const useUserStore = defineStore('userStore', () => {
@@ -14,19 +13,11 @@ export const useUserStore = defineStore('userStore', () => {
 });
 
 export const useAiStore = defineStore('aiStore', () => {
-  const aiMessages = ref<AiMessage[]>([
-    {
-      role: 'assistant',
-      content: '我是“邮小率”，你的智能助手，专门帮助学生解决概率论实验相关的问题。如果你有关于概率论的概念、实验步骤或者具体问题需要解答，随时告诉我，我会尽力帮助你！',
-      messageId: uuidv4(),
-    },
-  ]);
-  const currentChatBlock = ref<ChatBlock | null>(null);
-  const chatBlockList = ref<ChatBlock[]>([]);
+  const currentChat = ref<Chat | null>(null);
+  const chatList = ref<Chat[]>([]);
   return {
-    aiMessages,
-    currentChatBlock,
-    chatBlockList,
+    currentChat,
+    chatList,
   }
 }, {
   persist: true,
