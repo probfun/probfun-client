@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { watch, onMounted, ref } from 'vue';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button'
 import {
@@ -19,18 +19,12 @@ import Column from 'primevue/column';
 import ColumnGroup from 'primevue/columngroup';   // optional
 import Row from 'primevue/row';                   // optional
 import { useUserStore } from '@/store'
-import { postPostApi } from '@/api/message/messageApi';
+import { postPostApi, fetchPostApi } from '@/api/class/classApi';
 import { useToast } from 'primevue/usetoast';
-import { fetchPostApi } from '@/api/post/postApi';
-import { Post } from '@/api/message/messageType';
+import { Post } from '@/api/class/classType';
 
 const userStore = useUserStore();
 const defaultValue = 'item-1'
-const accordionItems = [
-    { value: 'item-1', title: '10月10日班级公告', content: 'bjgg' },
-    { value: 'item-2', title: '10月8日班级公告', content: 'bjgg' },
-    { value: 'item-3', title: '10月6日班级公告', content: 'bjgg' },
-]
 const products = ref([
     {
         expName: '正态分布',
@@ -54,7 +48,7 @@ const products = ref([
         comment: '非常好。'
     },
 ]);
-const selectedClassA = ref();
+
 const classesA = ref([
     { name: '2023215101' },
     { name: '2023215102' },
@@ -62,6 +56,7 @@ const classesA = ref([
     { name: '2023215104' },
     { name: '2023215105' }
 ]);
+const selectedClassA = ref(classesA.value[0]);
 const selectedClass = ref();
 const classes = ref([
     { name: '2023215101' },
@@ -135,8 +130,9 @@ const star = ref([
 
 const visible = ref(false);
 const toast = useToast();
-const title = ref('');
+const title = ref(new Date().toLocaleDateString());
 const content = ref('');
+const classs = ref<string[]>([])
 
 const cancel = () => {
 
@@ -151,9 +147,12 @@ async function sendPost() {
         toast.add({ severity: 'warn', summary: '提示', detail: '请选择班级', life: 3000 });
         return;
     }
-    title.value = selectedClass.value.join(', ');
+    for (let i = 0; i < selectedClass.value.length; i++) {
+        classs.value.push(selectedClass.value[i].name)
+    }
+    console.log(classs.value);
     try {
-        await postPostApi(title.value, content.value);
+        await postPostApi(title.value, content.value, classs.value);
         await getPost();
         toast.add({ severity: 'success', summary: '成功', detail: '发布班级公告成功！', life: 3000 });
         content.value = '';
@@ -167,8 +166,8 @@ async function sendPost() {
 const postList = ref<Post[] | null>(null);
 async function getPost() {
     try {
-        const result = await fetchPostApi();
-        postList.value = result.post;
+        const result = await fetchPostApi(selectedClassA.value.name);
+        postList.value = result.posts;
         console.log("公告", postList.value);
 
     }
@@ -179,6 +178,9 @@ async function getPost() {
 onMounted(() => {
     getPost();
 })
+watch([selectedClassA], () => {
+    getPost();
+})
 </script>
 
 <template>
@@ -187,8 +189,8 @@ onMounted(() => {
             <div class="flex mb-[-10px]">
                 <span class="text-lg font-bold">2024年秋季学期</span>
                 <div class="ml-auto">
-                    <MultiSelect v-model="selectedClassA" :options="classesA" optionLabel="name" filter
-                        placeholder="请选择班级" class="w-full md:w-56" />
+                    <Select v-model="selectedClassA" :options="classesA" optionLabel="name" filter placeholder="请选择班级"
+                        class="w-full md:w-56" />
                 </div>
             </div>
             <div class="flex my-5">
@@ -200,7 +202,7 @@ onMounted(() => {
             </div>
             <Panel header="已发布公告" class="mx-1 mt-3 mb-5 h-full overflow-auto">
                 <Accordion type="single" class="w-full" collapsible :default-value="defaultValue">
-                    <AccordionItem v-for="item in accordionItems" :key="item.value" :value="item.value">
+                    <AccordionItem v-for="item in postList" :key="item.timestamp" :value="item.timestamp">
                         <AccordionTrigger class="font-semibold">{{ item.title }}</AccordionTrigger>
                         <AccordionContent>
                             {{ item.content }}
@@ -212,6 +214,8 @@ onMounted(() => {
             <Dialog v-model:visible="visible" modal header="发布班级公告" :style="{ width: '50rem' }">
                 <span class="text-surface-500 dark:text-surface-400 block mb-8">请选择一个或多个班级，点击发布按钮发布公告。</span>
                 <div class="flex items-center gap-4 mb-4">
+                    <label for="title">公告标题</label>
+                    <InputText v-model="title" id="title"></InputText>
                     <MultiSelect v-model="selectedClass" :options="classes" optionLabel="name" filter
                         placeholder="请选择班级" class="w-full md:w-56" />
                 </div>

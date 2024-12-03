@@ -115,6 +115,7 @@ declare module 'vue' {
     HoverCardTrigger: typeof import('./src/components/ui/hover-card/HoverCardTrigger.vue')['default']
     Icon: typeof import('./src/components/diagram/diagram-test/Icon.vue')['default']
     Input: typeof import('./src/components/ui/input/Input.vue')['default']
+    InputText: typeof import('primevue/inputtext')['default']
     Label: typeof import('./src/components/ui/label/Label.vue')['default']
     LoginCard: typeof import('./src/components/auth/LoginCard.vue')['default']
     NavBar: typeof import('./src/components/NavBar.vue')['default']
