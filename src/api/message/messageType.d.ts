@@ -1,5 +1,6 @@
-import type { UserPublic } from '@/api/user/userType';
+import type { Post } from '@/api/class/classType';
 import type { Comment } from '@/api/comment/commentType';
+import type { UserPublic } from '@/api/user/userType';
 
 export interface LikeData {
   comment: Comment
@@ -20,7 +21,7 @@ export interface PinData {
   user: UserPublic
 }
 
-export interface ChosenData {
+export interface DeleteData {
   comment: Comment
   user: UserPublic
 }
@@ -35,5 +36,5 @@ export interface Message {
   postData: PostData | null
   replyData: ReplyData | null
   pinData: PinData | null
-  chosenData: ChosenData | null
+  deleteData: DeleteData | null
 }
