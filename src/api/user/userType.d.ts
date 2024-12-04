@@ -9,7 +9,7 @@ export interface User {
   major: string
   grade: number
   avatarUrl: string
-  role: string
+  role: integer
 }
 
 export interface UserPublic {

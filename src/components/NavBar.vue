@@ -293,6 +293,10 @@ async function readMessage() {
                     <AvatarImage :src="item.likeData?.user.avatarUrl || ''" alt="@radix-vue" />
                     <AvatarFallback>{{ item.likeData?.user.nickname }}</AvatarFallback>
                   </div>
+                  <div v-if="item.type === 'delete'">
+                    <AvatarImage :src="item.likeData?.user.avatarUrl || ''" alt="@radix-vue" />
+                    <AvatarFallback>管理员</AvatarFallback>
+                  </div>
                 </Avatar>
                 <div class="flex flex-col">
                   <span v-if="item.type === 'post'">{{ item.postData?.post.user.nickname }}</span>
@@ -305,6 +309,8 @@ async function readMessage() {
                   <span v-if="item.type === 'like'"
                     @click="router.push(`/dashboard/experiment/${item.likeData?.comment.expId}`)">{{
                       item.likeData?.user.nickname }}</span>
+                  <span v-if="item.type === 'delete'">管理员</span>
+
                   <span v-if="item.type === 'post'" class="content text-sm text-gray-600">老师发布了新的班级公告</span>
                   <span v-if="item.type === 'pin'" class="content text-sm text-gray-600"
                     @click="router.push(`/dashboard/experiment/${item.pinData?.comment.expId}`)">老师置顶了你的评论</span>
@@ -312,6 +318,7 @@ async function readMessage() {
                     @click="router.push(`/dashboard/experiment/${item.replyData?.comment.expId}`)">回复了你的评论</span>
                   <span v-if="item.type === 'like'" class="content text-sm text-gray-600"
                     @click="router.push(`/dashboard/experiment/${item.likeData?.comment.expId}`)">赞了你的评论</span>
+                  <span v-if="item.type === 'delete'" class="content text-sm text-gray-600">管理员删除了你的评论</span>
                 </div>
                 <div v-if="item.read === false" class="ml-auto">
                   <span class="inline-block w-2 h-2 bg-red-600 rounded-full"></span>

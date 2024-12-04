@@ -75,7 +75,7 @@ const sideBarItem = ref<SideBarItem[]>([
   {
     label: '个人资料',
     icon: User,
-    route: userStore.user?.role === '0' ? '/dashboard/info0' : '/dashboard/info1',
+    route: userStore.user?.role === 0 ? '/dashboard/info0' : '/dashboard/info1',
   },
 ]);
 
