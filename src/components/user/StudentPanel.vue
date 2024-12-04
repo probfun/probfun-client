@@ -8,7 +8,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import Avatar from 'primevue/avatar';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import {
     Accordion,
     AccordionContent,
@@ -107,8 +107,13 @@ onMounted(() => {
         </div>
         <Separator orientation="vertical" />
         <div class="selfInfo flex flex-col flex-1 p-3 mt-2">
-            <div class="flex mb-5">
-                <Avatar label="头" class="mr-5" size="xlarge" />
+            <div class="flex mb-5 items-center">
+                <Avatar class="mr-3">
+                    <div>
+                        <AvatarImage :src="userStore.user?.avatarUrl || ''" alt="@radix-vue" />
+                        <AvatarFallback>{{ userStore.user?.nickname }}</AvatarFallback>
+                    </div>
+                </Avatar>
                 <div class="flex flex-col">
                     <span class="text-base font-semibold mb-3">昵称：{{ userStore.user?.nickname }}</span>
                     <span class="text-base font-semibold">学工号：{{ userStore.user?.studentId }}</span>
@@ -125,9 +130,9 @@ onMounted(() => {
                             </path>
                         </svg>
                     </div>
-                    <div class="stat-title">总获赞数</div>
+                    <div class="stat-title">本月获赞数</div>
                     <div class="stat-value text-pink-500">12</div>
-                    <div class="stat-desc">21% more than last month</div>
+                    <div class="stat-desc">总获赞数：21</div>
                 </div>
 
                 <div class="stat">
@@ -139,9 +144,9 @@ onMounted(() => {
                             </path>
                         </svg>
                     </div>
-                    <div class="stat-title">总评论数</div>
+                    <div class="stat-title">本月评论数</div>
                     <div class="stat-value text-blue-600">10</div>
-                    <div class="stat-desc">21% more than last month</div>
+                    <div class="stat-desc">总评论数：20</div>
                 </div>
             </div>
 
@@ -154,9 +159,9 @@ onMounted(() => {
                                 d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                         </svg>
                     </div>
-                    <div class="stat-title">被评论数</div>
+                    <div class="stat-title">本月被评论数</div>
                     <div class="stat-value text-purple-500">3</div>
-                    <div class="stat-desc">21% more than last month</div>
+                    <div class="stat-desc">总被评论数：5</div>
                 </div>
 
                 <div class="stat">
@@ -167,9 +172,9 @@ onMounted(() => {
                                 d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
-                    <div class="stat-title">被精选数</div>
+                    <div class="stat-title">本月被精选数</div>
                     <div class="stat-value text-yellow-400">1</div>
-                    <div class="stat-desc">21% more than last month</div>
+                    <div class="stat-desc">总被精选数：2</div>
                 </div>
             </div>
 

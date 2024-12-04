@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/accordion';
 import Dialog from 'primevue/dialog';
 import Select from 'primevue/select';
-import Avatar from 'primevue/avatar';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import Panel from 'primevue/panel';
 import Textarea from 'primevue/textarea';
 import MultiSelect from 'primevue/multiselect';
@@ -193,8 +193,13 @@ watch([selectedClassA], () => {
                         class="w-full md:w-56" />
                 </div>
             </div>
-            <div class="flex my-5">
-                <Avatar label="头" class="mr-5" size="xlarge" />
+            <div class="flex my-5 items-center">
+                <Avatar class="mr-3">
+                    <div>
+                        <AvatarImage :src="userStore.user?.avatarUrl || ''" alt="@radix-vue" />
+                        <AvatarFallback>{{ userStore.user?.nickname }}</AvatarFallback>
+                    </div>
+                </Avatar>
                 <div class="flex flex-col">
                     <span class="text-base font-semibold mb-3">教师姓名：{{ userStore.user?.nickname }}</span>
                     <span class="text-base font-semibold">教工号：{{ userStore.user?.studentId }}</span>
