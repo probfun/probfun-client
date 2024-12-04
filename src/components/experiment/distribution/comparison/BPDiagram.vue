@@ -1,5 +1,6 @@
 <script setup lang="ts">
 declare const Desmos: any;
+import { color } from 'echarts/core';
 import { onMounted, ref, watch } from 'vue';
 
 const elt = ref<HTMLDivElement | null>(null);
@@ -9,6 +10,8 @@ const props = defineProps<{
     n: number; // 试验次数
     p: number; // 成功概率
 }>();
+
+let idNumber = 0;
 
 onMounted(() => {
     const options = {
@@ -27,19 +30,59 @@ onMounted(() => {
 const drawDistributions = () => {
     if (!calculator) return;
 
-    const poisson = {
-        id: 'poisson',
-        latex: `f(x) = \\frac{${props.n * props.p}^x e^{- ${props.n * props.p}}}{x!} \\{x >= 0\\}`,
-        color: Desmos.Colors.BLUE
-    };
+    const binomialValue: any[] = [];
+    const poissonValue: any[] = [];
 
-    const binomial = {
-        id: 'binomial',
-        latex: `f(x) = \\frac{${props.n}!}{x!((${props.n} - x)!)} ${props.p}^{x} (1 - ${props.p})^{${props.n} - x} \\{x >= 0\\}`,
-        color: Desmos.Colors.RED
+    const binomialPoints = Array.from({ length: props.n + 1 }, (_, k) => {
+        const binomialCoefficient = factorial(props.n) / (factorial(k) * factorial(props.n - k));
+        const probability = (binomialCoefficient * (props.p ** k) * ((1 - props.p) ** (props.n - k))).toFixed(4);
+        binomialValue.push(probability);
+        return `(${k}, ${probability})`;
+    });
+
+    const poissonPoints = Array.from({ length: 51 }, (_, k) => {
+        poissonValue.push((Math.exp(-props.n * props.p) * ((props.n * props.p) ** k) / factorial(k)).toFixed(4));
+        return `(${k}, ${(Math.exp(-props.n * props.p) * ((props.n * props.p) ** k) / factorial(k)).toFixed(4)})`;
+    });
+
+    function factorial(n: any): any {
+        return n <= 1 ? 1 : n * factorial(n - 1);
     }
-    calculator.setExpression(poisson);
-    calculator.setExpression(binomial);
+
+    const binomialPointExpression = {
+        id: `points_${idNumber}`,
+        latex: `(${binomialPoints.join('), (')})`,
+        color: Desmos.Colors.RED,
+        pointSize: 8 // 设置点的大小
+    };
+    for (let i = 0; i <= props.n; i++) {
+        const binomialLine = {
+            id: `lines_${i}`,
+            latex: `x = ${i} \\{0<= y <= ${binomialValue[i]}\\}`,
+            color: Desmos.Colors.RED,
+            lineStyle: Desmos.Styles.DASHED
+        }
+        calculator.setExpression(binomialLine)
+    }
+
+    const poissonPointExpression = {
+        id: `points_${idNumber + 1}`,
+        latex: `(${poissonPoints.join('), (')})`,
+        color: Desmos.Colors.BLUE,
+        pointSize: 8 // 设置点的大小
+    };
+    for (let i = 0; i <= 50; i++) {
+        const poissonLine = {
+            id: `plines_${i}`,
+            latex: `x = ${i} \\{0<= y <= ${poissonValue[i]}\\}`,
+            color: Desmos.Colors.BLUE,
+            lineStyle: Desmos.Styles.DASHED
+        }
+        calculator.setExpression(poissonLine)
+    }
+
+    calculator.setExpression(poissonPointExpression)
+    calculator.setExpression(binomialPointExpression)
 
     // 设置图形边界
     calculator.setMathBounds({

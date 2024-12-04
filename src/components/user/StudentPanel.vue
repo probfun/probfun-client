@@ -17,27 +17,18 @@ import {
 } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { useUserStore } from '@/store';
-import { fetchMessagesApi } from '@/api/message/messageApi';
-import { Message } from '@/api/message/messageType';
 import { onMounted, ref } from 'vue';
-import { fetchPostApi } from '@/api/post/postApi';
-import { Post } from '@/api/message/messageType';
+import { postPostApi, fetchPostApi } from '@/api/class/classApi';
+import { Post } from '@/api/class/classType';
 
 const userStore = useUserStore();
-const defaultValue = 'item-1'
-const accordionItems = [
-    { value: 'item-1', title: '10月10日班级公告', content: 'bjgg' },
-    { value: 'item-2', title: '10月8日班级公告', content: 'bjgg' },
-    { value: 'item-3', title: '10月6日班级公告', content: 'bjgg' },
-]
 
 const postList = ref<Post[] | null>(null);
 async function getPost() {
     try {
-        const result = await fetchPostApi();
-        postList.value = result.post;
+        const result = await fetchPostApi('2023215101');
+        postList.value = result.posts;
         console.log("公告", postList);
-        
     }
     catch (error) {
         console.error('Error during fetching posts:', error);
@@ -56,8 +47,8 @@ onMounted(() => {
             <span class="mb-2 text-base font-semibold">班级：2023215101</span>
             <div class="card h-[47%] border-2 p-3 overflow-auto">
                 <span class="font-semibold">班级公告</span>
-                <Accordion type="single" class="w-full" collapsible :default-value="defaultValue">
-                    <AccordionItem v-for="item in accordionItems" :key="item.value" :value="item.value">
+                <Accordion type="single" class="w-full" collapsible>
+                    <AccordionItem v-for="item in postList" :key="item.timestamp" :value="item.timestamp">
                         <AccordionTrigger class="font-semibold">{{ item.title }}</AccordionTrigger>
                         <AccordionContent>
                             {{ item.content }}

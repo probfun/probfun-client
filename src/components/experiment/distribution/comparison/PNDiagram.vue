@@ -9,6 +9,8 @@ const props = defineProps<{
     lambda: number
 }>();
 
+let idNumber = 0;
+
 onMounted(() => {
     const options = {
         keypad: false,
@@ -26,18 +28,37 @@ onMounted(() => {
 const drawDistributions = () => {
     if (!calculator) return;
 
-    const poisson = {
-        id: 'poisson',
-        latex: `f(x) = \\frac{${props.lambda}^x e^{- ${props.lambda}}}{x!} \\{x >= 0\\}`,
-        color: Desmos.Colors.BLUE
+    const poissonValue: any[] = [];
+
+    const poissonPoints = Array.from({ length: 150 }, (_, k) => {
+        poissonValue.push((Math.exp(-props.lambda) * ((props.lambda) ** k) / factorial(k)).toFixed(4));
+        return `(${k}, ${(Math.exp(-props.lambda) * ((props.lambda) ** k) / factorial(k)).toFixed(4)})`;
+    });
+
+    const poissonPointExpression = {
+        id: `points_${idNumber + 1}`,
+        latex: `(${poissonPoints.join('), (')})`,
+        color: Desmos.Colors.BLUE,
+        pointSize: 8 // 设置点的大小
     };
+    for (let i = 0; i <= 200; i++) {
+        const poissonLine = {
+            id: `plines_${i}`,
+            latex: `x = ${i} \\{0<= y <= ${poissonValue[i]}\\}`,
+            color: Desmos.Colors.BLUE,
+        }
+        calculator.setExpression(poissonLine)
+    }
+
+    function factorial(n: any): any {
+        return n <= 1 ? 1 : n * factorial(n - 1);
+    }
 
     const normal = {
         id: 'normal',
         latex: `f(x) = \\frac{1}{\\sqrt{2\\pi \\cdot ${props.lambda}}} e^{-\\frac{(x - ${props.lambda})^2}{2 \\cdot ${props.lambda}}} \\{x >= 0\\}`,
         color: Desmos.Colors.RED
     };
-    calculator.setExpression(poisson);
     calculator.setExpression(normal);
 
     // 设置图形边界

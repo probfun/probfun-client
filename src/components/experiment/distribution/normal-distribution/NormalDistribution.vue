@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import CommentPanel from '@/components/comment/CommentPanel.vue';
-import DistributionDiagram from '@/components/experiment/distribution/DistributionDiagram.vue';
+import DistributionDiagram from '@/components/experiment/distribution/normal-distribution/DistributionDiagram.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';

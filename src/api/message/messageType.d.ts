@@ -6,13 +6,6 @@ export interface LikeData {
   user: UserPublic
 }
 
-export interface Post {
-  title: string
-  content: string
-  timestamp: string
-  user: UserPublic
-}
-
 export interface PostData {
   post: Post
 }

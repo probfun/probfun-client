@@ -186,7 +186,7 @@ $$
           <CardHeader>
             <div class = "flex  gap-5">
             <CardTitle >泊松分布公式</CardTitle> 
-            <div class="w-10 h-1 mt-1 bg-red-500">
+            <div class="w-10 h-1 mt-1 bg-blue-500">
             </div>
           </div>
           </CardHeader>
@@ -198,7 +198,7 @@ $$
           <CardHeader>
             <div class = "flex  gap-5">
             <CardTitle >正态分布公式</CardTitle> 
-            <div class="w-10 h-1 mt-1 bg-blue-500">
+            <div class="w-10 h-1 mt-1 bg-red-500">
             </div>
           </div>
           </CardHeader>
