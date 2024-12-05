@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { Chat, ChatBlock, ChatData, ChatMessage, ReceiveData, Tool, ToolArgs } from '@/api/ai/aiType';
+import type { ChatBlock, ChatData, ReceiveData, Tool, ToolArgs } from '@/api/ai/aiType';
 import type { Textarea } from '@/components/ui/textarea';
-import { aiApi } from '@/api/ai/aiApi';
+import { aiApi, generateTitleApi } from '@/api/ai/aiApi';
 import AiSidebar from '@/components/ai/AiSidebar.vue';
 import {
   AlertDialog,
@@ -19,8 +19,16 @@ import { ContextMenuTrigger } from '@/components/ui/context-menu';
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAiStore } from '@/store';
+import {
+  copyMessage,
+  createChat,
+  createUserBlock,
+  DEFAULT_CHAT_TITLE,
+  deleteMessage,
+  getChatMessages,
+  START_BLOCK,
+} from '@/utils/ai';
 import { toMarkdown } from '@/utils/markdown'
-import { error, success } from '@/utils/toast';
 import { vAutoAnimate } from '@formkit/auto-animate';
 import { ArrowDownToLine, Bot, CircleStop, Clipboard, PencilLine, RotateCcw, Send, Trash2 } from 'lucide-vue-next';
 import { v4 as uuidv4 } from 'uuid';
@@ -41,58 +49,12 @@ const tempChatTitle = ref('');
 const isEditChatTitle = ref(false);
 const isOpen = ref(false);
 
-const startBlock: ChatBlock = {
-  role: 'ai',
-  data: [
-    {
-      type: 'text',
-      text: '我是“邮小率”，你的智能助手，专门帮助学生解决概率论实验相关的问题。如果你有关于概率论的概念、实验步骤或者具体问题需要解答，随时告诉我，我会尽力帮助你！',
-    },
-  ],
-  blockId: uuidv4(),
-};
-
 const isComposing = ref(false);
 
 function scrollToBottom(smooth: boolean = true) {
   if (scrollContainer.value) {
     scrollContainer.value.scrollTo({ top: scrollContainer.value.scrollHeight, behavior: smooth ? 'smooth' : 'instant' });
   }
-}
-
-function createChat() {
-  const chat: Chat = {
-    chatBlocks: [
-      startBlock,
-    ],
-    chatId: uuidv4(),
-    chatTitle: '概率论实验',
-    lastChatTime: new Date().toLocaleString(),
-  };
-  return chat;
-}
-
-function createUserBlock(userMessage: string) {
-  if (!aiStore.currentChat) {
-    aiStore.currentChat = createChat();
-    aiStore.chatList.push(aiStore.currentChat);
-  }
-  const chat = aiStore.currentChat;
-  const newUserBlock: ChatBlock = {
-    role: 'user',
-    data: [
-      {
-        type: 'text',
-        text: userMessage,
-      },
-    ],
-    blockId: uuidv4(),
-  };
-  chat.chatBlocks.push(newUserBlock);
-  chat.lastChatTime = new Date().toLocaleString();
-  nextTick(() => {
-    scrollToBottom();
-  });
 }
 
 function handleScroll() {
@@ -141,37 +103,7 @@ async function sendMessages() {
     });
 
     abortController.value = new AbortController();
-    // messageInterval.value = window.setInterval(() => {
-    //   if (messageQueue.value.length > 0) {
-    //     aiMessages[aiMessages.length - 1].content += messageQueue.value.shift()!;
-    //     aiMessages[aiMessages.length - 1].content
-    //         = aiMessages[aiMessages.length - 1].content
-    //         .replace(/\\\[/g, '$$$')
-    //         .replace(/\\\]/g, '$$$')
-    //         .replace(/\\\(/g, '$')
-    //         .replace(/\\\)/g, '$');
-    //     scrollToBottom();
-    //   }
-    // }, 30);
-    const chatMessages: ChatMessage[] = [];
-    for (const block of chatBlocks) {
-      for (const data of block.data) {
-        if (data.type === 'text') {
-          chatMessages.push({
-            role: block.role === 'ai' ? 'assistant' : 'user',
-            content: data.text as string,
-          });
-        }
-        else if (data.type === 'tool') {
-          const args = JSON.stringify((data.tool as Tool).args);
-          chatMessages.push({
-            role: 'function',
-            name: (data.tool as Tool).name,
-            content: args,
-          });
-        }
-      }
-    }
+    const chatMessages = getChatMessages();
     await aiApi(chatMessages, () => status.value = 'loading', receiveMessage, finishGenerating, abortController.value);
   }
   catch (error: any) {
@@ -196,6 +128,16 @@ async function finishGenerating() {
   // const length = chat.chatBlocks.length;
   // chat.chatBlocks[length - 1].content = chat.chatBlocks[length - 1].content.replace(/\$\$/g, '\n$$$\n');
   chat.lastChatTime = new Date().toLocaleString();
+  if (chat.chatTitle === DEFAULT_CHAT_TITLE) {
+    try {
+      const chatMessages = getChatMessages();
+      const response = await generateTitleApi(chatMessages);
+      chat.chatTitle = response.title;
+    }
+    catch (e: any) {
+      console.error('Error during generating title:', e);
+    }
+  }
   status.value = 'idle';
 }
 
@@ -204,7 +146,7 @@ function receiveMessage(data: ReceiveData) {
     status.value = 'generating';
   }
   const chat = aiStore.currentChat;
-  if (data.message) {
+  if (data?.message) {
     const message = data.message.replace(/\\\[/g, '$$$')
       .replace(/\\\]/g, '$$$')
       .replace(/\\\(/g, '$')
@@ -217,7 +159,7 @@ function receiveMessage(data: ReceiveData) {
     }
     chat?.chatBlocks[chat.chatBlocks.length - 1].data.push(chatData);
   }
-  if (data.tool) {
+  if (data?.tool) {
     const chatData: ChatData = {
       type: 'tool',
       tool: {
@@ -233,31 +175,6 @@ function receiveMessage(data: ReceiveData) {
 watch(status, () => {
   console.log('status:', status.value);
 })
-
-function deleteMessage(block: ChatBlock) {
-  const currentChat = aiStore.currentChat;
-  if (!currentChat) {
-    return;
-  }
-  currentChat.chatBlocks = currentChat.chatBlocks.filter(m => m !== block);
-}
-
-function copyMessage(block: ChatBlock) {
-  try {
-    let message = '';
-    for (const data of block.data) {
-      if (data.type === 'text') {
-        message += `${data.text}\n`;
-      }
-    }
-    navigator.clipboard.writeText(message);
-    success('复制成功');
-  }
-  catch (e: any) {
-    console.error('Error:', e);
-    error('复制失败');
-  }
-}
 
 function resetTextareaHeight() {
   if (tx.value) {
@@ -277,6 +194,7 @@ watch(() => aiStore.currentChat, () => {
   stopGenerating();
   nextTick(() => {
     scrollToBottom(false);
+    handleScroll();
   });
 });
 
@@ -295,7 +213,7 @@ function handleCompositionEnd() {
     <Card class="flex-1 flex hover:border-primary flex-col transition-all duration-300">
       <CardHeader v-auto-animate class="py-2 px-4 flex flex-row items-center h-10">
         <CardTitle v-if="!aiStore.currentChat || !isEditChatTitle">
-          {{ aiStore.currentChat?.chatTitle ?? '新对话' }}
+          {{ aiStore.currentChat?.chatTitle ?? DEFAULT_CHAT_TITLE }}
         </CardTitle>
         <Input
           v-else v-model="tempChatTitle" class="h-7 max-w-xs" @blur="() => {
@@ -334,7 +252,7 @@ function handleCompositionEnd() {
       </CardHeader>
       <CardContent class="overflow-y-hidden border-t flex pb-0 px-0 relative flex-1">
         <div ref="scrollContainer" class="flex w-full flex-col items-center gap-3 overflow-y-auto pt-4 px-6">
-          <div v-for="(block, index) in aiStore.currentChat?.chatBlocks ?? [startBlock]" :key="block.blockId" v-auto-animate class="flex w-full max-w-screen-md">
+          <div v-for="(block, index) in aiStore.currentChat?.chatBlocks ?? [START_BLOCK]" :key="block.blockId" v-auto-animate class="flex w-full max-w-screen-md">
             <div v-if="block.role === 'user'" class="ml-auto">
               <ContextMenu>
                 <ContextMenuTrigger>

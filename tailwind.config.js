@@ -1,4 +1,6 @@
-const animate = require('tailwindcss-animate')
+import typography from '@tailwindcss/typography';
+import daisyui from 'daisyui';
+import animate from 'tailwindcss-animate';
 
 function round(num) {
   return num
@@ -8,7 +10,8 @@ function round(num) {
 }
 const em = (px, base) => `${round(px / base)}em`
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+
+export default {
   darkMode: ['class'],
   safelist: ['dark'],
   prefix: '',
@@ -29,6 +32,21 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['NotoSansSC', 'sans-serif'], // 默认字体
+        noto: ['NotoSansSC', 'sans-serif'], // 自定义字体
+      },
+      fontWeight: {
+        thin: 100,
+        extralight: 200,
+        light: 300,
+        normal: 400,
+        medium: 500,
+        semibold: 600,
+        bold: 700,
+        extrabold: 800,
+        black: 900,
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -139,7 +157,7 @@ module.exports = {
       }),
     },
   },
-  plugins: [animate, require('@tailwindcss/typography'), require('daisyui')],
+  plugins: [animate, typography, daisyui],
   daisyui: {
     themes: [
       {
