@@ -1,5 +1,6 @@
 import type { ChatMessage, ReceiveChunk, ReceiveData } from '@/api/ai/aiType';
 import { error } from '@/utils/toast';
+import { postRaw } from '../request';
 // import OpenAI from 'openai';
 //
 // const OPENAI_KEY = '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';
@@ -54,7 +55,7 @@ export async function aiApi(
   finish: () => void,
   abortController: AbortController | null = null,
 ) {
-  const wsUrl = `ws://${location.host}/llm/chat`;
+  const wsUrl = `ws://${location.host}/ai/chat`;
   // const wsUrl = `ws://127.0.0.1:8000/chat`;
   let websocket: WebSocket | null = null;
 
@@ -72,7 +73,7 @@ export async function aiApi(
     // 监听连接关闭
     websocket.onclose = () => {
       console.log('WebSocket connection closed');
-      finish(); // 调用连接结束回调
+      // finish(); // 调用连接结束回调
     };
 
     // 监听错误
@@ -103,4 +104,10 @@ export async function aiApi(
     console.error('Error during WebSocket connection:', e);
     websocket?.close(); // 确保 WebSocket 被关闭
   }
+}
+
+export async function generateTitleApi(messages: ChatMessage[]) {
+  return await postRaw<{
+    title: string
+  }>('/ai/title', { messages });
 }

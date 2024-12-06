@@ -25,7 +25,35 @@ export interface Chat {
 
 export interface NormalDistributionArgs {
   mean: number
-  std: number
+  stdDev: number
+}
+
+export interface GeometricDistributionArgs {
+  p: number
+  n: number
+}
+
+export interface BinomialDistributionArgs {
+  n: number
+  p: number
+}
+
+export interface ExponentialDistributionArgs {
+  rate: number
+}
+
+export interface UniformDistributionArgs {
+  a: number
+  b: number
+}
+
+export interface PoissonDistributionArgs {
+  lambda: number
+}
+
+export interface DistributionArgs {
+  type: 'normal' | 'uniform' | 'geometric' | 'poisson' | 'binomial' | 'exponential'
+  args: NormalDistributionArgs | GeometricDistributionArgs | BinomialDistributionArgs | ExponentialDistributionArgs | UniformDistributionArgs | PoissonDistributionArgs
 }
 
 export interface BuffonNeedleArgs {
@@ -34,20 +62,20 @@ export interface BuffonNeedleArgs {
   needleAmount: number
 }
 
-export interface ToolArgs extends NormalDistributionArgs, BuffonNeedleArgs {}
+export interface ToolArgs extends DistributionArgs, BuffonNeedleArgs {}
 
 export interface Tool {
   name: string
   args: ToolArgs
 }
 
-export interface ReceiveData {
-  message: string
-  tool: {
+export type ReceiveData = {
+  message?: string
+  tool?: {
     name: string
     args: string
   }
-}
+} | null
 
 export interface ReceiveChunk {
   data: ReceiveData

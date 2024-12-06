@@ -37,7 +37,7 @@ async function login() {
     console.error('Error:', e);
     error('登录失败，请重试');
   }
-};
+}
 </script>
 
 <template>
@@ -72,6 +72,9 @@ async function login() {
 
     <Label class="w-full flex justify-center mt-5">
       还没有账号？点击此处<router-link to="/register" class="underline underline-offset-4 hover:text-primary transition-all font-medium px-1"> 注册 </router-link>
+    </Label>
+    <Label class="w-full flex justify-center mt-3">
+      登录遇到问题？请添加QQ群<div class="underline underline-offset-4 px-1 cursor-text">111293253</div>以联系管理员。
     </Label>
   </form>
 </template>

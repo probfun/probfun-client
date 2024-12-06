@@ -28,11 +28,13 @@ export default defineConfig({
         // target: 'http://127.0.0.1:4523/m1/4811506-4465979-default',
         changeOrigin: true,
       },
-      '/llm': {
-        target: 'ws://192.144.199.178',
+      '/ai': {
+        // target: 'ws://192.144.199.178',
+        target: 'ws://127.0.0.1:8000',
         ws: true,
         // target: 'http://127.0.0.1:4523/m1/4811506-4465979-default',
         changeOrigin: true,
+        rewrite: path => path.replace(/^\/ai/, ''),
       },
       '/uploads': {
         target: 'http://192.144.199.178',

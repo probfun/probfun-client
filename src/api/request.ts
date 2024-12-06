@@ -50,6 +50,10 @@ export function post<T>(url: string, data?: any, config?: any): Promise<Response
   return service.post(url, data, config).then(response => response.data);
 }
 
+export function postRaw<T>(url: string, data?: any, config?: any): Promise<T> {
+  return service.post(url, data, config).then(response => response.data);
+}
+
 // 封装DELETE请求，带类型定义
 export function del<T>(url: string, params?: any): Promise<ResponseData<T>> {
   return service.delete(url, { params }).then(response => response.data);
