@@ -26,6 +26,7 @@ import { Book, Bot, CircleHelp, Dices, Home, LogOut, Star, Sun, User } from 'luc
 import { useToast } from 'primevue/usetoast';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { Key } from 'readline';
 
 const toast = useToast();
 const userStore = useUserStore();
@@ -38,6 +39,7 @@ interface SideBarItem {
 }
 
 const route = useRoute();
+const seeFeedback = ref(false);
 const isFeedback = ref(false);
 const showIndex = ref(false);
 
@@ -400,11 +402,9 @@ function goHome() {
 <template>
   <div class="h-full">
     <aside class="h-full border-r flex flex-col relative bg-background z-40 items-center gap-4 px-2 sm:py-3">
-      <Button
-        size="icon"
+      <Button size="icon"
         class="group rounded-full size-9 bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
-        @click="goHome()"
-      >
+        @click="goHome()">
         <Dices class="size-5 group-hover:scale-110" />
       </Button>
       <!--      <a -->
@@ -420,15 +420,13 @@ function goHome() {
             <TooltipProvider :delay-duration="0">
               <Tooltip>
                 <TooltipTrigger>
-                  <Button
-                    size="icon" variant="ghost"
+                  <Button size="icon" variant="ghost"
                     :class="cn('size-9 rounded-lg text-muted-foreground', isActiveRoute(item.route ?? '') && '!bg-muted text-foreground')"
                     @click="() => {
                       if (item.command) item.command();
                       else if (item.route) router.push(item.route);
                       if (item.label !== '目录') showIndex = false;
-                    }"
-                  >
+                    }">
                     <component :is="item.icon" class="size-5" />
                   </Button>
                 </TooltipTrigger>
@@ -446,13 +444,11 @@ function goHome() {
             <TooltipProvider :delay-duration="0">
               <Tooltip>
                 <TooltipTrigger>
-                  <Button
-                    size="icon" variant="ghost" class="size-9 text-muted-foreground" @click="() => {
-                      if (item.route) router.push(item.route);
-                      else if (item.command) item.command();
-                      showIndex = false;
-                    }"
-                  >
+                  <Button size="icon" variant="ghost" class="size-9 text-muted-foreground" @click="() => {
+                    if (item.route) router.push(item.route);
+                    else if (item.command) item.command();
+                    showIndex = false;
+                  }">
                     <component :is="item.icon" class="size-5" />
                   </Button>
                 </TooltipTrigger>
@@ -492,10 +488,8 @@ function goHome() {
                 </summary>
                 <ul class="sapce-y-1">
                   <li v-for="(item, index) in chapter1Items" :key="item.label">
-                    <a
-                      :class="{ active: isActiveRoute(item.route) }"
-                      @click="() => { item.command(); toggleDrawer(); }"
-                    >
+                    <a :class="{ active: isActiveRoute(item.route) }"
+                      @click="() => { item.command(); toggleDrawer(); }">
                       <i :class="item.icon" />
                       1.{{ index + 1 }}-{{ item.label }}
                     </a>
@@ -511,10 +505,8 @@ function goHome() {
                 </summary>
                 <ul class="sapce-y-1">
                   <li v-for="(item, index) in chapter2Items" :key="item.label">
-                    <a
-                      :class="{ active: isActiveRoute(item.route) }"
-                      @click="() => { item.command(); toggleDrawer(); }"
-                    >
+                    <a :class="{ active: isActiveRoute(item.route) }"
+                      @click="() => { item.command(); toggleDrawer(); }">
                       <i :class="item.icon" />
                       2.{{ index + 1 }}-{{ item.label }}
                     </a>
@@ -524,10 +516,8 @@ function goHome() {
                       <summary><i class="pi pi-chart-bar" />2.7-分布的对比</summary>
                       <ul class="sapce-y-1">
                         <li v-for="(item, index) in comparisonOfDistributions" :key="item.label">
-                          <a
-                            :class="{ active: isActiveRoute(item.route) }"
-                            @click="() => { item.command(); toggleDrawer(); }"
-                          >
+                          <a :class="{ active: isActiveRoute(item.route) }"
+                            @click="() => { item.command(); toggleDrawer(); }">
                             <i />
                             2.7.{{ index + 1 }}-{{ item.label }}
                           </a>
@@ -545,8 +535,13 @@ function goHome() {
     <Dialog v-model:open="isFeedback">
       <DialogContent class="overflow-y-auto max-w-xl">
         <DialogHeader>
-          <DialogTitle>问题反馈</DialogTitle>
-          <DialogDescription>
+          <DialogTitle>问题反馈
+            <button v-if="userStore.user?.role === 1 && seeFeedback === false" class="mr-5 underline"
+              @click="seeFeedback = true">(查看所有意见反馈)</button>
+            <button v-if="userStore.user?.role === 1 && seeFeedback === true" class="mr-5 underline"
+              @click="seeFeedback = false">(返回)</button>
+          </DialogTitle>
+          <DialogDescription v-if="seeFeedback === false">
             <!--            感谢您对邮趣概率的支持！我们非常重视您的意见和建议，以便不断改进我们的服务。欢迎您分享以下内容：<br> -->
             <!--            1. <strong>功能建议：</strong>您希望我们增加哪些新功能或改进现有功能？<br> -->
             <!--            2. <strong>遇到的错误：</strong>在使用过程中，您是否遇到了任何技术或内容错误？<br> -->
@@ -570,12 +565,17 @@ function goHome() {
         <!--            <label for="feedback3" class="ml-2">其他建议</label> -->
         <!--          </div> -->
         <!--        </div> -->
-        <FloatLabel>
+        <FloatLabel v-if="seeFeedback === false">
           <Textarea v-model="content" class="resize-none" :rows="15" placeholder="请在这里输入您的问题反馈！" />
         </FloatLabel>
+        <div v-if="seeFeedback === true">
+          <div v-for="feed in feedbackList" :key="feed.feedbackID">
+            <div class="border py-3">{{ feed.content }}</div>
+          </div>
+        </div>
         <DialogFooter>
           <DialogClose>
-            <Button @click="sendFeedback">
+            <Button v-if="seeFeedback === false" @click="sendFeedback">
               提交
             </Button>
           </DialogClose>
