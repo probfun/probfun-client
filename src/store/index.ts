@@ -22,3 +22,14 @@ export const useAiStore = defineStore('aiStore', () => {
 }, {
   persist: true,
 });
+
+export const useConfigStore = defineStore('configStore', () => {
+  const darkMode = ref<boolean>(false);
+  const targetNodeId = ref<string | null>(null);
+  return {
+    darkMode,
+    targetNodeId,
+  }
+}, {
+  persist: true,
+});

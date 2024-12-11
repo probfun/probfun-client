@@ -1,14 +1,12 @@
 <script setup>
-import { nextTick, ref } from 'vue'
-import { Panel, VueFlow, useVueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
-import Icon from '../Icon.vue'
+import { useVueFlow, VueFlow } from '@vue-flow/core'
+import { nextTick, ref } from 'vue'
 
 import { initialEdges, initialNodes } from './initial-elements.js'
-import { useLayout } from './useLayout'
+import { useLayout } from './useLayout.js'
 
 import './nodeStyles.css';
-
 
 const nodes = ref(initialNodes)
 
@@ -38,8 +36,9 @@ async function layoutGraph(direction) {
       v-model:edges="edges"
       fit-view-on-init
       elevate-edges-on-select
-      :enableNodeParenting="true"
-    >      <Background />
+      :enable-node-parenting="true"
+    >
+      <Background />
 
       <!-- <Panel class="process-panel" position="top-right">
         <div class="layout-panel">
@@ -53,27 +52,6 @@ async function layoutGraph(direction) {
 </template>
 
 <style>
-.layout-flow {
-  background-color: fffff2;
-  height: 100%;
-  width: 100%;
-}
-
-.process-panel,
-.layout-panel {
-  display: flex;
-  gap: 10px;
-}
-
-.process-panel {
-  background-color: #a7cafe;
-  padding: 10px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  display: flex;
-  flex-direction: column;
-}
-
 .process-panel button {
   border: none;
   cursor: pointer;
@@ -129,9 +107,6 @@ async function layoutGraph(direction) {
   height: 10px;
   animation: spin 1s linear infinite;
 }
-
-
-
 
 @keyframes spin {
   0% {

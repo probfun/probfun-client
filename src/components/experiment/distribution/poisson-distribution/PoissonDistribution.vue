@@ -11,7 +11,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import PoissonDiagram from './PoissonDiagram.vue';
 import 'katex/dist/katex.min.css';
 
-const lambda = ref([3]); // Poisson distribution mean (λ)
+const lambda = ref([3]); // Poisson distribution-old mean (λ)
 const an = ref([1]);
 
 const save = ref(false);

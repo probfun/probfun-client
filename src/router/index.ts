@@ -1,6 +1,8 @@
 import AiPanel from '@/components/ai/AiPanel.vue';
 import LoginCard from '@/components/auth/LoginCard.vue';
 import RegisterCard from '@/components/auth/RegisterCard.vue';
+import Chatper1Diagram from '@/components/diagram/chapter-1/Chapter1Diagram.vue';
+import DistributionDiagram from '@/components/diagram/distribution-diagram/DistributionDiagram.vue';
 import BirthdayProblem from '@/components/experiment/chapter1/birthday-problem/BirthdayProblem.vue';
 import BirthdayAttack from '@/components/experiment/chapter1/BirthdayAttack.vue';
 import BuffonNeedle from '@/components/experiment/chapter1/buffon-needle/BuffonNeedle.vue';
@@ -11,14 +13,12 @@ import NormalDistribution from '@/components/experiment/distribution/normal-dist
 import PoissonDistribution from '@/components/experiment/distribution/poisson-distribution/PoissonDistribution.vue';
 import UniformDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
 import HomePage from '@/components/home/HomePage.vue';
-import probMindMap from '@/components/home/mindmap/C1/C1.vue';
-import distriMindMap from '@/components/home/mindmap/distribution/distribution.vue';
-import StarPanel from '@/components/star/StarPanel.vue';
 
+import StarPanel from '@/components/star/StarPanel.vue';
 import StudentPanel from '@/components/user/StudentPanel.vue';
 import TeacherPanel from '@/components/user/TeacherPanel.vue';
-import AuthPage from '@/pages/AuthPage.vue';
 
+import AuthPage from '@/pages/AuthPage.vue';
 import DashBoard from '@/pages/DashBoard.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
@@ -125,11 +125,11 @@ const router = createRouter({
         },
         {
           path: '/dashboard/mindmap/distribution',
-          component: distriMindMap,
+          component: DistributionDiagram,
         },
         {
-          path: '/dashboard/mindmap/C1',
-          component: probMindMap,
+          path: '/dashboard/mindmap/chapter-1',
+          component: Chatper1Diagram,
         },
       ],
     },

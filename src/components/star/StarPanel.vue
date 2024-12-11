@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import DiagramTest from '@/components/diagram/diagram-test';
+import DistributionDiagram from '@/components/diagram/distribution-diagram/DistributionDiagram.vue';
 </script>
 
 <template>
-  <DiagramTest />
+  <DistributionDiagram />
 </template>
 
 <style scoped>

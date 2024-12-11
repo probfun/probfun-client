@@ -1,12 +1,12 @@
 <script>
-import { ref, defineComponent, nextTick, onMounted } from 'vue';
-import { VueFlow, useVueFlow } from '@vue-flow/core';
 import { Background } from '@vue-flow/background';
-import { Controls, ControlButton } from '@vue-flow/controls';
+import { Controls } from '@vue-flow/controls';
+import { useVueFlow, VueFlow } from '@vue-flow/core';
 import { MiniMap } from '@vue-flow/minimap';
-import dagre from 'dagre'; // 引入 dagre
-import { initialEdges, initialNodes } from './initial-elements.js';
+import dagre from 'dagre';
+import { defineComponent, nextTick, onMounted, ref } from 'vue'; // 引入 dagre
 import Icon from '../Icon.vue';
+import { initialEdges, initialNodes } from './initial-elements.js';
 
 export default defineComponent({
   components: { VueFlow, Background, Controls, MiniMap, Icon },
@@ -15,19 +15,18 @@ export default defineComponent({
     const nodes = ref(initialNodes);
     const edges = ref(initialEdges);
     const dark = ref(false);
-    const searchQuery = ref(""); // 用来绑定搜索框的输入内容
-
+    const searchQuery = ref(''); // 用来绑定搜索框的输入内容
 
     // 搜索节点并定位
     const searchNode = () => {
-     // 移除之前的高亮节点
-  nodes.value.forEach((node) => {
-    node.class = node.class?.replace('highlight-node', '');  // 移除之前的高亮
-  });
+      // 移除之前的高亮节点
+      nodes.value.forEach((node) => {
+        node.class = node.class?.replace('highlight-node', ''); // 移除之前的高亮
+      });
 
-  const node = nodes.value.find(n =>
-    n.data.label.toLowerCase().includes(searchQuery.value.toLowerCase())
-  );
+      const node = nodes.value.find(n =>
+        n.data.label.toLowerCase().includes(searchQuery.value.toLowerCase()),
+      );
 
       if (node) {
         // 高亮当前匹配节点
@@ -108,12 +107,10 @@ export default defineComponent({
       dark.value = !dark.value;
     };
 
-
-
     // 自定义初始视图
     const customViewport = {
-      x: -500,  // 初始 X 坐标
-      y: 50,   // 初始 Y 坐标
+      x: -500, // 初始 X 坐标
+      y: 50, // 初始 Y 坐标
       zoom: 0.5, // 初始缩放比例
     };
 
@@ -143,7 +140,6 @@ export default defineComponent({
       showTooltip.value = !showTooltip.value; // 切换显示与隐藏
     };
 
-
     return {
       showTooltip,
       tooltipStyle,
@@ -157,43 +153,40 @@ export default defineComponent({
       resetTransform,
       toggleDarkMode,
       searchQuery,
-      searchNode
+      searchNode,
     };
   },
 });
-   
 </script>
 
-
-
-
-
 <template>
-   <div class="search-container">
-      <input
-        type="text"
-        v-model="searchQuery"
-        @input="searchNode"
-        placeholder="搜索节点"
-        class="search-input"
-      />
-    </div>
-  <VueFlow :nodes="nodes" :edges="edges" :class="{ dark }" class="basic-flow" @nodeDragStop="handleNodeDragStop"
-    :default-viewport="{ zoom: 1.5 }" :min-zoom="0.2" :max-zoom="4">
+  <div class="search-container">
+    <input
+      v-model="searchQuery"
+      type="text"
+      placeholder="搜索节点"
+      class="search-input"
+      @input="searchNode"
+    >
+  </div>
+  <VueFlow
+    :nodes="nodes" :edges="edges" :class="{ dark }" class="basic-flow" :default-viewport="{ zoom: 1.5 }"
+    :min-zoom="0.2" :max-zoom="4" @node-drag-stop="handleNodeDragStop"
+  >
     <Background pattern-color="#aaa" :gap="16" />
 
     <MiniMap />
 
-    <Controls position="top-left" class = "border-none">
-      <Button title="背景" @click="toggleDarkMode" class = "ml-4 mr-4">
+    <Controls position="top-left" class="border-none">
+      <Button title="背景" class="ml-4 mr-4" @click="toggleDarkMode">
         切换背景
         <Icon v-if="dark" name="sun" />
         <Icon v-else name="moon" />
       </Button>
 
-         <!-- 添加控制悬浮框显示的按钮 -->
-         <Button title="图例" @click="toggleTooltip">
-          显示图例
+      <!-- 添加控制悬浮框显示的按钮 -->
+      <Button title="图例" @click="toggleTooltip">
+        显示图例
         <Icon name="info" />
       </Button>
     </Controls>
@@ -201,7 +194,9 @@ export default defineComponent({
   <div v-if="showTooltip" :style="tooltipStyle" class="tooltip">
     <div class="tooltip-content">
       <div class="column">
-        <p class="highlight"><strong>Properties:</strong> </p>
+        <p class="highlight">
+          <strong>Properties:</strong>
+        </p>
         <p><strong>C</strong> convolution</p>
         <p><strong>F</strong> forgetfulness</p>
         <p><strong>I</strong> inverse</p>
@@ -214,21 +209,19 @@ export default defineComponent({
         <p><strong>X</strong> maximum</p>
       </div>
       <div class="column">
-
         <p><strong>L → C</strong> </p>
         <p><strong>L → S</strong> </p>
         <p><strong>F → R</strong> </p>
-        <p class="highlight"><strong>Relationships:</strong> </p>
+        <p class="highlight">
+          <strong>Relationships:</strong>
+        </p>
         <p><strong>special cases:</strong> ——></p>
         <p><strong>limiting:</strong>---------—></p>
         <p><strong>bayesian:</strong>--------—></p>
         <p><strong>transformations:</strong> <span class="highlight-text">—————></span></p>
-
       </div>
     </div>
   </div>
-
-
 </template>
 
 <style scoped>
