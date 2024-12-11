@@ -126,16 +126,16 @@ onMounted(() => {
 });
 
 const showTooltip = ref(false);
-const tooltipStyle = ref({
-  position: 'absolute',
-  bottom: '50px',
-  left: '50px',
-  backgroundColor: 'rgba(0, 0, 0, 0.7)',
-  color: 'white',
-  padding: '10px',
-  borderRadius: '5px',
-  zIndex: 1000,
-});
+// const tooltipStyle = ref({
+//   position: 'absolute',
+//   bottom: '50px',
+//   left: '50px',
+//   backgroundColor: 'rgba(0, 0, 0, 0.7)',
+//   color: 'white',
+//   padding: '10px',
+//   borderRadius: '5px',
+//   zIndex: 1000,
+// });
 function toggleTooltip() {
   showTooltip.value = !showTooltip.value;
 }
@@ -202,7 +202,18 @@ function toggleTooltip() {
           </Button>
         </Controls>
       </VueFlow>
-      <div v-if="showTooltip" :style="tooltipStyle" class="tooltip">
+      <div
+        v-if="showTooltip" :style="{
+          position: 'absolute',
+          bottom: '50px',
+          left: '50px',
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          color: 'white',
+          padding: '10px',
+          borderRadius: '5px',
+          zIndex: 1000,
+        }" class="tooltip"
+      >
         <div class="tooltip-content">
           <div class="column">
             <p class="highlight">
