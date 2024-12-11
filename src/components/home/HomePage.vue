@@ -41,14 +41,14 @@ const mindMaps = ref([
   {
     title: '第一章',
     description: '第一章主要涉及概率相关的实验。包含的知识点有：概率的基本概念、大数定律、条件概率、事件独立性等。',
-    img: '/homePage/chapter-1.png',
+    img: '/homePage/C1.png',
     path: 'dashboard/mindmap/chapter-1',
   },
   {
     title: '分布（第二章与第三章）',
     description: '第二章主要涉及各种一维分布相关的实验。包括6种基本分布：二项、泊松、几何、均匀、指数、 正态分布以及分布的对比：二项分布与泊松、正态分布的近似，泊松分布与指数、正态分布的近似。第三章主要涉及各种高维分布相关的实验。',
-    img: '/homePage/distribution-old.png',
-    path: 'dashboard/mindmap/distribution-old',
+    img: '/homePage/distribution.png',
+    path: 'dashboard/mindmap/distribution',
 
   },
   {
