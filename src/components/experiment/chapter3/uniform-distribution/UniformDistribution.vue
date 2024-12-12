@@ -41,32 +41,77 @@ function toggleChart3() {
 }
 
 function updateModel(param: { model: any; }, value: any) {
-  param.model = value;
+    param.model = value;
 }
 
 const oneFormula = computed(() => {
-    return `f(x) `;
-    //     return `f(x) =
-    //  \\begin{cases} 
-    // \\frac{${1}}{b - a} , & \\text{if } a \\leq x \\leq b \\\\
-    // 0 , & \\text{otherwise}
-    // \\end{cases}
-    //  = 
-    //  \\begin{cases} 
-    // \\frac{${1}}{${bFormatted} - ${aFormatted}} , & \\text{if } ${a.value[0]} \\leq x \\leq ${bFormatted} \\\\
-    // 0 , & \\text{otherwise}
-    // \\end{cases}`;
+    return `f(x, y) = 
+    \\begin{cases} 
+    \\frac{1}{(x2 - x1)(y2 - y1)}, & \\text{if } x \\in [x1, x2] \\text{ and } y \\in [y1, y2] \\\\
+    0, & \\text{otherwise}
+    \\end{cases}
+    =
+  \\begin{cases} 
+    \\frac{1}{(${x2.value} - ${x1.value})(${y2.value} - ${y1.value})}, & \\text{if } x \\in [${x1.value}, ${x2.value}] \\text{ and } y \\in [${y1.value}, ${y2.value}] \\\\
+    0, & \\text{otherwise}
+    \\end{cases}
+    `;
 
 });
 
 const twoFormula = computed(() => {
 
-    return `f(x) `;
+    return `f_X(x) = 
+    \\begin{cases} 
+    \\frac{1}{x2 - x1}, & \\text{if } x \\in [x1, x2] \\\\
+    0, & \\text{otherwise}
+    \\end{cases}
+    =
+    \\begin{cases} 
+    \\frac{1}{(${x2.value} - ${x1.value})}, & \\text{if } x \\in [${x1.value}, ${x2.value}] \\\\
+    0, & \\text{otherwise}
+    \\end{cases}
+    
+    \\\\
+
+   f_Y(y) = 
+    \\begin{cases} 
+    \\frac{1}{y2 - y1}, & \\text{if } y \\in [y1, y2] \\\\
+    0, & \\text{otherwise}
+    \\end{cases}
+    =
+    \\begin{cases} 
+    \\frac{1}{(${y2.value} - ${y1.value})}, & \\text{if } y \\in [${y1.value}, ${y2.value}] \\\\
+    0, & \\text{otherwise}
+    \\end{cases}
+    `;
 });
 
 const threeFormula = computed(() => {
 
-    return `f(x)`;
+    return `f_X(x | y) = 
+\\begin{cases} 
+    \\frac{1}{x2 - x1}, & \\text{if } x \\in [x1, x2] \\\\
+    0, & \\text{otherwise}
+    \\end{cases}
+    =
+    \\begin{cases} 
+    \\frac{1}{${x2.value} - ${x1.value}}, & \\text{if } x \\in [${x1.value}, ${x2.value}] \\\\
+    0, & \\text{otherwise}
+    \\end{cases}
+    \\\\
+    f_Y(y | x) = 
+    \\begin{cases} 
+    \\frac{1}{y2 - y1}, & \\text{if } x \\in [y1, y2] \\\\
+    0, & \\text{otherwise}
+    \\end{cases}
+    =
+    \\begin{cases} 
+    \\frac{1}{${y2.value} - ${y1.value}}, & \\text{if } y \\in [${y1.value}, ${y2.value}] \\\\
+    0, & \\text{otherwise}
+    \\end{cases}
+    
+    `;
 });
 
 
@@ -122,9 +167,9 @@ const content = `
             <div class="w-full h-full flex flex-col items-center justify-center gap-3 p-3">
                 <Card class="w-full">
                     <CardHeader>
-                        <CardTitle v-if="isChart1">二维正态的联合概率密度函数（PDF）</CardTitle>
-                        <CardTitle v-if="isChart2">二维正态的边缘分布概率密度函数（PDF）</CardTitle>
-                        <CardTitle v-if="isChart3">二维正态的条件分布</CardTitle>
+                        <CardTitle v-if="isChart1">二维均匀的联合概率密度函数（PDF）</CardTitle>
+                        <CardTitle v-if="isChart2">二维均匀的边缘分布概率密度函数（PDF）</CardTitle>
+                        <CardTitle v-if="isChart3">二维均匀的条件分布</CardTitle>
                     </CardHeader>
                     <CardContent class="flex w-full justify-center">
                         <div v-show="isChart1" ref="oneContainer" class="text-base" />
@@ -140,36 +185,43 @@ const content = `
                             参数调整
                         </CardTitle>
                     </CardHeader>
-                    <CardContent class="flex-1 flex flex-col justify-center items-center gap-3">
-                        <div class="dropdown ">
-                            <Button tabindex="0" role="button" class="m-0">
-                                点我切换
-                            </Button>
-                            <ul tabindex="0"
-                                class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-                                <li @click="toggleChart1">
-                                    <a>二维均匀分布</a>
-                                </li>
-                                <li @click="toggleChart2">
-                                    <a>二维均匀分布的边缘分布</a>
-                                </li>
-                                <li @click="toggleChart3">
-                                    <a>二维均匀分布的条件分布</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div v-for="param in parameters" :key="param.label"
-                            class="flex flex-col flex-1 items-center justify-center space-y-5">
-                            <Label>{{ param.label }}</Label>
-                            <div class="max-w-xl space-y-3">
-                                <Input :value="param.model" @input="updateModel(param, $event)"
-                                    :min-fraction-digits="0.1" />
-                                <Slider :value="param.model" @input="updateModel(param, $event)" :min="param.min"
-                                    :max="param.max" :step="param.step" class="w-48"  />
+                    <CardContent class="flex-1 flex flex-col justify-center items-center gap-6">
+                        <!-- 居中的按钮 -->
+                        <div class="flex justify-center w-full">
+                            <div class="dropdown">
+                                <Button tabindex="0" role="button" class="m-0">
+                                    点我切换
+                                </Button>
+                                <ul tabindex="0"
+                                    class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                                    <li @click="toggleChart1">
+                                        <a>二维均匀分布</a>
+                                    </li>
+                                    <li @click="toggleChart2">
+                                        <a>二维均匀分布的边缘分布</a>
+                                    </li>
+                                    <li @click="toggleChart3">
+                                        <a>二维均匀分布的条件分布</a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
 
+                        <!-- 输入框成一行排列 -->
+                        <div class="flex flex-row justify-center gap-6 w-full">
+                            <div v-for="param in parameters" :key="param.label"
+                                class="flex flex-col items-center space-y-3">
+                                <Label>{{ param.label }}</Label>
+                                <div class="max-w-xl space-y-3">
+                                    <Input :value="param.model" @input="updateModel(param, $event)"
+                                        :min-fraction-digits="0.1" />
+                                    <Slider :value="param.model" @input="updateModel(param, $event)" :min="param.min"
+                                        :max="param.max" :step="param.step" class="w-48" style="font-size: larger;" />
+                                </div>
+                            </div>
+                        </div>
                     </CardContent>
+
                 </Card>
             </div>
         </template>
