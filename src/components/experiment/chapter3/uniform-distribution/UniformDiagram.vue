@@ -26,6 +26,12 @@ onMounted(() => {
     // 创建 Desmos 3D 图形计算器实例
     calculator = Desmos.Calculator3D(elt.value, options);
     draw3DUniformDistribution();
+    calculator.setMathBounds({
+        left: props.x1 - 1,
+        right: props.x2 + 1,
+        bottom: props.y1 - 1,
+        top: props.y2 + 1
+    });
 });
 
 function draw3DUniformDistribution() {
