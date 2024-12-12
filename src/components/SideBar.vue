@@ -27,6 +27,7 @@ import { useToast } from 'primevue/usetoast';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Key } from 'readline';
+import { label } from '@unovis/ts/components/axis/style';
 
 const toast = useToast();
 const userStore = useUserStore();
@@ -359,6 +360,38 @@ const comparisonOfDistributions = [
   },
 ];
 
+const chapter3Items = [
+  {
+    label: '二维均匀分布',
+    icon: 'pi pi-chart-bar',
+    route: '/dashboard/experiment/2DuniformDistribution',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '二维均匀分布', window.location.href);
+        console.log('二维均匀分布');
+        await router.push('/dashboard/experiment/2DuniformDistribution');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
+  },
+  {
+    label: '二维正态分布',
+    icon: 'pi pi-chart-bar',
+    route: '',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '二维正态分布', window.location.href);
+        console.log('二维正态分布');
+        await router.push('/dashboard/experiment/buffon');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
+  },
+]
 const feedback = ref('improvement');
 const content = ref('');
 const feedbackList = ref<Feedback[] | null>(null);
@@ -524,6 +557,22 @@ function goHome() {
                         </li>
                       </ul>
                     </details>
+                  </li>
+                </ul>
+              </details>
+            </li>
+            <li>
+              <details open>
+                <summary class="font-bold">
+                  <i class="pi pi-bookmark" /> 第三章
+                </summary>
+                <ul class="sapce-y-1">
+                  <li v-for="(item, index) in chapter3Items" :key="item.label">
+                    <a :class="{ active: isActiveRoute(item.route) }"
+                      @click="() => { item.command(); toggleDrawer(); }">
+                      <i :class="item.icon" />
+                      3.{{ index + 1 }}-{{ item.label }}
+                    </a>
                   </li>
                 </ul>
               </details>

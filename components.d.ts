@@ -39,7 +39,6 @@ declare module 'vue' {
     BuffonNeedle: typeof import('./src/components/experiment/chapter1/buffon-needle/BuffonNeedle.vue')['default']
     BuffonNeedleDisplay: typeof import('./src/components/experiment/chapter1/buffon-needle/BuffonNeedleDisplay.vue')['default']
     Button: typeof import('./src/components/ui/button/Button.vue')['default']
-    C1: typeof import('./src/components/diagram/chapter-1/C1.vue')['default']
     Card: typeof import('./src/components/ui/card/Card.vue')['default']
     CardContent: typeof import('./src/components/ui/card/CardContent.vue')['default']
     CardDescription: typeof import('./src/components/ui/card/CardDescription.vue')['default']
