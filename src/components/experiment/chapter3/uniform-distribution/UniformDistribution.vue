@@ -10,12 +10,7 @@ import katex from 'katex';
 import { computed, onMounted, watch, nextTick } from 'vue';
 import 'katex/dist/katex.min.css';
 
-const parameters = [
-    { label: 'x1', model: x1, min: 0, max: 30, step: 0.1 },
-    { label: 'x2', model: x2, min: 1, max: 30, step: 0.2 },
-    { label: 'y1', model: y1, min: 0, max: 30, step: 0.2 },
-    { label: 'y2', model: y2, min: 1, max: 30, step: 0.2 }
-];
+
 const x1 = ref(0);
 const x2 = ref(1);
 const y1 = ref(0);
@@ -43,6 +38,10 @@ function toggleChart3() {
     isChart1.value = false;
     isChart2.value = false;
     isChart3.value = true;
+}
+
+function updateModel(param, value) {
+  param.model = value;
 }
 
 const oneFormula = computed(() => {
@@ -90,18 +89,21 @@ function renderFormula() {
     }
 }
 onMounted(() => {
-    nextTick(() => {
-        renderFormula();
-    });
+    renderFormula();
 });
 
-watch([oneFormula, twoFormula, threeFormula], () => {
-    nextTick(() => {
-        renderFormula();
-    });
-});
+// watch([oneFormula, twoFormula, threeFormula], () => {
+//     nextTick(() => {
+//         renderFormula();
+//     });
+// });
 
-
+const parameters = [
+    { label: 'x1', model: x1, min: 0, max: 30, step: 0.1 },
+    { label: 'x2', model: x2, min: 1, max: 30, step: 0.2 },
+    { label: 'y1', model: y1, min: 0, max: 30, step: 0.2 },
+    { label: 'y2', model: y2, min: 1, max: 30, step: 0.2 }
+];
 
 const content = `
 # 结论
@@ -160,9 +162,10 @@ const content = `
                             class="flex flex-col flex-1 items-center justify-center space-y-5">
                             <Label>{{ param.label }}</Label>
                             <div class="max-w-xl space-y-3">
-                                <Input v-model.number="param.model" :min-fraction-digits="0.1" />
-                                <Slider v-model="param.model" :min="param.min" :max="param.max" :step="param.step"
-                                    class="w-48" />
+                                <<Input :value="param.model" @input="updateModel(param, $event)"
+                                    :min-fraction-digits="0.1" />
+                                <Slider :value="param.model" @input="updateModel(param, $event)" :min="param.min"
+                                    :max="param.max" :step="param.step" class="w-48"  />
                             </div>
                         </div>
 
