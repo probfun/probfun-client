@@ -34,7 +34,7 @@ function draw3DUniformDistribution() {
     const uniform1 = {
         id: 'main',
         latex: `f_1(x, y) = \\frac{1}{${area}} \\{${props.x1} <= x <= ${props.x2}\\} \\{${props.y1} <= y <= ${props.y2}\\}`,
-        color: Desmos.Colors.BLUE,
+        color: Desmos.Colors.RED,
     }
     const uniform2 = {
         id: 'next',
@@ -71,5 +71,5 @@ function draw3DUniformDistribution() {
 </script>
 
 <template>
-    <div ref="elt" style="width: 100%; height: 400px;"></div>
+    <div ref="elt" style="width: 100%; height: 100%;"></div>
 </template>

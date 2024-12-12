@@ -112,6 +112,10 @@ const router = createRouter({
           component: () => import('@/components/experiment/chapter3/uniform-distribution/UniformDistribution.vue'),
         },
         {
+          path: '/dashboard/experiment/2DnormalDistribution',
+          component: () => import('@/components/experiment/chapter3/normal-distribution/NormalDistribution.vue'),
+        },
+        {
           path: '/dashboard/info0',
           component: StudentPanel,
         },

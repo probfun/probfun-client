@@ -379,12 +379,12 @@ const chapter3Items = [
   {
     label: '二维正态分布',
     icon: 'pi pi-chart-bar',
-    route: '',
+    route: '/dashboard/experiment/2DnormalDistribution',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '二维正态分布', window.location.href);
         console.log('二维正态分布');
-        await router.push('/dashboard/experiment/buffon');
+        await router.push('/dashboard/experiment/2DnormalDistribution');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
