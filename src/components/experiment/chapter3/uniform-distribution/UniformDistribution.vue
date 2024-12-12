@@ -40,7 +40,7 @@ function toggleChart3() {
     isChart3.value = true;
 }
 
-function updateModel(param, value) {
+function updateModel(param: { model: any; }, value: any) {
   param.model = value;
 }
 
@@ -162,7 +162,7 @@ const content = `
                             class="flex flex-col flex-1 items-center justify-center space-y-5">
                             <Label>{{ param.label }}</Label>
                             <div class="max-w-xl space-y-3">
-                                <<Input :value="param.model" @input="updateModel(param, $event)"
+                                <Input :value="param.model" @input="updateModel(param, $event)"
                                     :min-fraction-digits="0.1" />
                                 <Slider :value="param.model" @input="updateModel(param, $event)" :min="param.min"
                                     :max="param.max" :step="param.step" class="w-48"  />
