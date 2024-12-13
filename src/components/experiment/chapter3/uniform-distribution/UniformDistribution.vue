@@ -49,8 +49,8 @@ const oneFormula = computed(() => {
     \\begin{cases} 
     \\frac{1}{(x2 - x1)(y2 - y1)}, & \\text{if } x \\in [x1, x2] \\text{ and } y \\in [y1, y2] \\\\
     0, & \\text{otherwise}
-    \\end{cases}
-    =
+    \\end{cases}\\\\
+  \\phantom{f(x, y)}=
   \\begin{cases} 
     \\frac{1}{(${x2.value} - ${x1.value})(${y2.value} - ${y1.value})}, & \\text{if } x \\in [${x1.value}, ${x2.value}] \\text{ and } y \\in [${y1.value}, ${y2.value}] \\\\
     0, & \\text{otherwise}
@@ -66,20 +66,23 @@ const twoFormula = computed(() => {
     \\frac{1}{x2 - x1}, & \\text{if } x \\in [x1, x2] \\\\
     0, & \\text{otherwise}
     \\end{cases}
-    =
+    
+=
     \\begin{cases} 
     \\frac{1}{(${x2.value} - ${x1.value})}, & \\text{if } x \\in [${x1.value}, ${x2.value}] \\\\
     0, & \\text{otherwise}
     \\end{cases}
     
     \\\\
-
+    \\phantom{f_Y(y)}
+\\\\
    f_Y(y) = 
     \\begin{cases} 
     \\frac{1}{y2 - y1}, & \\text{if } y \\in [y1, y2] \\\\
     0, & \\text{otherwise}
     \\end{cases}
-    =
+ 
+   =
     \\begin{cases} 
     \\frac{1}{(${y2.value} - ${y1.value})}, & \\text{if } y \\in [${y1.value}, ${y2.value}] \\\\
     0, & \\text{otherwise}
@@ -99,7 +102,10 @@ const threeFormula = computed(() => {
     \\frac{1}{${x2.value} - ${x1.value}}, & \\text{if } x \\in [${x1.value}, ${x2.value}] \\\\
     0, & \\text{otherwise}
     \\end{cases}
-    \\\\
+    
+     \\\\
+    \\phantom{f_Y(y)}
+\\\\
     f_Y(y | x) = 
     \\begin{cases} 
     \\frac{1}{y2 - y1}, & \\text{if } x \\in [y1, y2] \\\\
@@ -164,14 +170,14 @@ const content = `
             </UniformDiagram>
         </template>
         <template #parameter>
-            <div class="w-full h-full flex flex-col items-center justify-center gap-3 p-3">
-                <Card class="w-full">
+            <div class="w-full h-full flex flex-row  justify-center gap-3 p-3">
+                <Card class="w-full w-1/2 card">
                     <CardHeader>
                         <CardTitle v-if="isChart1">二维均匀的联合概率密度函数（PDF）</CardTitle>
                         <CardTitle v-if="isChart2">二维均匀的边缘分布概率密度函数（PDF）</CardTitle>
                         <CardTitle v-if="isChart3">二维均匀的条件分布</CardTitle>
                     </CardHeader>
-                    <CardContent class="flex w-full justify-center">
+                    <CardContent class="flex w-full justify-start">
                         <div v-show="isChart1" ref="oneContainer" class="text-base" />
                         <div v-show="isChart2" ref="twoContainer" class="text-base" />
                         <div v-show="isChart3" ref="threeContainer" class="text-base" />
@@ -179,13 +185,13 @@ const content = `
                     </CardContent>
                 </Card>
 
-                <Card class="w-full flex-1 flex flex-col">
+                <Card class="h-full w-1/2 cardflex-1 flex flex-col">
                     <CardHeader>
                         <CardTitle>
                             参数调整
                         </CardTitle>
                     </CardHeader>
-                    <CardContent class="flex-1 flex flex-col justify-center items-center gap-6">
+                    <CardContent class=" flex flex-col justify-center items-center gap-3">
                         <!-- 居中的按钮 -->
                         <div class="flex justify-center w-full">
                             <div class="dropdown">
@@ -208,18 +214,21 @@ const content = `
                         </div>
 
                         <!-- 输入框成一行排列 -->
-                        <div class="flex flex-row justify-center gap-6 w-full">
-                            <div v-for="param in parameters" :key="param.label"
-                                class="flex flex-col items-center space-y-3">
-                                <Label>{{ param.label }}</Label>
-                                <div class="max-w-xl space-y-3">
-                                    <Input :value="param.model" @input="updateModel(param, $event)"
-                                        :min-fraction-digits="0.1" />
-                                    <Slider :value="param.model" @input="updateModel(param, $event)" :min="param.min"
-                                        :max="param.max" :step="param.step" class="w-48" style="font-size: larger;" />
+                        <div class="grid grid-cols-2 gap-10">
+                            <div v-for="(param) in parameters" :key="param.label"
+                                class="flex flex-col gap-8 pb-0">
+                                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-3">
+                                    <Label>{{ param.label }}</Label>
+                                    <div class="max-w-xl space-y-3">
+                                        <Input :value="param.model" @input="updateModel(param, $event)"
+                                            :min-fraction-digits="0.1" fluid />
+                                        <Slider :value="param.model" @input="updateModel(param, $event)"
+                                            :min="param.min" :max="param.max" :step="param.step" class="w-full" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
                     </CardContent>
 
                 </Card>

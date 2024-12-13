@@ -170,13 +170,13 @@ function updateExperiment() {
     title.value = '泊松分布与正态分布';
     tags.value = ['λ较大，泊松分布可近似为均值和方差均为λ的正态分布'];
   }
-  else if (path === '') {
-    title.value = '';
-    tags.value = [''];
+  else if (path === '2DuniformDistribution') {
+    title.value = '二维均匀分布';
+    tags.value = ['边缘分布','条件分布'];
   }
-  else if (path === '') {
-    title.value = '';
-    tags.value = [''];
+  else if (path === '2DnormalDistribution') {
+    title.value = '二维正态分布';
+    tags.value = ['边缘分布','条件分布'];
   }
   else if (path === '') {
     title.value = '';
