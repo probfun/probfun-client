@@ -172,11 +172,11 @@ function updateExperiment() {
   }
   else if (path === '2DuniformDistribution') {
     title.value = '二维均匀分布';
-    tags.value = ['边缘分布','条件分布'];
+    tags.value = ['边缘分布','条件分布','(x,y) ∈ Area G = (x2-x1)·(y2-y1)' , 'P((X,Y) ∈ A) = Area A / Area G'];
   }
   else if (path === '2DnormalDistribution') {
     title.value = '二维正态分布';
-    tags.value = ['边缘分布','条件分布'];
+    tags.value = ['边缘分布','条件分布','(X,Y) ~ N(μ1,μ2;σ1²,σ2²;ρ)'];
   }
   else if (path === '') {
     title.value = '';
