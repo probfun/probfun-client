@@ -17,6 +17,15 @@ const sigma1 = ref(0.1);
 const sigma2 = ref(0.1);
 const density = ref(0.5);
 
+const parameters = [
+    { label: 'μ1', model: mean1, min: 0, max: 10, step: 0.1 },
+    { label: 'μ2', model: mean2, min: 0, max: 10, step: 0.1 },
+   
+    { label: 'σ1', model: sigma2, min: 0.1, max: 10, step: 0.05 },
+    { label: 'σ2', model: density, min: 1, max: 10, step: 0.01 },
+    { label: 'ρ', model: sigma1, min: 0.1, max: 10, step: 0.05 },
+];
+
 const oneContainer = ref<HTMLElement | null>(null);
 const twoContainer = ref<HTMLElement | null>(null);
 const threeContainer = ref<HTMLElement | null>(null);
@@ -62,7 +71,7 @@ const oneFormula = computed(() => {
 
 const twoFormula = computed(() => {
 
-return `
+    return `
 \\\\
 f_X(x) = \\frac{1}{\\sqrt{2\\pi} σ_1}e^{-\\frac{(x-μ_1)^2}{2σ_1²}} , -∞<x<+∞
      \\\\
@@ -88,7 +97,7 @@ f_Y(y) = \\frac{1}{\\sqrt{2\\pi} σ_2}e^{-\\frac{(y-μ_2)^2}{2σ_2²}} , -∞<y<
 
 const threeFormula = computed(() => {
 
-return `f_{Y|X}(y | x) = 
+    return `f_{Y|X}(y | x) = 
 \\frac{f(x,y)}{f_X(x)}=
 \\frac{1}{\\sqrt{2\\pi} σ_2 \\sqrt{1-ρ^2}} e^{\\frac{1}{2(1-ρ^2)}[\\frac{x-μ_1}{σ_1}-ρ\\frac{y-μ_2}{σ_2}]^2}
 
@@ -175,8 +184,22 @@ const content = `
                     </CardHeader>
                     <CardContent class=" flex flex-col justify-center items-center gap-3">
                         <!-- 居中的按钮 -->
-                        <div class="flex justify-center w-full">
-                            <div class="dropdown">
+
+
+
+
+                        <div class="grid grid-cols-2 gap-10">
+                            <div v-for="(param) in parameters" :key="param.label" class="flex flex-col gap-8 pb-0">
+                                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-3">
+                                    <Label>{{ param.label }}</Label>
+                                    <div class="max-w-xl space-y-3">
+                                        <Input :value="param.model" :min-fraction-digits="0.1" fluid />
+                                        <Slider :value="param.model" :min="param.min" :max="param.max"
+                                            :step="param.step" class="w-full" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dropdown  transform translate-x-1/4 mt-6">
                                 <Button tabindex="0" role="button" class="m-0">
                                     点我切换
                                 </Button>
@@ -194,11 +217,27 @@ const content = `
                                 </ul>
                             </div>
                         </div>
+<!-- 
+                        <div class="flex  w-full">
+                            <div class="dropdown">
+                                <Button tabindex="0" role="button" class="m-0">
+                                    点我切换
+                                </Button>
+                                <ul tabindex="0"
+                                    class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                                    <li @click="toggleChart1">
+                                        <a>二维正态分布</a>
+                                    </li>
+                                    <li @click="toggleChart2">
+                                        <a>二维正态分布的边缘分布</a>
+                                    </li>
+                                    <li @click="toggleChart3">
+                                        <a>二维正态分布的条件分布</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div> -->
 
-                        <!-- 输入框成一行排列 -->
-                        <div class="grid grid-cols-2 gap-10">
-
-                        </div>
 
                     </CardContent>
 
