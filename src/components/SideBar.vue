@@ -581,8 +581,8 @@ function goHome() {
         </div>
       </div>
     </div>
-    <Dialog v-model:open="isFeedback">
-      <DialogContent class="overflow-y-auto max-w-xl">
+    <Dialog v-model:open="isFeedback" class="overflow-y-auto h-2/3">
+      <DialogContent class="overflow-y-auto h-2/3">
         <DialogHeader>
           <DialogTitle>问题反馈
             <button v-if="userStore.user?.role === 1 && seeFeedback === false" class="mr-5 underline"
