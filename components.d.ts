@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    3DUniformDiagram: typeof import('./src/components/experiment/chapter3/uniform-distribution/3DUniformDiagram.vue')['default']
     Accordion: typeof import('./src/components/ui/accordion/Accordion.vue')['default']
     AccordionContent: typeof import('./src/components/ui/accordion/AccordionContent.vue')['default']
     AccordionItem: typeof import('./src/components/ui/accordion/AccordionItem.vue')['default']
@@ -120,7 +121,7 @@ declare module 'vue' {
     Label: typeof import('./src/components/ui/label/Label.vue')['default']
     LoginCard: typeof import('./src/components/auth/LoginCard.vue')['default']
     NavBar: typeof import('./src/components/NavBar.vue')['default']
-    NormalDiagram: typeof import('./src/components/experiment/chapter3/normal-distribution/NormalDiagram.vue')['default']
+    NormalDiagram: typeof import('./src/components/experiment/distribution/normal-distribution/NormalDiagram.vue')['default']
     NormalDistribution: typeof import('./src/components/experiment/chapter3/normal-distribution/NormalDistribution.vue')['default']
     PE: typeof import('./src/components/experiment/distribution/comparison/PE.vue')['default']
     PN: typeof import('./src/components/experiment/distribution/comparison/PN.vue')['default']
@@ -168,6 +169,8 @@ declare module 'vue' {
     TeacherPanel: typeof import('./src/components/user/TeacherPanel.vue')['default']
     Textarea: typeof import('./src/components/ui/textarea/Textarea.vue')['default']
     ThreeDoors: typeof import('./src/components/experiment/chapter1/ThreeDoors.vue')['default']
+    ThreeNormalDiagram: typeof import('./src/components/experiment/chapter3/normal-distribution/threeNormalDiagram.vue')['default']
+    ThreeUniformDiagram: typeof import('./src/components/experiment/chapter3/uniform-distribution/threeUniformDiagram.vue')['default']
     Toast: typeof import('./src/components/ui/toast/Toast.vue')['default']
     ToastAction: typeof import('./src/components/ui/toast/ToastAction.vue')['default']
     ToastClose: typeof import('./src/components/ui/toast/ToastClose.vue')['default']

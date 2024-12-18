@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
-import UniformDiagram from './UniformDiagram.vue';
+import threeUniformDiagram from './threeUniformDiagram.vue';
+import UniformDiagram from '../../distribution/UniformDiagram.vue';
 import { ref } from 'vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import Slider from 'primevue/slider';
 import { toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { computed, onMounted, watch, nextTick } from 'vue';
@@ -38,10 +40,6 @@ function toggleChart3() {
     isChart1.value = false;
     isChart2.value = false;
     isChart3.value = true;
-}
-
-function updateModel(param: { model: any; }, value: any) {
-    param.model = value;
 }
 
 const oneFormula = computed(() => {
@@ -120,8 +118,6 @@ const threeFormula = computed(() => {
     `;
 });
 
-
-
 function renderFormula() {
     if (oneContainer.value) {
         katex.render(oneFormula.value, oneContainer.value, {
@@ -143,18 +139,9 @@ onMounted(() => {
     renderFormula();
 });
 
-// watch([oneFormula, twoFormula, threeFormula], () => {
-//     nextTick(() => {
-//         renderFormula();
-//     });
-// });
-
-const parameters = [
-    { label: 'x1', model: x1, min: 0, max: 30, step: 0.1 },
-    { label: 'x2', model: x2, min: 1, max: 30, step: 0.2 },
-    { label: 'y1', model: y1, min: 0, max: 30, step: 0.2 },
-    { label: 'y2', model: y2, min: 1, max: 30, step: 0.2 }
-];
+watch([oneFormula, twoFormula, threeFormula], () => {
+    renderFormula();
+});
 
 const content = `
 # 结论
@@ -166,8 +153,14 @@ const content = `
 <template>
     <ExperimentBoard>
         <template #experiment>
-            <UniformDiagram class="flex-1 h-full" :x1="x1" :x2="x2" :y1="y1" :y2="y2" :show-graph="isChart1">
-            </UniformDiagram>
+            <ThreeUniformDiagram v-if="isChart1" class="flex-1 h-full" :x1="x1" :x2="x2" :y1="y1" :y2="y2">
+            </ThreeUniformDiagram>
+            <div v-if="isChart2 || isChart3" class="w-full h-full flex">
+                <UniformDiagram class="w-[50%] h-full mr-1" :a="x1" :b="x2" :k="1" :m="0" :show-history="false">
+                </UniformDiagram>
+                <UniformDiagram class="w-[50%] h-full ml-1" :a="y1" :b="y2" :k="1" :m="0" :show-history="false">
+                </UniformDiagram>
+            </div>
         </template>
         <template #parameter>
             <div class="w-full h-full flex flex-row  justify-center gap-3 p-3">
@@ -213,17 +206,40 @@ const content = `
                             </div>
                         </div>
 
-                        <!-- 输入框成一行排列 -->
                         <div class="grid grid-cols-2 gap-10">
-                            <div v-for="(param) in parameters" :key="param.label"
-                                class="flex flex-col gap-8 pb-0">
+                            <div class="flex flex-col gap-8 pb-0">
                                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-3">
-                                    <Label>{{ param.label }}</Label>
+                                    <Label>x1</Label>
                                     <div class="max-w-xl space-y-3">
-                                        <Input :value="param.model" @input="updateModel(param, $event)"
-                                            :min-fraction-digits="0.1" fluid />
-                                        <Slider :value="param.model" @input="updateModel(param, $event)"
-                                            :min="param.min" :max="param.max" :step="param.step" class="w-full" />
+                                        <Input v-model="x1" fluid />
+                                        <Slider v-model="x1" :min="-10" :max="x2" :step="1" class="w-full" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-8 pb-0">
+                                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-3">
+                                    <Label>x2</Label>
+                                    <div class="max-w-xl space-y-3">
+                                        <Input v-model="x2" fluid />
+                                        <Slider v-model="x2" :min="x1" :max="10" :step="1" class="w-full" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-8 pb-0">
+                                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-3">
+                                    <Label>y1</Label>
+                                    <div class="max-w-xl space-y-3">
+                                        <Input v-model="y1" fluid />
+                                        <Slider v-model="y1" :min="-10" :max="y2" :step="1" class="w-full" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-8 pb-0">
+                                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-3">
+                                    <Label>y2</Label>
+                                    <div class="max-w-xl space-y-3">
+                                        <Input v-model="y2" fluid />
+                                        <Slider v-model="y2" :min="y1" :max="10" :step="1" class="w-full" />
                                     </div>
                                 </div>
                             </div>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 const props = defineProps<{
     x1: number,
@@ -73,7 +73,11 @@ function draw3DUniformDistribution() {
     calculator.setExpression(uniform4);
     calculator.setExpression(uniform5);
     calculator.setExpression(uniform6);
-}
+};
+
+watch(() => [props.x1, props.x2, props.y1, props.y2], () => {
+  draw3DUniformDistribution();
+});
 </script>
 
 <template>

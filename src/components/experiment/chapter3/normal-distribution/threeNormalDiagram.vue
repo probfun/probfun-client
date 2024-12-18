@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { color } from 'echarts/core';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 const props = defineProps<{
     mean1: number,
@@ -27,10 +27,10 @@ onMounted(() => {
     calculator = Desmos.Calculator3D(elt.value, options);
     draw3DUniformDistribution();
     calculator.setMathBounds({
-        left: props.mean1 - 1,
-        right: props.mean1 + 1,
-        bottom: props.mean2 - 1,
-        top: props.mean2 + 1
+        left: -4,
+        right: 4,
+        bottom: -4,
+        top: 4
     });
 });
 
@@ -43,6 +43,10 @@ function draw3DUniformDistribution() {
     }
     calculator.setExpression(normal);
 }
+
+watch(() => [props.mean1, props.mean2, props.sigma1, props.sigma2, props.density], () => {
+  draw3DUniformDistribution();
+});
 </script>
 
 <template>
