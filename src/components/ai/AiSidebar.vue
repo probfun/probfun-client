@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Chat } from '@/api/ai/aiType';
+import AiQuestions from '@/components/ai/AiQuestions.vue';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,6 +12,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   DropdownMenu,
@@ -22,6 +24,14 @@ import { cn } from '@/lib/utils';
 import { useAiStore } from '@/store';
 import { Ellipsis, Plus } from 'lucide-vue-next';
 import { ref, watch } from 'vue';
+
+defineProps < {
+  disabled: boolean
+}>();
+
+const emit = defineEmits<{
+  send: [question: string]
+}>();
 
 const isOpen = ref(false);
 const editChatBlock = ref<Chat | null>(null);
@@ -54,8 +64,8 @@ function handleCompositionEnd() {
 </script>
 
 <template>
-  <div class="sticky left-0 h-full w-72">
-    <Card class="h-full overflow-y-hidden flex flex-col hover:border-primary transition-all duration-300">
+  <div class="sticky left-0 h-full w-72 grid grid-rows-[1fr_2fr] gap-2">
+    <Card class="overflow-y-hidden flex flex-col hover:border-primary transition-all duration-300">
       <CardHeader class="px-4 py-2">
         <CardTitle class="flex items-center">
           历史聊天
@@ -119,6 +129,12 @@ function handleCompositionEnd() {
         </div>
       </CardContent>
     </Card>
+    <AiQuestions
+      :disabled="disabled"
+      @send="(question) => {
+        emit('send', question);
+      }"
+    />
 
     <AlertDialog v-model:open="isOpen">
       <AlertDialogContent>
@@ -138,7 +154,7 @@ function handleCompositionEnd() {
               if (readyToDeleteChat?.chatId === aiStore.currentChat?.chatId) {
                 aiStore.currentChat = null;
               }
-              aiStore.chatList = aiStore.chatList.filter((chat) => chat.chatId !== readyToDeleteChat?.chatId);
+              aiStore.chatList = aiStore.chatList.filter((chat: Chat) => chat.chatId !== readyToDeleteChat?.chatId);
               readyToDeleteChat = null;
             }"
           >

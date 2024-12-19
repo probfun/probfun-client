@@ -1,6 +1,7 @@
 export interface User {
   uid: string
   studentId: string
+  classId: string
   nickname: string
   gender: string
   email: string

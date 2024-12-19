@@ -414,6 +414,11 @@ async function readMessage() {
               </div>
             </div>
 
+            <div class="grid max-w-xs gap-2">
+              <Label>教学班</Label>
+              <Input v-model="tempUser.classId" disabled />
+            </div>
+
             <div class="grid grid-cols-2 gap-4">
               <FormField v-slot="{ componentField }" name="username">
                 <FormItem>
@@ -456,31 +461,33 @@ async function readMessage() {
               </FormField>
             </div>
 
-            <FormField v-slot="{ componentField }" name="username">
-              <FormItem>
-                <FormLabel>学院</FormLabel>
-                <FormControl>
-                  <Input
-                    v-bind="componentField" v-model="tempUser.school" type="text" placeholder=""
-                    class="transition-all"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
+            <div class="grid grid-cols-2 gap-4">
+              <FormField v-slot="{ componentField }" name="username">
+                <FormItem>
+                  <FormLabel>学院</FormLabel>
+                  <FormControl>
+                    <Input
+                      v-bind="componentField" v-model="tempUser.school" type="text" placeholder=""
+                      class="transition-all"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
 
-            <FormField v-slot="{ componentField }" name="username">
-              <FormItem>
-                <FormLabel>专业</FormLabel>
-                <FormControl>
-                  <Input
-                    v-bind="componentField" v-model="tempUser.major" type="text" placeholder=""
-                    class="transition-all"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
+              <FormField v-slot="{ componentField }" name="username">
+                <FormItem>
+                  <FormLabel>专业</FormLabel>
+                  <FormControl>
+                    <Input
+                      v-bind="componentField" v-model="tempUser.major" type="text" placeholder=""
+                      class="transition-all"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
+            </div>
 
             <FormField v-slot="{ componentField }" name="username">
               <FormItem>

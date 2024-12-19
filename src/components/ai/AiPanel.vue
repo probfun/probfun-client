@@ -76,6 +76,11 @@ function handleScroll() {
   showScrollToBottom.value = scrollHeight - scrollTop - clientHeight > bottomThreshold;
 }
 
+async function send(question: string) {
+  createUserBlock(question);
+  await sendMessages();
+}
+
 async function sendMessages() {
   if (status.value === 'loading') {
     return;
@@ -89,7 +94,6 @@ async function sendMessages() {
   }
   const chatBlocks = aiStore.currentChat?.chatBlocks;
   try {
-    message.value = '';
     const newAiBlock: ChatBlock = {
       role: 'ai',
       data: [],
@@ -209,7 +213,7 @@ function handleCompositionEnd() {
 
 <template>
   <div class="flex p-2 gap-2">
-    <AiSidebar />
+    <AiSidebar :disabled="status !== 'idle'" @send="(question) => send(question)" />
     <Card class="flex-1 flex hover:border-primary flex-col transition-all duration-300">
       <CardHeader v-auto-animate class="py-2 px-4 flex flex-row items-center h-10">
         <CardTitle v-if="!aiStore.currentChat || !isEditChatTitle">
@@ -390,6 +394,7 @@ function handleCompositionEnd() {
               else if (status === 'idle') {
                 createUserBlock(message);
                 await sendMessages();
+                message = '';
               }
             }"
           >
