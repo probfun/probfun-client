@@ -183,7 +183,7 @@ function updateExperiment() {
     title.value = '几何分布';
     tags.value = ['X~GE(p)'];
   }
-  else if (path === 'evenDistribution') {
+  else if (path === 'uniformDistribution') {
     title.value = '均匀分布';
     tags.value = ['X~U(a,b)'];
   }

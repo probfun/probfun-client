@@ -149,7 +149,7 @@ function toggleTooltip() {
           v-model="searchQuery"
           type="text"
           placeholder="搜索分布"
-          @input="searchNode"
+          @update:model-value="searchNode"
         />
       </div>
       <div class="flex gap-3 p-3 flex-col flex-1 overflow-y-auto">

@@ -84,7 +84,7 @@ const router = createRouter({
           component: GeometricDistribution,
         },
         {
-          path: '/dashboard/experiment/evenDistribution',
+          path: '/dashboard/experiment/uniformDistribution',
           component: UniformDistribution,
         },
         {
