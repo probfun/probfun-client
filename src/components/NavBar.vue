@@ -2,7 +2,7 @@
 import type { Message } from '@/api/message/messageType';
 import type { User } from '@/api/user/userType';
 import { fetchMessagesApi, readMessagesApi } from '@/api/message/messageApi';
-import { putUserApi, putUserAvatarApi } from '@/api/user/userApi';
+import { putUserApi, putUserAvatarApi, updatePasswordApi } from '@/api/user/userApi';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button'
@@ -72,6 +72,47 @@ async function onSubmit() {
     error('个人资料更新失败，请重试');
   }
   isLoading.value = false;
+}
+
+const isOpenPassword = ref(false);
+const oldPassword = ref('');
+const newPassword = ref('');
+const confirmPassword = ref('');
+
+async function updatePassword() {
+  if (!tempUser.value)
+    return;
+  if (oldPassword.value === '' || newPassword.value === '' || newPassword.value === '') {
+    warning('密码不能为空');
+  }
+  if (newPassword.value !== confirmPassword.value) {
+    warning('两次输入的密码不一致');
+    return;
+  }
+  if (newPassword.value === oldPassword.value) {
+    warning('新密码不能与旧密码相同');
+    return;
+  }
+  try {
+    await updatePasswordApi(
+      oldPassword.value,
+      newPassword.value,
+    );
+    success('密码已更新');
+    isOpenPassword.value = false;
+    oldPassword.value = '';
+    newPassword.value = '';
+    confirmPassword.value = '';
+  }
+  catch (e: any) {
+    console.error('Error during updating password:', e);
+    if (e.response.status === 400) {
+      warning('旧密码错误');
+    }
+    else {
+      error('密码更新失败，请重试');
+    }
+  }
 }
 
 const fileInput = ref<HTMLInputElement | null>(null);
@@ -172,11 +213,11 @@ function updateExperiment() {
   }
   else if (path === '2DuniformDistribution') {
     title.value = '二维均匀分布';
-    tags.value = ['边缘分布','条件分布','(x,y) ∈ Area G = (x2-x1)·(y2-y1)' , 'P((X,Y) ∈ A) = Area A / Area G'];
+    tags.value = ['边缘分布', '条件分布', '(x,y) ∈ Area G = (x2-x1)·(y2-y1)', 'P((X,Y) ∈ A) = Area A / Area G'];
   }
   else if (path === '2DnormalDistribution') {
     title.value = '二维正态分布';
-    tags.value = ['边缘分布','条件分布','(X,Y) ~ N(μ1,μ2;σ1²,σ2²;ρ)'];
+    tags.value = ['边缘分布', '条件分布', '(X,Y) ~ N(μ1,μ2;σ1²,σ2²;ρ)'];
   }
   else if (path === '') {
     title.value = '';
@@ -210,7 +251,7 @@ async function getMessage() {
     console.log(result.messages);
 
     for (let i = 0; i < result.messages.length; i++) {
-      if (result.messages[i].read === false) {
+      if (!result.messages[i].read) {
         messageList.value.push(result.messages[i]);
         console.log(result.messages[i]);
       }
@@ -219,7 +260,7 @@ async function getMessage() {
         messageNumber.value -= 1;
       }
     }
-    console.log("消息", messageList.value);
+    console.log('消息', messageList.value);
   }
   catch (error) {
     console.error('Error during fetching messages:', error);
@@ -259,10 +300,13 @@ async function readMessage() {
           <PopoverTrigger>
             <Button size="icon" class="size-8 relative text-muted-foreground" variant="ghost">
               <Bell :stroke-width="2.5" class="size-5" />
-              <Badge v-if="messageNumber !== 0"
+              <Badge
+                v-if="messageNumber !== 0"
                 class="absolute right-1.5 top-0 translate-x-1/2 rounded-full min-w-4 h-4 p-0 flex items-center justify-center"
-                variant="destructive">
-                {{ messageNumber <= 99 ? messageNumber : '99+' }} </Badge>
+                variant="destructive"
+              >
+                {{ messageNumber <= 99 ? messageNumber : '99+' }}
+              </Badge>
             </Button>
           </PopoverTrigger>
           <PopoverContent>
@@ -300,28 +344,40 @@ async function readMessage() {
                 </Avatar>
                 <div class="flex flex-col">
                   <span v-if="item.type === 'post'">{{ item.postData?.post.user.nickname }}</span>
-                  <span v-if="item.type === 'pin'"
-                    @click="router.push(`/dashboard/experiment/${item.pinData?.comment.expId}`)">{{
-                      item.pinData?.user.nickname }}</span>
-                  <span v-if="item.type === 'reply'"
-                    @click="router.push(`/dashboard/experiment/${item.replyData?.comment.expId}`)">{{
-                      item.replyData?.reply.user.nickname }}</span>
-                  <span v-if="item.type === 'like'"
-                    @click="router.push(`/dashboard/experiment/${item.likeData?.comment.expId}`)">{{
-                      item.likeData?.user.nickname }}</span>
+                  <span
+                    v-if="item.type === 'pin'"
+                    @click="router.push(`/dashboard/experiment/${item.pinData?.comment.expId}`)"
+                  >{{
+                    item.pinData?.user.nickname }}</span>
+                  <span
+                    v-if="item.type === 'reply'"
+                    @click="router.push(`/dashboard/experiment/${item.replyData?.comment.expId}`)"
+                  >{{
+                    item.replyData?.reply.user.nickname }}</span>
+                  <span
+                    v-if="item.type === 'like'"
+                    @click="router.push(`/dashboard/experiment/${item.likeData?.comment.expId}`)"
+                  >{{
+                    item.likeData?.user.nickname }}</span>
                   <span v-if="item.type === 'delete'">管理员</span>
 
                   <span v-if="item.type === 'post'" class="content text-sm text-gray-600">老师发布了新的班级公告</span>
-                  <span v-if="item.type === 'pin'" class="content text-sm text-gray-600"
-                    @click="router.push(`/dashboard/experiment/${item.pinData?.comment.expId}`)">老师置顶了你的评论</span>
-                  <span v-if="item.type === 'reply'" class="content text-sm text-gray-600"
-                    @click="router.push(`/dashboard/experiment/${item.replyData?.comment.expId}`)">回复了你的评论</span>
-                  <span v-if="item.type === 'like'" class="content text-sm text-gray-600"
-                    @click="router.push(`/dashboard/experiment/${item.likeData?.comment.expId}`)">赞了你的评论</span>
+                  <span
+                    v-if="item.type === 'pin'" class="content text-sm text-gray-600"
+                    @click="router.push(`/dashboard/experiment/${item.pinData?.comment.expId}`)"
+                  >老师置顶了你的评论</span>
+                  <span
+                    v-if="item.type === 'reply'" class="content text-sm text-gray-600"
+                    @click="router.push(`/dashboard/experiment/${item.replyData?.comment.expId}`)"
+                  >回复了你的评论</span>
+                  <span
+                    v-if="item.type === 'like'" class="content text-sm text-gray-600"
+                    @click="router.push(`/dashboard/experiment/${item.likeData?.comment.expId}`)"
+                  >赞了你的评论</span>
                   <span v-if="item.type === 'delete'" class="content text-sm text-gray-600">管理员删除了你的评论</span>
                 </div>
                 <div v-if="item.read === false" class="ml-auto">
-                  <span class="inline-block w-2 h-2 bg-red-600 rounded-full"></span>
+                  <span class="inline-block w-2 h-2 bg-red-600 rounded-full" />
                 </div>
               </div>
             </div>
@@ -363,8 +419,10 @@ async function readMessage() {
                 <FormItem>
                   <FormLabel>昵称</FormLabel>
                   <FormControl>
-                    <Input v-bind="componentField" v-model="tempUser.nickname" type="text" placeholder=""
-                      class="transition-all" />
+                    <Input
+                      v-bind="componentField" v-model="tempUser.nickname" type="text" placeholder=""
+                      class="transition-all"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -402,8 +460,10 @@ async function readMessage() {
               <FormItem>
                 <FormLabel>学院</FormLabel>
                 <FormControl>
-                  <Input v-bind="componentField" v-model="tempUser.school" type="text" placeholder=""
-                    class="transition-all" />
+                  <Input
+                    v-bind="componentField" v-model="tempUser.school" type="text" placeholder=""
+                    class="transition-all"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -413,8 +473,10 @@ async function readMessage() {
               <FormItem>
                 <FormLabel>专业</FormLabel>
                 <FormControl>
-                  <Input v-bind="componentField" v-model="tempUser.major" type="text" placeholder=""
-                    class="transition-all" />
+                  <Input
+                    v-bind="componentField" v-model="tempUser.major" type="text" placeholder=""
+                    class="transition-all"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -424,8 +486,10 @@ async function readMessage() {
               <FormItem>
                 <FormLabel>邮箱</FormLabel>
                 <FormControl>
-                  <Input v-bind="componentField" v-model="tempUser.email" type="email" placeholder=""
-                    class="transition-all" />
+                  <Input
+                    v-bind="componentField" v-model="tempUser.email" type="email" placeholder=""
+                    class="transition-all"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -435,8 +499,10 @@ async function readMessage() {
               <FormItem>
                 <FormLabel>手机号</FormLabel>
                 <FormControl>
-                  <Input v-bind="componentField" v-model="tempUser.phone" type="text" placeholder=""
-                    class="transition-all" />
+                  <Input
+                    v-bind="componentField" v-model="tempUser.phone" type="text" placeholder=""
+                    class="transition-all"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -448,9 +514,11 @@ async function readMessage() {
             <div class="flex justify-center items-start">
               <Avatar class="size-32 relative">
                 <AvatarImage :src="tempUser.avatarUrl" alt="avatar" />
-                <Button variant="ghost"
+                <Button
+                  variant="ghost"
                   class="absolute top-0 left-0 size-32 rounded-full opacity-0 transition-all hover:opacity-100 hover:bg-opacity-30 hover:bg-black"
-                  @click="triggerFileUpload">
+                  @click="triggerFileUpload"
+                >
                   <div class="flex flex-col items-center text-background">
                     <Plus class="size-6" />
                     <div class="font-semibold">
@@ -464,7 +532,67 @@ async function readMessage() {
           <input ref="fileInput" type="file" class="hidden" accept="image/*" @change="handleFileUpload">
         </div>
 
-        <DialogFooter>
+        <DialogFooter class="md:gap-5">
+          <Dialog v-model:open="isOpenPassword">
+            <DialogTrigger>
+              <Button> 修改密码 </Button>
+            </DialogTrigger>
+            <DialogContent class=" w-auto">
+              <DialogHeader>
+                <DialogTitle> 修改密码 </DialogTitle>
+                <DialogDescription>
+                  在此更改您的密码。完成后单击“保存”。
+                </DialogDescription>
+              </DialogHeader>
+
+              <div class="max-w-sm w-full grid gap-2">
+                <FormField v-slot="{ componentField }" name="username">
+                  <FormItem>
+                    <FormLabel>旧密码</FormLabel>
+                    <FormControl>
+                      <Input
+                        v-bind="componentField" v-model="oldPassword" type="password" placeholder=""
+                        class="transition-all"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormField>
+
+                <FormField v-slot="{ componentField }" name="username">
+                  <FormItem>
+                    <FormLabel>新密码</FormLabel>
+                    <FormControl>
+                      <Input
+                        v-bind="componentField" v-model="newPassword" type="password" placeholder=""
+                        class="transition-all"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormField>
+
+                <FormField v-slot="{ componentField }" name="username">
+                  <FormItem>
+                    <FormLabel>确认密码</FormLabel>
+                    <FormControl>
+                      <Input
+                        v-bind="componentField" v-model="confirmPassword" type="password" placeholder=""
+                        class="transition-all"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormField>
+              </div>
+
+              <DialogFooter>
+                <Button @click="updatePassword">
+                  设置密码
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
           <DialogClose>
             <Button @click="onSubmit">
               保存设置

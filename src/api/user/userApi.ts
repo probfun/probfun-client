@@ -65,6 +65,19 @@ export async function putUserApi(
   return result.data;
 }
 
+export async function updatePasswordApi(
+  oldPassword: string,
+  newPassword: string,
+) {
+  const result = await put<{
+    user: User
+  }>('/api/user/password', {
+    oldPassword,
+    newPassword,
+  });
+  return result.data;
+}
+
 export async function putUserAvatarApi(avatar: File) {
   const formData = new FormData();
   formData.append('avatar', avatar);
