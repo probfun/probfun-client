@@ -259,9 +259,9 @@ function handleCompositionEnd() {
           <div class="flex items-center justify-center border-r">
             <video
               width="60%"
-              class="pointer-events-none"
+              class="select-none"
+              :draggable="false"
               height="auto"
-              controls
               autoplay
               loop
             >
