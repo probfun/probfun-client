@@ -264,6 +264,7 @@ function handleCompositionEnd() {
               height="auto"
               autoplay
               loop
+              muted
             >
               <source src="/src/assets/ai-robot.webm" type="video/webm">
               <p>您的浏览器不支持 WebM 格式。</p>
