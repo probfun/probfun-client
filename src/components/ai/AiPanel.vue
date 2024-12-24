@@ -255,108 +255,123 @@ function handleCompositionEnd() {
         </div>
       </CardHeader>
       <CardContent class="overflow-y-hidden border-t flex pb-0 px-0 relative flex-1">
-        <div ref="scrollContainer" class="flex w-full flex-col items-center gap-3 overflow-y-auto pt-4 px-6">
-          <div v-for="(block, index) in aiStore.currentChat?.chatBlocks ?? [START_BLOCK]" :key="block.blockId" v-auto-animate class="flex w-full max-w-screen-md">
-            <div v-if="block.role === 'user'" class="ml-auto">
-              <ContextMenu>
-                <ContextMenuTrigger>
-                  <div
-                    class="rounded-lg bg-primary text-primary-foreground p-2" @dblclick="() => {
-                      message = block.data[0].text as string;
-                      aiStore.currentChat?.chatBlocks.splice(index);
-                      stopGenerating();
-                      nextTick(() => {
-                        resetTextareaHeight();
-                      });
-                    }"
-                  >
-                    <Label class="text-base whitespace-pre-line">{{ block.data[0].text }}</Label>
-                    <!--                  <Input v-model="msg.content" class="p-0 text-base min-w-none w-auto h-auto py-1" /> -->
-                  </div>
-                </ContextMenuTrigger>
-                <ContextMenuContent>
-                  <ContextMenuItem class="flex gap-2" @click="copyMessage(block)">
-                    <Clipboard class="size-4" />
-                    复制
-                  </ContextMenuItem>
-                  <ContextMenuItem
-                    class="flex gap-2"
-                    @click="() => {
-                      message = block.data[0].text as string;
-                      aiStore.currentChat?.chatBlocks.splice(index);
-                      stopGenerating();
-                      nextTick(() => {
-                        resetTextareaHeight();
-                      });
-                    }"
-                  >
-                    <PencilLine class="size-4" />
-                    编辑
-                  </ContextMenuItem>
-                  <ContextMenuItem
-                    class="flex gap-2" @click="() => {
-                      aiStore.currentChat?.chatBlocks.splice(index + 1);
-                      sendMessages();
-                    }"
-                  >
-                    <RotateCcw class="size-4" />
-                    重新发送
-                  </ContextMenuItem>
-                  <ContextMenuItem
-                    class="flex gap-2" @click="deleteMessage(block)"
-                  >
-                    <Trash2 class="size-4" />
-                    删除
-                  </ContextMenuItem>
-                </ContextMenuContent>
-              </ContextMenu>
-            </div>
-            <div v-else class="flex flex-col gap-3 w-full mb-4">
-              <div class="flex gap-2 items-center">
-                <div class="rounded-full p-1 bg-primary flex items-center justify-center text-primary-foreground">
-                  <Bot class="size-6" />
-                </div>
-                <Label class="text-base"> 邮小率 </Label>
-              </div>
-              <ContextMenu>
-                <ContextMenuTrigger :disabled="status !== 'idle' && aiStore.currentChat !== null && index === aiStore.currentChat.chatBlocks.length - 1">
-                  <div v-auto-animate class="rounded-lg bg-muted text-foreground p-3 w-full border">
-                    <div v-if="status === 'loading' && aiStore.currentChat && index === aiStore.currentChat.chatBlocks.length - 1" class="space-y-2">
-                      <Skeleton class="w-32 h-5" />
-                      <Skeleton class="w-full h-5" />
-                      <Skeleton class="w-full h-5" />
-                      <Skeleton class="w-full h-5" />
+        <div class="grid grid-cols-[1fr_3fr] w-full">
+          <div class="flex items-center justify-center border-r">
+            <video
+              width="60%"
+              class="pointer-events-none"
+              height="auto"
+              controls
+              autoplay
+              loop
+            >
+              <source src="/src/assets/ai-robot.webm" type="video/webm">
+              <p>您的浏览器不支持 WebM 格式。</p>
+            </video>
+          </div>
+          <div ref="scrollContainer" class="flex w-full flex-col items-center gap-3 overflow-y-auto pt-4 px-6">
+            <div v-for="(block, index) in aiStore.currentChat?.chatBlocks ?? [START_BLOCK]" :key="block.blockId" v-auto-animate class="flex w-full max-w-screen-md">
+              <div v-if="block.role === 'user'" class="ml-auto">
+                <ContextMenu>
+                  <ContextMenuTrigger>
+                    <div
+                      class="rounded-lg bg-primary text-primary-foreground p-2" @dblclick="() => {
+                        message = block.data[0].text as string;
+                        aiStore.currentChat?.chatBlocks.splice(index);
+                        stopGenerating();
+                        nextTick(() => {
+                          resetTextareaHeight();
+                        });
+                      }"
+                    >
+                      <Label class="text-base whitespace-pre-line">{{ block.data[0].text }}</Label>
+                      <!--                  <Input v-model="msg.content" class="p-0 text-base min-w-none w-auto h-auto py-1" /> -->
                     </div>
-                    <div v-else class="flex flex-col gap-4">
-                      <div v-for="(data, index_) in block.data" :key="index_">
-                        <div v-if="data.type === 'text'" class="prose max-w-none" v-html="toMarkdown(data.text!)" />
-                        <Tool v-else-if="data.type === 'tool'" :name="data.tool!.name" :args="data.tool!.args" />
+                  </ContextMenuTrigger>
+                  <ContextMenuContent>
+                    <ContextMenuItem class="flex gap-2" @click="copyMessage(block)">
+                      <Clipboard class="size-4" />
+                      复制
+                    </ContextMenuItem>
+                    <ContextMenuItem
+                      class="flex gap-2"
+                      @click="() => {
+                        message = block.data[0].text as string;
+                        aiStore.currentChat?.chatBlocks.splice(index);
+                        stopGenerating();
+                        nextTick(() => {
+                          resetTextareaHeight();
+                        });
+                      }"
+                    >
+                      <PencilLine class="size-4" />
+                      编辑
+                    </ContextMenuItem>
+                    <ContextMenuItem
+                      class="flex gap-2" @click="() => {
+                        aiStore.currentChat?.chatBlocks.splice(index + 1);
+                        sendMessages();
+                      }"
+                    >
+                      <RotateCcw class="size-4" />
+                      重新发送
+                    </ContextMenuItem>
+                    <ContextMenuItem
+                      class="flex gap-2" @click="deleteMessage(block)"
+                    >
+                      <Trash2 class="size-4" />
+                      删除
+                    </ContextMenuItem>
+                  </ContextMenuContent>
+                </ContextMenu>
+              </div>
+              <div v-else class="flex flex-col gap-3 w-full mb-4">
+                <div class="flex gap-2 items-center">
+                  <div class="rounded-full p-1 bg-primary flex items-center justify-center text-primary-foreground">
+                    <Bot class="size-6" />
+                  </div>
+                  <Label class="text-base"> 邮小率 </Label>
+                </div>
+                <ContextMenu>
+                  <ContextMenuTrigger :disabled="status !== 'idle' && aiStore.currentChat !== null && index === aiStore.currentChat.chatBlocks.length - 1">
+                    <div v-auto-animate class="rounded-lg bg-muted text-foreground p-3 w-full border">
+                      <div v-if="status === 'loading' && aiStore.currentChat && index === aiStore.currentChat.chatBlocks.length - 1" class="space-y-2">
+                        <Skeleton class="w-32 h-5" />
+                        <Skeleton class="w-full h-5" />
+                        <Skeleton class="w-full h-5" />
+                        <Skeleton class="w-full h-5" />
+                      </div>
+                      <div v-else class="flex flex-col gap-4">
+                        <div v-for="(data, index_) in block.data" :key="index_">
+                          <div v-if="data.type === 'text'" class="prose max-w-none" v-html="toMarkdown(data.text!)" />
+                          <Tool v-else-if="data.type === 'tool'" :name="data.tool!.name" :args="data.tool!.args" />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </ContextMenuTrigger>
-                <ContextMenuContent>
-                  <ContextMenuItem
-                    class="flex gap-2" @click="copyMessage(block)"
-                  >
-                    <Clipboard class="size-4" />
-                    复制
-                  </ContextMenuItem>
-                  <ContextMenuItem
-                    class="flex gap-2" @click="() => {
-                      aiStore.currentChat?.chatBlocks.splice(index);
-                      sendMessages();
-                    }"
-                  >
-                    <RotateCcw class="size-4" />
-                    重新生成
-                  </ContextMenuItem>
-                  <ContextMenuItem class="flex gap-2" @click="deleteMessage(block)">
-                    <Trash2 class="size-4" />
-                    删除
-                  </ContextMenuItem>
-                </ContextMenuContent>
-              </ContextMenu>
+                  </ContextMenuTrigger>
+                  <ContextMenuContent>
+                    <ContextMenuItem
+                      class="flex gap-2" @click="copyMessage(block)"
+                    >
+                      <Clipboard class="size-4" />
+                      复制
+                    </ContextMenuItem>
+                    <ContextMenuItem
+                      class="flex gap-2" @click="() => {
+                        aiStore.currentChat?.chatBlocks.splice(index);
+                        sendMessages();
+                      }"
+                    >
+                      <RotateCcw class="size-4" />
+                      重新生成
+                    </ContextMenuItem>
+                    <ContextMenuItem class="flex gap-2" @click="deleteMessage(block)">
+                      <Trash2 class="size-4" />
+                      删除
+                    </ContextMenuItem>
+                  </ContextMenuContent>
+                </ContextMenu>
+              </div>
             </div>
           </div>
         </div>

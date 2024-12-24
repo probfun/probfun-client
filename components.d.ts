@@ -11,6 +11,7 @@ declare module 'vue' {
     AccordionContent: typeof import('./src/components/ui/accordion/AccordionContent.vue')['default']
     AccordionItem: typeof import('./src/components/ui/accordion/AccordionItem.vue')['default']
     AccordionTrigger: typeof import('./src/components/ui/accordion/AccordionTrigger.vue')['default']
+    AiBot: typeof import('./src/components/ai/AiBot.vue')['default']
     AiPanel: typeof import('./src/components/ai/AiPanel.vue')['default']
     AiQuestions: typeof import('./src/components/ai/AiQuestions.vue')['default']
     AiSidebar: typeof import('./src/components/ai/AiSidebar.vue')['default']
