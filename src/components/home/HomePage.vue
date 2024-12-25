@@ -53,9 +53,9 @@ const mindMaps = ref([
   },
   {
     title: '第四章',
-    description: '第四章主要涉及xxx',
+    description: '第四章主要涉及期望、方差、协方差和相关系数四个部分相关的实验。知识点主要涉及它们的定义和相关运算。',
     img: '/homePage/threeDoors.png',
-    path: '/dashboard/experiment/normalDistribution',
+    path: 'dashboard/mindmap/chapter-4',
 
   },
   // {

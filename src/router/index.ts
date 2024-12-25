@@ -2,6 +2,7 @@ import AiPanel from '@/components/ai/AiPanel.vue';
 import LoginCard from '@/components/auth/LoginCard.vue';
 import RegisterCard from '@/components/auth/RegisterCard.vue';
 import Chatper1Diagram from '@/components/diagram/chapter-1/Chapter1Diagram.vue';
+import Chatper4Diagram from '@/components/diagram/chapter-4/Chapter4Diagram.vue';
 import DistributionDiagram from '@/components/diagram/distribution-diagram/DistributionDiagram.vue';
 import BirthdayProblem from '@/components/experiment/chapter1/birthday-problem/BirthdayProblem.vue';
 import BirthdayAttack from '@/components/experiment/chapter1/BirthdayAttack.vue';
@@ -138,6 +139,10 @@ const router = createRouter({
         {
           path: '/dashboard/mindmap/chapter-1',
           component: Chatper1Diagram,
+        },
+        {
+          path: '/dashboard/mindmap/chapter-4',
+          component: Chatper4Diagram,
         },
       ],
     },

@@ -73,9 +73,11 @@ onMounted(() => {
 <template>
   <HoverCard :open="configStore.targetNodeId === id">
     <HoverCardTrigger>
-      <div :class="cn('border rounded-xl p-3 bg-background transition-all border-primary', isHighlight && 'border-destructive border-4')" @click="onSelect">
-        <div class="text-sm">
-          {{ data.label }} {{ isHighlight }}
+      <div
+        :class="cn('border rounded-xl p-3 bg-background transition-all border-primary', isHighlight && 'border-destructive border-4')"
+        @click="onSelect">
+        <div class="text-sm whitespace-normal">
+          {{ data.label }}
         </div>
 
         <Handle id="a" type="source" :position="Position.Top" />
@@ -105,6 +107,4 @@ onMounted(() => {
   </HoverCard>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
