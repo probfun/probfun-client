@@ -172,10 +172,10 @@ function toggleTooltip() {
             }
           }"
         >
-          <div>
-            {{ distribution.data.label }}
+          <div class="whitespace-pre">
+            {{ distribution.data.label.split('\n')[0] }}
           </div>
-          <div>
+          <div class="whitespace-pre text-center">
             {{ distribution.data.chineseTranslation }}
           </div>
         </Button>

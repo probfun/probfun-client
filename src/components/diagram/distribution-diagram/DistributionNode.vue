@@ -75,8 +75,9 @@ onMounted(() => {
     <HoverCardTrigger>
       <div
         :class="cn('border rounded-xl p-3 bg-background transition-all border-primary', isHighlight && 'border-destructive border-4')"
-        @click="onSelect">
-        <div class="text-sm whitespace-normal">
+        @click="onSelect"
+      >
+        <div class="text-sm whitespace-pre text-center">
           {{ data.label }}
         </div>
 

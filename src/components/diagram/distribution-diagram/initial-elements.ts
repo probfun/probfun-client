@@ -184,7 +184,7 @@ export const nodeData = ref<NodeOptions[]>([
     label: 'Noncentral chi-square(n,δ)\nC',
     position: { x: 950, y: 750 },
     chineseTranslation: '非中心卡方分布(n, δ)\nC',
-    pdf: '$$f(x) = \\frac{1}{2} e^{-(x + \\delta)/2} \\left( \\frac{x}{\\delta} \\right)^{(n/4 - 1/2)} I_{n/2 - 1}(\\sqrt{\\delta x})}$$',
+    pdf: '$$f(x) = \\frac{1}{2} e^{-(x + \\delta)/2} \\left( \\frac{x}{\\delta} \\right)^{(n/4 - 1/2)} I_{n/2 - 1}(\\sqrt{\\delta x})$$',
   },
   {
     label: 'Log gamma(α,β)',
