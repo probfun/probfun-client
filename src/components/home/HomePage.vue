@@ -55,7 +55,7 @@ const mindMaps = ref([
     title: '第四章 期望相关的分组检测',
     description: '期望检验是统计学中的重要方法，用于分析样本数据与理论预期值之间的差异。通过分组检测，我们可以判断不同组别数据的期望值是否存在显著差异，这在医学研究、质量控制和社会调查等领域有广泛应用。',
     img: '/homePage/group.png',
-    path: '/dashboard/experiment/normalDistribution',
+    path: 'dashboard/mindmap/chapter-4',
 
   },
   // {
