@@ -103,7 +103,6 @@ declare module 'vue' {
     DropdownMenuSubTrigger: typeof import('./src/components/ui/dropdown-menu/DropdownMenuSubTrigger.vue')['default']
     DropdownMenuTrigger: typeof import('./src/components/ui/dropdown-menu/DropdownMenuTrigger.vue')['default']
     ExperimentBoard: typeof import('./src/components/experiment/ExperimentBoard.vue')['default']
-    Expextation: typeof import('./src/components/diagram/chapter-4/expextation.vue')['default']
     ExponentialDiagram: typeof import('./src/components/experiment/distribution/ExponentialDiagram.vue')['default']
     ExponentialDistribution: typeof import('./src/components/experiment/distribution/ExponentialDistribution.vue')['default']
     FloatLabel: typeof import('primevue/floatlabel')['default']

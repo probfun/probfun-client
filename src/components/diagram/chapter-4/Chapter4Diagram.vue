@@ -52,7 +52,7 @@ async function layoutGraph(direction) {
 
     <!-- 控制图片显示 -->
     <div v-if="showImage" class="image-container">
-      <img src="D:/大创/code/probfun-client/public/homePage/image.png" alt="imag" class="image" />
+      <img src="/homePage/image.png" alt="imag" class="image" />
     </div>
 
     <VueFlow
