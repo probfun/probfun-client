@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { useConfigStore } from '@/store';
 import { toMarkdown } from '@/utils/markdown.ts';
 import { Handle, Position, useVueFlow } from '@vue-flow/core'
-import { onMounted, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 const props = defineProps<{
   id: string
@@ -19,12 +19,25 @@ const props = defineProps<{
 
 const { getConnectedEdges, getEdges } = useVueFlow();
 const configStore = useConfigStore();
+const isHighlight = ref(false);
 
 function updateEdgeStyle() {
+  const connectedEdges = getConnectedEdges(props.id);
+  isHighlight.value = false;
+  for (const edge of connectedEdges) {
+    const target = edge.target;
+    const source = edge.source;
+
+    if (target !== configStore.targetNodeId && source !== configStore.targetNodeId) {
+      continue;
+    }
+
+    isHighlight.value = (target === props.id || source === props.id);
+  }
+
   if (configStore.targetNodeId !== props.id) {
     return;
   }
-  const connectedEdges = getConnectedEdges(props.id);
   const edges = getEdges.value as unknown as (GraphEdge & { defaultStroke: string })[];
   for (const edge of edges) {
     edge.style = {
@@ -60,9 +73,9 @@ onMounted(() => {
 <template>
   <HoverCard :open="configStore.targetNodeId === id">
     <HoverCardTrigger>
-      <div :class="cn('border rounded-xl p-3 bg-background transition-all border-primary', configStore.targetNodeId === id && 'border-destructive')" @click="onSelect">
+      <div :class="cn('border rounded-xl p-3 bg-background transition-all border-primary', isHighlight && 'border-destructive border-4')" @click="onSelect">
         <div class="text-sm">
-          {{ data.label }}
+          {{ data.label }} {{ isHighlight }}
         </div>
 
         <Handle id="a" type="source" :position="Position.Top" />
@@ -70,7 +83,7 @@ onMounted(() => {
       </div>
     </HoverCardTrigger>
     <HoverCardContent class="max-w-md w-auto">
-      <Label class="text-base font-bold"> 概率密度函数（PDF） </Label>
+      <Label class="text-base font-bold select-none"> 概率密度函数（PDF） </Label>
       <div class="w-full flex items-center justify-center pt-3">
         <div v-if="data.pdf" class="prose" v-html="toMarkdown(data.pdf)" />
         <div v-else class="">

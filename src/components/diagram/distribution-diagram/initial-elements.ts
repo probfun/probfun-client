@@ -35,7 +35,7 @@ export const nodeData = ref<NodeOptions[]>([
     label: 'Zipf(α,n)',
     position: { x: 0, y: 0 },
     chineseTranslation: 'Zipf 分布 (α, n)',
-    pdf: '$$P(X = k) = \\frac{1 / k^{\\alpha}}{\\sum_{m=1}^{n} 1 / m^{\\alpha}}}$$',
+    pdf: '$$P(X = k) = \\frac{1 / k^{\\alpha}}{\\sum_{m=1}^{n} 1 / m^{\\alpha}}$$',
   },
   {
     label: `Discrete uniform(a,b)\n R,V`,
