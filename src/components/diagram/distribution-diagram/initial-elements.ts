@@ -19,12 +19,13 @@ interface NodeOptions {
   chineseTranslation: string
   pdf: string | null
   expId?: string
+  description?: string
 }
 
-export function createDistributionNode({ label, position, chineseTranslation, pdf, expId }: NodeOptions) {
+export function createDistributionNode({ label, position, chineseTranslation, pdf, expId, description }: NodeOptions) {
   return {
     id: (nodeIdCounter++).toString(), // 自增 id
-    data: { label, chineseTranslation, pdf, expId },
+    data: { label, chineseTranslation, pdf, expId, description },
     position,
     type: 'distribution',
   };
@@ -85,12 +86,14 @@ export const nodeData = ref<NodeOptions[]>([
     chineseTranslation: '泊松分布(μ)\nC',
     pdf: '$$P(X = k) = \\frac{e^{-\\mu} \\mu^{k}}{k!}$$',
     expId: 'poissonDistribution',
+    description: '**应用案例**: 网络流量中的数据包到达率\n\n- **背景**: 在网络工程中，数据包的到达通常被建模为泊松过程。\n- **研究目的**: 分析特定时间段内到达的数据包数量，以优化网络资源配置。\n- **方法**: 收集网络流量数据，计算在单位时间内到达的数据包数量，并使用泊松分布进行拟合，评估网络的负载和延迟。',
   },
   {
     label: 'Hypergeometric\n(n1,n2,n3)',
     position: { x: 1300, y: 120 },
     chineseTranslation: '超几何分布\n(n1, n2, n3)',
     pdf: '$$P(X = k) = \\frac{\\binom{n1}{k} \\binom{n2}{n3 - k}}{\\binom{n1 + n2}{n3}}$$',
+    description: '**应用案例**: 电子产品抽样检验\n\n- **背景**: 在生产过程中，质检人员常常需要从批量产品中抽样检验，以评估整体质量。超几何分布适用于这种不放回抽样的情况。\n- **研究目的**: 评估在抽样中检出不合格品的概率，以优化质检流程。\n- **方法**: 设定批次中合格与不合格产品的数量，进行不放回抽样，从中计算不合格品被检出的概率。',
   },
   {
     label: 'Beta-Pascal\n(n,a,b)',
@@ -110,6 +113,7 @@ export const nodeData = ref<NodeOptions[]>([
     chineseTranslation: '二项分布(n, p)',
     pdf: '$$P(X = k) = \\binom{n}{k} p^{k} (1 - p)^{n - k}$$',
     expId: 'binomialDistribution',
+    description: '**应用案例**: 电子产品的质量控制\n\n- **背景**: 在生产过程中，电子产品的缺陷率可以用二项分布来建模。\n- **研究目的**: 分析在生产批次中合格产品的比例，以确保产品质量。\n- **方法**: 对每批产品进行抽样检测，记录合格与不合格的产品数量。使用二项分布模型来估计不合格产品的概率，并进行统计检验，以确定生产过程是否符合质量标准。',
   },
   {
     label: 'Bernoulli(p)\nM,P,X',
@@ -136,6 +140,7 @@ export const nodeData = ref<NodeOptions[]>([
     chineseTranslation: '正态分布(μ, σ²)\nL',
     pdf: '$$f(x) = \\frac{1}{\\sqrt{2\\pi \\sigma^2}} e^{-\\frac{(x - \\mu)^2}{2\\sigma^2}}$$',
     expId: 'normalDistribution',
+    description: '**应用案例**: 信号处理中的噪声建模\n\n- **背景**: 在无线通信和信号处理领域，信号在传输过程中往往会受到噪声的影响。许多类型的噪声（如高斯白噪声）可以用正态分布来建模。\n- **研究目的**: 分析信号在不同噪声条件下的传输质量。\n- **方法**: 通过实验收集不同信噪比（SNR）条件下的信号数据，利用正态分布模型对噪声进行分析，评估通信系统的性能。',
   },
   {
     label: 'Polya(n,p,β)',
@@ -227,12 +232,14 @@ export const nodeData = ref<NodeOptions[]>([
     position: { x: 950, y: 950 },
     chineseTranslation: '伽马分布(α, β)\nCα, S',
     pdf: '$$f(x) = \\frac{\\beta^\\alpha}{\\Gamma(\\alpha)} x^{\\alpha - 1} e^{-\\beta x}, \\quad x > 0$$',
+    description: '**应用案例**: 数据传输延迟建模\n\n- **背景**: 在网络通信中，数据包传输的延迟可能受到多种因素的影响，常常呈现出复杂的分布特征。\n- **研究目的**: 对数据传输延迟进行建模，以优化网络性能和资源分配。\n- **方法**: 收集不同条件下的传输延迟数据，使用伽马分布进行拟合，对比不同网络条件下的延迟分布，评估网络质量。',
   },
   {
     label: 'Beta(β,γ)',
     position: { x: 1150, y: 800 },
     chineseTranslation: '贝塔分布(β, γ)',
     pdf: '$$f(x) = \\frac{\\Gamma(\\beta + \\gamma)}{\\Gamma(\\beta) \\Gamma(\\gamma)} x^{\\beta - 1} (1 - x)^{\\gamma - 1}, \\quad 0 < x < 1$$',
+    description: '**应用案例**: 概率预测与决策支持\n\n- **背景**: Beta分布常用于建模概率和比例，适合在[0, 1]区间内的随机变量建模。\n- **研究目的**: 在项目管理和决策支持系统中，评估某一事件成功的概率。\n- **方法**: 收集历史数据（如项目成功与失败的次数），利用Beta分布进行参数估计，计算成功概率的后验分布。',
   },
   {
     label: 'Cauchy(a,α)\nC,I,S,V',
@@ -275,6 +282,7 @@ export const nodeData = ref<NodeOptions[]>([
     position: { x: -450, y: 620 },
     chineseTranslation: 't 分布(n)',
     pdf: '$$f(x) = \\frac{\\Gamma\\left(\\frac{n + 1}{2}\\right)}{\\sqrt{n \\pi} \\, \\Gamma\\left(\\frac{n}{2}\\right)} \\left(1 + \\frac{x^2}{n} \\right)^{-(n + 1)/2}$$',
+    description: '**应用案例**: 小样本统计分析\n\n- **背景**: 在电子信息领域的实验研究中，常常面临样本量较小的情况，这时使用t分布可以得到更准确的假设检验结果。\n- **研究目的**: 对实验结果进行显著性检验，判断新算法与传统算法的性能差异。\n- **方法**: 收集不同算法在相同数据集上的实验结果，使用t检验分析两组样本均值是否存在显著差异。',
   },
   {
     label: 'Hypoexponential(vector α)\nC',
@@ -312,6 +320,7 @@ export const nodeData = ref<NodeOptions[]>([
     chineseTranslation: '指数分布(α)\nF, M, S, V',
     pdf: '$$f(x) = \\alpha e^{-\\alpha x}, \\quad x \\ge 0$$',
     expId: 'exponentialDistribution',
+    description: '**应用案例**: 通信故障的寿命分析\n\n- **背景**: 在电子设备和网络组件中，故障发生时间常常服从指数分布。\n- **研究目的**: 评估设备的平均故障时间，以提前进行维护和更换。\n- **方法**: 收集设备故障时间数据，利用指数分布模型计算设备的可靠性和故障率。',
   },
   {
     label: 'Logistic-exponential(α,β)\nS,V',
@@ -427,6 +436,7 @@ export const nodeData = ref<NodeOptions[]>([
     position: { x: -350, y: 100 },
     chineseTranslation: '韦布尔分布(α, β)\nMβ, S, V',
     pdf: '$$f(x) = \\alpha \\beta x^{\\alpha - 1} e^{-(x / \\beta)^\\alpha}, \\quad x \\ge 0$$',
+    description: '**应用案例**: 设备可靠性与寿命预测\n\n- **背景**: 在电子设备的研发与生产中，设备的故障模式和寿命常常表现出特定的分布特征，Weibull分布被广泛应用于可靠性工程。\n- **研究目的**: 通过分析设备的故障数据，预测其寿命并制定维护计划。\n- **方法**: 收集设备运行时间与故障数据，使用Weibull分布进行参数估计，分析其失效率和可靠性。',
   },
   {
     label: 'Log logistc(λ,κ)\nI,S,V',
@@ -452,6 +462,7 @@ export const nodeData = ref<NodeOptions[]>([
     chineseTranslation: '均匀分布(a, b)\nR, V',
     pdf: '$$f(x) = \\frac{1}{b - a}, \\quad a \\le x \\le b$$',
     expId: 'uniformDistribution',
+    description: '**应用案例**: 随机采样与仿真\n\n- **背景**: 在进行系统仿真或随机采样时，均匀分布常常用于生成随机数。\n- **研究目的**: 在仿真中随机生成事件发生的时间或位置，以评估系统性能。\n- **方法**: 利用均匀分布生成随机变量，例如在网络流量模拟中生成随机到达时间，评估系统在不同负载条件下的响应能力。',
   },
   {
     label: 'Extreme value(α,β)\nV,Mβ',
@@ -467,7 +478,15 @@ export const nodeData = ref<NodeOptions[]>([
   },
 ]);
 
-export const initialNodes = nodeData.value.map((data) => {
+const sortedNodeData = nodeData.value.sort((a, b) => {
+  if (a.description && !b.description)
+    return -1;
+  if (!a.description && b.description)
+    return 1;
+  return 0;
+});
+
+export const initialNodes = sortedNodeData.map((data) => {
   return createDistributionNode(data);
 });
 

@@ -31,6 +31,10 @@ const customViewport = {
 function moveToNode(nodeId: string) {
   const node = nodes.value.find(n => n.id === nodeId);
   if (node) {
+    configStore.isMoving = true;
+    setInterval(() => {
+      configStore.isMoving = false;
+    }, 1500);
     fitView({
       nodes: [node.id],
       duration: 1000, // use this if you want a smooth transition to the node

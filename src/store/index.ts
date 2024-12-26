@@ -26,9 +26,11 @@ export const useAiStore = defineStore('aiStore', () => {
 export const useConfigStore = defineStore('configStore', () => {
   const darkMode = ref<boolean>(false);
   const targetNodeId = ref<string | null>(null);
+  const isMoving = ref(false);
   return {
     darkMode,
     targetNodeId,
+    isMoving,
   }
 }, {
   persist: true,

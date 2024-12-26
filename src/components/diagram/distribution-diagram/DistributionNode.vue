@@ -14,6 +14,7 @@ const props = defineProps<{
     label: string
     pdf: string | null
     expId?: string
+    description?: string
   }
 }>();
 
@@ -67,11 +68,19 @@ function onSelect() {
 
 onMounted(() => {
   updateEdgeStyle();
-})
+});
+
+function getDescriptionTitle(description: string) {
+  return description?.split('\n\n')[0].split(':')[1];
+}
+
+function getDescriptionBody(description: string) {
+  return description.split('\n\n')[1];
+}
 </script>
 
 <template>
-  <HoverCard :open="configStore.targetNodeId === id">
+  <HoverCard :open="configStore.targetNodeId === id && !configStore.isMoving">
     <HoverCardTrigger>
       <div
         :class="cn('border rounded-xl p-3 bg-background transition-all border-primary', isHighlight && 'border-destructive border-4')"
@@ -85,7 +94,7 @@ onMounted(() => {
         <Handle id="b" type="source" :position="Position.Bottom" />
       </div>
     </HoverCardTrigger>
-    <HoverCardContent class="max-w-md w-auto">
+    <HoverCardContent class="max-w-xl w-auto">
       <Label class="text-base font-bold select-none"> 概率密度函数（PDF） </Label>
       <div class="w-full flex items-center justify-center pt-3">
         <div v-if="data.pdf" class="prose" v-html="toMarkdown(data.pdf)" />
@@ -93,6 +102,12 @@ onMounted(() => {
           <Label>
             这个分布的概率密度函数暂未收录
           </Label>
+        </div>
+      </div>
+      <div v-if="data.description" class="mt-6">
+        <Label class="text-base font-bold select-none"> 应用案例： {{ getDescriptionTitle(data.description) }} </Label>
+        <div class="w-full flex items-center justify-center">
+          <div class="prose" v-html="toMarkdown(getDescriptionBody(data.description))" />
         </div>
       </div>
       <div v-if="data.expId">
