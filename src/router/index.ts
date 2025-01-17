@@ -117,6 +117,10 @@ const router = createRouter({
           component: () => import('@/components/experiment/chapter3/normal-distribution/threeNormalDistribution.vue'),
         },
         {
+          path: '/dashboard/experiment/centralLimitTheorem',
+          component: () => import('@/components/experiment/chapter3/central-limit-theorem/clt.vue'),
+        },
+        {
           path: '/dashboard/info0',
           component: StudentPanel,
         },

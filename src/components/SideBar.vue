@@ -389,6 +389,21 @@ const chapter3Items = [
       }
     },
   },
+  {
+    label: '中心极限定理',
+    icon: 'pi pi-chart-bar',
+    route: '/dashboard/experiment/centralLimitTheorem',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '中心极限定理', window.location.href);
+        console.log('中心极限定理');
+        await router.push('/dashboard/experiment/centralLimitTheorem');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
+  },
 ]
 const feedback = ref('improvement');
 const content = ref('');

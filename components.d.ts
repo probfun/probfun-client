@@ -56,6 +56,7 @@ declare module 'vue' {
     ChartTooltip: typeof import('./src/components/ui/chart/ChartTooltip.vue')['default']
     Checkbox: typeof import('./src/components/ui/checkbox/Checkbox.vue')['default']
     ChildCommentCard: typeof import('./src/components/comment/ChildCommentCard.vue')['default']
+    Clt: typeof import('./src/components/experiment/chapter3/central-limit-theorem/clt.vue')['default']
     CommentCard: typeof import('./src/components/comment/CommentCard.vue')['default']
     CommentPanel: typeof import('./src/components/comment/CommentPanel.vue')['default']
     Container: typeof import('./src/components/Container.vue')['default']
