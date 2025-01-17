@@ -15,12 +15,12 @@ import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 import Dialog from 'primevue/dialog';
 import MultiSelect from 'primevue/multiselect';
-import Panel from 'primevue/panel'; // optional
-// optional
+import Panel from 'primevue/panel';
 import Select from 'primevue/select';
 import Textarea from 'primevue/textarea';
 import { useToast } from 'primevue/usetoast';
 import { onMounted, ref, watch } from 'vue';
+import { log } from 'console';
 
 const userStore = useUserStore();
 const defaultValue = 'item-1'
@@ -55,8 +55,7 @@ const classesA = ref([
   { name: '2023215104' },
   { name: '2023215105' },
 ]);
-const selectedClassA = ref(classesA.value[0]);
-const selectedClass = ref<{ name: string }[]>([]);
+const selectedClass = ref(classesA.value[0]);
 const selectedTime = ref();
 const time = ref([
   { name: '近两周' },
@@ -124,7 +123,6 @@ const visible = ref(false);
 const toast = useToast();
 const title = ref(`${new Date().toLocaleDateString()} 班级公告`);
 const content = ref('');
-const classs = ref<string[]>([])
 
 function cancel() {
 
@@ -135,15 +133,8 @@ async function sendPost() {
     toast.add({ severity: 'warn', summary: '提示', detail: '班级公告不能为空', life: 3000 });
     return;
   }
-  if (selectedClass.value.length === 0) { // 检查是否选择了班级
-    toast.add({ severity: 'warn', summary: '提示', detail: '请选择班级', life: 3000 });
-    return;
-  }
-  for (let i = 0; i < selectedClass.value.length; i++) {
-    classs.value.push(selectedClass.value[i].name)
-  }
   try {
-    await postPostApi(title.value, content.value, classs.value);
+    await postPostApi(title.value, content.value, [selectedClass.value.name]);
     await getPost();
     toast.add({ severity: 'success', summary: '成功', detail: '发布班级公告成功！', life: 3000 });
     content.value = '';
@@ -158,7 +149,7 @@ async function sendPost() {
 const postList = ref<Post[] | null>(null);
 async function getPost() {
   try {
-    const result = await fetchPostApi(selectedClassA.value.name);
+    const result = await fetchPostApi(selectedClass.value.name);
     postList.value = result.posts;
   }
   catch (error) {
@@ -170,11 +161,10 @@ async function getClasses() {
   try {
     const result = await fetchClassListApi();
     classesA.value = result.filter(item => item).map(item => ({ name: item }));
-    selectedClassA.value = classesA.value[0];
-    console.log('公告', postList.value);
+    selectedClass.value = classesA.value[0];
   }
   catch (error) {
-    console.error('Error during fetching posts:', error);
+    console.error('Error during fetching classes:', error);
   }
 }
 
@@ -182,7 +172,7 @@ onMounted(async () => {
   await getClasses();
   await getPost();
 })
-watch([selectedClassA], () => {
+watch([selectedClass], () => {
   getPost();
 })
 </script>
@@ -193,10 +183,8 @@ watch([selectedClassA], () => {
       <div class="flex mb-[-10px]">
         <span class="text-lg font-bold">2024年秋季学期</span>
         <div class="ml-auto">
-          <Select
-            v-model="selectedClassA" :options="classesA" option-label="name" filter placeholder="请选择班级"
-            class="w-full md:w-56"
-          />
+          <Select v-model="selectedClass" :options="classesA" option-label="name" filter placeholder="请选择班级"
+            class="w-full md:w-56" />
         </div>
       </div>
       <div class="flex my-5 items-center">
@@ -231,10 +219,6 @@ watch([selectedClassA], () => {
         <div class="flex items-center gap-4 mb-4">
           <label for="title">公告标题</label>
           <InputText id="title" v-model="title" />
-          <MultiSelect
-            v-model="selectedClass" :options="classesA" option-label="name" filter
-            placeholder="请选择班级" class="w-full md:w-56"
-          />
         </div>
         <div class="flex items-center gap-4 mb-8">
           <Textarea v-model="content" auto-resize rows="10" class="w-full" placeholder="请输入班级公告" />
@@ -249,10 +233,8 @@ watch([selectedClassA], () => {
     <Separator orientation="vertical" />
     <div class="flex flex-col flex-1 w-1/2 p-3 overflow-auto">
       <div style="display: flex; justify-content: space-between;" class="mb-3 ml-auto">
-        <Select
-          v-model="selectedTime" :options="time" option-label="name" placeholder="请选择时间范围"
-          class="w-full md:w-56"
-        />
+        <Select v-model="selectedTime" :options="time" option-label="name" placeholder="请选择时间范围"
+          class="w-full md:w-56" />
       </div>
       <Panel header="已精选评论" class="w-full h-full">
         <DataTable :value="products" scrollable table-style="min-width: 60rem">
