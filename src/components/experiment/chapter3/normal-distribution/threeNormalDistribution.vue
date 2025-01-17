@@ -46,17 +46,25 @@ function toggleChart3() {
 
 const oneFormula = computed(() => {
     return `
+        \\text{如果}
+    (X,Y) \\sim N(μ_1,μ_2;σ_1²,σ_2²;ρ),
+    \\\\
+    \\text{则} 
+    X \\sim N(μ_1,σ_1²) , 
+    Y \\sim N(μ_2,σ_2²).
     \\\\
     \\text{当满足：} \\\\
     \\\\
     σ_1>0,σ_2>0,|ρ|<1,
     \\\\
+    \\text{则二维正态分布的概率密度函数为}
     \\phantom{f(x, y)}
     \\\\
     \\\\
     f(x, y) = 
     \\frac{1}{2\\pi·σ_1σ_2·\\sqrt{1-ρ^2}}  e^{\\frac{-1}{2(1-ρ^2)}[\\frac{(x-μ_1)^2}{σ_1^2}-2ρ\\frac{(x-μ_1)(y-μ_2)}{σ_1·σ_2}+\\frac{(y-μ_2)^2}{σ_2^2}]} 
     \\\\
+    \\text{则边缘分布概率密度函数为}\\\\
     f_X(x) = \\frac{1}{\\sqrt{2\\pi} σ_1}e^{-\\frac{(x-μ_1)^2}{2σ_1²}} , -∞<x<+∞
     \\\\
     \\phantom{f(x, y)}
@@ -65,12 +73,8 @@ const oneFormula = computed(() => {
     \\\\
     \\phantom{f(x, y)}
     \\\\
-    \\text{如果}
-    (X,Y) \\sim N(μ1,μ2;σ1²,σ2²;ρ),
-    \\\\
-    \\text{则} 
-    X \\sim N(μ1,σ1²) , 
-    Y \\sim N(μ2,σ2²).`;
+
+    `;
 });
 
 const twoFormula = computed(() => {
@@ -170,7 +174,32 @@ $$
 - $ρ$为$X,Y$之间的相关系数，$ρ∈[-1,1]$。
 - π为圆周率。
 
-该函数描述了随机变量$(X,Y)$的联合分布，表示了在二维空间中任意一点$(x,y)$出现的概率。
+该函数描述了随机变量$(X,Y)$的联合分布，表示了在二维空间中任意一点$(x,y)$出现的概率集中程度。
+
+令
+ $$
+μ = 
+        \\begin{pmatrix}
+          μ_1  \\\\
+          μ_2
+        \\end{pmatrix}
+        ,\\ 
+σ = \\begin{pmatrix}
+          \\sigma_X^2 & \\rho \\sigma_X \\sigma_Y \\\\
+          \\rho \\sigma_X \\sigma_Y & \\sigma_Y^2
+        \\end{pmatrix}
+        ，\\
+x = 
+        \\begin{pmatrix}
+          x_1  \\\\
+          x_2
+        \\end{pmatrix} ，
+  $$
+ 则
+ $$
+f(x,y) = \\frac{1}{2\\pi|Σ|^\\frac{1}{2}}e^{-(x-μ)'·Σ^{-1}(x-μ)}。
+ $$
+
 
 **期望、方差和协方差**
 
