@@ -215,7 +215,7 @@ watch([selectedClass], () => {
         发布班级公告
       </Button>
       <Dialog v-model:visible="visible" modal header="发布班级公告" :style="{ width: '50rem' }">
-        <span class="text-surface-500 dark:text-surface-400 block mb-8">请选择一个或多个班级，点击发布按钮发布公告。</span>
+        <span class="text-surface-500 dark:text-surface-400 block mb-8">请输入公告内容后，点击发布按钮发布公告。</span>
         <div class="flex items-center gap-4 mb-4">
           <label for="title">公告标题</label>
           <InputText id="title" v-model="title" />

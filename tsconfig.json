@@ -3,7 +3,7 @@
     "outDir": "./dist", // 编译后的文件输出到 dist 文件夹
     "rootDir": "./src", // 指定源文件的根目录
     "types": ["node"],
-    "typeRoots": ["node_modules/@types"],
+    "typeRoots": ["node_modules/@types", "src/types"],
     "target": "esnext",
     "module": "esnext",
     "strict": true,
@@ -43,7 +43,7 @@
     "src/utils/mathjax.js",
     "src/components/diagram/diagram-test/useRunProcess.js",
     "src/components/diagram/diagram-test/useLayout.js"
-  ],
+, "src/types/plotly.d.ts"  ],
   "exclude": [
     "node_modules",
     "dist"

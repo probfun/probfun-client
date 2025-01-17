@@ -154,7 +154,7 @@ const content = `
     <ExperimentBoard>
         <template #experiment>
             <ThreeNormalDiagram v-if="isChart1" :mean1="mean1" :mean2="mean2" :sigma1="sigma1" :sigma2="sigma2"
-                :density="density">
+                :density="density" class="w-full h-full">
             </ThreeNormalDiagram>
             <div v-if="isChart2" class="w-full h-full flex">
                 <NormalDiagram class="w-[50%] h-full mr-1" :mean="mean1" :std-dev="sigma1" :transformed-mean-y="mean1"
