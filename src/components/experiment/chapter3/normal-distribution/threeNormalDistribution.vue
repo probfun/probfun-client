@@ -46,20 +46,31 @@ function toggleChart3() {
 
 const oneFormula = computed(() => {
     return `
-   \\\\
-   \\text{当满足：} \\\\
-    -∞<x<+∞,-∞<y<+∞,
-   \\\\
-
-   -∞<μ_1<+∞,-∞<μ_2<+∞,σ_1>0,σ_2>0,|ρ|<1,
-     \\\\
-   \\phantom{f(x, y)}
-   \\\\
-   \\text{则}
-   \\\\
-   f(x, y) = 
-   \\frac{1}{2\\pi\\sqrt{1-ρ^2}}  e^{\\frac{-1}{2(1-ρ^2)}[\\frac{(x-μ_1)^2}{σ_1^2}-2ρ\\frac{(x-μ_1)(y-μ_2)}{σ_1·σ_2}+\\frac{(y-μ_2)^2}{σ_2^2}]} `;
-
+    \\\\
+    \\text{当满足：} \\\\
+    \\\\
+    σ_1>0,σ_2>0,|ρ|<1,
+    \\\\
+    \\phantom{f(x, y)}
+    \\\\
+    \\\\
+    f(x, y) = 
+    \\frac{1}{2\\pi\\sqrt{1-ρ^2}}  e^{\\frac{-1}{2(1-ρ^2)}[\\frac{(x-μ_1)^2}{σ_1^2}-2ρ\\frac{(x-μ_1)(y-μ_2)}{σ_1·σ_2}+\\frac{(y-μ_2)^2}{σ_2^2}]} 
+    \\\\
+    f_X(x) = \\frac{1}{\\sqrt{2\\pi} σ_1}e^{-\\frac{(x-μ_1)^2}{2σ_1²}} , -∞<x<+∞
+    \\\\
+    \\phantom{f(x, y)}
+    \\\\
+    f_Y(y) = \\frac{1}{\\sqrt{2\\pi} σ_2}e^{-\\frac{(y-μ_2)^2}{2σ_2²}} , -∞<y<+∞
+    \\\\
+    \\phantom{f(x, y)}
+    \\\\
+    \\text{如果}
+    (X,Y) \\sim N(μ1,μ2;σ1²,σ2²;ρ),
+    \\\\
+    \\text{则} 
+    X \\sim N(μ1,σ1²) , 
+    Y \\sim N(μ2,σ2²).`;
 });
 
 const twoFormula = computed(() => {
@@ -177,7 +188,7 @@ const content = `
             <div class="w-full h-full flex flex-row  justify-center gap-3 p-3">
                 <Card class="w-full w-1/2 card overflow-y-auto">
                     <CardHeader>
-                        <CardTitle v-if="isChart1">二维正态的联合概率密度函数（PDF）</CardTitle>
+                        <CardTitle v-if="isChart1">二维正态的联合与边缘分布概率密度函数（PDF）</CardTitle>
                         <CardTitle v-if="isChart2">二维正态的边缘分布概率密度函数（PDF）</CardTitle>
                         <CardTitle v-if="isChart3">二维正态的条件分布</CardTitle>
                     </CardHeader>
@@ -249,10 +260,7 @@ const content = `
                                 <ul tabindex="0"
                                     class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                                     <li @click="toggleChart1">
-                                        <a>二维正态分布</a>
-                                    </li>
-                                    <li @click="toggleChart2">
-                                        <a>二维正态分布的边缘分布</a>
+                                        <a>二维正态联合与边缘分布</a>
                                     </li>
                                     <li @click="toggleChart3">
                                         <a>二维正态分布的条件分布</a>
