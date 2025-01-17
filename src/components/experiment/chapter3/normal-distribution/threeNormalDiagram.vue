@@ -42,12 +42,16 @@ function createPlotlyChart() {
 
     // 创建二维正态分布的概率密度函数
     const rvPdf = (x: number, y: number) => {
-        const exp1 = Math.exp(-0.5 * (
-            Math.pow((x - mean[0]) / Math.sqrt(cov[0][0]), 2) +
-            Math.pow((y - mean[1]) / Math.sqrt(cov[1][1]), 2) -
-            2 * (x - mean[0]) * (y - mean[1]) / (Math.sqrt(cov[0][0]) * Math.sqrt(cov[1][1]))));
-        const norm = 2 * Math.PI * Math.sqrt(cov[0][0] * cov[1][1] - Math.pow(cov[0][1], 2));
-        return exp1 / norm;
+        const det = cov[0][0] * cov[1][1] - cov[0][1] * cov[1][0];
+        const invCov = [
+            [cov[1][1] / det, -cov[0][1] / det],
+            [-cov[1][0] / det, cov[0][0] / det]
+        ];
+        const diff = [x - mean[0], y - mean[1]];
+        const expTerm = -0.5 * (diff[0] * (invCov[0][0] * diff[0] + invCov[0][1] * diff[1]) +
+                                diff[1] * (invCov[1][0] * diff[0] + invCov[1][1] * diff[1]));
+        const norm = 2 * Math.PI * Math.sqrt(det);
+        return Math.exp(expTerm) / norm;
     };
 
     const Z = X.map((row, i) => row.map((_, j) => rvPdf(X[i][j], Y[i][j])));
