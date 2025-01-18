@@ -48,31 +48,30 @@ const oneFormula = computed(() => {
     return `
         \\text{如果}
     (X,Y) \\sim N(μ_1,μ_2;σ_1²,σ_2²;ρ),
-    \\\\
+    
     \\text{则} 
     X \\sim N(μ_1,σ_1²) , 
     Y \\sim N(μ_2,σ_2²).
-    \\\\
-    \\text{当满足：} \\\\
-    \\\\
+   
+    \\text{当满足：} 
+
     σ_1>0,σ_2>0,|ρ|<1,
     \\\\
-    \\text{则二维正态分布的概率密度函数为}
     \\phantom{f(x, y)}
     \\\\
-    \\\\
+    \\text{则二维正态分布的概率密度函数为:}
+
+
     f(x, y) = 
     \\frac{1}{2\\pi·σ_1σ_2·\\sqrt{1-ρ^2}}  e^{\\frac{-1}{2(1-ρ^2)}[\\frac{(x-μ_1)^2}{σ_1^2}-2ρ\\frac{(x-μ_1)(y-μ_2)}{σ_1·σ_2}+\\frac{(y-μ_2)^2}{σ_2^2}]} 
+   \\\\
+    \\phantom{f(x, y)}
     \\\\
-    \\text{则边缘分布概率密度函数为}\\\\
+    \\text{则边缘分布概率密度函数为:}
     f_X(x) = \\frac{1}{\\sqrt{2\\pi} σ_1}e^{-\\frac{(x-μ_1)^2}{2σ_1²}} , -∞<x<+∞
-    \\\\
-    \\phantom{f(x, y)}
-    \\\\
+, 
     f_Y(y) = \\frac{1}{\\sqrt{2\\pi} σ_2}e^{-\\frac{(y-μ_2)^2}{2σ_2²}} , -∞<y<+∞
-    \\\\
-    \\phantom{f(x, y)}
-    \\\\
+ 
 
     `;
 });
@@ -107,10 +106,7 @@ const threeFormula = computed(() => {
     return `f_{Y|X}(y | x) = 
 \\frac{f(x,y)}{f_X(x)}=
 \\frac{1}{\\sqrt{2\\pi} σ_2 \\sqrt{1-ρ^2}} e^{\\frac{1}{2(1-ρ^2)}[\\frac{x-μ_1}{σ_1}-ρ\\frac{y-μ_2}{σ_2}]^2}
-
- \\\\
-\\phantom{f_Y(y)}
-\\\\
+, 
 f_{X|Y}(x | y) = 
 \\frac{f(x,y)}{f_Y(y)}=
 \\frac{1}{\\sqrt{2\\pi} σ_1 \\sqrt{1-ρ^2}} e^{\\frac{1}{2(1-ρ^2)}[\\frac{x-μ_1}{σ_1}-ρ\\frac{y-μ_2}{σ_2}]^2}
@@ -119,16 +115,16 @@ f_{X|Y}(x | y) =
 \\phantom{f_Y(y)}
 \\\\
 \\text{因此，如果 Y = y,}
-\\\\
+
 
  \\text{它的条件分布仍然是一个正态分布，满足：}
- \\\\
+
 N(μ_1+ρ\\frac{σ_1}{σ_2}(y-μ_2) , (1-ρ^2)σ_1²).
 \\\\
 \\text{如果 X = x,}
-\\\\
+
 \\text{它的条件分布仍然是一个正态分布，满足：}
- \\\\
+
 N(μ_2+ρ\\frac{σ_2}{σ_1}(x-μ_1) , (1-ρ^2)σ_2²)
 `;
 });
@@ -266,8 +262,8 @@ f(x,y) = \\frac{1}{2\\pi|Σ|^\\frac{1}{2}}e^{-(x-μ)'·Σ^{-1}(x-μ)}。
             </div>
         </template>
         <template #parameter>
-            <div class="w-full h-full flex flex-row  justify-center gap-3 p-3">
-                <Card class="w-full w-1/2 card overflow-y-auto">
+            <div class="w-full h-full flex flex-col items-center justify-center gap-3 p-3">
+                <Card class="w-full h-1/2 card overflow-y-auto">
                     <CardHeader>
                         <CardTitle v-if="isChart1">二维正态的联合与边缘分布概率密度函数（PDF）</CardTitle>
                         <CardTitle v-if="isChart2">二维正态的边缘分布概率密度函数（PDF）</CardTitle>
@@ -281,14 +277,14 @@ f(x,y) = \\frac{1}{2\\pi|Σ|^\\frac{1}{2}}e^{-(x-μ)'·Σ^{-1}(x-μ)}。
                     </CardContent>
                 </Card>
 
-                <Card class="h-full w-1/2 cardflex-1 flex flex-col overflow-y-auto">
+                <Card class="w-full flex-1 flex flex-col">
                     <CardHeader>
                         <CardTitle>
                             参数调整
                         </CardTitle>
                     </CardHeader>
-                    <CardContent class=" flex flex-col justify-center items-center gap-3">
-                        <div class="grid grid-cols-2 gap-10">
+                    <CardContent class=" flex  justify-center items-center gap-3">
+                        <div class="grid grid-cols-8 gap-10">
                             <div class="flex flex-col gap-8 pb-0">
                                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
                                     <Label>μ1</Label>
@@ -334,20 +330,7 @@ f(x,y) = \\frac{1}{2\\pi|Σ|^\\frac{1}{2}}e^{-(x-μ)'·Σ^{-1}(x-μ)}。
                                     </div>
                                 </div>
                             </div>
-                            <div class="dropdown dropdown-top dropdown-end transform translate-x-1/4 mt-6">
-                                <Button tabindex="0" role="button" class="m-0">
-                                    点我切换
-                                </Button>
-                                <ul tabindex="0"
-                                    class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-                                    <li @click="toggleChart1">
-                                        <a>二维正态联合与边缘分布</a>
-                                    </li>
-                                    <li @click="toggleChart3">
-                                        <a>二维正态分布的条件分布</a>
-                                    </li>
-                                </ul>
-                            </div>
+
                             <div v-if="isChart3" class="flex flex-col gap-8 pb-0">
                                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
                                     <Label>y</Label>
@@ -365,6 +348,20 @@ f(x,y) = \\frac{1}{2\\pi|Σ|^\\frac{1}{2}}e^{-(x-μ)'·Σ^{-1}(x-μ)}。
                                         <Slider :min="-10" :max="10" :step="1" v-model="x" class="w-full" />
                                     </div>
                                 </div>
+                            </div>
+                                                        <div class="dropdown dropdown-top dropdown-end transform translate-x-1/4 mt-6">
+                                <Button tabindex="0" role="button" class="m-0">
+                                    点我切换
+                                </Button>
+                                <ul tabindex="0"
+                                    class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                                    <li @click="toggleChart1">
+                                        <a>二维正态联合与边缘分布</a>
+                                    </li>
+                                    <li @click="toggleChart3">
+                                        <a>二维正态分布的条件分布</a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </CardContent>
