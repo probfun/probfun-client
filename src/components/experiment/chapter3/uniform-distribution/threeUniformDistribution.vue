@@ -45,7 +45,7 @@ function toggleChart3() {
 const oneFormula = computed(() => {
     return `f(x, y) = 
     \\begin{cases} 
-    \\frac{1}{(x2 - x1)(y2 - y1)}, & \\text{if } x \\in [x1, x2] \\text{ and } y \\in [y1, y2] \\\\
+    \\frac{1}{(x_2 - x_1)(y_2 - y_1)}, & \\text{if } x \\in [x_1, x_2] \\text{ and } y \\in [y_1, y_2] \\\\
     0, & \\text{otherwise}
     \\end{cases}\\\\
   \\phantom{f(x, y)}=
@@ -61,7 +61,7 @@ const twoFormula = computed(() => {
 
     return `f_X(x) = 
     \\begin{cases} 
-    \\frac{1}{x2 - x1}, & \\text{if } x \\in [x1, x2] \\\\
+    \\frac{1}{x_2 - x_1}, & \\text{if } x \\in [x_1, x_2] \\\\
     0, & \\text{otherwise}
     \\end{cases}
     
@@ -76,7 +76,7 @@ const twoFormula = computed(() => {
 \\\\
    f_Y(y) = 
     \\begin{cases} 
-    \\frac{1}{y2 - y1}, & \\text{if } y \\in [y1, y2] \\\\
+    \\frac{1}{y_2 - y_1}, & \\text{if } y \\in [y_1, y_2] \\\\
     0, & \\text{otherwise}
     \\end{cases}
  
@@ -92,7 +92,7 @@ const threeFormula = computed(() => {
 
     return `f_X(x | y) = 
 \\begin{cases} 
-    \\frac{1}{x2 - x1}, & \\text{if } x \\in [x1, x2] \\\\
+    \\frac{1}{x_2 - x_1}, & \\text{if } x \\in [x_1, x_2] \\\\
     0, & \\text{otherwise}
     \\end{cases}
     =
@@ -106,7 +106,7 @@ const threeFormula = computed(() => {
 \\\\
     f_Y(y | x) = 
     \\begin{cases} 
-    \\frac{1}{y2 - y1}, & \\text{if } x \\in [y1, y2] \\\\
+    \\frac{1}{y_2 - y_1}, & \\text{if } x \\in [y_1, y_2] \\\\
     0, & \\text{otherwise}
     \\end{cases}
     =
