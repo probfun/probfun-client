@@ -10,9 +10,8 @@ const props = defineProps<{
     density: number
 }>();
 
-const plotlyChart = ref<HTMLElement | null>(null);
-
-function createPlotlyChart() {
+const plotlyChart1 = ref<HTMLElement | null>(null);
+function createPlotlyChart1() {
     // 设置均值和协方差矩阵
     const mean = [props.mean1, props.mean2];
     const cov = [
@@ -49,7 +48,7 @@ function createPlotlyChart() {
         ];
         const diff = [x - mean[0], y - mean[1]];
         const expTerm = -0.5 * (diff[0] * (invCov[0][0] * diff[0] + invCov[0][1] * diff[1]) +
-                                diff[1] * (invCov[1][0] * diff[0] + invCov[1][1] * diff[1]));
+            diff[1] * (invCov[1][0] * diff[0] + invCov[1][1] * diff[1]));
         const norm = 2 * Math.PI * Math.sqrt(det);
         return Math.exp(expTerm) / norm;
     };
@@ -75,6 +74,7 @@ function createPlotlyChart() {
             y: Y,  // 使用 X 和 Y 作为二维网格
             colorscale: 'Viridis',
             opacity: 0.7,
+            showscale: false,  // 完全隐藏颜色条
         },
         {
             type: 'scatter3d',
@@ -111,7 +111,7 @@ function createPlotlyChart() {
         },
         title: '',
         legend: {
-            x: 0,  // 将图例放到右侧
+            x: 1,  // 将图例放到右侧
             y: 1,  // 将图例放到上方
             traceorder: 'normal',
             font: {
@@ -125,19 +125,235 @@ function createPlotlyChart() {
         displayModeBar: false,  // 禁用交互菜单
     };
     // 渲染图表
-    if (plotlyChart.value) {
-        Plotly.react(plotlyChart.value, data, layout, config);
+    if (plotlyChart1.value) {
+        Plotly.react(plotlyChart1.value, data, layout, config);
+    }
+}
+
+const plotlyChart2 = ref<HTMLElement | null>(null);
+function createPlotlyChart2() {
+    // 设置均值和协方差矩阵
+    const mean = [props.mean1, props.mean2];
+    const cov = [
+        [Math.pow(props.sigma1, 2), props.density * props.sigma1 * props.sigma2],  // cov[0][0] = sigma1^2, cov[0][1] = rho * sigma1 * sigma2
+        [props.density * props.sigma1 * props.sigma2, Math.pow(props.sigma2, 2)]   // cov[1][0] = rho * sigma1 * sigma2, cov[1][1] = sigma2^2
+    ];
+
+    // 创建网格点
+    const linspace = (start: number, stop: number, num: number) => {
+        const step = (stop - start) / (num - 1);
+        return Array.from({ length: num }, (_, i) => start + i * step);
+    };
+
+    const x = linspace(-10, 10, 200);
+
+    // 计算边缘分布
+    const normPdf = (x: number[], mean: number, stddev: number) => {
+        return x.map(xVal => {
+            return (1 / Math.sqrt(2 * Math.PI * Math.pow(stddev, 2))) * Math.exp(-0.5 * Math.pow((xVal - mean) / stddev, 2));
+        });
+    };
+
+    const marginalX = normPdf(x, mean[0], Math.sqrt(cov[0][0]));
+
+    // 创建柱状图数据
+    const data = [
+        {
+            type: 'bar',
+            x: x,
+            y: marginalX,
+            name: 'Marginal X',
+            marker: { color: 'blue' },
+        },
+    ];
+
+    // 设置布局
+    const layout = {
+        xaxis: { title: '' },
+        yaxis: { title: '' },
+        margin: {
+            t: 5,  // 顶部空白
+            b: 5,  // 底部空白
+            l: 5,  // 左侧空白
+            r: 5,  // 右侧空白
+        },
+        title: '',
+    };
+
+    const config = {
+        displayModeBar: false,  // 禁用交互菜单
+    };
+
+    // 渲染图表
+    if (plotlyChart2.value) {
+        Plotly.react(plotlyChart2.value, data, layout, config);
+    }
+}
+
+const plotlyChart3 = ref<HTMLElement | null>(null);
+function createPlotlyChart3() {
+    // 设置均值和协方差矩阵
+    const mean = [props.mean1, props.mean2];
+    const cov = [
+        [Math.pow(props.sigma1, 2), props.density * props.sigma1 * props.sigma2],  // cov[0][0] = sigma1^2, cov[0][1] = rho * sigma1 * sigma2
+        [props.density * props.sigma1 * props.sigma2, Math.pow(props.sigma2, 2)]   // cov[1][0] = rho * sigma1 * sigma2, cov[1][1] = sigma2^2
+    ];
+
+    // 手动计算协方差矩阵的 Cholesky 分解
+    function choleskyDecomposition(cov: number[][]) {
+        const L = [
+            [0, 0],
+            [0, 0]
+        ];
+        // Cholesky 分解：L * L^T = Cov
+        L[0][0] = Math.sqrt(cov[0][0]);
+        L[1][0] = cov[1][0] / L[0][0];
+        L[1][1] = Math.sqrt(cov[1][1] - L[1][0] * L[1][0]);
+        return L;
+    }
+
+    // 使用 Cholesky 分解生成二维正态分布样本
+    function generateBivariateNormalSamples(n: number, mean: number[], cov: number[][]) {
+        const samples = [];
+        const L = choleskyDecomposition(cov); // 获取 Cholesky 分解的矩阵
+        for (let i = 0; i < n; i++) {
+            // 生成标准正态分布样本
+            const z = [Math.sqrt(-2 * Math.log(Math.random())) * Math.cos(2 * Math.PI * Math.random()), Math.sqrt(-2 * Math.log(Math.random())) * Math.sin(2 * Math.PI * Math.random())];
+            const x = mean[0] + L[0][0] * z[0] + L[0][1] * z[1];  // 计算 x 样本
+            const y = mean[1] + L[1][0] * z[0] + L[1][1] * z[1];  // 计算 y 样本
+            samples.push([x, y]);
+        }
+        return samples;
+    }
+
+    // 生成 500 个样本点
+    const n = 500;
+    const samples = generateBivariateNormalSamples(n, mean, cov);
+
+    // 将样本点分解为 x 和 y 坐标
+    const x = samples.map(point => point[0]);
+    const y = samples.map(point => point[1]);
+
+    // 创建散点图数据
+    const data = [
+        {
+            type: 'scatter',
+            mode: 'markers',
+            x: x,
+            y: y,
+            name: 'Samples',
+            marker: {
+                color: 'rgba(255, 0, 0, 0.5)',
+                size: 10,
+            },
+        }
+    ];
+
+    // 设置布局
+    const layout = {
+        xaxis: {
+            title: 'X',
+            zeroline: true,
+        },
+        yaxis: {
+            title: 'Y',
+            zeroline: true,
+        },
+        showlegend: false,
+        grid: { rows: 1, columns: 1 }
+    };
+
+    const config = {
+        displayModeBar: false,  // 禁用交互菜单
+    };
+
+    // 渲染图表
+    if (plotlyChart3.value) {
+        Plotly.react(plotlyChart3.value, data, layout, config);
+    }
+}
+
+const plotlyChart4 = ref<HTMLElement | null>(null);
+function createPlotlyChart4() {
+    // 设置均值和协方差矩阵
+    const mean = [props.mean1, props.mean2];
+    const cov = [
+        [Math.pow(props.sigma1, 2), props.density * props.sigma1 * props.sigma2],  // cov[0][0] = sigma1^2, cov[0][1] = rho * sigma1 * sigma2
+        [props.density * props.sigma1 * props.sigma2, Math.pow(props.sigma2, 2)]   // cov[1][0] = rho * sigma1 * sigma2, cov[1][1] = sigma2^2
+    ];
+
+    // 创建网格点
+    const linspace = (start: number, stop: number, num: number) => {
+        const step = (stop - start) / (num - 1);
+        return Array.from({ length: num }, (_, i) => start + i * step);
+    };
+
+    const y = linspace(-10, 10, 200);
+
+    // 计算边缘分布
+    const normPdf = (x: number[], mean: number, stddev: number) => {
+        return x.map(xVal => {
+            return (1 / Math.sqrt(2 * Math.PI * Math.pow(stddev, 2))) * Math.exp(-0.5 * Math.pow((xVal - mean) / stddev, 2));
+        });
+    };
+
+    const marginalY = normPdf(y, mean[1], Math.sqrt(cov[1][1]));
+
+    // 创建柱状图数据
+    const data = [
+        {
+            type: 'bar',
+            x: marginalY,
+            y: y,
+            name: 'Marginal Y',
+            orientation: 'h',  // 设置柱状图为水平
+            marker: { color: 'blue' },
+        },
+    ];
+
+    // 设置布局
+    const layout = {
+        xaxis: { title: '' },
+        yaxis: { title: '' },
+        margin: {
+            t: 5,  // 顶部空白
+            b: 5,  // 底部空白
+            l: 5,  // 左侧空白
+            r: 5,  // 右侧空白
+        },
+        title: '',
+    };
+
+    const config = {
+        displayModeBar: false,  // 禁用交互菜单
+    };
+
+    // 渲染图表
+    if (plotlyChart4.value) {
+        Plotly.react(plotlyChart4.value, data, layout, config);
     }
 }
 
 onMounted(() => {
-    createPlotlyChart();
+    createPlotlyChart1();
+    createPlotlyChart2();
+    createPlotlyChart3();
+    createPlotlyChart4();
 });
 watch(() => [props.mean1, props.mean2, props.sigma1, props.sigma2, props.density], () => {
-    createPlotlyChart();
+    createPlotlyChart1();
+    createPlotlyChart2();
+    createPlotlyChart3();
+    createPlotlyChart4();
 });
 </script>
 
 <template>
-    <div id="plotly-chart" ref="plotlyChart" class="w-full h-full"></div>
+    <div class="grid grid-cols-2 gap-4">
+        <div id="plotly-chart2" ref="plotlyChart2" class="w-full h-64"></div>
+        <div id="plotly-chart1" ref="plotlyChart1" class="w-full h-64"></div>
+        <div id="plotly-chart3" ref="plotlyChart3" class="w-full h-64"></div>
+        <div id="plotly-chart4" ref="plotlyChart4" class="w-full h-64"></div>
+    </div>
+
 </template>
