@@ -1,26 +1,25 @@
 <script setup lang="ts">
+import type { NodeOptions } from '@/api/distribution/distributionType';
 import type { GraphEdge } from '@vue-flow/core';
+import { generateDistributionDescriptionApi } from '@/api/distribution/distributionApi.ts';
 import { HoverCard } from '@/components/ui/hover-card';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import { useConfigStore } from '@/store';
+import { useConfigStore, useDistributionStore } from '@/store';
 import { toMarkdown } from '@/utils/markdown.ts';
+import { vAutoAnimate } from '@formkit/auto-animate';
 import { Handle, Position, useVueFlow } from '@vue-flow/core'
 import { onMounted, ref, watch } from 'vue';
 
 const props = defineProps<{
   id: string
-  data: {
-    label: string
-    pdf: string | null
-    expId?: string
-    description?: string
-  }
+  data: NodeOptions
 }>();
 
 const { getConnectedEdges, getEdges } = useVueFlow();
 const configStore = useConfigStore();
 const isHighlight = ref(false);
+const nodeDataRef = ref<NodeOptions | undefined>(undefined);
 
 function updateEdgeStyle() {
   const connectedEdges = getConnectedEdges(props.id);
@@ -57,7 +56,6 @@ watch(() => configStore.targetNodeId, () => {
 })
 
 function onSelect() {
-  console.log(props.data)
   if (configStore.targetNodeId === props.id) {
     configStore.targetNodeId = null;
   }
@@ -66,8 +64,41 @@ function onSelect() {
   }
 }
 
+const generating = ref(false);
+const isError = ref(false);
+
+async function generateDescription() {
+  console.log('Generating description');
+  if (generating.value) {
+    return;
+  }
+  const distribution = props.data.chineseTranslation;
+  generating.value = true;
+  isError.value = false;
+  if (nodeDataRef.value === undefined) {
+    return;
+  }
+  nodeDataRef.value.description = undefined;
+  try {
+    const response = await generateDistributionDescriptionApi(distribution);
+    nodeDataRef.value.description = response.description;
+  }
+  catch (error) {
+    console.error('Error during generating description:', error);
+    isError.value = true;
+  }
+  finally {
+    generating.value = false;
+  }
+}
+
 onMounted(() => {
   updateEdgeStyle();
+  const nodeData = useDistributionStore().nodeData;
+  nodeDataRef.value = nodeData.find(item => item.label === props.data.label);
+  if (nodeDataRef.value?.description === undefined && configStore.targetNodeId === props.id) {
+    generateDescription();
+  }
 });
 
 function getDescriptionTitle(description: string) {
@@ -80,7 +111,15 @@ function getDescriptionBody(description: string) {
 </script>
 
 <template>
-  <HoverCard :open="configStore.targetNodeId === id && !configStore.isMoving">
+  <HoverCard
+    :open="configStore.targetNodeId === id && !configStore.isMoving" @update:open="(isOpen) => {
+      if (isOpen) {
+        if (nodeDataRef?.description === undefined) {
+          generateDescription();
+        }
+      }
+    }"
+  >
     <HoverCardTrigger>
       <div
         :class="cn('border rounded-xl p-3 bg-background transition-all border-primary', isHighlight && 'border-destructive border-4')"
@@ -94,9 +133,9 @@ function getDescriptionBody(description: string) {
         <Handle id="b" type="source" :position="Position.Bottom" />
       </div>
     </HoverCardTrigger>
-    <HoverCardContent class="w-auto">
+    <HoverCardContent class="w-auto z-40">
       <Label class="text-base font-bold select-none"> 概率密度函数（PDF） </Label>
-      <div class="w-full flex items-center justify-center pt-3">
+      <div class="w-full flex items-center justify-center pt-3 select-none">
         <div v-if="data.pdf" class="prose" v-html="toMarkdown(data.pdf)" />
         <div v-else class="">
           <Label>
@@ -104,12 +143,39 @@ function getDescriptionBody(description: string) {
           </Label>
         </div>
       </div>
-      <div v-if="data.description" class="mt-6">
-        <Label class="text-base font-bold select-none"> 应用案例： {{ getDescriptionTitle(data.description) }} </Label>
-        <div class="w-full flex items-center justify-center">
-          <div class="prose" v-html="toMarkdown(getDescriptionBody(data.description))" />
+      <div v-auto-animate :class="cn('mt-3')">
+        <div v-if="nodeDataRef?.description" class="p-0">
+          <div class="p-2">
+            <Label class="text-base font-bold select-none"> 应用案例： {{ getDescriptionTitle(nodeDataRef.description) }} </Label>
+            <div class="w-full flex items-center justify-center select-none">
+              <div class="prose" v-html="toMarkdown(getDescriptionBody(nodeDataRef.description))" />
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end mr-2 text-muted-foreground">
+            <Label> 该内容由 AI 提供，</Label>
+            <Button variant="link" class="p-0" @click="generateDescription">
+              重新生成
+            </Button>
+          </div>
+        </div>
+        <div v-else-if="generating" class="w-full p-0">
+          <Label class="text-base font-bold select-none"> 应用案例：</Label>
+          <Label>
+            AI 生成中...
+          </Label>
+        </div>
+        <div v-else-if="isError" class="w-full text-destructive">
+          <Label class="text-base font-bold select-none"> 应用案例：</Label>
+          <Label>
+            生成遇到了一些问题，请
+          </Label>
+          <Button variant="link" class="p-0" @click="generateDescription">
+            重试
+          </Button>
         </div>
       </div>
+
       <div v-if="data.expId">
         <div class="w-full flex items-center justify-center pt-3">
           <Button>
