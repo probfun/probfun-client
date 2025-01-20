@@ -2,7 +2,6 @@ import type { NodeOptions } from '@/api/distribution/distributionType';
 import { useDistributionStore } from '@/store';
 
 let nodeIdCounter = 1; // 初始化计数器
-
 // const defaultStyle = {
 //   whiteSpace: 'pre-wrap',
 //   overflow: 'hidden',
@@ -33,6 +32,7 @@ export function initialNodes() {
       return 1;
     return 0;
   });
+  nodeIdCounter = 1;
   return sortedNodeData.map((data) => {
     return createDistributionNode(data);
   })

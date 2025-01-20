@@ -17,9 +17,11 @@ import { initialEdges, initialNodes } from './initial-elements.ts';
 
 const { setViewport, fitView, getEdges } = useVueFlow();
 
-const nodes = ref(initialNodes());
-const searchNodes = ref(nodes.value);
-const edges = ref(initialEdges());
+const nodeData = initialNodes();
+const edgeData = initialEdges();
+const nodes = ref(nodeData);
+const searchNodes = ref(nodeData);
+const edges = ref(edgeData);
 const dark = ref(false);
 const searchQuery = ref('');
 const configStore = useConfigStore();
@@ -151,7 +153,7 @@ const collapse = ref(false);
 
 <template>
   <div class="flex">
-    <div v-auto-animate class="relative h-full z-50">
+    <div v-auto-animate class="relative h-full z-30">
       <div v-if="!collapse" :class="cn('border-r flex flex-col max-w-xs w-full bg-background h-full')">
         <div class="p-3">
           <Input

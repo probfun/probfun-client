@@ -133,7 +133,7 @@ function getDescriptionBody(description: string) {
         <Handle id="b" type="source" :position="Position.Bottom" />
       </div>
     </HoverCardTrigger>
-    <HoverCardContent class="w-auto z-40">
+    <HoverCardContent class="w-auto z-20">
       <Label class="text-base font-bold select-none"> 概率密度函数（PDF） </Label>
       <div class="w-full flex items-center justify-center pt-3 select-none">
         <div v-if="data.pdf" class="prose" v-html="toMarkdown(data.pdf)" />
