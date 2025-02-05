@@ -30,6 +30,7 @@ declare module 'vue' {
     AvatarImage: typeof import('./src/components/ui/avatar/AvatarImage.vue')['default']
     Badge: typeof import('./src/components/ui/badge/Badge.vue')['default']
     BarChart: typeof import('./src/components/ui/chart-bar/BarChart.vue')['default']
+    Bertrand: typeof import('./src/components/experiment/chapter1/bertrand/bertrand.vue')['default']
     BinomialDiagram: typeof import('./src/components/experiment/distribution/BinomialDiagram.vue')['default']
     BinomialDistribution: typeof import('./src/components/experiment/distribution/BinomialDistribution.vue')['default']
     BirthdayAttack: typeof import('./src/components/experiment/chapter1/BirthdayAttack.vue')['default']

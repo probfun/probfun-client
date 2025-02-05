@@ -287,7 +287,7 @@ f(x,y) = \\frac{1}{2\\pi|Σ|^\\frac{1}{2}}e^{-(x-μ)'·Σ^{-1}(x-μ)}。
                         <div class="grid grid-cols-8 gap-10">
                             <div class="flex flex-col gap-8 pb-0">
                                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                                    <Label>μ1</Label>
+                                    <Label>μ_x</Label>
                                     <div class="max-w-xl space-y-3">
                                         <Input v-model="mean1" fluid />
                                         <Slider v-model="mean1" :min="-10" :max="10" :step="0.1" class="w-full" />
@@ -296,7 +296,7 @@ f(x,y) = \\frac{1}{2\\pi|Σ|^\\frac{1}{2}}e^{-(x-μ)'·Σ^{-1}(x-μ)}。
                             </div>
                             <div class="flex flex-col gap-8 pb-0">
                                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                                    <Label>μ2</Label>
+                                    <Label>μ_y</Label>
                                     <div class="max-w-xl space-y-3">
                                         <Input v-model="mean2" fluid />
                                         <Slider v-model="mean2" :min="-10" :max="10" :step="0.1" class="w-full" />
@@ -305,7 +305,7 @@ f(x,y) = \\frac{1}{2\\pi|Σ|^\\frac{1}{2}}e^{-(x-μ)'·Σ^{-1}(x-μ)}。
                             </div>
                             <div class="flex flex-col gap-8 pb-0">
                                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                                    <Label>σ1</Label>
+                                    <Label>σ_x</Label>
                                     <div class="max-w-xl space-y-3">
                                         <Input v-model="sigma1" fluid />
                                         <Slider :min="0.1" :max="2" :step="0.1" v-model="sigma1" class="w-full" />
@@ -314,7 +314,7 @@ f(x,y) = \\frac{1}{2\\pi|Σ|^\\frac{1}{2}}e^{-(x-μ)'·Σ^{-1}(x-μ)}。
                             </div>
                             <div class="flex flex-col gap-8 pb-0">
                                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                                    <Label>σ2</Label>
+                                    <Label>σ_y</Label>
                                     <div class="max-w-xl space-y-3">
                                         <Input v-model="sigma2" fluid />
                                         <Slider :min="0.1" :max="2" :step="0.1" v-model="sigma2" class="w-full" />

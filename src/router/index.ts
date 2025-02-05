@@ -127,6 +127,11 @@ const router = createRouter({
           component: () => import('@/components/experiment/chapter4/ExpectationTest.vue'),
         },
         {
+          path: '/dashboard/experiment/bertrand',
+          component: () => import('@/components/experiment/chapter1/bertrand/bertrand.vue'),
+        },
+
+        {
           path: '/dashboard/info0',
           component: StudentPanel,
         },

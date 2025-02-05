@@ -156,6 +156,21 @@ const chapter1Items = [
     route: '/dashboard/experiment/three-doors',
   },
   {
+    label: '贝特朗悖论',
+    icon: 'pi pi-chart-bar',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '贝特朗悖论', window.location.href);
+        console.log('贝特朗悖论');
+        await router.push('/dashboard/experiment/bertrand');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
+    route: '/dashboard/experiment/bertrand',
+  },
+  {
     label: '生日问题',
     icon: 'pi pi-chart-bar',
     route: '/dashboard/experiment/birthday-problem',

@@ -227,6 +227,11 @@ function updateExperiment() {
     title.value = '中心极限定理';
     tags.value = ['正态分布'];
   }
+  else if (path === 'bertrand') {
+    title.value = '贝特朗悖论';
+    tags.value = ['随机变量产生机制影响事件概率'];
+  }
+
   // else if (path === '') {
   // title.value ='';
   // tags.value =[''];
