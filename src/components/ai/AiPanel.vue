@@ -33,6 +33,7 @@ import { vAutoAnimate } from '@formkit/auto-animate';
 import { ArrowDownToLine, Bot, CircleStop, Clipboard, PencilLine, RotateCcw, Send, Trash2 } from 'lucide-vue-next';
 import { v4 as uuidv4 } from 'uuid';
 import { nextTick, onMounted, ref, watch } from 'vue'
+import {useRoute, useRouter} from "vue-router";
 
 const message = ref('');
 const aiStore = useAiStore();
@@ -116,6 +117,11 @@ async function sendMessages() {
   }
 }
 
+function getRouteQuery() {
+  const route = useRoute();
+  return route.query.query as string | undefined;
+}
+
 function stopGenerating() {
   if (status.value === 'generating') {
     status.value = 'aborted';
@@ -192,6 +198,14 @@ onMounted(() => {
   scrollToBottom(false);
   resetTextareaHeight();
   tx.value?.root.addEventListener('input', resetTextareaHeight, false);
+  const query = getRouteQuery();
+  if (query) {
+    aiStore.currentChat = null;
+    const question = `请解释一下${query}是什么`;
+    send(question);
+    const router = useRouter();
+    router.push({ query: undefined });
+  }
 });
 
 watch(() => aiStore.currentChat, () => {
@@ -255,21 +269,21 @@ function handleCompositionEnd() {
         </div>
       </CardHeader>
       <CardContent class="overflow-y-hidden border-t flex pb-0 px-0 relative flex-1">
-        <div class="grid grid-cols-[1fr_3fr] w-full">
-          <div class="flex items-center justify-center border-r">
-            <video
-              width="60%"
-              class="select-none"
-              :draggable="false"
-              height="auto"
-              autoplay
-              loop
-              muted
-            >
-              <source src="/src/assets/ai-robot.webm" type="video/webm">
-              <p>您的浏览器不支持 WebM 格式。</p>
-            </video>
-          </div>
+        <div class="grid grid-cols-[1fr_3fr]1 w-full">
+<!--          <div class="flex items-center justify-center border-r">-->
+<!--            <video-->
+<!--              width="60%"-->
+<!--              class="select-none"-->
+<!--              :draggable="false"-->
+<!--              height="auto"-->
+<!--              autoplay-->
+<!--              loop-->
+<!--              muted-->
+<!--            >-->
+<!--              <source src="/src/assets/ai-robot.webm" type="video/webm">-->
+<!--              <p>您的浏览器不支持 WebM 格式。</p>-->
+<!--            </video>-->
+<!--          </div>-->
           <div ref="scrollContainer" class="flex w-full flex-col items-center gap-3 overflow-y-auto pt-4 px-6">
             <div v-for="(block, index) in aiStore.currentChat?.chatBlocks ?? [START_BLOCK]" :key="block.blockId" v-auto-animate class="flex w-full max-w-screen-md">
               <div v-if="block.role === 'user'" class="ml-auto">

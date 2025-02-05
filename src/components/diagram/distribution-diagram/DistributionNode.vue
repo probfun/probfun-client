@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { NodeOptions } from '@/api/distribution/distributionType';
-import type { GraphEdge } from '@vue-flow/core';
-import { generateDistributionDescriptionApi } from '@/api/distribution/distributionApi.ts';
-import { HoverCard } from '@/components/ui/hover-card';
-import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
-import { useConfigStore, useDistributionStore } from '@/store';
-import { toMarkdown } from '@/utils/markdown.ts';
-import { vAutoAnimate } from '@formkit/auto-animate';
-import { Handle, Position, useVueFlow } from '@vue-flow/core'
-import { onMounted, ref, watch } from 'vue';
+import type {NodeOptions} from '@/api/distribution/distributionType';
+import type {GraphEdge} from '@vue-flow/core';
+import {Handle, Position, useVueFlow} from '@vue-flow/core'
+import {generateDistributionDescriptionApi} from '@/api/distribution/distributionApi.ts';
+import {HoverCard} from '@/components/ui/hover-card';
+import {Label} from '@/components/ui/label';
+import {cn} from '@/lib/utils';
+import {useConfigStore, useDistributionStore} from '@/store';
+import {toMarkdown} from '@/utils/markdown.ts';
+import {vAutoAnimate} from '@formkit/auto-animate';
+import {onMounted, ref, watch} from 'vue';
 
 const props = defineProps<{
   id: string
@@ -67,6 +67,10 @@ function onSelect() {
 const generating = ref(false);
 const isError = ref(false);
 
+function replaceKeywords(text: string): string {
+  return text.replace(/&&(.+?)&&/g, (match, p1) => ` [${p1}](ai?query=${encodeURIComponent(p1)}) `);
+}
+
 async function generateDescription() {
   console.log('Generating description');
   if (generating.value) {
@@ -102,11 +106,11 @@ onMounted(() => {
 });
 
 function getDescriptionTitle(description: string) {
-  return description?.split('\n\n')[0].split(':')[1];
+  return description?.split('\n\n')[0].split(':')[1].replace(/&/g, '');
 }
 
 function getDescriptionBody(description: string) {
-  return description.split('\n\n')[1];
+  return replaceKeywords(description.split('\n\n')[1]);
 }
 </script>
 
