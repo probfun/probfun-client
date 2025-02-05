@@ -1,15 +1,18 @@
 <script setup lang="ts">
-import type {NodeOptions} from '@/api/distribution/distributionType';
-import type {GraphEdge} from '@vue-flow/core';
-import {Handle, Position, useVueFlow} from '@vue-flow/core'
-import {generateDistributionDescriptionApi} from '@/api/distribution/distributionApi.ts';
-import {HoverCard} from '@/components/ui/hover-card';
-import {Label} from '@/components/ui/label';
-import {cn} from '@/lib/utils';
-import {useConfigStore, useDistributionStore} from '@/store';
-import {toMarkdown} from '@/utils/markdown.ts';
-import {vAutoAnimate} from '@formkit/auto-animate';
-import {onMounted, ref, watch} from 'vue';
+import type { NodeOptions } from '@/api/distribution/distributionType';
+import type { GraphEdge } from '@vue-flow/core';
+import { generateDistributionDescriptionApi } from '@/api/distribution/distributionApi.ts';
+import { Button } from '@/components/ui/button';
+import { DropdownMenu } from '@/components/ui/dropdown-menu';
+import { HoverCard } from '@/components/ui/hover-card';
+import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
+import { useConfigStore, useDistributionStore } from '@/store';
+import { toMarkdown } from '@/utils/markdown.ts';
+import { vAutoAnimate } from '@formkit/auto-animate';
+import { Handle, Position, useVueFlow } from '@vue-flow/core'
+import { Bot, Check, ChevronsLeftRightEllipsis, CircuitBoard, RectangleEllipsis } from 'lucide-vue-next';
+import { onMounted, ref, watch } from 'vue';
 
 const props = defineProps<{
   id: string
@@ -20,6 +23,7 @@ const { getConnectedEdges, getEdges } = useVueFlow();
 const configStore = useConfigStore();
 const isHighlight = ref(false);
 const nodeDataRef = ref<NodeOptions | undefined>(undefined);
+const customSubject = ref('');
 
 function updateEdgeStyle() {
   const connectedEdges = getConnectedEdges(props.id);
@@ -71,7 +75,7 @@ function replaceKeywords(text: string): string {
   return text.replace(/&&(.+?)&&/g, (match, p1) => ` [${p1}](ai?query=${encodeURIComponent(p1)}) `);
 }
 
-async function generateDescription() {
+async function generateDescription(subject: string = 'default') {
   console.log('Generating description');
   if (generating.value) {
     return;
@@ -84,7 +88,7 @@ async function generateDescription() {
   }
   nodeDataRef.value.description = undefined;
   try {
-    const response = await generateDistributionDescriptionApi(distribution);
+    const response = await generateDistributionDescriptionApi(distribution, subject);
     nodeDataRef.value.description = response.description;
   }
   catch (error) {
@@ -158,9 +162,43 @@ function getDescriptionBody(description: string) {
 
           <div class="flex items-center justify-end mr-2 text-muted-foreground">
             <Label> 该内容由 AI 提供，</Label>
-            <Button variant="link" class="p-0" @click="generateDescription">
-              重新生成
-            </Button>
+            <!--            <Popover> -->
+            <!--              <PopoverTrigger> -->
+
+            <!--              </PopoverTrigger> -->
+            <!--              <PopoverContent> -->
+            <!--                <Button @click="generateDescription('人工智能')"> 人工智能 </Button> -->
+            <!--                <Button @click="generateDescription('通信工程')"> 通信工程 </Button> -->
+            <!--                <Button @click="generateDescription('电子信息工程')"> 电子信息工程 </Button> -->
+            <!--              </PopoverContent> -->
+            <!--            </Popover> -->
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Button variant="link" class="p-0">
+                  想要探索更多应用领域？
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent side="right" align="start">
+                <DropdownMenuItem @click="generateDescription('人工智能')">
+                  <Bot class="mr-1 h-4 w-4" />人工智能
+                </DropdownMenuItem>
+                <DropdownMenuItem @click="generateDescription('通信工程')">
+                  <ChevronsLeftRightEllipsis class="mr-1 h-4 w-4" />
+                  通信工程
+                </DropdownMenuItem>
+                <DropdownMenuItem @click="generateDescription('电子信息工程')">
+                  <CircuitBoard class="mr-1 h-4 w-4" />
+                  电子信息工程
+                </DropdownMenuItem>
+                <DropdownMenuLabel class="flex items-center gap-2 hover:bg-secondary transition-all">
+                  <RectangleEllipsis class="mr-1 h-4 w-4" />
+                  <Input v-model="customSubject" class="flex-1 max-w-20 h-6" />
+                  <Button size="icon" class="size-5" variant="outline" @click="generateDescription(customSubject)">
+                    <Check class="size-4" />
+                  </Button>
+                </DropdownMenuLabel>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
         <div v-else-if="generating" class="w-full p-0">
@@ -174,7 +212,7 @@ function getDescriptionBody(description: string) {
           <Label>
             生成遇到了一些问题，请
           </Label>
-          <Button variant="link" class="p-0" @click="generateDescription">
+          <Button variant="link" class="p-0" @click="generateDescription()">
             重试
           </Button>
         </div>
