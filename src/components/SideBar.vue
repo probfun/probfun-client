@@ -389,6 +389,42 @@ const chapter3Items = [
       }
     },
   },
+  // {
+  //   label: '中心极限定理',
+  //   icon: 'pi pi-chart-bar',
+  //   route: '/dashboard/experiment/centralLimitTheorem',
+  //   command: async () => {
+  //     try {
+  //       await clickApi('CLICK', 'catalogue', '中心极限定理', window.location.href);
+  //       console.log('中心极限定理');
+  //       await router.push('/dashboard/experiment/centralLimitTheorem');
+  //     }
+  //     catch (error) {
+  //       console.error('Error tracking button click:', error);
+  //     }
+  //   },
+  // },
+]
+const chapter4Items = [
+ 
+  {
+    label: '期望检验',
+    icon: 'pi pi-chart-bar',
+    route: '/dashboard/experiment/expectationTest',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '期望检验', window.location.href);
+        console.log('期望检验');
+        await router.push('/dashboard/experiment/expectationTest');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
+  },
+]
+const chapter5Items = [
+ 
   {
     label: '中心极限定理',
     icon: 'pi pi-chart-bar',
@@ -604,6 +640,46 @@ function goHome() {
                 </ul>
               </details>
             </li>
+
+            <li>
+              <details open>
+                <summary class="font-bold">
+                  <i class="pi pi-bookmark" /> 第四章
+                </summary>
+                <ul class="sapce-y-1">
+                  <li v-for="(item, index) in chapter4Items" :key="item.label">
+                    <a
+                      :class="{ active: isActiveRoute(item.route) }"
+                      @click="() => { item.command(); toggleDrawer(); }"
+                    >
+                      <i :class="item.icon" />
+                      4.{{ index + 1 }}-{{ item.label }}
+                    </a>
+                  </li>
+                </ul>
+              </details>
+            </li>
+
+            <li>
+              <details open>
+                <summary class="font-bold">
+                  <i class="pi pi-bookmark" /> 第五章
+                </summary>
+                <ul class="sapce-y-1">
+                  <li v-for="(item, index) in chapter5Items" :key="item.label">
+                    <a
+                      :class="{ active: isActiveRoute(item.route) }"
+                      @click="() => { item.command(); toggleDrawer(); }"
+                    >
+                      <i :class="item.icon" />
+                      5.{{ index + 1 }}-{{ item.label }}
+                    </a>
+                  </li>
+                </ul>
+              </details>
+            </li>
+
+
           </ul>
         </div>
       </div>
