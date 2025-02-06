@@ -3,13 +3,182 @@ import ExperimentBoard from '../../ExperimentBoard.vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import InputNumber from 'primevue/inputnumber';
 import Slider from 'primevue/slider';
-import { ref } from 'vue';
+import { Button } from '@/components/ui/button';
+import { ref, onMounted, watch } from 'vue';
 import { toMarkdown } from '@/utils/markdown';
+import Chart from 'primevue/chart';
+import { log } from 'console';
 
-const n = ref(1); //钉子行数
+const n = ref(3); //框的数量
 const ball = ref(10); //球的数量
+const canvasRef = ref<HTMLCanvasElement | null>(null);
+const chartData = ref();
+const chartOptions = ref();
+const binCounts = ref<number[]>([]);
 
+const setChartData = () => {
+    const documentStyle = getComputedStyle(document.documentElement);
 
+    return {
+        labels: Array.from({ length: n.value }, (_, i) => i + 1),
+        datasets: [
+            {
+                type: 'line',
+                label: '近似曲线',
+                borderColor: documentStyle.getPropertyValue('--p-orange-500'),
+                borderWidth: 2,
+                fill: false,
+                tension: 0.4,
+                data: binCounts
+            },
+            {
+                type: 'bar',
+                label: '每个框中球的数量',
+                backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
+                data: binCounts
+            }
+        ]
+    };
+};
+const setChartOptions = () => {
+    const documentStyle = getComputedStyle(document.documentElement);
+    const textColor = documentStyle.getPropertyValue('--p-text-color');
+    const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
+    const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+
+    return {
+        maintainAspectRatio: false,
+        aspectRatio: 0.6,
+        plugins: {
+            legend: {
+                labels: {
+                    color: textColor
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: {
+                    color: textColorSecondary
+                },
+                grid: {
+                    color: surfaceBorder
+                }
+            },
+            y: {
+                ticks: {
+                    color: textColorSecondary
+                },
+                grid: {
+                    color: surfaceBorder
+                }
+            }
+        }
+    };
+}
+
+function drawBoard() {
+    const canvas = canvasRef.value;
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // 圆的半径
+            const radius = 2;
+            // 层与层之间的垂直间距
+            const verticalSpacing = 15;
+            // 水平圆之间的间距
+            const horizontalSpacing = 20;
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 2;
+
+            // 每层圆的数量
+            const circlesPerLayer = [];
+            for (let i = 0; i < n.value; i++) {
+                circlesPerLayer.push(n.value - i + 1);
+            }
+
+            // 起始 y 坐标
+            let y = canvas.height - radius - 20;
+            let bottomLayerStartX = 0; // 最下面一层的起始 x 坐标
+            circlesPerLayer.forEach((count, layerIndex) => {
+                // 计算该层圆的总宽度（包含间距）
+                const totalWidth = (count - 1) * (2 * radius + horizontalSpacing);
+                // 计算该层第一个圆的起始 x 坐标
+                const layerStartX = (canvas.width - totalWidth) / 2;
+
+                if (layerIndex === circlesPerLayer.length - 1) {
+                    // 保存最下面一层的起始 x 坐标
+                    bottomLayerStartX = layerStartX;
+                }
+
+                for (let i = 0; i < count; i++) {
+                    // 计算当前圆的 x 坐标，考虑水平间距
+                    const x = layerStartX + i * (2 * radius + horizontalSpacing);
+
+                    // 开始绘制路径
+                    ctx.beginPath();
+                    // 绘制圆
+                    ctx.arc(x, y, radius, 0, 2 * Math.PI);
+                    // 设置填充颜色
+                    ctx.fillStyle = 'black';
+                    // 填充圆
+                    ctx.fill();
+                    // 设置边框颜色
+                    ctx.strokeStyle = 'black';
+                    // 设置边框宽度
+                    ctx.lineWidth = 2;
+                    // 绘制边框
+                    ctx.stroke();
+                }
+
+                // 更新 y 坐标到下一层
+                y -= verticalSpacing;
+            });
+
+            // 绘制竖线：保持竖线数量不变
+            let startX = bottomLayerStartX;
+            for (let i = 0; i < n.value + 1; i++) {
+                // 开始一条新路径
+                ctx.beginPath();
+                // 移动到竖线的起始点
+                ctx.moveTo(startX - 24 * (n.value - 1) / 2, 230); // 保持竖线位置与底层圆对齐
+                // 绘制竖线到结束点
+                ctx.lineTo(startX - 24 * (n.value - 1) / 2, 250); // 竖线长度
+                // 绘制路径
+                ctx.stroke();
+                // 更新下一条竖线的起始 x 坐标
+                startX += 24;
+            }
+        }
+    }
+}
+function startSimulation() {
+    binCounts.value = new Array(n.value).fill(0);
+    for (let i = 0; i < ball.value; i++) {
+        let position = 0;
+        for (let j = 0; j < n.value - 1; j++) {
+            const prob = Math.random();
+            if (prob < 0.5) {
+                position -= 1;
+            }
+            else {
+                position += 1;
+            }
+        }
+        binCounts.value[Math.floor(n.value / 2) + position / 2]++;
+    }
+    chartData.value = setChartData();
+}
+
+onMounted(() => {
+    drawBoard();
+    chartData.value = setChartData();
+    chartOptions.value = setChartOptions();
+});
+watch([n, ball], () => {
+    drawBoard();
+});
 
 const content = `
 ## **概述**
@@ -50,7 +219,19 @@ $$
 <template>
     <ExperimentBoard>
         <template #experiment>
-
+            <div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <canvas ref="canvasRef" width="400" height="250"></canvas>
+                    </div>
+                    <div>
+                        <Chart type="bar" :data="chartData" :options="chartOptions" class="h-full" />
+                    </div>
+                </div>
+                <div class="flex justify-center items-center mt-5">
+                    <Button @click="startSimulation()">开始模拟</Button>
+                </div>
+            </div>
         </template>
         <template #parameter>
             <div class="w-full h-full p-3">
@@ -71,10 +252,10 @@ $$
                         <div class="grid grid-cols-2 gap-10">
                             <div class="flex flex-col gap-8 pb-0">
                                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                                    <Label>钉子行数</Label>
+                                    <Label>框的数量</Label>
                                     <div class="max-w-xl space-y-3">
                                         <InputNumber v-model="n" fluid />
-                                        <Slider v-model="n" :min="5" :max="20" :step="1" class="w-full" />
+                                        <Slider v-model="n" :min="3" :max="15" :step="2" class="w-full" />
                                     </div>
                                 </div>
                             </div>
@@ -83,7 +264,7 @@ $$
                                     <Label>球的数量</Label>
                                     <div class="max-w-xl space-y-3">
                                         <InputNumber v-model="ball" fluid />
-                                        <Slider v-model="ball" :min="5" :max="100" :step="5" class="w-full" />
+                                        <Slider v-model="ball" :min="5" :max="1000" :step="5" class="w-full" />
                                     </div>
                                 </div>
                             </div>

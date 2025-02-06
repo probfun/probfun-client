@@ -25,22 +25,14 @@ const twoContainer = ref<HTMLElement | null>(null);
 const threeContainer = ref<HTMLElement | null>(null);
 
 const isChart1 = ref(true);
-const isChart2 = ref(false);
 const isChart3 = ref(false);
 
 function toggleChart1() {
     isChart1.value = true;
-    isChart2.value = false;
-    isChart3.value = false;
-}
-function toggleChart2() {
-    isChart1.value = false;
-    isChart2.value = true;
     isChart3.value = false;
 }
 function toggleChart3() {
     isChart1.value = false;
-    isChart2.value = false;
     isChart3.value = true;
 }
 
@@ -241,39 +233,20 @@ f(x,y) = \\frac{1}{2\\pi|Σ|^\\frac{1}{2}}e^{-(x-μ)'·Σ^{-1}(x-μ)}。
 <template>
     <ExperimentBoard>
         <template #experiment>
-            <ThreeNormalDiagram v-if="isChart1" :mean1="mean1" :mean2="mean2" :sigma1="sigma1" :sigma2="sigma2"
-                :density="density" class="w-full h-full">
+            <ThreeNormalDiagram :mean1="mean1" :mean2="mean2" :sigma1="sigma1" :sigma2="sigma2"
+                :density="density" :isChart3="isChart3" :fixed-x="x" :fixed-y="y" class="w-full h-full">
             </ThreeNormalDiagram>
-            <div v-if="isChart2" class="w-full h-full flex">
-                <NormalDiagram class="w-[50%] h-full mr-1" :mean="mean1" :std-dev="sigma1" :transformed-mean-y="mean1"
-                    :transformed-variance-y="sigma1"></NormalDiagram>
-                <NormalDiagram class="w-[50%] h-full ml-1" :mean="mean2" :std-dev="sigma2" :transformed-mean-y="mean2"
-                    :transformed-variance-y="sigma2"></NormalDiagram>
-            </div>
-            <div v-if="isChart3" class="w-full h-full flex">
-                <NormalDiagram class="w-[50%] h-full mr-1" :mean="mean1 + density * (sigma1 / sigma2) * (y - mean2)"
-                    :std-dev="(1 - density * density) * sigma1 * sigma1"
-                    :transformed-mean-y="mean1 + density * (sigma1 / sigma2) * (y - mean2)"
-                    :transformed-variance-y="(1 - density * density) * sigma1 * sigma1"></NormalDiagram>
-                <NormalDiagram class="w-[50%] h-full ml-1" :mean="mean2 + density * (sigma2 / sigma1) * (x - mean1)"
-                    :std-dev="(1 - density * density) * sigma2 * sigma2"
-                    :transformed-mean-y="mean2 + density * (sigma2 / sigma1) * (x - mean1)"
-                    :transformed-variance-y="(1 - density * density) * sigma2 * sigma2"></NormalDiagram>
-            </div>
         </template>
         <template #parameter>
             <div class="w-full h-full flex flex-col items-center justify-center gap-3 p-3">
                 <Card class="w-full h-1/2 card overflow-y-auto">
                     <CardHeader>
                         <CardTitle v-if="isChart1">二维正态的联合与边缘分布概率密度函数（PDF）</CardTitle>
-                        <CardTitle v-if="isChart2">二维正态的边缘分布概率密度函数（PDF）</CardTitle>
                         <CardTitle v-if="isChart3">二维正态的条件分布</CardTitle>
                     </CardHeader>
                     <CardContent class="flex w-full justify-start">
                         <div v-show="isChart1" ref="oneContainer" class="text-base" />
-                        <div v-show="isChart2" ref="twoContainer" class="text-base" />
                         <div v-show="isChart3" ref="threeContainer" class="text-base" />
-
                     </CardContent>
                 </Card>
 
@@ -349,7 +322,7 @@ f(x,y) = \\frac{1}{2\\pi|Σ|^\\frac{1}{2}}e^{-(x-μ)'·Σ^{-1}(x-μ)}。
                                     </div>
                                 </div>
                             </div>
-                                                        <div class="dropdown dropdown-top dropdown-end transform translate-x-1/4 mt-6">
+                            <div class="dropdown dropdown-top dropdown-end transform translate-x-1/4 mt-6">
                                 <Button tabindex="0" role="button" class="m-0">
                                     点我切换
                                 </Button>
