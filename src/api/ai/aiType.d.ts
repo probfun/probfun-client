@@ -60,6 +60,9 @@ export interface TwoDNormalDistributionArgs {
   mean2: number
   stdDev2: number
   density: number
+  isChart3: boolean
+  fixedX: number
+  fixedY: number
 }
 
 export interface PoissonDistributionArgs {

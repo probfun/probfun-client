@@ -84,5 +84,8 @@ const { type, args } = args_;
     :sigma1="(args as TwoDNormalDistributionArgs).stdDev1"
     :sigma2="(args as TwoDNormalDistributionArgs).stdDev2"
     :density="(args as TwoDNormalDistributionArgs).density"
+    :isChart3="(args as TwoDNormalDistributionArgs).isChart3"
+    :fixedX="(args as TwoDNormalDistributionArgs).fixedX"
+    :fixedY="(args as TwoDNormalDistributionArgs).fixedY"
   />
 </template>
