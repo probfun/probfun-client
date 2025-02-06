@@ -26,7 +26,7 @@ onMounted(async () => {
 
 <template>
   <div class="w-screen h-screen flex">
-    <SideBar />
+    <SideBar class="z-50" />
     <div v-auto-animate class="w-screen h-screen flex flex-col relative transition-all overflow-y-hidden">
       <NavBar />
       <router-view class="flex-1 overflow-y-hidden" />

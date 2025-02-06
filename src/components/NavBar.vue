@@ -219,10 +219,19 @@ function updateExperiment() {
     title.value = '二维正态分布';
     tags.value = ['边缘分布', '条件分布', '(X,Y) ~ N(μ1,μ2;σ1²,σ2²;ρ)'];
   }
-  else if (path === '') {
-    title.value = '';
-    tags.value = [''];
+  else if (path === 'expectationTest') {
+    title.value = '期望检验';
+    tags.value = ['分组检测'];
   }
+  else if (path === 'centralLimitTheorem') {
+    title.value = '中心极限定理';
+    tags.value = ['正态分布'];
+  }
+  else if (path === 'bertrand') {
+    title.value = '贝特朗悖论';
+    tags.value = ['随机变量产生机制影响事件概率'];
+  }
+
   // else if (path === '') {
   // title.value ='';
   // tags.value =[''];

@@ -47,13 +47,32 @@ export interface UniformDistributionArgs {
   b: number
 }
 
+export interface TwoDUniformDistributionArgs {
+  x1: number
+  y1: number
+  x2: number
+  y2: number
+}
+
+export interface TwoDNormalDistributionArgs {
+  mean1: number
+  stdDev1: number
+  mean2: number
+  stdDev2: number
+  density: number
+}
+
 export interface PoissonDistributionArgs {
   lambda: number
 }
 
+interface ThreeDoorsArgs {
+  selectedStrategy: 'never' | 'always' | 'random'
+}
+
 export interface DistributionArgs {
-  type: 'normal' | 'uniform' | 'geometric' | 'poisson' | 'binomial' | 'exponential'
-  args: NormalDistributionArgs | GeometricDistributionArgs | BinomialDistributionArgs | ExponentialDistributionArgs | UniformDistributionArgs | PoissonDistributionArgs
+  type: 'normal' | 'uniform' | 'geometric' | 'poisson' | 'binomial' | 'exponential' | '2d-uniform' | '2d-normal'
+  args: NormalDistributionArgs | GeometricDistributionArgs | BinomialDistributionArgs | ExponentialDistributionArgs | UniformDistributionArgs | PoissonDistributionArgs | TwoDUniformDistributionArgs | TwoDNormalDistributionArgs
 }
 
 export interface BuffonNeedleArgs {
@@ -62,7 +81,7 @@ export interface BuffonNeedleArgs {
   needleAmount: number
 }
 
-export interface ToolArgs extends DistributionArgs, BuffonNeedleArgs {}
+export interface ToolArgs extends DistributionArgs, BuffonNeedleArgs, ThreeDoorsArgs {}
 
 export interface Tool {
   name: string

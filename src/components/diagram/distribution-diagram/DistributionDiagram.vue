@@ -4,20 +4,24 @@ import DistributionNode from '@/components/diagram/distribution-diagram/Distribu
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils.ts';
 import { useConfigStore } from '@/store';
-import { Background } from '@vue-flow/background'; // 引入 dagre
+import { vAutoAnimate } from '@formkit/auto-animate'; // 引入 dagre
+import { Background } from '@vue-flow/background';
 import { Controls } from '@vue-flow/controls';
 import { useVueFlow, VueFlow } from '@vue-flow/core';
 import { MiniMap } from '@vue-flow/minimap';
 import dagre from 'dagre';
+import { ChevronRight } from 'lucide-vue-next';
 import { nextTick, onMounted, ref, watch } from 'vue';
 import Icon from '../Icon.vue';
 import { initialEdges, initialNodes } from './initial-elements.ts';
 
 const { setViewport, fitView, getEdges } = useVueFlow();
 
-const nodes = ref(initialNodes);
-const searchNodes = ref(initialNodes);
-const edges = ref(initialEdges);
+const nodeData = initialNodes();
+const edgeData = initialEdges();
+const nodes = ref(nodeData);
+const searchNodes = ref(nodeData);
+const edges = ref(edgeData);
 const dark = ref(false);
 const searchQuery = ref('');
 const configStore = useConfigStore();
@@ -143,47 +147,54 @@ const showTooltip = ref(false);
 function toggleTooltip() {
   showTooltip.value = !showTooltip.value;
 }
+
+const collapse = ref(false);
 </script>
 
 <template>
   <div class="flex">
-    <div class="border-r flex flex-col max-w-xs w-full">
-      <div class="p-3">
-        <Input
-          v-model="searchQuery"
-          type="text"
-          placeholder="搜索分布"
-          @update:model-value="searchNode"
-        />
+    <div v-auto-animate class="relative h-full z-30">
+      <div v-if="!collapse" :class="cn('border-r flex flex-col max-w-xs w-full bg-background h-full')">
+        <div class="p-3">
+          <Input
+            v-model="searchQuery"
+            type="text"
+            placeholder="搜索分布"
+            @update:model-value="searchNode"
+          />
+        </div>
+        <div class="flex gap-3 p-3 flex-col flex-1 overflow-y-auto">
+          <Button
+            v-for="distribution in searchNodes" :key="distribution.id" variant="outline" :class="cn('flex flex-col h-auto transition-all', configStore.targetNodeId === distribution.id && 'border-primary text-primary')" @click="() => {
+              if (configStore.targetNodeId === distribution.id) {
+                configStore.targetNodeId = null;
+                resetEdges();
+                fitView({
+                  nodes: [],
+                  duration: 1000, // use this if you want a smooth transition to the node
+                  padding: 10,
+                  minZoom: 0.5,
+                  offset: { x: 0, y: 800 },
+                });
+              }
+              else {
+                configStore.targetNodeId = distribution.id;
+                moveToNode(distribution.id);
+              }
+            }"
+          >
+            <div class="whitespace-pre">
+              {{ distribution.data.label.split('\n')[0] }}
+            </div>
+            <div class="whitespace-pre text-center">
+              {{ distribution.data.chineseTranslation }}
+            </div>
+          </Button>
+        </div>
       </div>
-      <div class="flex gap-3 p-3 flex-col flex-1 overflow-y-auto">
-        <Button
-          v-for="distribution in searchNodes" :key="distribution.id" variant="outline" :class="cn('flex flex-col h-auto transition-all', configStore.targetNodeId === distribution.id && 'border-primary text-primary')" @click="() => {
-            if (configStore.targetNodeId === distribution.id) {
-              configStore.targetNodeId = null;
-              resetEdges();
-              fitView({
-                nodes: [],
-                duration: 1000, // use this if you want a smooth transition to the node
-                padding: 10,
-                minZoom: 0.5,
-                offset: { x: 0, y: 800 },
-              });
-            }
-            else {
-              configStore.targetNodeId = distribution.id;
-              moveToNode(distribution.id);
-            }
-          }"
-        >
-          <div class="whitespace-pre">
-            {{ distribution.data.label.split('\n')[0] }}
-          </div>
-          <div class="whitespace-pre text-center">
-            {{ distribution.data.chineseTranslation }}
-          </div>
-        </Button>
-      </div>
+      <Button class="bottom-10 absolute right-0 translate-x-[100%] rounded-l-none rounded-r-full" size="icon" @click="collapse = !collapse">
+        <ChevronRight :class="cn('transition-all size-5', !collapse && 'rotate-180')" />
+      </Button>
     </div>
     <div class="relative flex-1">
       <VueFlow
@@ -264,57 +275,9 @@ function toggleTooltip() {
   color: #fffffb
 }
 
-.basic-flow.dark .vue-flow__node {
-  background: #4a5568;
-  color: #fffffb
-}
-
-.basic-flow.dark .vue-flow__node.selected {
-  background: #333;
-  box-shadow: 0 0 0 2px #2563eb
-}
-
-.basic-flow .vue-flow__controls {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center
-}
-
-.basic-flow.dark .vue-flow__controls {
-  border: 1px solid #FFFFFB
-}
-
-.basic-flow .vue-flow__controls .vue-flow__controls-button {
-  border: none;
-  border-right: 1px solid #eee
-}
-
 .basic-flow .vue-flow__controls .vue-flow__controls-button svg {
   height: 100%;
   width: 100%
-}
-
-.basic-flow.dark .vue-flow__controls .vue-flow__controls-button {
-  background: #333;
-  fill: #fffffb;
-  border: none
-}
-
-.basic-flow.dark .vue-flow__controls .vue-flow__controls-button:hover {
-  background: #4d4d4d
-}
-
-.basic-flow.dark .vue-flow__edge-textbg {
-  fill: #292524
-}
-
-.basic-flow.dark .vue-flow__edge-text {
-  fill: #fffffb
-}
-
-.light {
-  white-space: pre-line;
-  /* 支持换行符 */
 }
 
 .tooltip {

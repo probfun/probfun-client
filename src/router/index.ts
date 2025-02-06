@@ -13,6 +13,8 @@ import GeometricDistribution from '@/components/experiment/distribution/geometri
 import NormalDistribution from '@/components/experiment/distribution/normal-distribution/NormalDistribution.vue';
 import PoissonDistribution from '@/components/experiment/distribution/poisson-distribution/PoissonDistribution.vue';
 import UniformDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
+import ExpectationTest from '@/components/experiment/chapter4/ExpectationTest.vue';
+
 import HomePage from '@/components/home/HomePage.vue';
 
 import StarPanel from '@/components/star/StarPanel.vue';
@@ -118,8 +120,17 @@ const router = createRouter({
         },
         {
           path: '/dashboard/experiment/centralLimitTheorem',
-          component: () => import('@/components/experiment/chapter3/central-limit-theorem/clt.vue'),
+          component: () => import('@/components/experiment/chapter5/central-limit-theorem/clt.vue'),
         },
+        {
+          path: '/dashboard/experiment/ExpectationTest',
+          component: () => import('@/components/experiment/chapter4/ExpectationTest.vue'),
+        },
+        {
+          path: '/dashboard/experiment/bertrand',
+          component: () => import('@/components/experiment/chapter1/bertrand/bertrand.vue'),
+        },
+
         {
           path: '/dashboard/info0',
           component: StudentPanel,

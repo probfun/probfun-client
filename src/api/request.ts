@@ -41,25 +41,25 @@ service.interceptors.response.use(
 );
 
 // 封装GET请求，带类型定义
-export function get<T>(url: string, params?: any): Promise<ResponseData<T>> {
+export async function get<T>(url: string, params?: any): Promise<ResponseData<T>> {
   return service.get(url, { params }).then(response => response.data);
 }
 
 // 封装POST请求，带类型定义
-export function post<T>(url: string, data?: any, config?: any): Promise<ResponseData<T>> {
+export async function post<T>(url: string, data?: any, config?: any): Promise<ResponseData<T>> {
   return service.post(url, data, config).then(response => response.data);
 }
 
-export function postRaw<T>(url: string, data?: any, config?: any): Promise<T> {
+export async function postRaw<T>(url: string, data?: any, config?: any): Promise<T> {
   return service.post(url, data, config).then(response => response.data);
 }
 
 // 封装DELETE请求，带类型定义
-export function del<T>(url: string, params?: any): Promise<ResponseData<T>> {
+export async function del<T>(url: string, params?: any): Promise<ResponseData<T>> {
   return service.delete(url, { params }).then(response => response.data);
 }
 
 // 封装PUT请求，带类型定义
-export function put<T>(url: string, data?: any, config?: any): Promise<ResponseData<T>> {
+export async function put<T>(url: string, data?: any, config?: any): Promise<ResponseData<T>> {
   return service.put(url, data, config).then(response => response.data);
 }
