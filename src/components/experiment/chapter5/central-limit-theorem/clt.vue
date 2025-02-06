@@ -15,6 +15,8 @@ const canvasRef = ref<HTMLCanvasElement | null>(null);
 const chartData = ref();
 const chartOptions = ref();
 const binCounts = ref<number[]>([]);
+let path = ref<number[]>([]);
+let isSimulating = false;
 
 const setChartData = () => {
     const documentStyle = getComputedStyle(document.documentElement);
@@ -150,25 +152,64 @@ function drawBoard() {
                 // 更新下一条竖线的起始 x 坐标
                 startX += 24;
             }
+
+            // 绘制小球轨迹
+            if (path.value.length > 0) {
+                ctx.beginPath();
+                ctx.moveTo(startX - 12 * (2 * n.value + 1), 230 - n.value * 15);
+                ctx.lineTo(startX - 12 * (2 * n.value + 1), 258 - n.value * 15);
+                let fromX = startX - 12 * (2 * n.value + 1);
+                let fromY = 258 - n.value * 15;
+                console.log(path.value);
+
+                for (let i = 0; i < path.value.length; i++) {
+                    ctx.moveTo(fromX, fromY);
+                    ctx.lineTo(fromX + path.value[i] * 12, fromY + 15);
+                    fromX = fromX + path.value[i] * 12;
+                    fromY = fromY + 15;
+                }
+                ctx.strokeStyle = 'blue';  // 设置轨迹颜色
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+            }
+            path.value = []
         }
     }
 }
-function startSimulation() {
+
+async function startSimulation() {
+    isSimulating = true
     binCounts.value = new Array(n.value).fill(0);
     for (let i = 0; i < ball.value; i++) {
+        if (!isSimulating) {
+            break;
+        }
+        path.value = [];
         let position = 0;
         for (let j = 0; j < n.value - 1; j++) {
             const prob = Math.random();
             if (prob < 0.5) {
                 position -= 1;
+                path.value.push(-1)
             }
             else {
                 position += 1;
+                path.value.push(1);
             }
         }
+        drawBoard();
         binCounts.value[Math.floor(n.value / 2) + position / 2]++;
+        await new Promise(resolve => setTimeout(resolve, 500));
     }
-    chartData.value = setChartData();
+    if (isSimulating) {
+        chartData.value = setChartData();
+    }
+    isSimulating = false;
+}
+
+function stopSimulation() {
+    isSimulating = false;
 }
 
 onMounted(() => {
@@ -178,6 +219,8 @@ onMounted(() => {
 });
 watch([n, ball], () => {
     drawBoard();
+    chartData.value = setChartData();
+    chartOptions.value = setChartOptions();
 });
 
 const content = `
@@ -229,7 +272,8 @@ $$
                     </div>
                 </div>
                 <div class="flex justify-center items-center mt-5">
-                    <Button @click="startSimulation()">开始模拟</Button>
+                    <Button @click="startSimulation()" class="m-1">开始模拟</Button>
+                    <Button @click="stopSimulation()" class="m-1">停止模拟</Button>
                 </div>
             </div>
         </template>
