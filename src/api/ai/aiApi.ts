@@ -79,6 +79,7 @@ export async function aiApi(
     // 监听错误
     websocket.onerror = (error) => {
       console.error('WebSocket error:', error);
+      finish();
     };
 
     // 如果提供了 AbortController，监听中断信号

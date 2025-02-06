@@ -33,7 +33,7 @@ import { vAutoAnimate } from '@formkit/auto-animate';
 import { ArrowDownToLine, Bot, CircleStop, Clipboard, PencilLine, RotateCcw, Send, Trash2 } from 'lucide-vue-next';
 import { v4 as uuidv4 } from 'uuid';
 import { nextTick, onMounted, ref, watch } from 'vue'
-import {useRoute, useRouter} from "vue-router";
+import { useRoute, useRouter } from 'vue-router';
 
 const message = ref('');
 const aiStore = useAiStore();
@@ -123,10 +123,9 @@ function getRouteQuery() {
 }
 
 function stopGenerating() {
-  if (status.value === 'generating') {
-    status.value = 'aborted';
+  if (status.value !== 'idle') {
+    status.value = 'idle';
     abortController.value?.abort();
-    // messageQueue.value = [];
   }
 }
 
@@ -135,8 +134,6 @@ async function finishGenerating() {
   if (!chat) {
     return;
   }
-  // const length = chat.chatBlocks.length;
-  // chat.chatBlocks[length - 1].content = chat.chatBlocks[length - 1].content.replace(/\$\$/g, '\n$$$\n');
   chat.lastChatTime = new Date().toLocaleString();
   if (chat.chatTitle === DEFAULT_CHAT_TITLE) {
     try {
@@ -270,20 +267,20 @@ function handleCompositionEnd() {
       </CardHeader>
       <CardContent class="overflow-y-hidden border-t flex pb-0 px-0 relative flex-1">
         <div class="grid grid-cols-[1fr_3fr]1 w-full">
-<!--          <div class="flex items-center justify-center border-r">-->
-<!--            <video-->
-<!--              width="60%"-->
-<!--              class="select-none"-->
-<!--              :draggable="false"-->
-<!--              height="auto"-->
-<!--              autoplay-->
-<!--              loop-->
-<!--              muted-->
-<!--            >-->
-<!--              <source src="/src/assets/ai-robot.webm" type="video/webm">-->
-<!--              <p>您的浏览器不支持 WebM 格式。</p>-->
-<!--            </video>-->
-<!--          </div>-->
+          <!--          <div class="flex items-center justify-center border-r"> -->
+          <!--            <video -->
+          <!--              width="60%" -->
+          <!--              class="select-none" -->
+          <!--              :draggable="false" -->
+          <!--              height="auto" -->
+          <!--              autoplay -->
+          <!--              loop -->
+          <!--              muted -->
+          <!--            > -->
+          <!--              <source src="/src/assets/ai-robot.webm" type="video/webm"> -->
+          <!--              <p>您的浏览器不支持 WebM 格式。</p> -->
+          <!--            </video> -->
+          <!--          </div> -->
           <div ref="scrollContainer" class="flex w-full flex-col items-center gap-3 overflow-y-auto pt-4 px-6">
             <div v-for="(block, index) in aiStore.currentChat?.chatBlocks ?? [START_BLOCK]" :key="block.blockId" v-auto-animate class="flex w-full max-w-screen-md">
               <div v-if="block.role === 'user'" class="ml-auto">
@@ -395,7 +392,7 @@ function handleCompositionEnd() {
         </Button>
       </CardContent>
       <CardFooter class="p-2 border-t flex justify-center">
-        <form class="max-w-screen-md flex w-full gap-2 items-end">
+        <div class="max-w-screen-md flex w-full gap-2 items-end">
           <Textarea
             ref="tx"
             v-model="message"
@@ -408,6 +405,7 @@ function handleCompositionEnd() {
                   if (status === 'idle' && message.trim() !== '') {
                     createUserBlock(message);
                     sendMessages();
+                    message = '';
                   }
                 }
               }
@@ -416,9 +414,9 @@ function handleCompositionEnd() {
             @compositionend="handleCompositionEnd"
           />
           <Button
-            size="icon" :disabled="status === 'connecting' || (status === 'idle' && message.trim() === '')" class="transition-all"
+            size="icon" :disabled="(status === 'idle' && message.trim() === '')" class="transition-all"
             @click="async () => {
-              if (status === 'generating') {
+              if (status !== 'idle') {
                 stopGenerating();
               }
               else if (status === 'idle') {
@@ -431,7 +429,7 @@ function handleCompositionEnd() {
             <Send v-if="status === 'idle'" class="size-4" />
             <CircleStop v-else class="size-4" />
           </Button>
-        </form>
+        </div>
       </CardFooter>
     </Card>
     <Card v-if="false" class="w-72">
