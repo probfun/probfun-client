@@ -23,41 +23,95 @@ const bertrandDisplay = ref<any>(null);  // 用于贝特朗悖论展示的引用
 // 计算弦长度的函数
 function calculateChordLength(x: number, y: number, strategy: string): number {
   let length = 0;
+
   if (strategy === 'random') {
-    length = Math.sqrt(x * x + y * y);
+    // 随机端点法
+    const theta1 = Math.random() * 2 * Math.PI;
+    const theta2 = Math.random() * 2 * Math.PI;
+    const x1 = Math.cos(theta1);
+    const y1 = Math.sin(theta1);
+    const x2 = Math.cos(theta2);
+    const y2 = Math.sin(theta2);
+    length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
   } else if (strategy === 'middle') {
-    // 示例: 随机选择弦的中点（待根据实际情况完善）
-    length = Math.random() * 2;
+    // 半径中点法
+    const theta = Math.random() * 2 * Math.PI;
+    const d = Math.random();  // d 控制弦的中点离圆心的距离
+    const x0 = d * Math.cos(theta);
+    const y0 = d * Math.sin(theta);
+    const L = Math.sqrt(1 - d * d);  // 计算弦的半长轴
+    length = 2 * L;
   } else if (strategy === 'diameter') {
-    // 示例: 随机选择一个直径，垂直于该直径的弦（待根据实际情况完善）
-    length = Math.random() * 2;
+    // 随机中点法
+    let x0: number, y0: number;
+    do {
+      x0 = Math.random() * 2 - 1;  // 随机选择一个点，确保点在单位圆内
+      y0 = Math.random() * 2 - 1;
+    } while (x0 * x0 + y0 * y0 > 1);  // 确保点在单位圆内
+
+    const d = Math.sqrt(x0 * x0 + y0 * y0);  // 计算弦的中点到圆心的距离
+    const L = Math.sqrt(1 - d * d);  // 计算弦的半长轴
+    length = 2 * L;
   }
+
   return length;
 }
 
+// // 更新显示红色/蓝色条件
+// function updateDisplay(chordLength: number): string {
+//   const threshold = Math.sqrt(3);  // 根号3作为条件
+//   return chordLength > threshold ? '#FF0000' : '#0000FF';  // 红色表示大于根号3，蓝色表示小于根号3
+// }
+
 // 动态更新弦的数据
 function updateCircles() {
-  const data = [];
-  for (let i = 0; i < 100; i++) {
-    const x = Math.random() * 2 - 1;  // x 坐标在 -1 和 1 之间
-    const y = Math.random() * 2 - 1;  // y 坐标在 -1 和 1 之间
-    const length = calculateChordLength(x, y, selectedStrategy.value);
-    const color = length > Math.sqrt(3) ? 'red' : 'blue';  // 判断弦的颜色
-    data.push({ x, y, length, color });
-  }
-  circleData.value = data;
+  const threshold = Math.sqrt(3);  // 计算根号3一次，避免重复计算
+
+  let newCircleData = [];
+
+  // 逐步生成弦的动画
+  let index = 0;
+  const interval = setInterval(() => {
+    const x1 = Math.cos(Math.random() * 2 * Math.PI);  // 随机选取弦的第一个端点
+    const y1 = Math.sin(Math.random() * 2 * Math.PI);  // 随机选取弦的第一个端点
+    const x2 = Math.cos(Math.random() * 2 * Math.PI);  // 随机选取弦的第二个端点
+    const y2 = Math.sin(Math.random() * 2 * Math.PI);  // 随机选取弦的第二个端点
+
+    // 计算弦的长度
+    const length = calculateChordLength(x1, y1, selectedStrategy.value);
+    const color = length > threshold ? 'red' : 'blue';  // 判断弦的颜色
+
+    newCircleData.push({ x1, y1, x2, y2, length, color });
+
+    // 更新 circleData
+    circleData.value = [...newCircleData];
+
+    // 每次执行一次，直到完成所有弦的生成
+    index++;
+    if (index >= 100) {
+      clearInterval(interval);
+    }
+  }, 100);  // 每100ms生成一条新的弦
 }
 
 // 模拟按钮点击
 function toggleSimulation() {
   simulateGame.value = !simulateGame.value;
   if (simulateGame.value) {
-    updateCircles();
+    circleData.value = [];  // 清空之前的数据
+    updateCircles();  // 开始模拟
   }
 }
 
+// 监听模拟状态，更新弦数据
+watch(simulateGame, () => {
+  if (simulateGame.value) {
+    updateCircles();
+  }
+});
+
+// 初始化数据
 onMounted(() => {
-  // 初始化数据
   updateCircles();
 });
 
@@ -95,7 +149,13 @@ const discussTabList = [
           <svg width="200" height="200" viewBox="0 -10 170 190">
             <circle cx="80" cy="80" r="80" fill="none" stroke="black" />
             <g v-for="(chord, index) in circleData" :key="index">
-              <!-- <line :x1="100" :y1="100" :x2="100 + chord.x * 100" :y2="100 + chord.y * 100" :stroke="chord.color" stroke-width="2" /> -->
+              <line 
+                :x1="80 + chord.x1 * 80" 
+                :y1="80 + chord.y1 * 80" 
+                :x2="80 + chord.x2 * 80" 
+                :y2="80 + chord.y2 * 80" 
+                :stroke="chord.color" 
+                stroke-width="2" />
             </g>
           </svg>
           <div class="circle-label">random endpoints</div>
