@@ -1,247 +1,251 @@
 <script setup lang="ts">
-import CommentPanel from '@/components/comment/CommentPanel.vue';
-import ThreeDoorsDisplay from '@/components/experiment/chapter1/three-doors/ThreeDoorsDisplay.vue';
-import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
+import { ref, onMounted, watch } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
-import { toMarkdown } from '@/utils/markdown';
-import { GraduationCap, Lightbulb, MessagesSquare } from 'lucide-vue-next';
-import { onMounted, ref, watch } from 'vue';
+import CommentPanel from '@/components/comment/CommentPanel.vue';
+import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 
-
-
-const selectedStrategy = ref<'random' | 'middle' | 'diameter'>('random');  // 用户选择的实验策略
-const circleData = ref<any[]>([]);  // 用来存储弦数据
-const simulateGame = ref(false);  // 是否开始模拟
-// const simulateGame = ref<boolean>(false);
-
-
-const bertrandDisplay = ref<any>(null);  // 用于贝特朗悖论展示的引用
-
-// 计算弦长度的函数
-function calculateChordLength(x: number, y: number, strategy: string): number {
-  let length = 0;
-
-  if (strategy === 'random') {
-    // 随机端点法
-    const theta1 = Math.random() * 2 * Math.PI;
-    const theta2 = Math.random() * 2 * Math.PI;
-    const x1 = Math.cos(theta1);
-    const y1 = Math.sin(theta1);
-    const x2 = Math.cos(theta2);
-    const y2 = Math.sin(theta2);
-    length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-  } else if (strategy === 'middle') {
-    // 半径中点法
-    const theta = Math.random() * 2 * Math.PI;
-    const d = Math.random();  // d 控制弦的中点离圆心的距离
-    const x0 = d * Math.cos(theta);
-    const y0 = d * Math.sin(theta);
-    const L = Math.sqrt(1 - d * d);  // 计算弦的半长轴
-    length = 2 * L;
-  } else if (strategy === 'diameter') {
-    // 随机中点法
-    let x0: number, y0: number;
-    do {
-      x0 = Math.random() * 2 - 1;  // 随机选择一个点，确保点在单位圆内
-      y0 = Math.random() * 2 - 1;
-    } while (x0 * x0 + y0 * y0 > 1);  // 确保点在单位圆内
-
-    const d = Math.sqrt(x0 * x0 + y0 * y0);  // 计算弦的中点到圆心的距离
-    const L = Math.sqrt(1 - d * d);  // 计算弦的半长轴
-    length = 2 * L;
-  }
-
-  return length;
-}
-
-// // 更新显示红色/蓝色条件
-// function updateDisplay(chordLength: number): string {
-//   const threshold = Math.sqrt(3);  // 根号3作为条件
-//   return chordLength > threshold ? '#FF0000' : '#0000FF';  // 红色表示大于根号3，蓝色表示小于根号3
-// }
-
-// 动态更新弦的数据
-function updateCircles() {
-  const threshold = Math.sqrt(3);  // 计算根号3一次，避免重复计算
-
-  let newCircleData = [];
-
-  // 逐步生成弦的动画
-  let index = 0;
+// 用于控制模拟开始与否
+// const simulateGame = ref(false);
+const bertrandDisplay = ref<any>({
+  autoGameRound: [100], // 默认模拟轮数为100
+  autoGaming: false, // 是否正在进行模拟
+  simulateGame() {
+  console.log('开始模拟！');
+  let round = 0;
   const interval = setInterval(() => {
-    const x1 = Math.cos(Math.random() * 2 * Math.PI);  // 随机选取弦的第一个端点
-    const y1 = Math.sin(Math.random() * 2 * Math.PI);  // 随机选取弦的第一个端点
-    const x2 = Math.cos(Math.random() * 2 * Math.PI);  // 随机选取弦的第二个端点
-    const y2 = Math.sin(Math.random() * 2 * Math.PI);  // 随机选取弦的第二个端点
-
-    // 计算弦的长度
-    const length = calculateChordLength(x1, y1, selectedStrategy.value);
-    const color = length > threshold ? 'red' : 'blue';  // 判断弦的颜色
-
-    newCircleData.push({ x1, y1, x2, y2, length, color });
-
-    // 更新 circleData
-    circleData.value = [...newCircleData];
-
-    // 每次执行一次，直到完成所有弦的生成
-    index++;
-    if (index >= 100) {
-      clearInterval(interval);
+    if (round >= bertrandDisplay.value.autoGameRound[0]) {
+      clearInterval(interval); // 停止模拟
+      return;
     }
-  }, 100);  // 每100ms生成一条新的弦
+    // 确保每次更新的数据是响应式的
+    generateRandomEndPoints();
+    generateRadialMidpoint();
+    generateRandomMidpoint();
+    round++;
+  }, 100); // 每 100ms 更新一次
+}
+,
+ // 停止模拟并清除所有图像
+ stopSimulation() {
+  console.log("停止模拟！");
+  // 清空所有弦数据
+  chord1.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
+  chord2.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
+  chord3.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
+  chord1Color.value = 'blue';
+  chord2Color.value = 'blue';
+  chord3Color.value = 'blue';
+
+  // 停止模拟
+  bertrandDisplay.value.autoGaming = false;
 }
 
-// 模拟按钮点击
-function toggleSimulation() {
-  simulateGame.value = !simulateGame.value;
-  if (simulateGame.value) {
-    circleData.value = [];  // 清空之前的数据
-    updateCircles();  // 开始模拟
-  }
-}
-
-// 监听模拟状态，更新弦数据
-watch(simulateGame, () => {
-  if (simulateGame.value) {
-    updateCircles();
-  }
 });
 
-// 初始化数据
+
+function limitInput(e: { target: { value: string; }; }) {
+  const value = parseInt(e.target.value);
+  if (isNaN(value)) {
+    bertrandDisplay.value.autoGameRound[0] = 1;
+  } else if (value > 500) {
+    bertrandDisplay.value.autoGameRound[0] = 500;
+  } else if (value < 1) {
+    bertrandDisplay.value.autoGameRound[0] = 1;
+  } else {
+    bertrandDisplay.value.autoGameRound[0] = value;
+  }
+}
+
+
+
+// 随机端点法
+const chord1 = ref<{ x1: number, y1: number, x2: number, y2: number }>({ x1: 0, y1: 0, x2: 0, y2: 0 });
+const chord1Color = ref('blue');
+
+function generateRandomEndPoints() {
+  const theta1 = Math.random() * 2 * Math.PI;
+  const theta2 = Math.random() * 2 * Math.PI;
+
+  chord1.value = {
+    x1: Math.cos(theta1),
+    y1: Math.sin(theta1),
+    x2: Math.cos(theta2),
+    y2: Math.sin(theta2),
+  };
+  console.log('chord1:', chord1.value);  // 输出弦的坐标，检查是否更新
+  console.log(`line 1: x1=${chord1.value.x1}, y1=${chord1.value.y1}, x2=${chord1.value.x2}, y2=${chord1.value.y2}`);
+
+  const length = Math.sqrt((chord1.value.x1 - chord1.value.x2) ** 2 + (chord1.value.y1 - chord1.value.y2) ** 2);
+  chord1Color.value = length > Math.sqrt(3) ? 'red' : 'blue';
+}
+
+// 半径中点法
+const chord2 = ref<{ x1: number, y1: number, x2: number, y2: number }>({ x1: 0, y1: 0, x2: 0, y2: 0 });
+const chord2Color = ref('blue');
+
+function generateRadialMidpoint() {
+  const theta = Math.random() * 2 * Math.PI; // 随机选择一个角度
+
+  // 半径的端点
+  const x1 = Math.cos(theta);
+  const y1 = Math.sin(theta);
+  
+  // 垂直于半径的弦的另一端点
+  const x2 = -x1;
+  const y2 = -y1;
+
+  chord2.value = { x1, y1, x2, y2 };
+  const length = Math.sqrt((chord2.value.x1 - chord2.value.x2) ** 2 + (chord2.value.y1 - chord2.value.y2) ** 2);
+  chord2Color.value = length > Math.sqrt(3) ? 'red' : 'blue';
+}
+
+// 随机中点法
+const chord3 = ref<{ x1: number, y1: number, x2: number, y2: number }>({ x1: 0, y1: 0, x2: 0, y2: 0 });
+const chord3Color = ref('blue');
+
+function generateRandomMidpoint() {
+  // 修正随机中点法，确保弦端点在圆上
+  const theta = Math.random() * 2 * Math.PI;
+  const d = Math.random();
+  const x0 = d * Math.cos(theta);
+  const y0 = d * Math.sin(theta);
+  const L = Math.sqrt(1 - d ** 2);
+  const dx = -Math.sin(theta) * L;
+  const dy = Math.cos(theta) * L;
+
+  chord3.value = {
+    x1: x0 + dx,
+    y1: y0 + dy,
+    x2: x0 - dx,
+    y2: y0 - dy
+  };
+  const length = Math.sqrt((chord3.value.x1 - chord3.value.x2) ** 2 + (chord3.value.y1 - chord3.value.y2) ** 2);
+  chord3Color.value = length > Math.sqrt(3) ? 'red' : 'blue';
+}
+
 onMounted(() => {
-  updateCircles();
+  generateRandomEndPoints();
+  generateRadialMidpoint();
+  generateRandomMidpoint();
+
+
+});
+// 切换模拟状态
+function toggleSimulation() {
+  if (bertrandDisplay.value.autoGaming) {
+    bertrandDisplay.value.stopSimulation();
+  } else {
+    bertrandDisplay.value.simulateGame();
+  }
+  bertrandDisplay.value.autoGaming = !bertrandDisplay.value.autoGaming;
+}
+
+
+
+// 监听模拟状态变化
+// watch(simulateGame, () => {
+//   if (simulateGame.value) {
+//     // 在模拟开始时更新需要的状态
+//   }
+// });
+watch(() => bertrandDisplay.value.autoGaming, (newValue) => {
+  if (newValue) {
+    bertrandDisplay.value.simulateGame();
+  } else {
+    bertrandDisplay.value.stopSimulation();
+  }
 });
 
 
-const discussTabList = [
 
-  {
-    id: 0,
-    label: '实验结论',
-    name: 'conclusion',
-    icon: GraduationCap,
-  },
-  {
-    id: 1,
-    label: '相关讨论',
-    name: 'discuss',
-    icon: Lightbulb,
-  },
-  {
-    id: 2,
-    label: '讨论区',
-    name: 'comment',
-    icon: MessagesSquare,
-  },
-];
 </script>
 
-<template>
-  <ExperimentBoard :discuss-tab-list="discussTabList">
-    <template #experiment>
 
+<template>
+  <ExperimentBoard>
+    <template #experiment>
       <!-- 三个单位圆展示 -->
-      <div class="circles-container  grid grid-cols-3  ">
+      <div class="circles-container flex justify-around mb-6">
         <div class="circle">
           <svg width="200" height="200" viewBox="0 -10 170 190">
             <circle cx="80" cy="80" r="80" fill="none" stroke="black" />
-            <g v-for="(chord, index) in circleData" :key="index">
-              <line 
-                :x1="80 + chord.x1 * 80" 
-                :y1="80 + chord.y1 * 80" 
-                :x2="80 + chord.x2 * 80" 
-                :y2="80 + chord.y2 * 80" 
-                :stroke="chord.color" 
-                stroke-width="2" />
-            </g>
+            <!-- 在此绘制第一种策略的弦 -->
+            <line :x1="80 + chord1.x1 * 80" :y1="80 + chord1.y1 * 80" :x2="80 + chord1.x2 * 80" :y2="80 + chord1.y2 * 80" stroke="chord1Color" stroke-width="2" />
+
           </svg>
-          <div class="circle-label">random endpoints</div>
+          <div class="circle-label">Random Endpoints</div>
         </div>
 
         <div class="circle">
           <svg width="200" height="200" viewBox="0 -10 170 190">
             <circle cx="80" cy="80" r="80" fill="none" stroke="black" />
-            <g v-for="(chord, index) in circleData" :key="index">
-              <!-- <line :x1="100" :y1="100" :x2="100 + chord.x * 100" :y2="100 + chord.y * 100" :stroke="chord.color"
-                    stroke-width="2" /> -->
-            </g>
+            <!-- 在此绘制第二种策略的弦 -->
+            <line :x1="80 + chord2.x1 * 80" :y1="80 + chord2.y1 * 80" :x2="80 + chord2.x2 * 80" :y2="80 + chord2.y2 * 80" stroke="chord2Color" stroke-width="2" />
+
           </svg>
-          <div class="circle-label">radial midpoint</div>
+          <div class="circle-label">Radial Midpoint</div>
         </div>
 
         <div class="circle">
           <svg width="200" height="200" viewBox="0 -10 180 190">
             <circle cx="80" cy="80" r="80" fill="none" stroke="black" />
-            <g v-for="(chord, index) in circleData" :key="index">
-              <!-- <line :x1="100" :y1="100" :x2="100 + chord.x * 100" :y2="100 + chord.y * 100" :stroke="chord.color"
-                    stroke-width="2" /> -->
-            </g>
+            <!-- 在此绘制第三种策略的弦 -->
+            <line :x1="80 + chord3.x1 * 80" :y1="80 + chord3.y1 * 80" :x2="80 + chord3.x2 * 80" :y2="80 + chord3.y2 * 80" stroke="chord3Color" stroke-width="2" />
+
           </svg>
-          <div class="circle-label ">random midpoint</div>
+          <div class="circle-label">Random Midpoint</div>
         </div>
       </div>
 
-      <!-- 模拟控制 -->
-      <div class="controls absolute left-1/2 -translate-x-1/2 mt-2">
-        <Button @click="toggleSimulation">
-          {{ simulateGame.value ? '停止模拟' : '开始模拟' }}
-        </Button>
 
-      </div>
+
 
 
     </template>
+
     <template #parameter>
-      <div v-if="bertrandDisplay" class="p-2 grid grid-cols-2 w-full h-full gap-2">
+      <div v-if="bertrandDisplay" class="p-2 grid grid-cols-2 gap-2">
+        <!-- 配置区 -->
         <div class="flex flex-col gap-2">
           <Card class="flex-1 flex flex-col">
             <CardHeader class="p-4">
-              <CardTitle>
-                模拟轮数
-              </CardTitle>
+              <CardTitle>模拟轮数</CardTitle>
             </CardHeader>
             <CardContent class="flex flex-col items-center p-4 pt-0 flex-1">
               <div class="font-bold h-full justify-center items-center mb-4 gap-3 flex flex-col">
-                <Input v-model="bertrandDisplay.autoGameRound[0]" class="" :min="1" :max="500" />
-                <Slider v-model="bertrandDisplay.autoGameRound" class="" />
+                <Input v-model="bertrandDisplay.autoGameRound[0]" class="" :min="1" :max="500" @input="limitInput" />
+                <Slider v-model="bertrandDisplay.autoGameRound" class="":min="1" :max="500" />
               </div>
               <div class="flex justify-center gap-2 w-full">
-                <Button class="" @click="() => {
-                  if (bertrandDisplay === null)
-                    return;
-                  bertrandDisplay.autoGaming ? bertrandDisplay.autoGaming = false : bertrandDisplay.simulateGame();
-                }">
+
+                <Button
+                  class="" @click="toggleSimulation"
+                >
                   {{ bertrandDisplay.autoGaming ? '终止模拟' : '开始模拟' }}
                 </Button>
               </div>
             </CardContent>
           </Card>
 
+          <!-- 实验结果显示 -->
           <Card class="flex-1">
             <CardHeader class="p-4">
-              <CardTitle>
-                实验结果
-              </CardTitle>
+              <CardTitle>实验结果</CardTitle>
             </CardHeader>
             <CardContent class="flex items-center flex-col">
-
+              <!-- 显示实验结果内容 -->
             </CardContent>
           </Card>
         </div>
+
+        <!-- 实验详情 -->
         <Card class="h-full flex flex-col">
           <CardHeader class="p-4">
-            <CardTitle>
-              实验结果
-            </CardTitle>
+            <CardTitle>方法详解</CardTitle>
           </CardHeader>
-          <CardContent class="flex flex-1 flex-col  items-center justify-center">
-
-            <Button class="mt-3" @click="bertrandDisplay.resetData">
-              重置数据
-            </Button>
+          <CardContent class="flex flex-1 flex-col items-center justify-center">
+            <!-- 显示实验详细内容 -->
           </CardContent>
         </Card>
       </div>
@@ -249,12 +253,9 @@ const discussTabList = [
 
     <template #conclusion>
       <div class="w-full h-full p-3">
-        <!-- <div class="prose-sm max-w-full text-foreground" v-html="toMarkdown(conclusionContent)" /> -->
+        <!-- 结果总结区域 -->
       </div>
     </template>
-
-
-
 
     <template #comment>
       <CommentPanel exp-id="bertrand" />
@@ -263,46 +264,37 @@ const discussTabList = [
 </template>
 
 <style scoped>
-.circle-container {
+.circles-container {
   display: flex;
-  justify-content: center;
-  /* 水平居中 */
-  align-items: center;
-  /* 垂直居中 */
-  flex-direction: column;
-  /* 文字在圆圈下方 */
-  gap: 1px;
-  /* 圆圈与文字之间的间距 */
-  margin-top: 20px;
+  justify-content: space-around;
+  margin-bottom: 20px;
 }
 
 .circle {
   position: relative;
   display: flex;
   justify-content: center;
-  /* 水平居中 */
   align-items: center;
-  /* 垂直居中 */
   width: 200px;
   height: 200px;
-  left:100px;
 }
 
 .circle-label {
   position: absolute;
-  /* 文字绝对定位 */
-  bottom: 0px;
-  /* 调整文字位置，确保它在圆圈下方 */
+  bottom: -20px;
   text-align: center;
-  /* 文字水平居中 */
   font-size: 14px;
-  /* 可根据需要调整字体大小 */
   font-weight: bold;
-  /* 可选：加粗字体 */
-
 }
 
-/* button {
+.controls {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 20px;
+}
+
+.controls button {
   padding: 8px 16px;
   background-color: #007bff;
   color: white;
@@ -310,7 +302,8 @@ const discussTabList = [
   border-radius: 4px;
   cursor: pointer;
 }
-button:hover {
+
+.controls button:hover {
   background-color: #0056b3;
-} */
+}
 </style>
