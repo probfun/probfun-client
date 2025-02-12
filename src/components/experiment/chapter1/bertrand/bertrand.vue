@@ -7,41 +7,56 @@ import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 
 // 用于控制模拟开始与否
 // const simulateGame = ref(false);
-const bertrandDisplay = ref<any>({
+const autoGaming = ref(false);
+
+const bertrandDisplay = ref<{
+  autoGameRound: number[];
+  simulationInterval: number | null;
+  simulateGame(): void;
+  stopSimulation(): void;
+}>({
   autoGameRound: [100], // 默认模拟轮数为100
-  autoGaming: false, // 是否正在进行模拟
+  simulationInterval: null, // 用于存储定时器 ID
   simulateGame() {
-  console.log('开始模拟！');
-  let round = 0;
-  const interval = setInterval(() => {
-    if (round >= bertrandDisplay.value.autoGameRound[0]) {
-      clearInterval(interval); // 停止模拟
-      return;
+    console.log('开始模拟！');
+    let round = 0;
+    this.simulationInterval = setInterval(() => {
+      if (round >= this.autoGameRound[0] ||!autoGaming.value) {
+        if (this.simulationInterval) {
+          clearInterval(this.simulationInterval);
+        }
+        this.simulationInterval = null;
+        return;
+      }
+      // 确保每次更新的数据是响应式的
+      generateRandomEndPoints();
+      generateRadialMidpoint();
+      generateRandomMidpoint();
+      round++;
+    }, 100) as unknown as number; // 强制类型转换
+  },
+  // 停止模拟并清除所有图像
+  stopSimulation() {
+    console.log("停止模拟！");
+    // 清空所有弦数据
+    chord1.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
+    chord2.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
+    chord3.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
+    chord1Color.value = 'blue';
+    chord2Color.value = 'blue';
+    chord3Color.value = 'blue';
+
+    // 停止模拟
+    autoGaming.value = false;
+    if (this.simulationInterval) {
+      clearInterval(this.simulationInterval);
+      this.simulationInterval = null;
     }
-    // 确保每次更新的数据是响应式的
-    generateRandomEndPoints();
-    generateRadialMidpoint();
-    generateRandomMidpoint();
-    round++;
-  }, 100); // 每 100ms 更新一次
-}
-,
- // 停止模拟并清除所有图像
- stopSimulation() {
-  console.log("停止模拟！");
-  // 清空所有弦数据
-  chord1.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
-  chord2.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
-  chord3.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
-  chord1Color.value = 'blue';
-  chord2Color.value = 'blue';
-  chord3Color.value = 'blue';
-
-  // 停止模拟
-  bertrandDisplay.value.autoGaming = false;
-}
-
+  }
 });
+
+
+
 
 
 function limitInput(e: { target: { value: string; }; }) {
@@ -90,7 +105,7 @@ function generateRadialMidpoint() {
   // 半径的端点
   const x1 = Math.cos(theta);
   const y1 = Math.sin(theta);
-  
+
   // 垂直于半径的弦的另一端点
   const x2 = -x1;
   const y2 = -y1;
@@ -131,16 +146,25 @@ onMounted(() => {
 
 
 });
+// // 切换模拟状态
+// function toggleSimulation() {
+//   if (bertrandDisplay.value.autoGaming) {
+//     bertrandDisplay.value.stopSimulation();
+//   } else {
+//     bertrandDisplay.value.simulateGame();
+//   }
+//   bertrandDisplay.value.autoGaming = !bertrandDisplay.value.autoGaming;
+// }
 // 切换模拟状态
 function toggleSimulation() {
-  if (bertrandDisplay.value.autoGaming) {
-    bertrandDisplay.value.stopSimulation();
-  } else {
+  autoGaming.value = !autoGaming.value;
+  if (autoGaming.value) {
     bertrandDisplay.value.simulateGame();
+  } else {
+    console.log('停止模拟，调用 stopSimulation 函数');
+    bertrandDisplay.value.stopSimulation();
   }
-  bertrandDisplay.value.autoGaming = !bertrandDisplay.value.autoGaming;
 }
-
 
 
 // 监听模拟状态变化
@@ -149,7 +173,7 @@ function toggleSimulation() {
 //     // 在模拟开始时更新需要的状态
 //   }
 // });
-watch(() => bertrandDisplay.value.autoGaming, (newValue) => {
+watch(() => autoGaming.value, (newValue) => {
   if (newValue) {
     bertrandDisplay.value.simulateGame();
   } else {
@@ -171,36 +195,39 @@ watch(() => bertrandDisplay.value.autoGaming, (newValue) => {
           <svg width="200" height="200" viewBox="0 -10 170 190">
             <circle cx="80" cy="80" r="80" fill="none" stroke="black" />
             <!-- 在此绘制第一种策略的弦 -->
-            <line :x1="80 + chord1.x1 * 80" :y1="80 + chord1.y1 * 80" :x2="80 + chord1.x2 * 80" :y2="80 + chord1.y2 * 80" stroke="chord1Color" stroke-width="2" />
+            <line :x1="80 + chord1.x1 * 80" :y1="80 + chord1.y1 * 80" :x2="80 + chord1.x2 * 80"
+              :y2="80 + chord1.y2 * 80" :stroke="chord1Color" stroke-width="2" />
 
           </svg>
           <div class="circle-label">
-        方法一<br>一端点固定，一端点随机选取
-      </div>
+            方法一<br>一端点固定，一端点随机选取
+          </div>
         </div>
 
         <div class="circle">
           <svg width="200" height="200" viewBox="0 -10 170 190">
             <circle cx="80" cy="80" r="80" fill="none" stroke="black" />
             <!-- 在此绘制第二种策略的弦 -->
-            <line :x1="80 + chord2.x1 * 80" :y1="80 + chord2.y1 * 80" :x2="80 + chord2.x2 * 80" :y2="80 + chord2.y2 * 80" stroke="chord2Color" stroke-width="2" />
+            <line :x1="80 + chord2.x1 * 80" :y1="80 + chord2.y1 * 80" :x2="80 + chord2.x2 * 80"
+              :y2="80 + chord2.y2 * 80" :stroke="chord2Color" stroke-width="2" />
 
           </svg>
           <div class="circle-label">
-        方法二<br>弦的中点为任意直径上的任意点
-      </div>
+            方法二<br>弦的中点为任意直径上的任意点
+          </div>
         </div>
 
         <div class="circle">
           <svg width="200" height="200" viewBox="0 -10 180 190">
             <circle cx="80" cy="80" r="80" fill="none" stroke="black" />
             <!-- 在此绘制第三种策略的弦 -->
-            <line :x1="80 + chord3.x1 * 80" :y1="80 + chord3.y1 * 80" :x2="80 + chord3.x2 * 80" :y2="80 + chord3.y2 * 80" stroke="chord3Color" stroke-width="2" />
+            <line :x1="80 + chord3.x1 * 80" :y1="80 + chord3.y1 * 80" :x2="80 + chord3.x2 * 80"
+              :y2="80 + chord3.y2 * 80" :stroke="chord3Color" stroke-width="2" />
 
           </svg>
           <div class="circle-label">
-        方法三<br>弦的中点在单位圆内随机选取
-      </div>
+            方法三<br>弦的中点在单位圆内随机选取
+          </div>
         </div>
       </div>
 
@@ -221,14 +248,12 @@ watch(() => bertrandDisplay.value.autoGaming, (newValue) => {
             <CardContent class="flex flex-col items-center p-4 pt-0 flex-1">
               <div class="font-bold h-full justify-center items-center mb-4 gap-3 flex flex-col">
                 <Input v-model="bertrandDisplay.autoGameRound[0]" class="" :min="1" :max="500" @input="limitInput" />
-                <Slider v-model="bertrandDisplay.autoGameRound" class="":min="1" :max="500" />
+                <Slider v-model="bertrandDisplay.autoGameRound" class="" :min="1" :max="500" />
               </div>
               <div class="flex justify-center gap-2 w-full">
 
-                <Button
-                  class="" @click="toggleSimulation"
-                >
-                  {{ bertrandDisplay.autoGaming ? '终止模拟' : '开始模拟' }}
+                <Button class="" @click="toggleSimulation">
+                  {{ autoGaming ? '终止模拟' : '开始模拟' }}
                 </Button>
               </div>
             </CardContent>
@@ -240,19 +265,19 @@ watch(() => bertrandDisplay.value.autoGaming, (newValue) => {
               <CardTitle>实验结果</CardTitle>
             </CardHeader>
             <CardContent class="flex items-center flex-col">
-              
+
               <div class="grid grid-cols-2 gap-y-4 gap-x-10 justify-between">
                 <Label class="flex items-center flex-shrink-0">
                   方法一实验频率： {{ }}
                 </Label>
                 <Label class="flex items-center flex-shrink-0">
-                  方法一理论频率： {{  }}
+                  方法一理论频率： {{ }}
                 </Label>
                 <Label class="flex items-center flex-shrink-0">
-                  方法二实验频率： {{  }}
+                  方法二实验频率： {{ }}
                 </Label>
                 <Label class="flex items-center flex-shrink-0">
-                  方法二理论频率： {{  }}
+                  方法二理论频率： {{ }}
                 </Label>
                 <Label class="flex items-center flex-shrink-0">
                   方法三实验频率： {{ }}
@@ -261,7 +286,7 @@ watch(() => bertrandDisplay.value.autoGaming, (newValue) => {
                   方法三理论频率： {{ }}
                 </Label>
               </div>
-            
+
             </CardContent>
           </Card>
         </div>
