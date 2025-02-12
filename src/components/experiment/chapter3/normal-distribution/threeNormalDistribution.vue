@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
-import ThreeNormalDiagram from './threeNormalDiagram.vue';
-import NormalDiagram from '../../distribution/normal-distribution/NormalDiagram.vue';
-import { ref } from 'vue';
+import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import Slider from 'primevue/slider';
 import { toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
-import { computed, onMounted, watch, nextTick } from 'vue';
+import Slider from 'primevue/slider';
+import { computed, onMounted, ref, watch } from 'vue';
+
+import ThreeNormalDiagram from './threeNormalDiagram.vue';
 import 'katex/dist/katex.min.css';
 
 const mean1 = ref(0);
@@ -28,16 +27,16 @@ const isChart1 = ref(true);
 const isChart3 = ref(false);
 
 function toggleChart1() {
-    isChart1.value = true;
-    isChart3.value = false;
+  isChart1.value = true;
+  isChart3.value = false;
 }
 function toggleChart3() {
-    isChart1.value = false;
-    isChart3.value = true;
+  isChart1.value = false;
+  isChart3.value = true;
 }
 
 const oneFormula = computed(() => {
-    return `
+  return `
         \\text{如果}\\ 
     (X,Y) \\sim N(μ_x,μ_y;σ_x²,σ_y²;ρ),\ 
     
@@ -69,8 +68,7 @@ const oneFormula = computed(() => {
 });
 
 const twoFormula = computed(() => {
-
-    return `
+  return `
 \\\\
 f_X(x) = \\frac{1}{\\sqrt{2\\pi} σ_1}e^{-\\frac{(x-μ_1)^2}{2σ_1²}} , -∞<x<+∞
      \\\\
@@ -80,7 +78,7 @@ f_Y(y) = \\frac{1}{\\sqrt{2\\pi} σ_2}e^{-\\frac{(y-μ_2)^2}{2σ_2²}} , -∞<y<
 
 
     \\\\
-   \\phantom{f(x, y)}
+   \\phantom{f(x, y)} 
    \\\\
 
 
@@ -94,8 +92,7 @@ f_Y(y) = \\frac{1}{\\sqrt{2\\pi} σ_2}e^{-\\frac{(y-μ_2)^2}{2σ_2²}} , -∞<y<
 });
 
 const threeFormula = computed(() => {
-
-    return `f_{Y|X}(y | x) = 
+  return `f_{Y|X}(y | x) = 
 \\frac{f(x,y)}{f_X(x)}=
 \\frac{1}{\\sqrt{2\\pi} σ_y \\sqrt{1-ρ^2}} e^{\\frac{1}{2(1-ρ^2)}[\\frac{x-μ_x}{σ_x}-ρ\\frac{y-μ_y}{σ_y}]^2}
 , \\;
@@ -122,28 +119,28 @@ N(μ_y+ρ\\frac{σ_y}{σ_x}(x-μ_x) , (1-ρ^2)σ_y²。
 });
 
 function renderFormula() {
-    if (oneContainer.value) {
-        katex.render(oneFormula.value, oneContainer.value, {
-            throwOnError: false,
-        });
-    }
-    if (twoContainer.value) {
-        katex.render(twoFormula.value, twoContainer.value, {
-            throwOnError: false,
-        });
-    }
-    if (threeContainer.value) {
-        katex.render(threeFormula.value, threeContainer.value, {
-            throwOnError: false,
-        });
-    }
+  if (oneContainer.value) {
+    katex.render(oneFormula.value, oneContainer.value, {
+      throwOnError: false,
+    });
+  }
+  if (twoContainer.value) {
+    katex.render(twoFormula.value, twoContainer.value, {
+      throwOnError: false,
+    });
+  }
+  if (threeContainer.value) {
+    katex.render(threeFormula.value, threeContainer.value, {
+      throwOnError: false,
+    });
+  }
 }
 onMounted(() => {
-    renderFormula();
+  renderFormula();
 });
 
 watch([oneFormula, twoFormula, threeFormula], () => {
-    renderFormula();
+  renderFormula();
 });
 
 const content = `
@@ -227,127 +224,133 @@ f(x,y) = \\frac{1}{2\\pi|Σ|^\\frac{1}{2}}e^{-(x-μ)'·Σ^{-1}(x-μ)}。
 - **3. 相关性**：如果$ρ = 0$,则$X$和$Y$是独立的，如果$ρ = ±1$，则$X$和$Y$完全线性相关。
 
 `
-
 </script>
 
 <template>
-    <ExperimentBoard>
-        <template #experiment>
-            <ThreeNormalDiagram :mean1="mean1" :mean2="mean2" :sigma1="sigma1" :sigma2="sigma2"
-                :density="density" :isChart3="isChart3" :fixed-x="x" :fixed-y="y" class="w-full h-full">
-            </ThreeNormalDiagram>
-        </template>
-        <template #parameter>
-            <div class="w-full h-full flex flex-col items-center justify-center gap-3 p-3">
-                <Card class="w-full h-1/2 card overflow-y-auto">
-                    <CardHeader>
-                        <CardTitle v-if="isChart1">二维正态的联合与边缘分布概率密度函数（PDF）</CardTitle>
-                        <CardTitle v-if="isChart3">二维正态的条件分布</CardTitle>
-                    </CardHeader>
-                    <CardContent class="flex w-full justify-start">
-                        <div v-show="isChart1" ref="oneContainer" class="text-base" />
-                        <div v-show="isChart3" ref="threeContainer" class="text-base" />
-                    </CardContent>
-                </Card>
+  <ExperimentBoard :panel-size="70">
+    <template #experiment>
+      <ThreeNormalDiagram
+        :mean1="mean1" :mean2="mean2" :sigma1="sigma1" :sigma2="sigma2"
+        :density="density" :is-chart3="isChart3" :fixed-x="x" :fixed-y="y" class="w-full h-full"
+      />
+    </template>
+    <template #parameter>
+      <div class="w-full h-full flex flex-col items-center justify-center gap-3 p-3">
+        <Card class="w-full h-1/2 card overflow-y-auto">
+          <CardHeader>
+            <CardTitle v-if="isChart1">
+              二维正态的联合与边缘分布概率密度函数（PDF）
+            </CardTitle>
+            <CardTitle v-if="isChart3">
+              二维正态的条件分布
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="flex w-full justify-start">
+            <div v-show="isChart1" ref="oneContainer" class="text-base" />
+            <div v-show="isChart3" ref="threeContainer" class="text-base" />
+          </CardContent>
+        </Card>
 
-                <Card class="w-full flex-1 flex flex-col">
-                    <CardHeader>
-                        <CardTitle>
-                            参数调整
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent class=" flex  justify-center items-center gap-3">
-                        <div class="grid grid-cols-8 gap-10">
-                            <div class="flex flex-col gap-8 pb-0">
-                                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                                    <Label>μ_x</Label>
-                                    <div class="max-w-xl space-y-3">
-                                        <Input v-model="mean1" fluid />
-                                        <Slider v-model="mean1" :min="-10" :max="10" :step="0.1" class="w-full" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex flex-col gap-8 pb-0">
-                                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                                    <Label>μ_y</Label>
-                                    <div class="max-w-xl space-y-3">
-                                        <Input v-model="mean2" fluid />
-                                        <Slider v-model="mean2" :min="-10" :max="10" :step="0.1" class="w-full" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex flex-col gap-8 pb-0">
-                                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                                    <Label>σ_x</Label>
-                                    <div class="max-w-xl space-y-3">
-                                        <Input v-model="sigma1" fluid />
-                                        <Slider :min="0.1" :max="2" :step="0.1" v-model="sigma1" class="w-full" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex flex-col gap-8 pb-0">
-                                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                                    <Label>σ_y</Label>
-                                    <div class="max-w-xl space-y-3">
-                                        <Input v-model="sigma2" fluid />
-                                        <Slider :min="0.1" :max="2" :step="0.1" v-model="sigma2" class="w-full" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex flex-col gap-8 pb-0">
-                                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                                    <Label>ρ</Label>
-                                    <div class="max-w-xl space-y-3">
-                                        <Input v-model="density" fluid />
-                                        <Slider :min="-0.9" :max="0.9" :step="0.1" v-model="density" class="w-full" />
-                                    </div>
-                                </div>
-                            </div>
+        <Card class="w-full flex-1 flex flex-col">
+          <CardHeader>
+            <CardTitle>
+              参数调整
+            </CardTitle>
+          </CardHeader>
+          <CardContent class=" flex  justify-center items-center gap-3">
+            <div class="grid grid-cols-8 gap-10">
+              <div class="flex flex-col gap-8 pb-0">
+                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
+                  <Label>μ_x</Label>
+                  <div class="max-w-xl space-y-3">
+                    <Input v-model="mean1" fluid />
+                    <Slider v-model="mean1" :min="-10" :max="10" :step="0.1" class="w-full" />
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-8 pb-0">
+                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
+                  <Label>μ_y</Label>
+                  <div class="max-w-xl space-y-3">
+                    <Input v-model="mean2" fluid />
+                    <Slider v-model="mean2" :min="-10" :max="10" :step="0.1" class="w-full" />
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-8 pb-0">
+                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
+                  <Label>σ_x</Label>
+                  <div class="max-w-xl space-y-3">
+                    <Input v-model="sigma1" fluid />
+                    <Slider v-model="sigma1" :min="0.1" :max="2" :step="0.1" class="w-full" />
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-8 pb-0">
+                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
+                  <Label>σ_y</Label>
+                  <div class="max-w-xl space-y-3">
+                    <Input v-model="sigma2" fluid />
+                    <Slider v-model="sigma2" :min="0.1" :max="2" :step="0.1" class="w-full" />
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-8 pb-0">
+                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
+                  <Label>ρ</Label>
+                  <div class="max-w-xl space-y-3">
+                    <Input v-model="density" fluid />
+                    <Slider v-model="density" :min="-0.9" :max="0.9" :step="0.1" class="w-full" />
+                  </div>
+                </div>
+              </div>
 
-                            <div v-if="isChart3" class="flex flex-col gap-8 pb-0">
-                                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                                    <Label>y</Label>
-                                    <div class="max-w-xl space-y-3">
-                                        <Input v-model="y" fluid />
-                                        <Slider :min="-10" :max="10" :step="1" v-model="y" class="w-full" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div v-if="isChart3" class="flex flex-col gap-8 pb-0">
-                                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                                    <Label>x</Label>
-                                    <div class="max-w-xl space-y-3">
-                                        <Input v-model="x" fluid />
-                                        <Slider :min="-10" :max="10" :step="1" v-model="x" class="w-full" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="dropdown dropdown-top dropdown-end transform translate-x-1/4 mt-6">
-                                <Button tabindex="0" role="button" class="m-0">
-                                    点我切换
-                                </Button>
-                                <ul tabindex="0"
-                                    class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-                                    <li @click="toggleChart1">
-                                        <a>二维正态联合与边缘分布</a>
-                                    </li>
-                                    <li @click="toggleChart3">
-                                        <a>二维正态分布的条件分布</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
+              <div v-if="isChart3" class="flex flex-col gap-8 pb-0">
+                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
+                  <Label>y</Label>
+                  <div class="max-w-xl space-y-3">
+                    <Input v-model="y" fluid />
+                    <Slider v-model="y" :min="-10" :max="10" :step="1" class="w-full" />
+                  </div>
+                </div>
+              </div>
+              <div v-if="isChart3" class="flex flex-col gap-8 pb-0">
+                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
+                  <Label>x</Label>
+                  <div class="max-w-xl space-y-3">
+                    <Input v-model="x" fluid />
+                    <Slider v-model="x" :min="-10" :max="10" :step="1" class="w-full" />
+                  </div>
+                </div>
+              </div>
+              <div class="dropdown dropdown-top dropdown-end transform translate-x-1/4 mt-6">
+                <Button tabindex="0" role="button" class="m-0">
+                  点我切换
+                </Button>
+                <ul
+                  tabindex="0"
+                  class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+                >
+                  <li @click="toggleChart1">
+                    <a>二维正态联合与边缘分布</a>
+                  </li>
+                  <li @click="toggleChart3">
+                    <a>二维正态分布的条件分布</a>
+                  </li>
+                </ul>
+              </div>
             </div>
-        </template>
-        <template #conclusion>
-            <div class="w-full h-full p-5">
-                <div class="prose-sm max-w-full " v-html="toMarkdown(content)" />
-            </div>
-        </template>
-        <template #comment>
-            <CommentPanel exp-id="2DnormalDistribution" />
-        </template>
-    </ExperimentBoard>
+          </CardContent>
+        </Card>
+      </div>
+    </template>
+    <template #conclusion>
+      <div class="w-full h-full p-5">
+        <div class="prose-sm max-w-full " v-html="toMarkdown(content)" />
+      </div>
+    </template>
+    <template #comment>
+      <CommentPanel exp-id="2DnormalDistribution" />
+    </template>
+  </ExperimentBoard>
 </template>

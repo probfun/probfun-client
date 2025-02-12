@@ -1,17 +1,16 @@
 <script setup lang="ts">
-import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
-import threeUniformDiagram from './threeUniformDiagram.vue';
-import UniformDiagram from '../../distribution/UniformDiagram.vue';
-import { ref } from 'vue';
+import ThreeUniformDiagram from '@/components/experiment/chapter3/uniform-distribution/threeUniformDiagram.vue';
+import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import Slider from 'primevue/slider';
 import { toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
-import { computed, onMounted, watch, nextTick } from 'vue';
-import 'katex/dist/katex.min.css';
+import Slider from 'primevue/slider';
 
+import { computed, onMounted, ref, watch } from 'vue';
+import UniformDiagram from '../../distribution/UniformDiagram.vue';
+import 'katex/dist/katex.min.css';
 
 const x1 = ref(0);
 const x2 = ref(1);
@@ -27,23 +26,23 @@ const isChart2 = ref(false);
 const isChart3 = ref(false);
 
 function toggleChart1() {
-    isChart1.value = true;
-    isChart2.value = false;
-    isChart3.value = false;
+  isChart1.value = true;
+  isChart2.value = false;
+  isChart3.value = false;
 }
 function toggleChart2() {
-    isChart1.value = false;
-    isChart2.value = true;
-    isChart3.value = false;
+  isChart1.value = false;
+  isChart2.value = true;
+  isChart3.value = false;
 }
 function toggleChart3() {
-    isChart1.value = false;
-    isChart2.value = false;
-    isChart3.value = true;
+  isChart1.value = false;
+  isChart2.value = false;
+  isChart3.value = true;
 }
 
 const oneFormula = computed(() => {
-    return `f(x, y) = 
+  return `f(x, y) = 
     \\begin{cases} 
     \\frac{1}{(x_2 - x_1)(y_2 - y_1)}, & \\text{if } x \\in [x_1, x_2] \\text{ and } y \\in [y_1, y_2] \\\\
     0, & \\text{otherwise}
@@ -54,12 +53,10 @@ const oneFormula = computed(() => {
     0, & \\text{otherwise}
     \\end{cases}
     `;
-
 });
 
 const twoFormula = computed(() => {
-
-    return `f_X(x) = 
+  return `f_X(x) = 
     \\begin{cases} 
     \\frac{1}{x_2 - x_1}, & \\text{if } x \\in [x_1, x_2] \\\\
     0, & \\text{otherwise}
@@ -89,8 +86,7 @@ const twoFormula = computed(() => {
 });
 
 const threeFormula = computed(() => {
-
-    return `f_X(x | y) = 
+  return `f_X(x | y) = 
 \\begin{cases} 
     \\frac{1}{x_2 - x_1}, & \\text{if } x \\in [x_1, x_2] \\\\
     0, & \\text{otherwise}
@@ -119,28 +115,28 @@ const threeFormula = computed(() => {
 });
 
 function renderFormula() {
-    if (oneContainer.value) {
-        katex.render(oneFormula.value, oneContainer.value, {
-            throwOnError: false,
-        });
-    }
-    if (twoContainer.value) {
-        katex.render(twoFormula.value, twoContainer.value, {
-            throwOnError: false,
-        });
-    }
-    if (threeContainer.value) {
-        katex.render(threeFormula.value, threeContainer.value, {
-            throwOnError: false,
-        });
-    }
+  if (oneContainer.value) {
+    katex.render(oneFormula.value, oneContainer.value, {
+      throwOnError: false,
+    });
+  }
+  if (twoContainer.value) {
+    katex.render(twoFormula.value, twoContainer.value, {
+      throwOnError: false,
+    });
+  }
+  if (threeContainer.value) {
+    katex.render(threeFormula.value, threeContainer.value, {
+      throwOnError: false,
+    });
+  }
 }
 onMounted(() => {
-    renderFormula();
+  renderFormula();
 });
 
 watch([oneFormula, twoFormula, threeFormula], () => {
-    renderFormula();
+  renderFormula();
 });
 
 const content = `
@@ -185,116 +181,117 @@ $$
 - **3. 独立性**：若$(X,Y)$独立地从均匀分布中抽样，$X$ 和 $Y$ 的分布是独立的，且每个维度的分布也是均匀的。
 
 `
-
 </script>
 
 <template>
-    <ExperimentBoard>
-        <template #experiment>
-            <ThreeUniformDiagram v-if="isChart1" class="flex-1 h-full" :x1="x1" :x2="x2" :y1="y1" :y2="y2">
-            </ThreeUniformDiagram>
-            <div v-if="isChart2 || isChart3" class="w-full h-full flex">
-                <UniformDiagram class="w-[50%] h-full mr-1" :a="x1" :b="x2" :k="1" :m="0" :show-history="false">
-                </UniformDiagram>
-                <UniformDiagram class="w-[50%] h-full ml-1" :a="y1" :b="y2" :k="1" :m="0" :show-history="false">
-                </UniformDiagram>
+  <ExperimentBoard>
+    <template #experiment>
+      <ThreeUniformDiagram v-if="isChart1" class="flex-1 h-full" :x1="x1" :x2="x2" :y1="y1" :y2="y2" />
+      <div v-if="isChart2 || isChart3" class="w-full h-full flex">
+        <UniformDiagram class="w-[50%] h-full mr-1" :a="x1" :b="x2" :k="1" :m="0" :show-history="false" />
+        <UniformDiagram class="w-[50%] h-full ml-1" :a="y1" :b="y2" :k="1" :m="0" :show-history="false" />
+      </div>
+    </template>
+    <template #parameter>
+      <div class="w-full h-full flex flex-row  justify-center gap-3 p-3">
+        <Card class="w-full card">
+          <CardHeader>
+            <CardTitle v-if="isChart1">
+              二维均匀的联合概率密度函数（PDF）
+            </CardTitle>
+            <CardTitle v-if="isChart2">
+              二维均匀的边缘分布概率密度函数（PDF）
+            </CardTitle>
+            <CardTitle v-if="isChart3">
+              二维均匀的条件分布
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="flex w-full justify-start">
+            <div v-show="isChart1" ref="oneContainer" class="text-base" />
+            <div v-show="isChart2" ref="twoContainer" class="text-base" />
+            <div v-show="isChart3" ref="threeContainer" class="text-base" />
+          </CardContent>
+        </Card>
+
+        <Card class="h-full w-1/2 cardflex-1 flex flex-col">
+          <CardHeader>
+            <CardTitle>
+              参数调整
+            </CardTitle>
+          </CardHeader>
+          <CardContent class=" flex flex-col justify-center items-center gap-3">
+            <!-- 居中的按钮 -->
+            <div class="flex justify-center w-full">
+              <div class="dropdown">
+                <Button tabindex="0" role="button" class="m-0">
+                  点我切换
+                </Button>
+                <ul
+                  tabindex="0"
+                  class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+                >
+                  <li @click="toggleChart1">
+                    <a>二维均匀分布</a>
+                  </li>
+                  <li @click="toggleChart2">
+                    <a>二维均匀分布的边缘分布</a>
+                  </li>
+                  <li @click="toggleChart3">
+                    <a>二维均匀分布的条件分布</a>
+                  </li>
+                </ul>
+              </div>
             </div>
-        </template>
-        <template #parameter>
-            <div class="w-full h-full flex flex-row  justify-center gap-3 p-3">
-                <Card class="w-full w-1/2 card">
-                    <CardHeader>
-                        <CardTitle v-if="isChart1">二维均匀的联合概率密度函数（PDF）</CardTitle>
-                        <CardTitle v-if="isChart2">二维均匀的边缘分布概率密度函数（PDF）</CardTitle>
-                        <CardTitle v-if="isChart3">二维均匀的条件分布</CardTitle>
-                    </CardHeader>
-                    <CardContent class="flex w-full justify-start">
-                        <div v-show="isChart1" ref="oneContainer" class="text-base" />
-                        <div v-show="isChart2" ref="twoContainer" class="text-base" />
-                        <div v-show="isChart3" ref="threeContainer" class="text-base" />
 
-                    </CardContent>
-                </Card>
-
-                <Card class="h-full w-1/2 cardflex-1 flex flex-col">
-                    <CardHeader>
-                        <CardTitle>
-                            参数调整
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent class=" flex flex-col justify-center items-center gap-3">
-                        <!-- 居中的按钮 -->
-                        <div class="flex justify-center w-full">
-                            <div class="dropdown">
-                                <Button tabindex="0" role="button" class="m-0">
-                                    点我切换
-                                </Button>
-                                <ul tabindex="0"
-                                    class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-                                    <li @click="toggleChart1">
-                                        <a>二维均匀分布</a>
-                                    </li>
-                                    <li @click="toggleChart2">
-                                        <a>二维均匀分布的边缘分布</a>
-                                    </li>
-                                    <li @click="toggleChart3">
-                                        <a>二维均匀分布的条件分布</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-10">
-                            <div class="flex flex-col gap-8 pb-0">
-                                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-3">
-                                    <Label>x1</Label>
-                                    <div class="max-w-xl space-y-3">
-                                        <Input v-model="x1" fluid />
-                                        <Slider v-model="x1" :min="-10" :max="x2" :step="1" class="w-full" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex flex-col gap-8 pb-0">
-                                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-3">
-                                    <Label>x2</Label>
-                                    <div class="max-w-xl space-y-3">
-                                        <Input v-model="x2" fluid />
-                                        <Slider v-model="x2" :min="x1" :max="10" :step="1" class="w-full" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex flex-col gap-8 pb-0">
-                                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-3">
-                                    <Label>y1</Label>
-                                    <div class="max-w-xl space-y-3">
-                                        <Input v-model="y1" fluid />
-                                        <Slider v-model="y1" :min="-10" :max="y2" :step="1" class="w-full" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex flex-col gap-8 pb-0">
-                                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-3">
-                                    <Label>y2</Label>
-                                    <div class="max-w-xl space-y-3">
-                                        <Input v-model="y2" fluid />
-                                        <Slider v-model="y2" :min="y1" :max="10" :step="1" class="w-full" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </CardContent>
-
-                </Card>
+            <div class="grid grid-cols-2 gap-10">
+              <div class="flex flex-col gap-8 pb-0">
+                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-3">
+                  <Label>x1</Label>
+                  <div class="max-w-xl space-y-3">
+                    <Input v-model="x1" fluid />
+                    <Slider v-model="x1" :min="-10" :max="x2" :step="1" class="w-full" />
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-8 pb-0">
+                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-3">
+                  <Label>x2</Label>
+                  <div class="max-w-xl space-y-3">
+                    <Input v-model="x2" fluid />
+                    <Slider v-model="x2" :min="x1" :max="10" :step="1" class="w-full" />
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-8 pb-0">
+                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-3">
+                  <Label>y1</Label>
+                  <div class="max-w-xl space-y-3">
+                    <Input v-model="y1" fluid />
+                    <Slider v-model="y1" :min="-10" :max="y2" :step="1" class="w-full" />
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-8 pb-0">
+                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-3">
+                  <Label>y2</Label>
+                  <div class="max-w-xl space-y-3">
+                    <Input v-model="y2" fluid />
+                    <Slider v-model="y2" :min="y1" :max="10" :step="1" class="w-full" />
+                  </div>
+                </div>
+              </div>
             </div>
-        </template>
-        <template #conclusion>
-            <div class="w-full h-full p-5">
-                <div class="prose-sm max-w-full " v-html="toMarkdown(content)" />
-            </div>
-        </template>
-        <template #comment>
-            <CommentPanel exp-id="2DuniformDistribution" />
-        </template>
-    </ExperimentBoard>
+          </CardContent>
+        </Card>
+      </div>
+    </template>
+    <template #conclusion>
+      <div class="w-full h-full p-5">
+        <div class="prose-sm max-w-full " v-html="toMarkdown(content)" />
+      </div>
+    </template>
+    <template #comment>
+      <CommentPanel exp-id="2DuniformDistribution" />
+    </template>
+  </ExperimentBoard>
 </template>
