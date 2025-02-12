@@ -174,7 +174,9 @@ watch(() => bertrandDisplay.value.autoGaming, (newValue) => {
             <line :x1="80 + chord1.x1 * 80" :y1="80 + chord1.y1 * 80" :x2="80 + chord1.x2 * 80" :y2="80 + chord1.y2 * 80" stroke="chord1Color" stroke-width="2" />
 
           </svg>
-          <div class="circle-label">Random Endpoints</div>
+          <div class="circle-label">
+        方法一<br>一端点固定，一端点随机选取
+      </div>
         </div>
 
         <div class="circle">
@@ -184,7 +186,9 @@ watch(() => bertrandDisplay.value.autoGaming, (newValue) => {
             <line :x1="80 + chord2.x1 * 80" :y1="80 + chord2.y1 * 80" :x2="80 + chord2.x2 * 80" :y2="80 + chord2.y2 * 80" stroke="chord2Color" stroke-width="2" />
 
           </svg>
-          <div class="circle-label">Radial Midpoint</div>
+          <div class="circle-label">
+        方法二<br>弦的中点为任意直径上的任意点
+      </div>
         </div>
 
         <div class="circle">
@@ -194,7 +198,9 @@ watch(() => bertrandDisplay.value.autoGaming, (newValue) => {
             <line :x1="80 + chord3.x1 * 80" :y1="80 + chord3.y1 * 80" :x2="80 + chord3.x2 * 80" :y2="80 + chord3.y2 * 80" stroke="chord3Color" stroke-width="2" />
 
           </svg>
-          <div class="circle-label">Random Midpoint</div>
+          <div class="circle-label">
+        方法三<br>弦的中点在单位圆内随机选取
+      </div>
         </div>
       </div>
 
@@ -234,7 +240,28 @@ watch(() => bertrandDisplay.value.autoGaming, (newValue) => {
               <CardTitle>实验结果</CardTitle>
             </CardHeader>
             <CardContent class="flex items-center flex-col">
-              <!-- 显示实验结果内容 -->
+              
+              <div class="grid grid-cols-2 gap-y-4 gap-x-10 justify-between">
+                <Label class="flex items-center flex-shrink-0">
+                  方法一实验频率： {{ }}
+                </Label>
+                <Label class="flex items-center flex-shrink-0">
+                  方法一理论频率： {{  }}
+                </Label>
+                <Label class="flex items-center flex-shrink-0">
+                  方法二实验频率： {{  }}
+                </Label>
+                <Label class="flex items-center flex-shrink-0">
+                  方法二理论频率： {{  }}
+                </Label>
+                <Label class="flex items-center flex-shrink-0">
+                  方法三实验频率： {{ }}
+                </Label>
+                <Label class="flex items-center flex-shrink-0">
+                  方法三理论频率： {{ }}
+                </Label>
+              </div>
+            
             </CardContent>
           </Card>
         </div>
