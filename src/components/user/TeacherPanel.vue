@@ -57,11 +57,6 @@ const classesA = ref([
 ]);
 const selectedClass = ref(classesA.value[0]);
 const selectedTime = ref();
-const time = ref([
-  { name: '近两周' },
-  { name: '近一个月' },
-  { name: '本学期' },
-])
 const click = ref([
   {
     expName: '正态分布',
@@ -232,10 +227,6 @@ watch([selectedClass], () => {
     </div>
     <Separator orientation="vertical" />
     <div class="flex flex-col flex-1 w-1/2 p-3 overflow-auto">
-      <div style="display: flex; justify-content: space-between;" class="mb-3 ml-auto">
-        <Select v-model="selectedTime" :options="time" option-label="name" placeholder="请选择时间范围"
-          class="w-full md:w-56" />
-      </div>
       <Panel header="已精选评论" class="w-full h-full">
         <DataTable :value="products" scrollable table-style="min-width: 60rem">
           <Column field="expName" header="实验名称" />
@@ -254,13 +245,13 @@ watch([selectedClass], () => {
       </Panel>
       <div class="h-full">
         <div class="flex my-2">
-          <Panel header="各实验点击次数排行榜">
+          <Panel header="各实验点击次数排行榜" class="w-full mr-2">
             <DataTable :value="click" scrollable table-style="min-width: 18rem">
               <Column field="expName" header="实验名称" sortable style="width: 25%" />
               <Column field="times" header="点击次数" sortable style="width: 25%" />
             </DataTable>
           </Panel>
-          <Panel header="各实验浏览时长排行榜" class="ml-auto">
+          <Panel header="各实验浏览时长排行榜" class="ml-auto w-full">
             <DataTable :value="browse" scrollable table-style="min-width: 18rem">
               <Column field="expName" header="实验名称" sortable style="width: 25%" />
               <Column field="time" header="浏览时长" sortable style="width: 25%" />
@@ -268,16 +259,16 @@ watch([selectedClass], () => {
           </Panel>
         </div>
         <div class="flex">
-          <Panel header="各实验评论次数排行榜">
+          <Panel header="各实验评论次数排行榜" class="w-full mr-2">
             <DataTable :value="comment" scrollable table-style="min-width: 18rem">
-              <Column field="expName" header="实验名称" sortable style="width: 25%" />
-              <Column field="times" header="评论次数" sortable style="width: 25%" />
+              <Column field="expName" header="实验名称" sortable style="width: 50%" />
+              <Column field="times" header="评论次数" sortable style="width: 50%" />
             </DataTable>
           </Panel>
-          <Panel header="各实验收藏次数排行榜" class="ml-auto">
+          <Panel header="各实验收藏次数排行榜" class="ml-auto w-full">
             <DataTable :value="star" scrollable table-style="min-width: 18rem">
-              <Column field="expName" header="实验名称" sortable style="width: 25%" />
-              <Column field="times" header="收藏次数" sortable style="width: 25%" />
+              <Column field="expName" header="实验名称" sortable style="width: 50%" />
+              <Column field="times" header="收藏次数" sortable style="width: 50%" />
             </DataTable>
           </Panel>
         </div>

@@ -200,7 +200,9 @@ async function startSimulation() {
         }
         drawBoard();
         binCounts.value[Math.floor(n.value / 2) + position / 2]++;
-        await new Promise(resolve => setTimeout(resolve, 500));
+        if (ball.value <= 50) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+        }
     }
     if (isSimulating) {
         chartData.value = setChartData();
@@ -305,7 +307,7 @@ $$
                             </div>
                             <div class="flex flex-col gap-8 pb-0">
                                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                                    <Label>球的数量</Label>
+                                    <Label>球的数量(大于50时不予展示每个小球下落的路径)</Label>
                                     <div class="max-w-xl space-y-3">
                                         <InputNumber v-model="ball" fluid />
                                         <Slider v-model="ball" :min="5" :max="1000" :step="5" class="w-full" />

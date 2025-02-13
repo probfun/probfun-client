@@ -587,8 +587,8 @@ watch(() => [props.mean1, props.mean2, props.sigma1, props.sigma2, props.density
         <div id="plotly-chart2" ref="plotlyChart2" class="w-full h-64" v-if="!props.isChart3"></div>
         <div id="plotly-chart5" ref="plotlyChart5" class="w-full h-64" v-if="props.isChart3"></div>
         <div id="plotly-chart1" ref="plotlyChart1" class="w-full h-64"></div>
-        <div id="plotly-chart3" ref="plotlyChart3" class="w-full h-64"></div>
-        <div id="plotly-chart4" ref="plotlyChart4" class="w-full h-64" v-if="!props.isChart3"></div>
+        <div id="plotly-chart3" ref="plotlyChart3" class="w-full h-96"></div>
+        <div id="plotly-chart4" ref="plotlyChart4" class="w-64 h-full" v-if="!props.isChart3"></div>
         <div id="plotly-chart6" ref="plotlyChart6" class="w-full h-64" v-if="props.isChart3"></div>
     </div>
 
