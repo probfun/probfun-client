@@ -14,9 +14,9 @@ import NormalDistribution from '@/components/experiment/distribution/normal-dist
 import PoissonDistribution from '@/components/experiment/distribution/poisson-distribution/PoissonDistribution.vue';
 import UniformDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
 
-import HomePage from '@/components/home/HomePage.vue';
+import FavoritePanel from '@/components/favorite/FavoritePanel.vue';
 
-import StarPanel from '@/components/star/StarPanel.vue';
+import HomePage from '@/components/home/HomePage.vue';
 import StudentPanel from '@/components/user/StudentPanel.vue';
 import TeacherPanel from '@/components/user/TeacherPanel.vue';
 
@@ -129,7 +129,10 @@ const router = createRouter({
           path: '/dashboard/experiment/bertrand',
           component: () => import('@/components/experiment/chapter1/bertrand/bertrand.vue'),
         },
-
+        {
+          path: '/dashboard/experiment/distribution-clt',
+          component: () => import('@/components/experiment/chapter5/distribution-clt/DistributionClt.vue'),
+        },
         {
           path: '/dashboard/info0',
           component: StudentPanel,
@@ -143,8 +146,8 @@ const router = createRouter({
           component: AiPanel,
         },
         {
-          path: '/dashboard/star',
-          component: StarPanel,
+          path: '/dashboard/favorite',
+          component: FavoritePanel,
         },
         {
           path: '/dashboard/mindmap/distribution',

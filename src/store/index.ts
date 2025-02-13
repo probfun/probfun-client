@@ -1,13 +1,20 @@
 import type { Chat } from '@/api/ai/aiType';
 import type { NodeOptions } from '@/api/distribution/distributionType';
+import type { Experiment } from '@/api/experiment/experimentType';
 import type { User } from '@/api/user/userType';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
 export const useUserStore = defineStore('userStore', () => {
   const user = ref<User | null>(null);
+  const favoriteExperiments = ref<Experiment[]>([]);
+  function isFavorite(expId: string): boolean {
+    return favoriteExperiments.value.some(exp => exp.expId === expId);
+  }
   return {
     user,
+    favoriteExperiments,
+    isFavorite,
   }
 }, {
   persist: true,
@@ -92,7 +99,7 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       position: { x: 450, y: 200 },
       chineseTranslation: '泊松分布(μ)\nC',
       pdf: '$$P(X = k) = \\frac{e^{-\\mu} \\mu^{k}}{k!}$$',
-      expId: 'poissonDistribution',
+      expId: 'poisson-distribution',
       description: '**应用案例**: 网络流量中的数据包到达率\n\n- **背景**: 在网络工程中，数据包的到达通常被建模为泊松过程。\n- **研究目的**: 分析特定时间段内到达的数据包数量，以优化网络资源配置。\n- **方法**: 收集网络流量数据，计算在单位时间内到达的数据包数量，并使用泊松分布进行拟合，评估网络的负载和延迟。',
     },
     {
@@ -119,7 +126,7 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       position: { x: 800, y: 170 },
       chineseTranslation: '二项分布(n, p)',
       pdf: '$$P(X = k) = \\binom{n}{k} p^{k} (1 - p)^{n - k}$$',
-      expId: 'binomialDistribution',
+      expId: 'binomial-distribution',
       description: '**应用案例**: 电子产品的质量控制\n\n- **背景**: 在生产过程中，电子产品的缺陷率可以用二项分布来建模。\n- **研究目的**: 分析在生产批次中合格产品的比例，以确保产品质量。\n- **方法**: 对每批产品进行抽样检测，记录合格与不合格的产品数量。使用二项分布模型来估计不合格产品的概率，并进行统计检验，以确定生产过程是否符合质量标准。',
     },
     {
@@ -133,7 +140,7 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       position: { x: -300, y: 550 },
       chineseTranslation: '几何分布(p)\nF, M, V',
       pdf: '$$P(X = k) = (1 - p)^{k - 1} p, \\quad k = 1, 2, 3, \\dots$$',
-      expId: 'geometricDistribution',
+      expId: 'geometric-distribution',
     },
     {
       label: 'Pascal(n,p)\nCp',
@@ -146,7 +153,7 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       position: { x: 950, y: 600 },
       chineseTranslation: '正态分布(μ, σ²)\nL',
       pdf: '$$f(x) = \\frac{1}{\\sqrt{2\\pi \\sigma^2}} e^{-\\frac{(x - \\mu)^2}{2\\sigma^2}}$$',
-      expId: 'normalDistribution',
+      expId: 'normal-distribution',
       description: '**应用案例**: 信号处理中的噪声建模\n\n- **背景**: 在无线通信和信号处理领域，信号在传输过程中往往会受到噪声的影响。许多类型的噪声（如高斯白噪声）可以用正态分布来建模。\n- **研究目的**: 分析信号在不同噪声条件下的传输质量。\n- **方法**: 通过实验收集不同信噪比（SNR）条件下的信号数据，利用正态分布模型对噪声进行分析，评估通信系统的性能。',
     },
     {
@@ -172,7 +179,7 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       position: { x: 580, y: 450 },
       chineseTranslation: '标准正态分布',
       pdf: '$$f(x) = \\frac{1}{\\sqrt{2\\pi}} e^{-\\frac{x^2}{2}}$$',
-      expId: 'normalDistribution',
+      expId: 'normal-distribution',
     },
     {
       label: 'Log normal(α，β)\nP',
@@ -327,7 +334,7 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       position: { x: -350, y: 100 },
       chineseTranslation: '指数分布(α)\nF, M, S, V',
       pdf: '$$f(x) = \\alpha e^{-\\alpha x}, \\quad x \\ge 0$$',
-      expId: 'exponentialDistribution',
+      expId: 'exponential-distribution',
       description: '**应用案例**: 通信故障的寿命分析\n\n- **背景**: 在电子设备和网络组件中，故障发生时间常常服从指数分布。\n- **研究目的**: 评估设备的平均故障时间，以提前进行维护和更换。\n- **方法**: 收集设备故障时间数据，利用指数分布模型计算设备的可靠性和故障率。',
     },
     {
@@ -377,7 +384,7 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       position: { x: -350, y: 100 },
       chineseTranslation: '标准均匀分布\nV',
       pdf: '$$f(x) = \\begin{cases} 1 & \\text{if } 0 \\le x \\le 1, \\\\ 0 & \\text{otherwise.} \\end{cases}$$',
-      expId: 'uniformDistribution',
+      expId: 'uniform-distribution',
     },
     {
       label: 'Minimax(β,γ)\nMβ,V',
@@ -469,7 +476,7 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       position: { x: -350, y: 100 },
       chineseTranslation: '均匀分布(a, b)\nR, V',
       pdf: '$$f(x) = \\frac{1}{b - a}, \\quad a \\le x \\le b$$',
-      expId: 'uniformDistribution',
+      expId: 'uniform-distribution',
       description: '**应用案例**: 随机采样与仿真\n\n- **背景**: 在进行系统仿真或随机采样时，均匀分布常常用于生成随机数。\n- **研究目的**: 在仿真中随机生成事件发生的时间或位置，以评估系统性能。\n- **方法**: 利用均匀分布生成随机变量，例如在网络流量模拟中生成随机到达时间，评估系统在不同负载条件下的响应能力。',
     },
     {
@@ -485,9 +492,20 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       pdf: '$$f(x) = \\frac{\\lambda}{\\kappa} \\left(1 + \\frac{x}{\\kappa}\\right)^{-(\\lambda + 1)}, \\quad x \\ge 0$$',
     },
   ]);
+  const version = ref(2);
   return {
     nodeData,
+    version,
   }
 }, {
-  persist: true,
+  persist: {
+    key: 'distributionStore',
+    storage: localStorage,
+    beforeHydrate: () => {
+      const stored = JSON.parse(localStorage.getItem('distributionStore') || '{}')
+      if (stored.version !== 2) {
+        localStorage.removeItem('distributionStore') // 版本不一致，移除旧数据
+      }
+    },
+  },
 });

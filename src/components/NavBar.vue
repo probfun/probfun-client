@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Message } from '@/api/message/messageType';
 import type { User } from '@/api/user/userType';
+import { fetchFavoriteExperimentsApi, toggleFavoriteApi } from '@/api/experiment/experimentApi.ts';
 import { fetchMessagesApi, readMessagesApi } from '@/api/message/messageApi';
 import { putUserApi, putUserAvatarApi, updatePasswordApi } from '@/api/user/userApi';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
@@ -15,6 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+
 import {
   FormControl,
   FormField,
@@ -34,9 +36,8 @@ import {
 import { Separator } from '@/components/ui/separator';
 
 import { useUserStore } from '@/store'
-
 import { error, success, warning } from '@/utils/toast';
-import { Bell, Plus } from 'lucide-vue-next'
+import { Bell, Plus, Star } from 'lucide-vue-next'
 import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -78,6 +79,7 @@ const isOpenPassword = ref(false);
 const oldPassword = ref('');
 const newPassword = ref('');
 const confirmPassword = ref('');
+const isFavorite = ref(false);
 
 async function updatePassword() {
   if (!tempUser.value)
@@ -171,59 +173,59 @@ function updateExperiment() {
     title.value = '阳性检测';
     tags.value = ['条件概率', '互斥事件', '独立事件'];
   }
-  else if (path === 'binomialDistribution') {
+  else if (path === 'binomial-distribution') {
     title.value = '二项分布';
     tags.value = ['X~B(n,p)'];
   }
-  else if (path === 'poissonDistribution') {
+  else if (path === 'poisson-distribution') {
     title.value = '泊松分布';
     tags.value = ['X~P(λ)'];
   }
-  else if (path === 'geometricDistribution') {
+  else if (path === 'geometric-distribution') {
     title.value = '几何分布';
     tags.value = ['X~GE(p)'];
   }
-  else if (path === 'uniformDistribution') {
+  else if (path === 'uniform-distribution') {
     title.value = '均匀分布';
     tags.value = ['X~U(a,b)'];
   }
-  else if (path === 'exponentialDistribution') {
+  else if (path === 'exponential-distribution') {
     title.value = '指数分布';
     tags.value = ['X~E(λ)'];
   }
-  else if (path === 'normalDistribution') {
+  else if (path === 'normal-distribution') {
     title.value = '正态分布';
     tags.value = ['X~N(μ,σ²)'];
   }
-  else if (path === 'binomialPoisson') {
+  else if (path === 'binomial-poisson') {
     title.value = '二项分布与泊松分布';
     tags.value = ['泊松近似定理 : np=λ，n很大，p很小，λ固定时近似'];
   }
-  else if (path === 'binomialNormal') {
+  else if (path === 'binomial-normal') {
     title.value = '二项分布与正态分布';
     tags.value = ['np和np(1-p)足够大，即n→∞时近似'];
   }
-  else if (path === 'poissonExponential') {
+  else if (path === 'poisson-exponential') {
     title.value = '泊松分布与指数分布';
     tags.value = ['泊松分布：事件的数量', '指数分布：事件之间的时间间隔', '公交车悖论'];
   }
-  else if (path === 'poissonNormal') {
+  else if (path === 'poisson-normal') {
     title.value = '泊松分布与正态分布';
     tags.value = ['λ较大，泊松分布可近似为均值和方差均为λ的正态分布'];
   }
-  else if (path === '2DuniformDistribution') {
+  else if (path === '2d-uniform-distribution') {
     title.value = '二维均匀分布';
     tags.value = ['边缘分布', '条件分布', '(x,y) ∈ Area G = (x2-x1)·(y2-y1)', 'P((X,Y) ∈ A) = Area A / Area G'];
   }
-  else if (path === '2DnormalDistribution') {
+  else if (path === '2d-normal-distribution') {
     title.value = '二维正态分布';
     tags.value = ['边缘分布', '条件分布', '(X,Y) ~ N(μ1,μ2;σ1²,σ2²;ρ)'];
   }
-  else if (path === 'expectationTest') {
+  else if (path === 'expectation-test') {
     title.value = '期望检验';
     tags.value = ['分组检测'];
   }
-  else if (path === 'centralLimitTheorem') {
+  else if (path === 'central-limit-theorem') {
     title.value = '中心极限定理';
     tags.value = ['正态分布'];
   }
@@ -240,6 +242,9 @@ function updateExperiment() {
     title.value = '邮趣概率';
     tags.value = [];
   }
+
+  const userStore = useUserStore();
+  isFavorite.value = userStore.favoriteExperiments.map(item => item.expId).includes(path ?? '');
 }
 
 watch(() => route.path, () => {
@@ -289,19 +294,54 @@ async function readMessage() {
     console.error('Error during read messages: ', error);
   }
 }
+
+async function refreshFavorite() {
+  try {
+    const response = await fetchFavoriteExperimentsApi();
+    userStore.favoriteExperiments = response.experiments;
+    const path = route.path.split('/').pop();
+    isFavorite.value = userStore.favoriteExperiments.map(item => item.expId).includes(path ?? '');
+  }
+  catch (error) {
+    console.error('Error during fetching favorite experiments:', error);
+  }
+}
+
+async function toggleFavorite() {
+  try {
+    const path = route.path.split('/').pop();
+    if (!path) {
+      return;
+    }
+    await toggleFavoriteApi(path);
+    await refreshFavorite();
+    success(isFavorite.value ? '已收藏' : '已取消收藏');
+  }
+  catch (error) {
+    console.error('Error during toggle favorite:', error);
+  }
+}
 </script>
 
 <template>
   <nav class="w-full flex py-2 px-5 z-50 border-b bg-background gap-2">
-    <div class="flex items-center  justify-center gap-3 overflow-x-hidden">
+    <div class="flex items-center  justify-center gap-2 overflow-x-hidden">
       <Label class="text-lg font-bold shrink-0">
         {{ title }}
       </Label>
-      <div class="flex gap-2 overflow-x-auto px-2">
+      <div class="flex gap-2 overflow-x-auto">
         <Badge v-for="item in tags" :key="item" class="text-sm shrink-0">
           {{ item }}
         </Badge>
       </div>
+      <Button v-if="title !== '邮趣概率'" size="icon" variant="ghost" class="p-1 size-auto" @click="toggleFavorite">
+        <Star
+          class="size-5 transition-all" :style="{
+            fill: isFavorite ? '#FFA500' : 'none',
+            stroke: isFavorite ? '#FFA500' : '#999',
+          }"
+        />
+      </Button>
     </div>
     <div class="flex items-center gap-2 ml-auto">
       <div class="relative flex items-center justify-items-center ml-auto mr-2 hover:scale-110 top-[3px]">
@@ -385,7 +425,7 @@ async function readMessage() {
                   >赞了你的评论</span>
                   <span v-if="item.type === 'delete'" class="content text-sm text-gray-600">管理员删除了你的评论</span>
                 </div>
-                <div v-if="item.read === false" class="ml-auto">
+                <div v-if="!item.read" class="ml-auto">
                   <span class="inline-block w-2 h-2 bg-red-600 rounded-full" />
                 </div>
               </div>

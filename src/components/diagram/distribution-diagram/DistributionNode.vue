@@ -72,7 +72,7 @@ const generating = ref(false);
 const isError = ref(false);
 
 function replaceKeywords(text: string): string {
-  return text.replace(/&&(.+?)&&/g, (match, p1) => ` [${p1}](ai?query=${encodeURIComponent(p1)}) `);
+  return text.replace(/&&(.+?)&&/g, (match, p1) => ` [${p1}](ai?query=${encodeURIComponent(`请解释一下${p1}是什么`)}) `);
 }
 
 async function generateDescription(subject: string = 'default') {

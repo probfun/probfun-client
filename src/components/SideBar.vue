@@ -66,7 +66,7 @@ const sideBarItem = ref<SideBarItem[]>([
   {
     label: '收藏',
     icon: Star,
-    route: '/dashboard/star',
+    route: '/dashboard/favorite',
   },
   {
     label: '大模型回答',
@@ -377,7 +377,7 @@ const chapter3Items = [
   {
     label: '二维均匀分布',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/2DuniformDistribution',
+    route: '/dashboard/experiment/2d-uniform-distribution',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '二维均匀分布', window.location.href);
@@ -428,7 +428,6 @@ const chapter4Items = [
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '期望检验', window.location.href);
-        console.log('期望检验');
         await router.push('/dashboard/experiment/expectation-test');
       }
       catch (error) {
@@ -445,8 +444,21 @@ const chapter5Items = [
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '中心极限定理', window.location.href);
-        console.log('中心极限定理');
         await router.push('/dashboard/experiment/central-limit-theorem');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
+  },
+  {
+    label: '各种分布的中心极限定理',
+    icon: 'pi pi-chart-bar',
+    route: '/dashboard/experiment/distribution-clt',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '各种分布的中心极限定理', window.location.href);
+        await router.push('/dashboard/experiment/distribution-clt');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -566,7 +578,7 @@ function goHome() {
       <input id="my-drawer" v-model="showIndex" type="checkbox" class="drawer-toggle">
       <div class="drawer-side">
         <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay" />
-        <div class="bg-background min-h-full w-72 max-w-full p-2 ml-12 pt-14">
+        <div class="bg-background min-h-full w-80 max-w-full p-2 ml-12 pt-14">
           <!--          <div class="flex justify-between p-3 pb-5 border-b"> -->
           <!--            <label class="font-bold text-2xl"> -->
           <!--              实验 -->
@@ -595,6 +607,13 @@ function goHome() {
                     >
                       <i :class="item.icon" />
                       1.{{ index + 1 }}-{{ item.label }}
+                      <Star
+                        v-if="userStore.favoriteExperiments.map(item_ => item_.expId).includes(item.route.substring(item.route.lastIndexOf('/') + 1) || item.route)" class="size-4 ml-auto"
+                        :style="{
+                          fill: '#FFA500',
+                          stroke: '#FFA500',
+                        }"
+                      />
                     </a>
                   </li>
                 </ul>
@@ -614,6 +633,13 @@ function goHome() {
                     >
                       <i :class="item.icon" />
                       2.{{ index + 1 }}-{{ item.label }}
+                      <Star
+                        v-if="userStore.favoriteExperiments.map(item_ => item_.expId).includes(item.route.substring(item.route.lastIndexOf('/') + 1) || item.route)" class="size-4 ml-auto"
+                        :style="{
+                          fill: '#FFA500',
+                          stroke: '#FFA500',
+                        }"
+                      />
                     </a>
                   </li>
                   <li>
@@ -627,6 +653,13 @@ function goHome() {
                           >
                             <i />
                             2.7.{{ index + 1 }}-{{ item.label }}
+                            <Star
+                              v-if="userStore.favoriteExperiments.map(item_ => item_.expId).includes(item.route.substring(item.route.lastIndexOf('/') + 1) || item.route)" class="size-4 ml-auto"
+                              :style="{
+                                fill: '#FFA500',
+                                stroke: '#FFA500',
+                              }"
+                            />
                           </a>
                         </li>
                       </ul>
@@ -648,6 +681,13 @@ function goHome() {
                     >
                       <i :class="item.icon" />
                       3.{{ index + 1 }}-{{ item.label }}
+                      <Star
+                        v-if="userStore.favoriteExperiments.map(item_ => item_.expId).includes(item.route.substring(item.route.lastIndexOf('/') + 1) || item.route)" class="size-4 ml-auto"
+                        :style="{
+                          fill: '#FFA500',
+                          stroke: '#FFA500',
+                        }"
+                      />
                     </a>
                   </li>
                 </ul>
@@ -667,6 +707,13 @@ function goHome() {
                     >
                       <i :class="item.icon" />
                       4.{{ index + 1 }}-{{ item.label }}
+                      <Star
+                        v-if="userStore.favoriteExperiments.map(item_ => item_.expId).includes(item.route.substring(item.route.lastIndexOf('/') + 1) || item.route)" class="size-4 ml-auto"
+                        :style="{
+                          fill: '#FFA500',
+                          stroke: '#FFA500',
+                        }"
+                      />
                     </a>
                   </li>
                 </ul>
@@ -686,6 +733,13 @@ function goHome() {
                     >
                       <i :class="item.icon" />
                       5.{{ index + 1 }}-{{ item.label }}
+                      <Star
+                        v-if="userStore.favoriteExperiments.map(item_ => item_.expId).includes(item.route.substring(item.route.lastIndexOf('/') + 1) || item.route)" class="size-4 ml-auto"
+                        :style="{
+                          fill: '#FFA500',
+                          stroke: '#FFA500',
+                        }"
+                      />
                     </a>
                   </li>
                 </ul>
