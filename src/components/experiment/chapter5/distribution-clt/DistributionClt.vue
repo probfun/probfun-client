@@ -8,8 +8,9 @@ import { ref, watch } from 'vue';
 import { content } from './content';
 
 function f(x: number): number {
-  if (x >= 0) {
-    return Math.exp(-x);
+  if (x >= 0 && x <= 1) {
+    // return Math.exp(-x);
+    return 1;
   }
   else {
     return 0;
@@ -19,14 +20,13 @@ const n_list = ref<number[]>([2]);
 const n = ref(2);
 watch(() => n_list, () => {
   n.value = n_list.value[0];
-  console.log(n.value);
 }, { deep: true });
 </script>
 
 <template>
   <ExperimentBoard>
     <template #experiment>
-      <DistributionCltDiagram :args="{ f, dx: 0.1, left: 0, right: 3, n }" />
+      <DistributionCltDiagram :args="{ f, dx: 0.01, left: 0, right: 1, n }" />
     </template>
     <template #parameter>
       <div class="p-5">

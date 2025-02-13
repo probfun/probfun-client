@@ -23,13 +23,19 @@ const chartOptions = computed(() => {
   const textColor = hslToHex(documentStyle.getPropertyValue('--foreground')); // Maps to primary foreground color
   const textColorSecondary = hslToHex(documentStyle.getPropertyValue('--muted-foreground')); // Maps to muted foreground color
   const surfaceBorder = hslToHex(documentStyle.getPropertyValue('--border')); // Maps to border color
-  console.log(textColor, textColorSecondary, surfaceBorder);
   return {
     animation: {
       duration: 0,
     },
     maintainAspectRatio: false,
     aspectRatio: 0.6,
+    layout: {
+      padding: {
+        left: 20,
+        right: 20,
+        top: 20,
+      },
+    },
     plugins: {
       legend: {
         labels: {
@@ -66,6 +72,8 @@ const chartOptions = computed(() => {
         },
       },
       y: {
+        beginAtZero: true, // 确保 y 轴从 0 开始
+        min: 0, // 强制 y 轴最小值为 0
         ticks: {
           color: textColorSecondary,
         },
@@ -81,8 +89,6 @@ function getChartData(data: {
   x: number[]
   y: number[]
 }) {
-  // const kValues = Array.from({ length: data.length }, (_, i) => i + 1);
-  // const
   return ({
     labels: data.x,
     datasets: [
