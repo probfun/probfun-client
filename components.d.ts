@@ -89,6 +89,7 @@ declare module 'vue' {
     DialogTrigger: typeof import('./src/components/ui/dialog/DialogTrigger.vue')['default']
     DisplayContainer: typeof import('./src/components/experiment/DisplayContainer.vue')['default']
     Distribution: typeof import('./src/components/home/mindmap/distribution-old/distribution.vue')['default']
+    DistributionCltDiagram: typeof import('./src/components/experiment/chapter5/distribution-clt/DistributionCltDiagram.vue')['default']
     DistributionDiagram: typeof import('./src/components/diagram/distribution-diagram/DistributionDiagram.vue')['default']
     DistributionNode: typeof import('./src/components/diagram/distribution-diagram/DistributionNode.vue')['default']
     DropdownMenu: typeof import('./src/components/ui/dropdown-menu/DropdownMenu.vue')['default']

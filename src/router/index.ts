@@ -13,7 +13,6 @@ import GeometricDistribution from '@/components/experiment/distribution/geometri
 import NormalDistribution from '@/components/experiment/distribution/normal-distribution/NormalDistribution.vue';
 import PoissonDistribution from '@/components/experiment/distribution/poisson-distribution/PoissonDistribution.vue';
 import UniformDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
-import ExpectationTest from '@/components/experiment/chapter4/ExpectationTest.vue';
 
 import HomePage from '@/components/home/HomePage.vue';
 
@@ -71,59 +70,59 @@ const router = createRouter({
           component: BirthdayProblem,
         },
         {
-          path: '/dashboard/experiment/normalDistribution',
+          path: '/dashboard/experiment/normal-distribution',
           component: NormalDistribution,
         },
         {
-          path: '/dashboard/experiment/binomialDistribution',
+          path: '/dashboard/experiment/binomial-distribution',
           component: () => import('@/components/experiment/distribution/BinomialDistribution.vue'),
         },
         {
-          path: '/dashboard/experiment/poissonDistribution',
+          path: '/dashboard/experiment/poisson-distribution',
           component: PoissonDistribution,
         },
         {
-          path: '/dashboard/experiment/geometricDistribution',
+          path: '/dashboard/experiment/geometric-distribution',
           component: GeometricDistribution,
         },
         {
-          path: '/dashboard/experiment/uniformDistribution',
+          path: '/dashboard/experiment/uniform-distribution',
           component: UniformDistribution,
         },
         {
-          path: '/dashboard/experiment/exponentialDistribution',
+          path: '/dashboard/experiment/exponential-distribution',
           component: () => import('@/components/experiment/distribution/ExponentialDistribution.vue'),
         },
         {
-          path: '/dashboard/experiment/binomialPoisson',
+          path: '/dashboard/experiment/binomial-poisson',
           component: () => import('@/components/experiment/distribution/comparison/BP.vue'),
         },
         {
-          path: '/dashboard/experiment/binomialNormal',
+          path: '/dashboard/experiment/binomial-normal',
           component: () => import('@/components/experiment/distribution/comparison/BN.vue'),
         },
         {
-          path: '/dashboard/experiment/poissonExponential',
+          path: '/dashboard/experiment/poisson-exponential',
           component: () => import('@/components/experiment/distribution/comparison/PE.vue'),
         },
         {
-          path: '/dashboard/experiment/poissonNormal',
+          path: '/dashboard/experiment/poisson-normal',
           component: () => import('@/components/experiment/distribution/comparison/PN.vue'),
         },
         {
-          path: '/dashboard/experiment/2DuniformDistribution',
+          path: '/dashboard/experiment/2d-uniform-distribution',
           component: () => import('@/components/experiment/chapter3/uniform-distribution/threeUniformDistribution.vue'),
         },
         {
-          path: '/dashboard/experiment/2DnormalDistribution',
+          path: '/dashboard/experiment/2d-normal-distribution',
           component: () => import('@/components/experiment/chapter3/normal-distribution/threeNormalDistribution.vue'),
         },
         {
-          path: '/dashboard/experiment/centralLimitTheorem',
+          path: '/dashboard/experiment/central-limit-theorem',
           component: () => import('@/components/experiment/chapter5/central-limit-theorem/clt.vue'),
         },
         {
-          path: '/dashboard/experiment/ExpectationTest',
+          path: '/dashboard/experiment/expectation-test',
           component: () => import('@/components/experiment/chapter4/ExpectationTest.vue'),
         },
         {

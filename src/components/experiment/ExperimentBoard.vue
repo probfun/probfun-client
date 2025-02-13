@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Tab } from '@/components/Container.vue';
-import type { PropType } from 'vue';
 import Container from '@/components/Container.vue';
 import {
   ResizableHandle,
@@ -10,26 +9,25 @@ import {
 import { ChartColumnIncreasing, GraduationCap, MessagesSquare, Presentation } from 'lucide-vue-next';
 import { ref } from 'vue';
 
-//
-defineProps({
-  discussTabList: {
-    type: Array as PropType<Tab[]>,
-    required: false,
-    default: [
-      {
-        id: 0,
-        label: '实验结论',
-        name: 'conclusion',
-        icon: GraduationCap,
-      },
-      {
-        id: 1,
-        label: '讨论区',
-        name: 'comment',
-        icon: MessagesSquare,
-      },
-    ],
-  },
+withDefaults(defineProps<{
+  discussTabList?: Tab[]
+  panelSize?: number
+}>(), {
+  discussTabList: () => [
+    {
+      id: 0,
+      label: '实验结论',
+      name: 'conclusion',
+      icon: GraduationCap,
+    },
+    {
+      id: 1,
+      label: '讨论区',
+      name: 'comment',
+      icon: MessagesSquare,
+    },
+  ],
+  panelSize: 40,
 });
 
 const displayTabList = ref([{
@@ -74,7 +72,7 @@ const parameterTabList = ref([{
     >
       <ResizablePanel id="demo-panel-2" :default-size="70" :min-size="20" :max-size="80">
         <ResizablePanelGroup id="demo-group-2" direction="vertical">
-          <ResizablePanel id="demo-panel-3" :default-size="40">
+          <ResizablePanel id="demo-panel-3" :default-size="panelSize">
             <div class="flex h-full items-center justify-center p-1">
               <Container class="h-full w-full" :tabs="displayTabList">
                 <slot name="experiment" />
@@ -82,7 +80,7 @@ const parameterTabList = ref([{
             </div>
           </ResizablePanel>
           <ResizableHandle id="demo-handle-2" class="bg-transparent" />
-          <ResizablePanel id="demo-panel-4" :default-size="60">
+          <ResizablePanel id="demo-panel-4">
             <div class="flex h-full items-center justify-center p-1">
               <Container class="h-full w-full" :tabs="parameterTabList">
                 <slot name="parameter" />
