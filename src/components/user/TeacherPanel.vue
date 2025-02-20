@@ -20,7 +20,8 @@ import Select from 'primevue/select';
 import Textarea from 'primevue/textarea';
 import { useToast } from 'primevue/usetoast';
 import { onMounted, ref, watch } from 'vue';
-import { log } from 'console';
+import { fetchCommentsApi } from '@/api/class/teacher/teacherApi';
+import { Comment } from '@/api/comment/commentType';
 
 const userStore = useUserStore();
 const defaultValue = 'item-1'
@@ -48,15 +49,14 @@ const products = ref([
   },
 ]);
 
-const classesA = ref([
+const classes = ref([
   { name: '2023215101' },
   { name: '2023215102' },
   { name: '2023215103' },
   { name: '2023215104' },
   { name: '2023215105' },
 ]);
-const selectedClass = ref(classesA.value[0]);
-const selectedTime = ref();
+const selectedClass = ref(classes.value[0]);
 const click = ref([
   {
     expName: '正态分布',
@@ -142,6 +142,8 @@ async function sendPost() {
 }
 
 const postList = ref<Post[] | null>(null);
+const commentList = ref<Comment[] | null>(null);
+
 async function getPost() {
   try {
     const result = await fetchPostApi(selectedClass.value.name);
@@ -155,17 +157,38 @@ async function getPost() {
 async function getClasses() {
   try {
     const result = await fetchClassListApi();
-    classesA.value = result.filter(item => item).map(item => ({ name: item }));
-    selectedClass.value = classesA.value[0];
+    classes.value = result.filter(item => item).map(item => ({ name: item }));
+    selectedClass.value = classes.value[0];
   }
   catch (error) {
     console.error('Error during fetching classes:', error);
   }
 }
 
+async function getComments() {
+  try {
+    const result = await fetchCommentsApi(selectedClass.value.name, 'ALL_TIME');
+    commentList.value = result.comments;
+    console.log('pinglun', commentList.value);
+    commentList.value.forEach(comment => {
+      products.value.push({
+        expName: comment.expId,
+        name: comment.user.nickname,
+        studentID: comment.user.studentId,
+        time: comment.timestamp,
+        comment: comment.content
+      });
+    });
+  }
+  catch (error) {
+    console.error('Error during fetching comments:', error);
+  }
+}
+
 onMounted(async () => {
   await getClasses();
   await getPost();
+  await getComments();
 })
 watch([selectedClass], () => {
   getPost();
@@ -178,7 +201,7 @@ watch([selectedClass], () => {
       <div class="flex mb-[-10px]">
         <span class="text-lg font-bold">2024年秋季学期</span>
         <div class="ml-auto">
-          <Select v-model="selectedClass" :options="classesA" option-label="name" filter placeholder="请选择班级"
+          <Select v-model="selectedClass" :options="classes" option-label="name" filter placeholder="请选择班级"
             class="w-full md:w-56" />
         </div>
       </div>

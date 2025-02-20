@@ -173,7 +173,6 @@ declare module 'vue' {
     Skeleton: typeof import('./src/components/ui/skeleton/Skeleton.vue')['default']
     Slider: typeof import('./src/components/ui/slider/Slider.vue')['default']
     Sonner: typeof import('./src/components/ui/sonner/Sonner.vue')['default']
-    StarPanel: typeof import('./src/components/star/StarPanel.vue')['default']
     StudentPanel: typeof import('./src/components/user/StudentPanel.vue')['default']
     TeacherPanel: typeof import('./src/components/user/TeacherPanel.vue')['default']
     Textarea: typeof import('./src/components/ui/textarea/Textarea.vue')['default']
