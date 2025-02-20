@@ -198,8 +198,7 @@ onMounted(() => {
   const query = getRouteQuery();
   if (query) {
     aiStore.currentChat = null;
-    const question = `请解释一下${query}是什么`;
-    send(question);
+    send(query);
     const router = useRouter();
     router.push({ query: undefined });
   }

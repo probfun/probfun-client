@@ -15,13 +15,13 @@ const experiments = ref([
     title: '正态分布',
     description: '正态分布是一种常见的分布。在正态分布中，大多数数据集中在平均值附近，这种分布经常出现在自然现象和日常生活中。',
     img: '/homePage/normalDistribution.png',
-    path: '/dashboard/experiment/normalDistribution',
+    path: '/dashboard/experiment/normal-distribution',
   },
   {
     title: '泊松分布',
     description: '泊松分布是一种预测在一定时间或空间内随机事件发生次数的统计方法，它基于一个参数λ，这个参数表示平均发生次数。',
     img: '/homePage/poissonDistribution.png',
-    path: '/dashboard/experiment/poissonDistribution',
+    path: '/dashboard/experiment/poisson-distribution',
   },
   {
     title: '三门问题',
