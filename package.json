@@ -11,6 +11,7 @@
   "dependencies": {
     "@dagrejs/dagre": "^1.1.4",
     "@formkit/auto-animate": "^0.8.2",
+    "@lottiefiles/dotlottie-vue": "^0.5.6",
     "@primevue/themes": "^4.0.5",
     "@radix-icons/vue": "^1.0.0",
     "@tailwindcss/typography": "^0.5.15",
@@ -36,6 +37,8 @@
     "markdown": "^0.5.0",
     "markdown-it": "^14.1.0",
     "markdown-it-katex": "^2.0.3",
+    "mathjs": "^14.2.1",
+    "nerdamer": "^1.1.13",
     "openai": "^4.68.4",
     "pinia": "^2.2.2",
     "pinia-plugin-persistedstate": "^4.0.1",

@@ -17,7 +17,6 @@ import { Button } from '@/components/ui/button'
 import { CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ContextMenuTrigger } from '@/components/ui/context-menu';
 import { Label } from '@/components/ui/label'
-import { Skeleton } from '@/components/ui/skeleton';
 import { useAiStore } from '@/store';
 import {
   copyMessage,
@@ -30,6 +29,7 @@ import {
 } from '@/utils/ai';
 import { toMarkdown } from '@/utils/markdown'
 import { vAutoAnimate } from '@formkit/auto-animate';
+import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
 import { ArrowDownToLine, Bot, CircleStop, Clipboard, PencilLine, RotateCcw, Send, Trash2 } from 'lucide-vue-next';
 import { v4 as uuidv4 } from 'uuid';
 import { nextTick, onMounted, ref, watch } from 'vue'
@@ -280,7 +280,7 @@ function handleCompositionEnd() {
           <!--              <p>您的浏览器不支持 WebM 格式。</p> -->
           <!--            </video> -->
           <!--          </div> -->
-          <div ref="scrollContainer" class="flex w-full flex-col items-center gap-3 overflow-y-auto pt-4 px-6">
+          <div ref="scrollContainer" class="flex w-full flex-col items-center gap-3 overflow-y-auto pt-4 px-6 pb-24">
             <div v-for="(block, index) in aiStore.currentChat?.chatBlocks ?? [START_BLOCK]" :key="block.blockId" v-auto-animate class="flex w-full max-w-screen-md">
               <div v-if="block.role === 'user'" class="ml-auto">
                 <ContextMenu>
@@ -346,13 +346,13 @@ function handleCompositionEnd() {
                 <ContextMenu>
                   <ContextMenuTrigger :disabled="status !== 'idle' && aiStore.currentChat !== null && index === aiStore.currentChat.chatBlocks.length - 1">
                     <div v-auto-animate class="rounded-lg bg-muted text-foreground p-3 w-full border">
-                      <div v-if="status === 'loading' && aiStore.currentChat && index === aiStore.currentChat.chatBlocks.length - 1" class="space-y-2">
-                        <Skeleton class="w-32 h-5" />
-                        <Skeleton class="w-full h-5" />
-                        <Skeleton class="w-full h-5" />
-                        <Skeleton class="w-full h-5" />
+                      <div v-if="status !== 'idle' && aiStore.currentChat && index === aiStore.currentChat.chatBlocks.length - 1" class="flex flex-col items-center justify-center">
+                        <DotLottieVue class="size-32 mb-4" autoplay loop src="https://lottie.host/54344590-688a-4a46-970b-f8dbea72f5d1/3CdMHIQhDO.lottie" />
+                        <Label class="mb-6 text-base">
+                          AI 正在生成中 ...
+                        </Label>
                       </div>
-                      <div v-else class="flex flex-col gap-4">
+                      <div v-else class="flex flex-col gap-4 overflow-x-auto">
                         <div v-for="(data, index_) in block.data" :key="index_">
                           <div v-if="data.type === 'text'" class="prose max-w-none" v-html="toMarkdown(data.text!)" />
                           <Tool v-else-if="data.type === 'tool'" :name="data.tool!.name" :args="data.tool!.args" />
