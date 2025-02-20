@@ -4,6 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
+import { conclusionContent } from './content';
+import { toMarkdown } from '@/utils/markdown';
+
+import randomEndpointGif from '/public/Bertrand/random_endpoint.gif';
+import randomMidpointGif from '/public/Bertrand/random_midpoint.gif';
+import diameterMidpointGif from '/public/Bertrand/diameter_midpoint.gif';
+
 
 // 用于控制模拟开始与否
 // const simulateGame = ref(false);
@@ -21,7 +28,7 @@ const bertrandDisplay = ref<{
     console.log('开始模拟！');
     let round = 0;
     this.simulationInterval = setInterval(() => {
-      if (round >= this.autoGameRound[0] ||!autoGaming.value) {
+      if (round >= this.autoGameRound[0] || !autoGaming.value) {
         if (this.simulationInterval) {
           clearInterval(this.simulationInterval);
         }
@@ -181,7 +188,35 @@ watch(() => autoGaming.value, (newValue) => {
   }
 });
 
+// 定义不同方法的数据
+const methodsData = {
+  '随机端点法': {
+    name: '随机端点法',
+    image: randomEndpointGif, // 替换为实际的图片路径
+    description: '随机端点法的详细解释...'
+  },
+  '随机中点法': {
+    name: '随机中点法',
+    image: randomMidpointGif, // 替换为实际的图片路径
+    description: '随机中点法的详细解释...'
+  },
+  '直径中点法': {
+    name: '直径中点法',
+    image: diameterMidpointGif, // 替换为实际的图片路径
+    description: '直径中点法的详细解释...'
+  }
+};
 
+// 定义方法名称的联合类型
+type MethodName = keyof typeof methodsData;
+
+// 当前展示的方法
+const currentMethod = ref(methodsData['随机端点法']);
+
+// 切换方法的函数
+const toggleMethod = (methodName: MethodName) => {
+  currentMethod.value = methodsData[methodName];
+};
 
 </script>
 
@@ -200,7 +235,7 @@ watch(() => autoGaming.value, (newValue) => {
 
           </svg>
           <div class="circle-label">
-            方法一<br>一端点固定，一端点随机选取
+            方法一: 随机端点法<br>一端点固定，一端点随机选取
           </div>
         </div>
 
@@ -213,7 +248,7 @@ watch(() => autoGaming.value, (newValue) => {
 
           </svg>
           <div class="circle-label">
-            方法二<br>弦的中点为任意直径上的任意点
+            方法二：直径中点法<br>弦的中点为任意直径上的任意点
           </div>
         </div>
 
@@ -226,7 +261,7 @@ watch(() => autoGaming.value, (newValue) => {
 
           </svg>
           <div class="circle-label">
-            方法三<br>弦的中点在单位圆内随机选取
+            方法三：随机中点法<br>弦的中点在单位圆内随机选取
           </div>
         </div>
       </div>
@@ -238,7 +273,7 @@ watch(() => autoGaming.value, (newValue) => {
     </template>
 
     <template #parameter>
-      <div v-if="bertrandDisplay" class="p-2 grid grid-cols-2 gap-2">
+      <div v-if="bertrandDisplay" class="p-2 grid grid-cols-2 gap-2 h-full">
         <!-- 配置区 -->
         <div class="flex flex-col gap-2">
           <Card class="flex-1 flex flex-col">
@@ -295,9 +330,30 @@ watch(() => autoGaming.value, (newValue) => {
         <Card class="h-full flex flex-col">
           <CardHeader class="p-4">
             <CardTitle>方法详解</CardTitle>
+            <!-- 下拉按钮 -->
+            <div class="dropdown ">
+              <Button tabindex="0" role="button" class="m-1">
+                点我切换
+              </Button>
+              <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                <li @click="toggleMethod('随机端点法')">
+                  <a>随机端点法</a>
+                </li>
+                <li @click="toggleMethod('随机中点法')">
+                  <a>随机中点法</a>
+                </li>
+                <li @click="toggleMethod('直径中点法')">
+                  <a>直径中点法</a>
+                </li>
+              </ul>
+            </div>
           </CardHeader>
           <CardContent class="flex flex-1 flex-col items-center justify-center">
             <!-- 显示实验详细内容 -->
+            <img v-if="currentMethod.name === '随机端点法'" :src="randomEndpointGif" alt="随机端点法动图" style="width: 40%;">
+            <img v-if="currentMethod.name === '随机中点法'" :src="randomMidpointGif" alt="随机中点法动图" style="width: 40%;">
+            <img v-if="currentMethod.name === '直径中点法'" :src="diameterMidpointGif" alt="直径中点法动图" style="width: 40%;">
+            <p>{{ currentMethod.description }}</p>
           </CardContent>
         </Card>
       </div>
@@ -305,7 +361,7 @@ watch(() => autoGaming.value, (newValue) => {
 
     <template #conclusion>
       <div class="w-full h-full p-3">
-        <!-- 结果总结区域 -->
+        <div class="prose-sm max-w-full text-foreground" v-html="toMarkdown(conclusionContent)" />
       </div>
     </template>
 
