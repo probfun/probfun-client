@@ -6,6 +6,9 @@ import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { conclusionContent } from './content';
 import { toMarkdown } from '@/utils/markdown';
+import katex from 'katex';
+import MarkdownIt from 'markdown-it';
+import 'katex/dist/katex.min.css'; // 引入 KaTeX CSS
 
 import randomEndpointGif from '/public/Bertrand/random_endpoint.gif';
 import randomMidpointGif from '/public/Bertrand/random_midpoint.gif';
@@ -193,17 +196,17 @@ const methodsData = {
   '随机端点法': {
     name: '随机端点法',
     image: randomEndpointGif, // 替换为实际的图片路径
-    description: '随机端点法的详细解释...'
+    description: '随机端点法指固定弦的一个端点，另一个端点在圆周上随机选取，即$P(A) = $（计算公式）'
   },
   '随机中点法': {
     name: '随机中点法',
     image: randomMidpointGif, // 替换为实际的图片路径
-    description: '随机中点法的详细解释...'
+    description: '随机中点法指弦的中点在单位圆内随机选取，即'
   },
   '直径中点法': {
     name: '直径中点法',
     image: diameterMidpointGif, // 替换为实际的图片路径
-    description: '直径中点法的详细解释...'
+    description: '直径中点法指任选一直径，垂直于该直径的弦的中点在该直径上随机选取，即'
   }
 };
 
