@@ -1,78 +1,20 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { toMarkdown } from '@/utils/markdown';
+import { onMounted, ref, watch } from 'vue';
+import { conclusionContent } from './content';
+
+import diameterMidpointGif from '/public/Bertrand/diameter_midpoint.gif';
+import randomEndpointGif from '/public/Bertrand/random_endpoint.gif';
+import randomMidpointGif from '/public/Bertrand/random_midpoint.gif';
 
 // 用于控制模拟开始与否
 // const simulateGame = ref(false);
 const autoGaming = ref(false);
-
-const bertrandDisplay = ref<{
-  autoGameRound: number[];
-  simulationInterval: number | null;
-  simulateGame(): void;
-  stopSimulation(): void;
-}>({
-  autoGameRound: [100], // 默认模拟轮数为100
-  simulationInterval: null, // 用于存储定时器 ID
-  simulateGame() {
-    console.log('开始模拟！');
-    let round = 0;
-    this.simulationInterval = setInterval(() => {
-      if (round >= this.autoGameRound[0] ||!autoGaming.value) {
-        if (this.simulationInterval) {
-          clearInterval(this.simulationInterval);
-        }
-        this.simulationInterval = null;
-        return;
-      }
-      // 确保每次更新的数据是响应式的
-      generateRandomEndPoints();
-      generateRadialMidpoint();
-      generateRandomMidpoint();
-      round++;
-    }, 100) as unknown as number; // 强制类型转换
-  },
-  // 停止模拟并清除所有图像
-  stopSimulation() {
-    console.log("停止模拟！");
-    // 清空所有弦数据
-    chord1.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
-    chord2.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
-    chord3.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
-    chord1Color.value = 'blue';
-    chord2Color.value = 'blue';
-    chord3Color.value = 'blue';
-
-    // 停止模拟
-    autoGaming.value = false;
-    if (this.simulationInterval) {
-      clearInterval(this.simulationInterval);
-      this.simulationInterval = null;
-    }
-  }
-});
-
-
-
-
-
-function limitInput(e: { target: { value: string; }; }) {
-  const value = parseInt(e.target.value);
-  if (isNaN(value)) {
-    bertrandDisplay.value.autoGameRound[0] = 1;
-  } else if (value > 500) {
-    bertrandDisplay.value.autoGameRound[0] = 500;
-  } else if (value < 1) {
-    bertrandDisplay.value.autoGameRound[0] = 1;
-  } else {
-    bertrandDisplay.value.autoGameRound[0] = value;
-  }
-}
-
-
 
 // 随机端点法
 const chord1 = ref<{ x1: number, y1: number, x2: number, y2: number }>({ x1: 0, y1: 0, x2: 0, y2: 0 });
@@ -88,7 +30,7 @@ function generateRandomEndPoints() {
     x2: Math.cos(theta2),
     y2: Math.sin(theta2),
   };
-  console.log('chord1:', chord1.value);  // 输出弦的坐标，检查是否更新
+  console.log('chord1:', chord1.value); // 输出弦的坐标，检查是否更新
   console.log(`line 1: x1=${chord1.value.x1}, y1=${chord1.value.y1}, x2=${chord1.value.x2}, y2=${chord1.value.y2}`);
 
   const length = Math.sqrt((chord1.value.x1 - chord1.value.x2) ** 2 + (chord1.value.y1 - chord1.value.y2) ** 2);
@@ -133,18 +75,78 @@ function generateRandomMidpoint() {
     x1: x0 + dx,
     y1: y0 + dy,
     x2: x0 - dx,
-    y2: y0 - dy
+    y2: y0 - dy,
   };
   const length = Math.sqrt((chord3.value.x1 - chord3.value.x2) ** 2 + (chord3.value.y1 - chord3.value.y2) ** 2);
   chord3Color.value = length > Math.sqrt(3) ? 'red' : 'blue';
+}
+
+const bertrandDisplay = ref<{
+  autoGameRound: number[]
+  simulationInterval: number | null
+  simulateGame: () => void
+  stopSimulation: () => void
+}>({
+      autoGameRound: [100], // 默认模拟轮数为100
+      simulationInterval: null, // 用于存储定时器 ID
+      simulateGame() {
+        console.log('开始模拟！');
+        let round = 0;
+        this.simulationInterval = setInterval(() => {
+          if (round >= this.autoGameRound[0] || !autoGaming.value) {
+            if (this.simulationInterval) {
+              clearInterval(this.simulationInterval);
+            }
+            this.simulationInterval = null;
+            return;
+          }
+          // 确保每次更新的数据是响应式的
+          generateRandomEndPoints();
+          generateRadialMidpoint();
+          generateRandomMidpoint();
+          round++;
+        }, 100) as unknown as number; // 强制类型转换
+      },
+      // 停止模拟并清除所有图像
+      stopSimulation() {
+        console.log('停止模拟！');
+        // 清空所有弦数据
+        chord1.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
+        chord2.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
+        chord3.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
+        chord1Color.value = 'blue';
+        chord2Color.value = 'blue';
+        chord3Color.value = 'blue';
+
+        // 停止模拟
+        autoGaming.value = false;
+        if (this.simulationInterval) {
+          clearInterval(this.simulationInterval);
+          this.simulationInterval = null;
+        }
+      },
+    });
+
+function limitInput(e: { target: { value: string } }) {
+  const value = Number.parseInt(e.target.value);
+  if (Number.isNaN(value)) {
+    bertrandDisplay.value.autoGameRound[0] = 1;
+  }
+  else if (value > 500) {
+    bertrandDisplay.value.autoGameRound[0] = 500;
+  }
+  else if (value < 1) {
+    bertrandDisplay.value.autoGameRound[0] = 1;
+  }
+  else {
+    bertrandDisplay.value.autoGameRound[0] = value;
+  }
 }
 
 onMounted(() => {
   generateRandomEndPoints();
   generateRadialMidpoint();
   generateRandomMidpoint();
-
-
 });
 // // 切换模拟状态
 // function toggleSimulation() {
@@ -160,12 +162,12 @@ function toggleSimulation() {
   autoGaming.value = !autoGaming.value;
   if (autoGaming.value) {
     bertrandDisplay.value.simulateGame();
-  } else {
+  }
+  else {
     console.log('停止模拟，调用 stopSimulation 函数');
     bertrandDisplay.value.stopSimulation();
   }
 }
-
 
 // 监听模拟状态变化
 // watch(simulateGame, () => {
@@ -176,15 +178,42 @@ function toggleSimulation() {
 watch(() => autoGaming.value, (newValue) => {
   if (newValue) {
     bertrandDisplay.value.simulateGame();
-  } else {
+  }
+  else {
     bertrandDisplay.value.stopSimulation();
   }
 });
 
+// 定义不同方法的数据
+const methodsData = {
+  randomEndpoint: {
+    name: '随机端点法',
+    image: randomEndpointGif, // 替换为实际的图片路径
+    description: '随机端点法指固定弦的一个端点，另一个端点在圆周上随机选取，即 $P(A) = $（计算公式）',
+  },
+  randomMidpoint: {
+    name: '随机中点法',
+    image: randomMidpointGif, // 替换为实际的图片路径
+    description: '随机中点法指弦的中点在单位圆内随机选取，即',
+  },
+  diameterMidpoint: {
+    name: '直径中点法',
+    image: diameterMidpointGif, // 替换为实际的图片路径
+    description: '直径中点法指任选一直径，垂直于该直径的弦的中点在该直径上随机选取，即',
+  },
+};
 
+// 定义方法名称的联合类型
+type MethodName = keyof typeof methodsData;
 
+// 当前展示的方法
+const currentMethod = ref(methodsData.randomEndpoint);
+
+// 切换方法的函数
+function toggleMethod(methodName: MethodName) {
+  currentMethod.value = methodsData[methodName];
+}
 </script>
-
 
 <template>
   <ExperimentBoard>
@@ -195,12 +224,14 @@ watch(() => autoGaming.value, (newValue) => {
           <svg width="200" height="200" viewBox="0 -10 170 190">
             <circle cx="80" cy="80" r="80" fill="none" stroke="black" />
             <!-- 在此绘制第一种策略的弦 -->
-            <line :x1="80 + chord1.x1 * 80" :y1="80 + chord1.y1 * 80" :x2="80 + chord1.x2 * 80"
-              :y2="80 + chord1.y2 * 80" :stroke="chord1Color" stroke-width="2" />
+            <line
+              :x1="80 + chord1.x1 * 80" :y1="80 + chord1.y1 * 80" :x2="80 + chord1.x2 * 80"
+              :y2="80 + chord1.y2 * 80" :stroke="chord1Color" stroke-width="2"
+            />
 
           </svg>
           <div class="circle-label">
-            方法一<br>一端点固定，一端点随机选取
+            方法一: 随机端点法<br>一端点固定，一端点随机选取
           </div>
         </div>
 
@@ -208,12 +239,14 @@ watch(() => autoGaming.value, (newValue) => {
           <svg width="200" height="200" viewBox="0 -10 170 190">
             <circle cx="80" cy="80" r="80" fill="none" stroke="black" />
             <!-- 在此绘制第二种策略的弦 -->
-            <line :x1="80 + chord2.x1 * 80" :y1="80 + chord2.y1 * 80" :x2="80 + chord2.x2 * 80"
-              :y2="80 + chord2.y2 * 80" :stroke="chord2Color" stroke-width="2" />
+            <line
+              :x1="80 + chord2.x1 * 80" :y1="80 + chord2.y1 * 80" :x2="80 + chord2.x2 * 80"
+              :y2="80 + chord2.y2 * 80" :stroke="chord2Color" stroke-width="2"
+            />
 
           </svg>
           <div class="circle-label">
-            方法二<br>弦的中点为任意直径上的任意点
+            方法二：直径中点法<br>弦的中点为任意直径上的任意点
           </div>
         </div>
 
@@ -221,24 +254,21 @@ watch(() => autoGaming.value, (newValue) => {
           <svg width="200" height="200" viewBox="0 -10 180 190">
             <circle cx="80" cy="80" r="80" fill="none" stroke="black" />
             <!-- 在此绘制第三种策略的弦 -->
-            <line :x1="80 + chord3.x1 * 80" :y1="80 + chord3.y1 * 80" :x2="80 + chord3.x2 * 80"
-              :y2="80 + chord3.y2 * 80" :stroke="chord3Color" stroke-width="2" />
+            <line
+              :x1="80 + chord3.x1 * 80" :y1="80 + chord3.y1 * 80" :x2="80 + chord3.x2 * 80"
+              :y2="80 + chord3.y2 * 80" :stroke="chord3Color" stroke-width="2"
+            />
 
           </svg>
           <div class="circle-label">
-            方法三<br>弦的中点在单位圆内随机选取
+            方法三：随机中点法<br>弦的中点在单位圆内随机选取
           </div>
         </div>
       </div>
-
-
-
-
-
     </template>
 
     <template #parameter>
-      <div v-if="bertrandDisplay" class="p-2 grid grid-cols-2 gap-2">
+      <div v-if="bertrandDisplay" class="p-2 grid grid-cols-2 gap-2 h-full">
         <!-- 配置区 -->
         <div class="flex flex-col gap-2">
           <Card class="flex-1 flex flex-col">
@@ -251,7 +281,6 @@ watch(() => autoGaming.value, (newValue) => {
                 <Slider v-model="bertrandDisplay.autoGameRound" class="" :min="1" :max="500" />
               </div>
               <div class="flex justify-center gap-2 w-full">
-
                 <Button class="" @click="toggleSimulation">
                   {{ autoGaming ? '终止模拟' : '开始模拟' }}
                 </Button>
@@ -265,7 +294,6 @@ watch(() => autoGaming.value, (newValue) => {
               <CardTitle>实验结果</CardTitle>
             </CardHeader>
             <CardContent class="flex items-center flex-col">
-
               <div class="grid grid-cols-2 gap-y-4 gap-x-10 justify-between">
                 <Label class="flex items-center flex-shrink-0">
                   方法一实验频率： {{ }}
@@ -286,7 +314,6 @@ watch(() => autoGaming.value, (newValue) => {
                   方法三理论频率： {{ }}
                 </Label>
               </div>
-
             </CardContent>
           </Card>
         </div>
@@ -295,9 +322,31 @@ watch(() => autoGaming.value, (newValue) => {
         <Card class="h-full flex flex-col">
           <CardHeader class="p-4">
             <CardTitle>方法详解</CardTitle>
+            <!-- 下拉按钮 -->
+            <div class="dropdown ">
+              <Button tabindex="0" role="button" class="m-1">
+                点我切换
+              </Button>
+              <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                <li @click="toggleMethod('randomEndpoint')">
+                  <a>随机端点法</a>
+                </li>
+                <li @click="toggleMethod('randomMidpoint')">
+                  <a>随机中点法</a>
+                </li>
+                <li @click="toggleMethod('diameterMidpoint')">
+                  <a>直径中点法</a>
+                </li>
+              </ul>
+            </div>
           </CardHeader>
           <CardContent class="flex flex-1 flex-col items-center justify-center">
             <!-- 显示实验详细内容 -->
+            <img v-if="currentMethod.name === '随机端点法'" :src="randomEndpointGif" alt="随机端点法动图" style="width: 40%;">
+            <img v-if="currentMethod.name === '随机中点法'" :src="randomMidpointGif" alt="随机中点法动图" style="width: 40%;">
+            <img v-if="currentMethod.name === '直径中点法'" :src="diameterMidpointGif" alt="直径中点法动图" style="width: 40%;">
+            <!--            <p>{{ currentMethod.description }}</p> -->
+            <div class="prose text-sm font-medium mt-4" v-html="toMarkdown(currentMethod.description)" />
           </CardContent>
         </Card>
       </div>
@@ -305,7 +354,7 @@ watch(() => autoGaming.value, (newValue) => {
 
     <template #conclusion>
       <div class="w-full h-full p-3">
-        <!-- 结果总结区域 -->
+        <div class="prose-sm max-w-full text-foreground" v-html="toMarkdown(conclusionContent)" />
       </div>
     </template>
 
@@ -337,13 +386,6 @@ watch(() => autoGaming.value, (newValue) => {
   text-align: center;
   font-size: 14px;
   font-weight: bold;
-}
-
-.controls {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-top: 20px;
 }
 
 .controls button {

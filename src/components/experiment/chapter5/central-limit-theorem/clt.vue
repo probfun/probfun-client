@@ -1,322 +1,319 @@
 <script setup lang="ts">
-import ExperimentBoard from '../../ExperimentBoard.vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
-import InputNumber from 'primevue/inputnumber';
-import Slider from 'primevue/slider';
 import { Button } from '@/components/ui/button';
-import { ref, onMounted, watch } from 'vue';
 import { toMarkdown } from '@/utils/markdown';
 import Chart from 'primevue/chart';
-import { log } from 'console';
+import InputNumber from 'primevue/inputnumber';
+import Slider from 'primevue/slider';
+import { onMounted, ref, watch } from 'vue';
+import ExperimentBoard from '../../ExperimentBoard.vue';
 
-const n = ref(3); //框的数量
-const ball = ref(10); //球的数量
+const n = ref(3); // 框的数量
+const ball = ref(10); // 球的数量
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 const chartData = ref();
 const chartOptions = ref();
 const binCounts = ref<number[]>([]);
-let path = ref<number[]>([]);
+const path = ref<number[]>([]);
 let isSimulating = false;
 
-const setChartData = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
+function setChartData() {
+  const documentStyle = getComputedStyle(document.documentElement);
 
-    return {
-        labels: Array.from({ length: n.value }, (_, i) => i + 1),
-        datasets: [
-            {
-                type: 'line',
-                label: '近似曲线',
-                borderColor: documentStyle.getPropertyValue('--p-orange-500'),
-                borderWidth: 2,
-                fill: false,
-                tension: 0.4,
-                data: binCounts
-            },
-            {
-                type: 'bar',
-                label: '每个框中球的数量',
-                backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
-                data: binCounts
-            }
-        ]
-    };
-};
-const setChartOptions = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
-    const textColor = documentStyle.getPropertyValue('--p-text-color');
-    const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
-    const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+  return {
+    labels: Array.from({ length: n.value }, (_, i) => i + 1),
+    datasets: [
+      {
+        type: 'line',
+        label: '近似曲线',
+        borderColor: documentStyle.getPropertyValue('--p-orange-500'),
+        borderWidth: 2,
+        fill: false,
+        tension: 0.4,
+        data: binCounts,
+      },
+      {
+        type: 'bar',
+        label: '每个框中球的数量',
+        backgroundColor: documentStyle.getPropertyValue('--p-cyan-500'),
+        data: binCounts,
+      },
+    ],
+  };
+}
+function setChartOptions() {
+  const documentStyle = getComputedStyle(document.documentElement);
+  const textColor = documentStyle.getPropertyValue('--p-text-color');
+  const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
+  const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
 
-    return {
-        maintainAspectRatio: false,
-        aspectRatio: 0.6,
-        plugins: {
-            legend: {
-                labels: {
-                    color: textColor
-                }
-            }
+  return {
+    maintainAspectRatio: false,
+    aspectRatio: 0.6,
+    plugins: {
+      legend: {
+        labels: {
+          color: textColor,
         },
-        scales: {
-            x: {
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder
-                }
-            },
-            y: {
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder
-                }
-            }
-        }
-    };
+      },
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+        },
+      },
+      y: {
+        ticks: {
+          color: textColorSecondary,
+        },
+        grid: {
+          color: surfaceBorder,
+        },
+      },
+    },
+  };
 }
 
 function drawBoard() {
-    const canvas = canvasRef.value;
-    if (canvas) {
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-            if (n.value >= 11) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                // 圆的半径
-                const radius = 2;
-                // 层与层之间的垂直间距
-                const verticalSpacing = 15;
-                // 水平圆之间的间距
-                const horizontalSpacing = 20;
-                ctx.strokeStyle = 'black';
-                ctx.lineWidth = 2;
+  const canvas = canvasRef.value;
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      if (n.value >= 11) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // 圆的半径
+        const radius = 2;
+        // 层与层之间的垂直间距
+        const verticalSpacing = 15;
+        // 水平圆之间的间距
+        const horizontalSpacing = 20;
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 2;
 
-                // 每层圆的数量
-                const circlesPerLayer = [];
-                for (let i = 0; i < n.value; i++) {
-                    circlesPerLayer.push(n.value - i + 1);
-                }
-
-                // 起始 y 坐标
-                let y = canvas.height - radius - 20;
-                let bottomLayerStartX = 0; // 最下面一层的起始 x 坐标
-                circlesPerLayer.forEach((count, layerIndex) => {
-                    // 计算该层圆的总宽度（包含间距）
-                    const totalWidth = (count - 1) * (2 * radius + horizontalSpacing);
-                    // 计算该层第一个圆的起始 x 坐标
-                    const layerStartX = (canvas.width - totalWidth) / 2;
-
-                    if (layerIndex === circlesPerLayer.length - 1) {
-                        // 保存最下面一层的起始 x 坐标
-                        bottomLayerStartX = layerStartX;
-                    }
-
-                    for (let i = 0; i < count; i++) {
-                        // 计算当前圆的 x 坐标，考虑水平间距
-                        const x = layerStartX + i * (2 * radius + horizontalSpacing);
-
-                        // 开始绘制路径
-                        ctx.beginPath();
-                        // 绘制圆
-                        ctx.arc(x, y, radius, 0, 2 * Math.PI);
-                        // 设置填充颜色
-                        ctx.fillStyle = 'black';
-                        // 填充圆
-                        ctx.fill();
-                        // 设置边框颜色
-                        ctx.strokeStyle = 'black';
-                        // 设置边框宽度
-                        ctx.lineWidth = 2;
-                        // 绘制边框
-                        ctx.stroke();
-                    }
-
-                    // 更新 y 坐标到下一层
-                    y -= verticalSpacing;
-                });
-
-                // 绘制竖线：保持竖线数量不变
-                let startX = bottomLayerStartX;
-                for (let i = 0; i < n.value + 1; i++) {
-                    // 开始一条新路径
-                    ctx.beginPath();
-                    // 移动到竖线的起始点
-                    ctx.moveTo(startX - 24 * (n.value - 1) / 2, 230); // 保持竖线位置与底层圆对齐
-                    // 绘制竖线到结束点
-                    ctx.lineTo(startX - 24 * (n.value - 1) / 2, 250); // 竖线长度
-                    // 绘制路径
-                    ctx.stroke();
-                    // 更新下一条竖线的起始 x 坐标
-                    startX += 24;
-                }
-
-                // 绘制小球轨迹
-                if (path.value.length > 0) {
-                    ctx.beginPath();
-                    ctx.moveTo(startX - 12 * (2 * n.value + 1), 230 - n.value * 15);
-                    ctx.lineTo(startX - 12 * (2 * n.value + 1), 258 - n.value * 15);
-                    let fromX = startX - 12 * (2 * n.value + 1);
-                    let fromY = 258 - n.value * 15;
-                    console.log(path.value);
-
-                    for (let i = 0; i < path.value.length; i++) {
-                        ctx.moveTo(fromX, fromY);
-                        ctx.lineTo(fromX + path.value[i] * 12, fromY + 15);
-                        fromX = fromX + path.value[i] * 12;
-                        fromY = fromY + 15;
-                    }
-                    ctx.strokeStyle = 'blue';  // 设置轨迹颜色
-                    ctx.lineWidth = 1;
-                    ctx.stroke();
-
-                }
-                path.value = []
-            }
-            else {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                // 圆的半径
-                const radius = 3;
-                // 层与层之间的垂直间距
-                const verticalSpacing = 20;
-                // 水平圆之间的间距
-                const horizontalSpacing = 24;
-                ctx.strokeStyle = 'black';
-                ctx.lineWidth = 2;
-
-                // 每层圆的数量
-                const circlesPerLayer = [];
-                for (let i = 0; i < n.value; i++) {
-                    circlesPerLayer.push(n.value - i + 1);
-                }
-
-                // 起始 y 坐标
-                let y = canvas.height - radius - 50;
-                let bottomLayerStartX = 0; // 最下面一层的起始 x 坐标
-                circlesPerLayer.forEach((count, layerIndex) => {
-                    // 计算该层圆的总宽度（包含间距）
-                    const totalWidth = (count - 1) * (2 * radius + horizontalSpacing);
-                    // 计算该层第一个圆的起始 x 坐标
-                    const layerStartX = (canvas.width - totalWidth) / 2;
-
-                    if (layerIndex === circlesPerLayer.length - 1) {
-                        // 保存最下面一层的起始 x 坐标
-                        bottomLayerStartX = layerStartX;
-                    }
-
-                    for (let i = 0; i < count; i++) {
-                        // 计算当前圆的 x 坐标，考虑水平间距
-                        const x = layerStartX + i * (2 * radius + horizontalSpacing);
-
-                        // 开始绘制路径
-                        ctx.beginPath();
-                        // 绘制圆
-                        ctx.arc(x, y, radius, 0, 2 * Math.PI);
-                        // 设置填充颜色
-                        ctx.fillStyle = 'black';
-                        // 填充圆
-                        ctx.fill();
-                        // 设置边框颜色
-                        ctx.strokeStyle = 'black';
-                        // 设置边框宽度
-                        ctx.lineWidth = 2;
-                        // 绘制边框
-                        ctx.stroke();
-                    }
-
-                    // 更新 y 坐标到下一层
-                    y -= verticalSpacing;
-                });
-
-                // 绘制竖线：保持竖线数量不变
-                let startX = bottomLayerStartX;
-                for (let i = 0; i < n.value + 1; i++) {
-                    // 开始一条新路径
-                    ctx.beginPath();
-                    // 移动到竖线的起始点
-                    ctx.moveTo(startX - 30 * (n.value - 1) / 2, 200); // 保持竖线位置与底层圆对齐
-                    // 绘制竖线到结束点
-                    ctx.lineTo(startX - 30 * (n.value - 1) / 2, 230); // 竖线长度
-                    // 绘制路径
-                    ctx.stroke();
-                    // 更新下一条竖线的起始 x 坐标
-                    startX += 30;
-                }
-
-                // 绘制小球轨迹
-                if (path.value.length > 0) {
-                    ctx.beginPath();
-                    ctx.moveTo(startX - 15 * (2 * n.value + 1), 200 - n.value * 20);
-                    ctx.lineTo(startX - 15 * (2 * n.value + 1), 238 - n.value * 20);
-                    let fromX = startX - 15 * (2 * n.value + 1);
-                    let fromY = 238 - n.value * 20;
-                    console.log(path.value);
-
-                    for (let i = 0; i < path.value.length; i++) {
-                        ctx.moveTo(fromX, fromY);
-                        ctx.lineTo(fromX + path.value[i] * 15, fromY + 20);
-                        fromX = fromX + path.value[i] * 15;
-                        fromY = fromY + 20;
-                    }
-                    ctx.strokeStyle = 'blue';  // 设置轨迹颜色
-                    ctx.lineWidth = 1;
-                    ctx.stroke();
-
-                }
-                path.value = []
-            }
+        // 每层圆的数量
+        const circlesPerLayer = [];
+        for (let i = 0; i < n.value; i++) {
+          circlesPerLayer.push(n.value - i + 1);
         }
+
+        // 起始 y 坐标
+        let y = canvas.height - radius - 20;
+        let bottomLayerStartX = 0; // 最下面一层的起始 x 坐标
+        circlesPerLayer.forEach((count, layerIndex) => {
+          // 计算该层圆的总宽度（包含间距）
+          const totalWidth = (count - 1) * (2 * radius + horizontalSpacing);
+          // 计算该层第一个圆的起始 x 坐标
+          const layerStartX = (canvas.width - totalWidth) / 2;
+
+          if (layerIndex === circlesPerLayer.length - 1) {
+            // 保存最下面一层的起始 x 坐标
+            bottomLayerStartX = layerStartX;
+          }
+
+          for (let i = 0; i < count; i++) {
+            // 计算当前圆的 x 坐标，考虑水平间距
+            const x = layerStartX + i * (2 * radius + horizontalSpacing);
+
+            // 开始绘制路径
+            ctx.beginPath();
+            // 绘制圆
+            ctx.arc(x, y, radius, 0, 2 * Math.PI);
+            // 设置填充颜色
+            ctx.fillStyle = 'black';
+            // 填充圆
+            ctx.fill();
+            // 设置边框颜色
+            ctx.strokeStyle = 'black';
+            // 设置边框宽度
+            ctx.lineWidth = 2;
+            // 绘制边框
+            ctx.stroke();
+          }
+
+          // 更新 y 坐标到下一层
+          y -= verticalSpacing;
+        });
+
+        // 绘制竖线：保持竖线数量不变
+        let startX = bottomLayerStartX;
+        for (let i = 0; i < n.value + 1; i++) {
+          // 开始一条新路径
+          ctx.beginPath();
+          // 移动到竖线的起始点
+          ctx.moveTo(startX - 24 * (n.value - 1) / 2, 230); // 保持竖线位置与底层圆对齐
+          // 绘制竖线到结束点
+          ctx.lineTo(startX - 24 * (n.value - 1) / 2, 250); // 竖线长度
+          // 绘制路径
+          ctx.stroke();
+          // 更新下一条竖线的起始 x 坐标
+          startX += 24;
+        }
+
+        // 绘制小球轨迹
+        if (path.value.length > 0) {
+          ctx.beginPath();
+          ctx.moveTo(startX - 12 * (2 * n.value + 1), 230 - n.value * 15);
+          ctx.lineTo(startX - 12 * (2 * n.value + 1), 258 - n.value * 15);
+          let fromX = startX - 12 * (2 * n.value + 1);
+          let fromY = 258 - n.value * 15;
+          console.log(path.value);
+
+          for (let i = 0; i < path.value.length; i++) {
+            ctx.moveTo(fromX, fromY);
+            ctx.lineTo(fromX + path.value[i] * 12, fromY + 15);
+            fromX = fromX + path.value[i] * 12;
+            fromY = fromY + 15;
+          }
+          ctx.strokeStyle = 'blue'; // 设置轨迹颜色
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+        path.value = []
+      }
+      else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // 圆的半径
+        const radius = 3;
+        // 层与层之间的垂直间距
+        const verticalSpacing = 20;
+        // 水平圆之间的间距
+        const horizontalSpacing = 24;
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 2;
+
+        // 每层圆的数量
+        const circlesPerLayer = [];
+        for (let i = 0; i < n.value; i++) {
+          circlesPerLayer.push(n.value - i + 1);
+        }
+
+        // 起始 y 坐标
+        let y = canvas.height - radius - 50;
+        let bottomLayerStartX = 0; // 最下面一层的起始 x 坐标
+        circlesPerLayer.forEach((count, layerIndex) => {
+          // 计算该层圆的总宽度（包含间距）
+          const totalWidth = (count - 1) * (2 * radius + horizontalSpacing);
+          // 计算该层第一个圆的起始 x 坐标
+          const layerStartX = (canvas.width - totalWidth) / 2;
+
+          if (layerIndex === circlesPerLayer.length - 1) {
+            // 保存最下面一层的起始 x 坐标
+            bottomLayerStartX = layerStartX;
+          }
+
+          for (let i = 0; i < count; i++) {
+            // 计算当前圆的 x 坐标，考虑水平间距
+            const x = layerStartX + i * (2 * radius + horizontalSpacing);
+
+            // 开始绘制路径
+            ctx.beginPath();
+            // 绘制圆
+            ctx.arc(x, y, radius, 0, 2 * Math.PI);
+            // 设置填充颜色
+            ctx.fillStyle = 'black';
+            // 填充圆
+            ctx.fill();
+            // 设置边框颜色
+            ctx.strokeStyle = 'black';
+            // 设置边框宽度
+            ctx.lineWidth = 2;
+            // 绘制边框
+            ctx.stroke();
+          }
+
+          // 更新 y 坐标到下一层
+          y -= verticalSpacing;
+        });
+
+        // 绘制竖线：保持竖线数量不变
+        let startX = bottomLayerStartX;
+        for (let i = 0; i < n.value + 1; i++) {
+          // 开始一条新路径
+          ctx.beginPath();
+          // 移动到竖线的起始点
+          ctx.moveTo(startX - 30 * (n.value - 1) / 2, 200); // 保持竖线位置与底层圆对齐
+          // 绘制竖线到结束点
+          ctx.lineTo(startX - 30 * (n.value - 1) / 2, 230); // 竖线长度
+          // 绘制路径
+          ctx.stroke();
+          // 更新下一条竖线的起始 x 坐标
+          startX += 30;
+        }
+
+        // 绘制小球轨迹
+        if (path.value.length > 0) {
+          ctx.beginPath();
+          ctx.moveTo(startX - 15 * (2 * n.value + 1), 200 - n.value * 20);
+          ctx.lineTo(startX - 15 * (2 * n.value + 1), 238 - n.value * 20);
+          let fromX = startX - 15 * (2 * n.value + 1);
+          let fromY = 238 - n.value * 20;
+          console.log(path.value);
+
+          for (let i = 0; i < path.value.length; i++) {
+            ctx.moveTo(fromX, fromY);
+            ctx.lineTo(fromX + path.value[i] * 15, fromY + 20);
+            fromX = fromX + path.value[i] * 15;
+            fromY = fromY + 20;
+          }
+          ctx.strokeStyle = 'blue'; // 设置轨迹颜色
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+        path.value = []
+      }
     }
+  }
 }
 
 async function startSimulation() {
-    isSimulating = true
-    binCounts.value = new Array(n.value).fill(0);
-    for (let i = 0; i < ball.value; i++) {
-        if (!isSimulating) {
-            break;
-        }
-        path.value = [];
-        let position = 0;
-        for (let j = 0; j < n.value - 1; j++) {
-            const prob = Math.random();
-            if (prob < 0.5) {
-                position -= 1;
-                path.value.push(-1)
-            }
-            else {
-                position += 1;
-                path.value.push(1);
-            }
-        }
-        drawBoard();
-        binCounts.value[Math.floor(n.value / 2) + position / 2]++;
-        if (ball.value <= 50) {
-            await new Promise(resolve => setTimeout(resolve, 500));
-        }
+  isSimulating = true
+  binCounts.value = Array.from({ length: n.value }).fill(0) as number[];
+  for (let i = 0; i < ball.value; i++) {
+    if (!isSimulating) {
+      break;
     }
-    if (isSimulating) {
-        chartData.value = setChartData();
+    path.value = [];
+    let position = 0;
+    for (let j = 0; j < n.value - 1; j++) {
+      const prob = Math.random();
+      if (prob < 0.5) {
+        position -= 1;
+        path.value.push(-1)
+      }
+      else {
+        position += 1;
+        path.value.push(1);
+      }
     }
-    isSimulating = false;
+    drawBoard();
+    binCounts.value[Math.floor(n.value / 2) + position / 2]++;
+    if (ball.value <= 50) {
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+  }
+  if (isSimulating) {
+    chartData.value = setChartData();
+  }
+  isSimulating = false;
 }
 
 function stopSimulation() {
-    isSimulating = false;
+  isSimulating = false;
 }
 
 onMounted(() => {
-    drawBoard();
-    chartData.value = setChartData();
-    chartOptions.value = setChartOptions();
+  drawBoard();
+  chartData.value = setChartData();
+  chartOptions.value = setChartOptions();
 });
 watch([n, ball], () => {
-    drawBoard();
-    chartData.value = setChartData();
-    chartOptions.value = setChartOptions();
+  drawBoard();
+  chartData.value = setChartData();
+  chartOptions.value = setChartOptions();
 });
 
 const content = `
@@ -356,61 +353,65 @@ $$
 </script>
 
 <template>
-    <ExperimentBoard>
-        <template #experiment>
-            <div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <canvas ref="canvasRef" width="400" height="250"></canvas>
-                    </div>
-                    <div>
-                        <Chart type="bar" :data="chartData" :options="chartOptions" class="h-full" />
-                    </div>
+  <ExperimentBoard :panel-size="70">
+    <template #experiment>
+      <div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <canvas ref="canvasRef" width="400" height="250" />
+          </div>
+          <div>
+            <Chart type="bar" :data="chartData" :options="chartOptions" class="h-full" />
+          </div>
+        </div>
+        <div class="flex justify-center items-center mt-5">
+          <Button class="m-1" @click="startSimulation()">
+            开始模拟
+          </Button>
+          <Button class="m-1" @click="stopSimulation()">
+            停止模拟
+          </Button>
+        </div>
+      </div>
+    </template>
+    <template #parameter>
+      <div class="w-full h-full p-3">
+        <Card class="h-full w-full cardflex-1 flex flex-col overflow-y-auto">
+          <CardHeader>
+            <CardTitle>参数调整</CardTitle>
+          </CardHeader>
+          <CardContent class=" flex flex-col justify-center items-center gap-3">
+            <div class="grid grid-cols-2 gap-10">
+              <div class="flex flex-col gap-8 pb-0">
+                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
+                  <Label>框的数量</Label>
+                  <div class="max-w-xl space-y-3">
+                    <InputNumber v-model="n" fluid />
+                    <Slider v-model="n" :min="3" :max="15" :step="2" class="w-full" />
+                  </div>
                 </div>
-                <div class="flex justify-center items-center mt-5">
-                    <Button @click="startSimulation()" class="m-1">开始模拟</Button>
-                    <Button @click="stopSimulation()" class="m-1">停止模拟</Button>
+              </div>
+              <div class="flex flex-col gap-8 pb-0">
+                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
+                  <Label>球的数量(大于50时不予展示每个小球下落的路径)</Label>
+                  <div class="max-w-xl space-y-3">
+                    <InputNumber v-model="ball" fluid />
+                    <Slider v-model="ball" :min="5" :max="1000" :step="5" class="w-full" />
+                  </div>
                 </div>
+              </div>
             </div>
-        </template>
-        <template #parameter>
-            <div class="w-full h-full p-3">
-                <Card class="h-full w-full cardflex-1 flex flex-col overflow-y-auto">
-                    <CardHeader>
-                        <CardTitle>参数调整</CardTitle>
-                    </CardHeader>
-                    <CardContent class=" flex flex-col justify-center items-center gap-3">
-                        <div class="grid grid-cols-2 gap-10">
-                            <div class="flex flex-col gap-8 pb-0">
-                                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                                    <Label>框的数量</Label>
-                                    <div class="max-w-xl space-y-3">
-                                        <InputNumber v-model="n" fluid />
-                                        <Slider v-model="n" :min="3" :max="15" :step="2" class="w-full" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex flex-col gap-8 pb-0">
-                                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                                    <Label>球的数量(大于50时不予展示每个小球下落的路径)</Label>
-                                    <div class="max-w-xl space-y-3">
-                                        <InputNumber v-model="ball" fluid />
-                                        <Slider v-model="ball" :min="5" :max="1000" :step="5" class="w-full" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-        </template>
-        <template #conclusion>
-            <div class="w-full h-full p-5">
-                <div class="prose-sm max-w-full " v-html="toMarkdown(content)" />
-            </div>
-        </template>
-        <template #comment>
-            <CommentPanel exp-id="centralLimitTheorem" />
-        </template>
-    </ExperimentBoard>
+          </CardContent>
+        </Card>
+      </div>
+    </template>
+    <template #conclusion>
+      <div class="w-full h-full p-5">
+        <div class="prose-sm max-w-full " v-html="toMarkdown(content)" />
+      </div>
+    </template>
+    <template #comment>
+      <CommentPanel exp-id="centralLimitTheorem" />
+    </template>
+  </ExperimentBoard>
 </template>

@@ -599,7 +599,7 @@ function goHome() {
                 <summary class="font-bold">
                   <i class="pi pi-bookmark" /> 第一章
                 </summary>
-                <ul class="sapce-y-1">
+                <ul class="space-y-0">
                   <li v-for="(item, index) in chapter1Items" :key="item.label">
                     <a
                       :class="{ active: isActiveRoute(item.route) }"
@@ -625,7 +625,7 @@ function goHome() {
                 <summary class="font-bold">
                   <i class="pi pi-bookmark" /> 第二章
                 </summary>
-                <ul class="sapce-y-1">
+                <ul class="space-y-0">
                   <li v-for="(item, index) in chapter2Items" :key="item.label">
                     <a
                       :class="{ active: isActiveRoute(item.route) }"
@@ -645,7 +645,7 @@ function goHome() {
                   <li>
                     <details open>
                       <summary><i class="pi pi-chart-bar" />2.7-分布的对比</summary>
-                      <ul class="sapce-y-1">
+                      <ul class="space-y-0">
                         <li v-for="(item, index) in comparisonOfDistributions" :key="item.label">
                           <a
                             :class="{ active: isActiveRoute(item.route) }"
@@ -673,7 +673,7 @@ function goHome() {
                 <summary class="font-bold">
                   <i class="pi pi-bookmark" /> 第三章
                 </summary>
-                <ul class="sapce-y-1">
+                <ul class="space-y-0">
                   <li v-for="(item, index) in chapter3Items" :key="item.label">
                     <a
                       :class="{ active: isActiveRoute(item.route) }"
@@ -699,7 +699,7 @@ function goHome() {
                 <summary class="font-bold">
                   <i class="pi pi-bookmark" /> 第四章
                 </summary>
-                <ul class="sapce-y-1">
+                <ul class="space-y-0">
                   <li v-for="(item, index) in chapter4Items" :key="item.label">
                     <a
                       :class="{ active: isActiveRoute(item.route) }"
@@ -726,22 +726,45 @@ function goHome() {
                   <i class="pi pi-bookmark" /> 第五章
                 </summary>
                 <ul class="sapce-y-1">
-                  <li v-for="(item, index) in chapter5Items" :key="item.label">
-                    <a
-                      :class="{ active: isActiveRoute(item.route) }"
-                      @click="() => { item.command(); toggleDrawer(); }"
-                    >
-                      <i :class="item.icon" />
-                      5.{{ index + 1 }}-{{ item.label }}
-                      <Star
-                        v-if="userStore.favoriteExperiments.map(item_ => item_.expId).includes(item.route.substring(item.route.lastIndexOf('/') + 1) || item.route)" class="size-4 ml-auto"
-                        :style="{
-                          fill: '#FFA500',
-                          stroke: '#FFA500',
-                        }"
-                      />
-                    </a>
+                  <li>
+                    <details open>
+                      <summary><i class="pi pi-chart-bar" />5.1-中心极限定理</summary>
+                      <ul class="space-y-0">
+                        <li v-for="(item, index) in chapter5Items" :key="item.label">
+                          <a
+                            :class="{ active: isActiveRoute(item.route) }"
+                            @click="() => { item.command(); toggleDrawer(); }"
+                          >
+                            <i />
+                            5.1.{{ index + 1 }}-{{ item.label }}
+                            <Star
+                              v-if="userStore.favoriteExperiments.map(item_ => item_.expId).includes(item.route.substring(item.route.lastIndexOf('/') + 1) || item.route)" class="size-4 ml-auto"
+                              :style="{
+                                fill: '#FFA500',
+                                stroke: '#FFA500',
+                              }"
+                            />
+                          </a>
+                        </li>
+                      </ul>
+                    </details>
                   </li>
+                  <!--                  <li v-for="(item, index) in chapter5Items" :key="item.label"> -->
+                  <!--                    <a -->
+                  <!--                      :class="{ active: isActiveRoute(item.route) }" -->
+                  <!--                      @click="() => { item.command(); toggleDrawer(); }" -->
+                  <!--                    > -->
+                  <!--                      <i :class="item.icon" /> -->
+                  <!--                      5.{{ index + 1 }}-{{ item.label }} -->
+                  <!--                      <Star -->
+                  <!--                        v-if="userStore.favoriteExperiments.map(item_ => item_.expId).includes(item.route.substring(item.route.lastIndexOf('/') + 1) || item.route)" class="size-4 ml-auto" -->
+                  <!--                        :style="{ -->
+                  <!--                          fill: '#FFA500', -->
+                  <!--                          stroke: '#FFA500', -->
+                  <!--                        }" -->
+                  <!--                      /> -->
+                  <!--                    </a> -->
+                  <!--                  </li> -->
                 </ul>
               </details>
             </li>

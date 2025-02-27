@@ -1,5 +1,3 @@
-import { computed } from 'vue';
-
 const documentStyle = getComputedStyle(document.documentElement)
 
 function hslToHex(hsl: string) {
@@ -19,10 +17,15 @@ function hslToHex(hsl: string) {
   return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
 }
 
-const chartOptions = computed(() => {
+function getChartOption(y1: number[], y2: number[]) {
   const textColor = hslToHex(documentStyle.getPropertyValue('--foreground')); // Maps to primary foreground color
   const textColorSecondary = hslToHex(documentStyle.getPropertyValue('--muted-foreground')); // Maps to muted foreground color
   const surfaceBorder = hslToHex(documentStyle.getPropertyValue('--border')); // Maps to border color
+  const computeMaxY = (y1: number[], y2: number[]) => {
+    const maxVal = Math.max(...y1, ...y2); // 找到 y1 和 y2 中的最大值
+    console.log(maxVal);
+    return maxVal * 1.1; // 加 10% 作为额外的缓冲
+  };
   return {
     animation: {
       duration: 0,
@@ -74,6 +77,7 @@ const chartOptions = computed(() => {
       y: {
         beginAtZero: true, // 确保 y 轴从 0 开始
         min: 0, // 强制 y 轴最小值为 0
+        max: computeMaxY(y1, y2),
         ticks: {
           color: textColorSecondary,
         },
@@ -82,35 +86,29 @@ const chartOptions = computed(() => {
         },
       },
     },
-  }
-});
+  };
+}
 
-function getChartData(data: {
-  x: number[]
-  y: number[]
-}) {
+function getChartData(x: number[], y1: number[], y2: number[]) {
   return ({
-    labels: data.x,
+    labels: x,
     datasets: [
       {
-        // label: '估算的 Pi 值',
-        data: data.y,
+        label: 'n个分布的叠加',
+        data: y1,
         fill: false,
         borderColor: 'rgb(75, 192, 192)', // 浅绿色
         tension: 0.4,
       },
-      // {
-      //   label: 'Pi = 3.14152', // 辅助线的标签
-      //   data: kValues.map(k => (k >= 1 && k <= 500) ? 3.14152 : 3.14152), // 不使用 null 值
-      //   fill: true, // 不填充线下面的区域
-      //   borderColor: hslToHex(documentStyle.getPropertyValue('--destructive')) || 'red', // 设置辅助线的颜色，或者给一个备用颜色
-      //   borderWidth: 1, // 辅助线的宽度
-      //   pointRadius: 0, // 不显示数据点
-      //   borderDash: [10, 5], // 虚线样式
-      //   tension: 0, // 线的张力设置为 0，确保为直线
-      // },
+      {
+        label: '对应的正态分布', // 第二条曲线的标签
+        data: y2,
+        fill: false,
+        borderColor: 'rgb(255, 99, 132)', // 另一种颜色
+        tension: 0.4,
+      },
     ],
   });
 }
 
-export { chartOptions, getChartData };
+export { getChartData, getChartOption };
