@@ -213,6 +213,9 @@ importers:
       '@types/katex':
         specifier: ^0.16.7
         version: 0.16.7
+      '@types/lodash':
+        specifier: ^4.17.15
+        version: 4.17.15
       '@types/markdown-it':
         specifier: ^14.1.2
         version: 14.1.2
@@ -1064,6 +1067,9 @@ packages:
 
   '@types/linkify-it@5.0.0':
     resolution: {integrity: sha512-sVDA58zAw4eWAffKOaQH5/5j3XeayukzDk+ewSsnv3p4yJEZHCCzMDiZM8e0OUrRvmpGZ85jf4yDHkHsgBNr9Q==}
+
+  '@types/lodash@4.17.15':
+    resolution: {integrity: sha512-w/P33JFeySuhN6JLkysYUK2gEmy9kHHFN7E8ro0tkfmlDOgxBDzWEZ/J8cWA+fHqFevpswDTFZnDx+R9lbL6xw==}
 
   '@types/mapbox__point-geometry@0.1.4':
     resolution: {integrity: sha512-mUWlSxAmYLfwnRBmgYV86tgYmMIICX4kza8YnE/eIlywGe2XoOxlpVnXWwir92xRLjwyarqwpu2EJKD2pk0IUA==}
@@ -5077,6 +5083,8 @@ snapshots:
       '@types/geojson': 7946.0.14
 
   '@types/linkify-it@5.0.0': {}
+
+  '@types/lodash@4.17.15': {}
 
   '@types/mapbox__point-geometry@0.1.4': {}
 

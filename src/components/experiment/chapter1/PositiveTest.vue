@@ -407,4 +407,10 @@ $$
   font-size: 16px; /* 可以根据需要调整 */
 }
 
+div, label {
+  user-select: none;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none;    /* Firefox */
+  -ms-user-select: none;     /* IE/Edge */
+}
 </style>
