@@ -438,7 +438,7 @@ const chapter4Items = [
 ]
 const chapter5Items = [
   {
-    label: '中心极限定理',
+    label: '中心极限定理(高尔顿钉板实验)',
     icon: 'pi pi-chart-bar',
     route: '/dashboard/experiment/central-limit-theorem',
     command: async () => {
