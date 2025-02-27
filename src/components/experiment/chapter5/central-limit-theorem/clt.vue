@@ -352,10 +352,10 @@ $$
             </div>
 
           </div>
-          <div class="flex justify-center items-center h-1/2">
+          <div class="flex justify-center items-center h-full">
             <Chart type="bar" :data="chartData" :options="chartOptions" class="h-full w-2/3" />
           </div>
-          <div class="flex justify-center items-center mt-5">
+          <div class="flex justify-center items-center">
             <Button class="m-1" @click="startSimulation()">
               开始模拟
             </Button>
