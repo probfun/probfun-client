@@ -16,70 +16,235 @@ import randomMidpointGif from '/public/Bertrand/random_midpoint.gif';
 // const simulateGame = ref(false);
 const autoGaming = ref(false);
 
-// 随机端点法
-const chord1 = ref<{ x1: number, y1: number, x2: number, y2: number }>({ x1: 0, y1: 0, x2: 0, y2: 0 });
-const chord1Color = ref('blue');
+// 定义弦端点对象的类型
+type ChordEndPoints = {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+};
 
+// 创建响应式的弦端点对象和颜色对象
+const chord1 = ref<ChordEndPoints>({ x1: 0, y1: 0, x2: 0, y2: 0 });
+const chord1Color = ref<string>('blue');
+
+// 记录生成弦的总数
+const totalChords = ref(0);
+// 记录长度大于根号三的弦的数量
+const longChords = ref(0);
+// 记录占比
+const longChordRatio = ref(0);
+
+/**
+ * 在单位圆上随机生成一个点
+ * @returns 包含该点横、纵坐标的数组
+ */
+function generatePointOnUnitCircle(): [number, number] {
+  // 生成 0 到 2π 之间的随机极角
+  const theta = Math.random() * 2 * Math.PI;
+  // 根据三角函数计算单位圆上点的坐标
+  const x = Math.cos(theta);
+  const y = Math.sin(theta);
+  return [x, y];
+}
+
+/**
+ * 计算两点之间的弦长
+ * @param p1 第一个点的坐标 [x1, y1]
+ * @param p2 第二个点的坐标 [x2, y2]
+ * @returns 弦长
+ */
+function calculateChordLength(p1: [number, number], p2: [number, number]): number {
+  const [x1, y1] = p1;
+  const [x2, y2] = p2;
+  // 根据两点间距离公式计算弦长
+  return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+}
+
+/**
+ * 生成圆上的随机端点并更新弦的信息
+ */
 function generateRandomEndPoints() {
-  const theta1 = Math.random() * 2 * Math.PI;
-  const theta2 = Math.random() * 2 * Math.PI;
+  // 生成两个单位圆上的随机点
+  const point1 = generatePointOnUnitCircle();
+  const point2 = generatePointOnUnitCircle();
 
+  // 更新弦的端点坐标
   chord1.value = {
-    x1: Math.cos(theta1),
-    y1: Math.sin(theta1),
-    x2: Math.cos(theta2),
-    y2: Math.sin(theta2),
+    x1: point1[0],
+    y1: point1[1],
+    x2: point2[0],
+    y2: point2[1]
   };
+
   console.log('chord1:', chord1.value); // 输出弦的坐标，检查是否更新
   console.log(`line 1: x1=${chord1.value.x1}, y1=${chord1.value.y1}, x2=${chord1.value.x2}, y2=${chord1.value.y2}`);
 
-  const length = Math.sqrt((chord1.value.x1 - chord1.value.x2) ** 2 + (chord1.value.y1 - chord1.value.y2) ** 2);
+  // 计算弦长
+  const length = calculateChordLength(point1, point2);
+  // 根据弦长更新弦的颜色
   chord1Color.value = length > Math.sqrt(3) ? 'red' : 'blue';
+
+  // 生成弦的总数加 1
+  totalChords.value++;
+  if (length > Math.sqrt(3)) {
+    // 如果弦长大于根号三，长弦数量加 1
+    longChords.value++;
+  }
+  // 计算长弦的占比
+  longChordRatio.value = totalChords.value > 0 ? longChords.value / totalChords.value : 0;
+  console.log(`长弦占比: ${(longChordRatio.value * 100).toFixed(2)}%`);
 }
 
-// 半径中点法
-const chord2 = ref<{ x1: number, y1: number, x2: number, y2: number }>({ x1: 0, y1: 0, x2: 0, y2: 0 });
+
+// 方法二相关变量
+const chord2 = ref<ChordEndPoints>({ x1: 0, y1: 0, x2: 0, y2: 0 });
 const chord2Color = ref('blue');
+// 记录方法二生成弦的总数
+const totalChords2 = ref(0);
+// 记录方法二长度大于根号三的弦的数量
+const longChords2 = ref(0);
+// 记录方法二长弦的占比
+const longChordRatio2 = ref(0);
 
-function generateRadialMidpoint() {
-  const theta = Math.random() * 2 * Math.PI; // 随机选择一个角度
+/**
+ * 计算两点之间的弦长
+ * @param p1 第一个点的坐标 [x1, y1]
+ * @param p2 第二个点的坐标 [x2, y2]
+ * @returns 弦长
+ */
 
-  // 半径的端点
+function calculateChordLength2(p1: [number, number], p2: [number, number]): number {
+  const [x1, y1] = p1;
+  const [x2, y2] = p2;
+  return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+}
+/**
+ * 生成弦（直径中点法）
+ */
+ function generateRadialMidpoint() {
+  // 生成随机直径
+  const theta = Math.random() * 2 * Math.PI;
   const x1 = Math.cos(theta);
   const y1 = Math.sin(theta);
-
-  // 垂直于半径的弦的另一端点
   const x2 = -x1;
   const y2 = -y1;
 
-  chord2.value = { x1, y1, x2, y2 };
-  const length = Math.sqrt((chord2.value.x1 - chord2.value.x2) ** 2 + (chord2.value.y1 - chord2.value.y2) ** 2);
+  // 在直径上随机选一个点
+  const distanceFromCenter = Math.random(); // 生成 0 到 1 之间的随机距离
+  const side = Math.random() < 0.5 ? -1 : 1; // 随机选择直径的哪一半边
+  const midX = side * distanceFromCenter * x1;
+  const midY = side * distanceFromCenter * y1;
+
+  // 根据中点到圆心的距离计算弦长
+  const halfChordLength = Math.sqrt(1 - distanceFromCenter ** 2);
+  const chordLength = 2 * halfChordLength;
+
+  let dx, dy;
+  if (distanceFromCenter === 0) {
+    // 中点为圆心，随机选方向
+    const angle = Math.random() * 2 * Math.PI;
+    dx = halfChordLength * Math.cos(angle);
+    dy = halfChordLength * Math.sin(angle);
+  } else {
+    // 中点不为圆心
+    const perpendicularX = -midY;
+    const perpendicularY = midX;
+    const perpendicularLength = Math.sqrt(perpendicularX ** 2 + perpendicularY ** 2);
+    dx = (perpendicularX / perpendicularLength) * halfChordLength;
+    dy = (perpendicularY / perpendicularLength) * halfChordLength;
+  }
+
+  // 计算弦的端点坐标
+  const chordX1 = midX + dx;
+  const chordY1 = midY + dy;
+  const chordX2 = midX - dx;
+  const chordY2 = midY - dy;
+
+  chord2.value = {
+    x1: chordX1,
+    y1: chordY1,
+    x2: chordX2,
+    y2: chordY2
+  };
+
+  console.log('chord2:', chord2.value);
+
+  const length = calculateChordLength2([chordX1, chordY1], [chordX2, chordY2]);
   chord2Color.value = length > Math.sqrt(3) ? 'red' : 'blue';
+
+  totalChords2.value++;
+  if (length > Math.sqrt(3)) {
+    longChords2.value++;
+  }
+  longChordRatio2.value = totalChords2.value > 0 ? longChords2.value / totalChords2.value : 0;
+  console.log(`方法二长弦占比: ${(longChordRatio2.value * 100).toFixed(2)}%`);
 }
 
-// 随机中点法
-const chord3 = ref<{ x1: number, y1: number, x2: number, y2: number }>({ x1: 0, y1: 0, x2: 0, y2: 0 });
+
+// 方法三相关变量
+const chord3 = ref<ChordEndPoints>({ x1: 0, y1: 0, x2: 0, y2: 0 });
 const chord3Color = ref('blue');
+// 记录方法三生成弦的总数
+const totalChords3 = ref(0);
+// 记录方法三长度大于根号三的弦的数量
+const longChords3 = ref(0);
+// 记录方法三长弦的占比
+const longChordRatio3 = ref(0);
 
+/**
+ * 生成弦（随机中点法）
+ */
 function generateRandomMidpoint() {
-  // 修正随机中点法，确保弦端点在圆上
-  const theta = Math.random() * 2 * Math.PI;
-  const d = Math.random();
-  const x0 = d * Math.cos(theta);
-  const y0 = d * Math.sin(theta);
-  const L = Math.sqrt(1 - d ** 2);
-  const dx = -Math.sin(theta) * L;
-  const dy = Math.cos(theta) * L;
+  let x0, y0;
+  // 生成在单位圆内的中点
+  while (true) {
+    x0 = Math.random() * 2 - 1;
+    y0 = Math.random() * 2 - 1;
+    if (x0 * x0 + y0 * y0 <= 1) {
+      break;
+    }
+  }
 
+  // 计算中点到圆心的距离
+  const d = Math.sqrt(x0 * x0 + y0 * y0);
+  // 计算弦长的一半
+  const L = Math.sqrt(1 - d ** 2);
+
+  let dx, dy;
+  if (d === 0) {
+    // 中点为圆心，随机选方向
+    const theta = Math.random() * 2 * Math.PI;
+    dx = L * Math.cos(theta);
+    dy = L * Math.sin(theta);
+  } else {
+    // 中点不为圆心
+    dx = (-y0 / d) * L;
+    dy = (x0 / d) * L;
+  }
+
+  // 计算弦的端点坐标
   chord3.value = {
     x1: x0 + dx,
     y1: y0 + dy,
     x2: x0 - dx,
-    y2: y0 - dy,
+    y2: y0 - dy
   };
+
+  // 计算弦长
   const length = Math.sqrt((chord3.value.x1 - chord3.value.x2) ** 2 + (chord3.value.y1 - chord3.value.y2) ** 2);
+  // 根据弦长更新颜色
   chord3Color.value = length > Math.sqrt(3) ? 'red' : 'blue';
+
+  // 更新统计数据
+  totalChords3.value++;
+  if (length > Math.sqrt(3)) {
+    longChords3.value++;
+  }
+  longChordRatio3.value = totalChords3.value > 0 ? longChords3.value / totalChords3.value : 0;
+  console.log(`方法三长弦占比: ${(longChordRatio3.value * 100).toFixed(2)}%`);
 }
+
 
 const bertrandDisplay = ref<{
   autoGameRound: number[]
@@ -87,45 +252,54 @@ const bertrandDisplay = ref<{
   simulateGame: () => void
   stopSimulation: () => void
 }>({
-      autoGameRound: [100], // 默认模拟轮数为100
-      simulationInterval: null, // 用于存储定时器 ID
-      simulateGame() {
-        console.log('开始模拟！');
-        let round = 0;
-        this.simulationInterval = setInterval(() => {
-          if (round >= this.autoGameRound[0] || !autoGaming.value) {
-            if (this.simulationInterval) {
-              clearInterval(this.simulationInterval);
-            }
-            this.simulationInterval = null;
-            return;
-          }
-          // 确保每次更新的数据是响应式的
-          generateRandomEndPoints();
-          generateRadialMidpoint();
-          generateRandomMidpoint();
-          round++;
-        }, 100) as unknown as number; // 强制类型转换
-      },
-      // 停止模拟并清除所有图像
-      stopSimulation() {
-        console.log('停止模拟！');
-        // 清空所有弦数据
-        chord1.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
-        chord2.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
-        chord3.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
-        chord1Color.value = 'blue';
-        chord2Color.value = 'blue';
-        chord3Color.value = 'blue';
-
-        // 停止模拟
-        autoGaming.value = false;
+  autoGameRound: [100], // 默认模拟轮数为100
+  simulationInterval: null, // 用于存储定时器 ID
+  simulateGame() {
+    console.log('开始模拟！');
+    let round = 0;
+    this.simulationInterval = setInterval(() => {
+      if (round >= this.autoGameRound[0] || !autoGaming.value) {
         if (this.simulationInterval) {
           clearInterval(this.simulationInterval);
-          this.simulationInterval = null;
         }
-      },
-    });
+        this.simulationInterval = null;
+        return;
+      }
+      // 确保每次更新的数据是响应式的
+      generateRandomEndPoints();
+      generateRadialMidpoint();
+      generateRandomMidpoint();
+      round++;
+    }, 100) as unknown as number; // 强制类型转换
+  },
+  // 停止模拟并清除所有图像
+  stopSimulation() {
+    console.log('停止模拟！');
+    // 清空所有弦数据
+    chord1.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
+    chord2.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
+    chord3.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
+    chord1Color.value = 'blue';
+    chord2Color.value = 'blue';
+    chord3Color.value = 'blue';
+    totalChords.value = 0;
+    longChords.value = 0;
+    longChordRatio.value = 0;
+    totalChords2.value = 0;
+    longChords2.value = 0;
+    longChordRatio2.value = 0;
+    totalChords3.value = 0;
+  longChords3.value = 0;
+  longChordRatio3.value = 0;
+
+    // 停止模拟
+    autoGaming.value = false;
+    if (this.simulationInterval) {
+      clearInterval(this.simulationInterval);
+      this.simulationInterval = null;
+    }
+  },
+});
 
 function limitInput(e: { target: { value: string } }) {
   const value = Number.parseInt(e.target.value);
@@ -189,17 +363,17 @@ const methodsData = {
   randomEndpoint: {
     name: '随机端点法',
     image: randomEndpointGif, // 替换为实际的图片路径
-    description: '随机端点法指固定弦的一个端点，另一个端点在圆周上随机选取，即 $P(A) = $（计算公式）',
+    description: '随机端点法指固定弦的一个端点，另一个端点在圆周上随机选取，即 $P(A) = \\frac{小圆面积}{大圆面积} = \\frac{1}{4}$。',
   },
   randomMidpoint: {
     name: '随机中点法',
     image: randomMidpointGif, // 替换为实际的图片路径
-    description: '随机中点法指弦的中点在单位圆内随机选取，即',
+    description: '随机中点法指弦的中点在单位圆内随机选取，即 $$P(A) = \\frac{\\frac{1}{3}弧长}{周长} = \\frac{1}{3}$$',
   },
   diameterMidpoint: {
     name: '直径中点法',
     image: diameterMidpointGif, // 替换为实际的图片路径
-    description: '直径中点法指任选一直径，垂直于该直径的弦的中点在该直径上随机选取，即',
+    description: '直径中点法指任选一直径，垂直于该直径的弦的中点在该直径上随机选取，即 <br><br> $P(A) = \\frac{\\frac{1}{2}直径}{直径} = \\frac{1}{2}$',
   },
 };
 
@@ -224,10 +398,8 @@ function toggleMethod(methodName: MethodName) {
           <svg width="200" height="200" viewBox="0 -10 170 190">
             <circle cx="80" cy="80" r="80" fill="none" stroke="black" />
             <!-- 在此绘制第一种策略的弦 -->
-            <line
-              :x1="80 + chord1.x1 * 80" :y1="80 + chord1.y1 * 80" :x2="80 + chord1.x2 * 80"
-              :y2="80 + chord1.y2 * 80" :stroke="chord1Color" stroke-width="2"
-            />
+            <line :x1="80 + chord1.x1 * 80" :y1="80 + chord1.y1 * 80" :x2="80 + chord1.x2 * 80"
+              :y2="80 + chord1.y2 * 80" :stroke="chord1Color" stroke-width="2" />
 
           </svg>
           <div class="circle-label">
@@ -239,10 +411,8 @@ function toggleMethod(methodName: MethodName) {
           <svg width="200" height="200" viewBox="0 -10 170 190">
             <circle cx="80" cy="80" r="80" fill="none" stroke="black" />
             <!-- 在此绘制第二种策略的弦 -->
-            <line
-              :x1="80 + chord2.x1 * 80" :y1="80 + chord2.y1 * 80" :x2="80 + chord2.x2 * 80"
-              :y2="80 + chord2.y2 * 80" :stroke="chord2Color" stroke-width="2"
-            />
+            <line :x1="80 + chord2.x1 * 80" :y1="80 + chord2.y1 * 80" :x2="80 + chord2.x2 * 80"
+              :y2="80 + chord2.y2 * 80" :stroke="chord2Color" stroke-width="2" />
 
           </svg>
           <div class="circle-label">
@@ -254,10 +424,8 @@ function toggleMethod(methodName: MethodName) {
           <svg width="200" height="200" viewBox="0 -10 180 190">
             <circle cx="80" cy="80" r="80" fill="none" stroke="black" />
             <!-- 在此绘制第三种策略的弦 -->
-            <line
-              :x1="80 + chord3.x1 * 80" :y1="80 + chord3.y1 * 80" :x2="80 + chord3.x2 * 80"
-              :y2="80 + chord3.y2 * 80" :stroke="chord3Color" stroke-width="2"
-            />
+            <line :x1="80 + chord3.x1 * 80" :y1="80 + chord3.y1 * 80" :x2="80 + chord3.x2 * 80"
+              :y2="80 + chord3.y2 * 80" :stroke="chord3Color" stroke-width="2" />
 
           </svg>
           <div class="circle-label">
@@ -296,22 +464,22 @@ function toggleMethod(methodName: MethodName) {
             <CardContent class="flex items-center flex-col">
               <div class="grid grid-cols-2 gap-y-4 gap-x-10 justify-between">
                 <Label class="flex items-center flex-shrink-0">
-                  方法一实验频率： {{ }}
+                  方法一实验频率： {{ (longChordRatio * 100).toFixed(2) }}%
                 </Label>
                 <Label class="flex items-center flex-shrink-0">
-                  方法一理论频率： {{ }}
+                  方法一理论频率： {{ 0.333 }}
                 </Label>
                 <Label class="flex items-center flex-shrink-0">
-                  方法二实验频率： {{ }}
+                  方法二实验频率： {{ (longChordRatio2 * 100).toFixed(2) }}%
                 </Label>
                 <Label class="flex items-center flex-shrink-0">
-                  方法二理论频率： {{ }}
+                  方法二理论频率： {{ 0.50 }}
                 </Label>
                 <Label class="flex items-center flex-shrink-0">
-                  方法三实验频率： {{ }}
+                  方法三实验频率：{{ (longChordRatio3 * 100).toFixed(2) }}%
                 </Label>
                 <Label class="flex items-center flex-shrink-0">
-                  方法三理论频率： {{ }}
+                  方法三理论频率： {{ 0.250 }}
                 </Label>
               </div>
             </CardContent>
