@@ -2,10 +2,10 @@
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import DistributionCltDiagram from '@/components/experiment/chapter5/distribution-clt/DistributionCltDiagram.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
-import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select } from '@/components/ui/select';
-import { Slider } from '@/components/ui/slider' // 如果需要微积分功能
 import { toMarkdown } from '@/utils/markdown.ts';
 import { all, create } from 'mathjs';
 import { onMounted, ref, watch } from 'vue';
@@ -14,8 +14,9 @@ import 'nerdamer/Calculus';
 import 'nerdamer/Algebra';
 import 'nerdamer/Solve';
 
-const latexInput = ref('1');
-const range = ref([0, 1]);
+const latexInput = ref('e^{-x^2}');
+const displayLatexInput = ref('e^{-x^2}');
+const range = ref([0, 10]);
 const math = create(all);
 
 function uniform(x: number): number {
@@ -84,6 +85,7 @@ function betaFunction(a: number, b: number): number {
 
 const fAny = ref<((x: number) => number) | null>(null);
 const fCustom = ref<((x: number) => number) | null>(null);
+const multi = ref(false);
 
 const functionList = {
   uniform: {
@@ -145,7 +147,15 @@ const functionList = {
   custom: {
     name: 'Custom',
     f: fCustom.value,
-    chinese: '自定义',
+    chinese: '自定义...',
+    latex: '',
+    left: 0,
+    right: 1,
+  },
+  ai: {
+    name: 'AI',
+    f: fCustom.value,
+    chinese: 'AI 生成',
     latex: '',
     left: 0,
     right: 1,
@@ -163,6 +173,7 @@ const functionLabel: FunctionLabel[] = [
   'cauchy',
   'pareto',
   'custom',
+  'ai',
 ]
 
 function latexToMath(latex: string): ((x: number) => number) | null {
@@ -188,6 +199,8 @@ function latexToMath(latex: string): ((x: number) => number) | null {
   try {
     const node = math.parse(expression);
     const code = node.compile();
+    Number.parseFloat(code.evaluate({ x: 0 }));
+    displayLatexInput.value = latex;
     return (x: number) => {
       return Number.parseFloat(code.evaluate({ x }));
     }
@@ -206,6 +219,7 @@ function convert() {
   catch (error) {
     console.error(error);
   }
+  console.log(fAny.value)
 }
 
 function fAnyWrap(f: ((xx: number) => number) | null) {
@@ -237,49 +251,155 @@ onMounted(() => {
 <template>
   <ExperimentBoard>
     <template #experiment>
-      <DistributionCltDiagram v-if="fAny" :args="{ f: fAny, dx: 0.01, left: range[0], right: range[1], n }" />
+      <DistributionCltDiagram v-if="fAny" :args="{ f: fAny, dx: 0.01, left: range[0], right: range[1], n, multi }" />
     </template>
     <template #parameter>
-      <div class="p-5 flex flex-col gap-4">
-        <div class="flex gap-2 items-center">
-          <Label class="flex-shrink-0">
-            选择分布：
-          </Label>
-          <Select
-            v-model="selected" @update:model-value="() => {
-              fAny = fAnyWrap(functionList[selected].f);
-              range = [functionList[selected].left, functionList[selected].right];
-              if (selected === 'custom') {
-                convert();
-              }
-            }"
-          >
-            <SelectTrigger>
-              {{ functionList[selected].name }} ({{ functionList[selected].chinese }})
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem v-for="func in functionLabel" :key="functionList[func].name" :value="func">
-                {{ functionList[func].name }} ({{ functionList[func].chinese }})
-              </SelectItem>
-            </SelectContent>
-          </Select>
+      <div class="p-2 grid grid-cols-2 gap-2 h-full w-full">
+        <div class="flex flex-col gap-2">
+          <Card>
+            <CardHeader class="p-4">
+              <CardTitle> 分布选择 </CardTitle>
+            </CardHeader>
+            <CardContent class="flex flex-col gap-2">
+              <div class="grid grid-cols-[1fr_3fr] gap-4 items-center">
+                <Label class="flex-shrink-0">
+                  选择分布：
+                </Label>
+                <Select
+                  v-model="selected" @update:model-value="() => {
+                    fAny = fAnyWrap(functionList[selected].f);
+                    range = [functionList[selected].left, functionList[selected].right];
+                    if (selected === 'custom') {
+                      convert();
+                    }
+                  }"
+                >
+                  <SelectTrigger>
+                    {{ functionList[selected].chinese }}
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem v-for="func in functionLabel" :key="functionList[func].name" :value="func">
+                      {{ functionList[func].chinese }}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                <Label v-if="selected === 'custom'" class="flex-shrink-0">
+                  自定义分布：
+                </Label>
+                <div v-if="selected === 'custom'" class="gap-2 flex">
+                  <Input v-model="latexInput" />
+                  <Button @click="convert">
+                    确定
+                  </Button>
+                </div>
+              </div>
+              <div v-if="fAny" class="w-full prose items-center mt-3" v-html="toMarkdown(`$$\n${selected === 'custom' ? `f(x)=${displayLatexInput}` : functionList[selected].latex}\n$$`)" />
+              <div v-else class="w-full pt-3 flex justify-center items-center">
+                <Label class="text-destructive">
+                  你输入的概率密度函数无法解析，请检查输入
+                </Label>
+              </div>
+            </CardContent>
+          </Card>
+          <Card class="flex-1 flex flex-col">
+            <CardHeader class="p-4">
+              <CardTitle> 参数调整 </CardTitle>
+            </CardHeader>
+            <CardContent class="flex items-center justify-center flex-1">
+              <div class="grid w-full grid-cols-[1fr_3fr] gap-4 items-center">
+                <Label class="flex-shrink-0">
+                  叠加分布数量：
+                </Label>
+                <div class="gap-2 flex items-center">
+                  <Slider v-model="n_list" :disabled="multi" :min="1" :max="30" />
+                  <Input v-model="n" :disabled="multi" :min="1" :max="30" type="number" class="w-16" />
+                  <Label class="flex-shrink-0">
+                    个
+                  </Label>
+                </div>
+                <Label class="flex-shrink-0">
+                  分布定义域：
+                </Label>
+                <div class="flex gap-2">
+                  <!--                  <Label class="flex-shrink-0"> -->
+                  <!--                    {{ range[0] }} -->
+                  <!--                  </Label> -->
+                  <Input v-model="range[0]" :disabled="selected !== 'custom'" :min="-10" :max="range[1]" type="number" class="w-16" />
+                  <Slider v-model="range" :disabled="selected !== 'custom'" :min="-10" :max="10" />
+                  <!--                  <Label class="flex-shrink-0"> -->
+                  <!--                    {{ range[1] }} -->
+                  <!--                  </Label> -->
+                  <Input v-model="range[1]" :disabled="selected !== 'custom'" :min="range[0]" :max="10" type="number" class="w-16" />
+                </div>
+                <Label class="flex-shrink-0">
+                  展示方式：
+                </Label>
+                <div class="flex justify-center py-2">
+                  <RadioGroup
+                    default-value="option-one" class="flex flex-row gap-5" @update:model-value="(value) => {
+                      multi = value === 'option-two';
+                      console.log(multi);
+                    }"
+                  >
+                    <div class="flex items-center space-x-2">
+                      <RadioGroupItem id="option-one" value="option-one" />
+                      <Label for="option-one">动态调整</Label>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                      <RadioGroupItem id="option-two" value="option-two" />
+                      <Label for="option-two">对比展示</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-        <div class="flex gap-2 items-center">
-          <Label class="flex-shrink-0">
-            叠加的分布数量：
-          </Label>
-          <Slider v-model="n_list" :min="1" :max="30" />
-          <Label class="flex-shrink-0 w-10 text-center">
-            {{ n }} 个
-          </Label>
-        </div>
-        <div v-if="selected === 'custom'" class="flex gap-2">
-          <Input v-model="latexInput" />
-          <Button @click="convert">
-            确定
-          </Button>
-        </div>
-        <Slider v-model="range" :min="-10" :max="10" />
+        <Card>
+          <CardHeader class="p-4">
+            <CardTitle> 收敛速度 </CardTitle>
+          </CardHeader>
+          <CardContent />
+        </Card>
+        <!--        <div class="flex gap-2 items-center"> -->
+        <!--          <Label class="flex-shrink-0"> -->
+        <!--            选择分布： -->
+        <!--          </Label> -->
+        <!--          <Select -->
+        <!--            v-model="selected" @update:model-value="() => { -->
+        <!--              fAny = fAnyWrap(functionList[selected].f); -->
+        <!--              range = [functionList[selected].left, functionList[selected].right]; -->
+        <!--              if (selected === 'custom') { -->
+        <!--                convert(); -->
+        <!--              } -->
+        <!--            }" -->
+        <!--          > -->
+        <!--            <SelectTrigger> -->
+        <!--              {{ functionList[selected].name }} ({{ functionList[selected].chinese }}) -->
+        <!--            </SelectTrigger> -->
+        <!--            <SelectContent> -->
+        <!--              <SelectItem v-for="func in functionLabel" :key="functionList[func].name" :value="func"> -->
+        <!--                {{ functionList[func].name }} ({{ functionList[func].chinese }}) -->
+        <!--              </SelectItem> -->
+        <!--            </SelectContent> -->
+        <!--          </Select> -->
+        <!--        </div> -->
+        <!--        <div class="flex gap-2 items-center"> -->
+        <!--          <Label class="flex-shrink-0"> -->
+        <!--            叠加的分布数量： -->
+        <!--          </Label> -->
+        <!--          <Slider v-model="n_list" :min="1" :max="30" /> -->
+        <!--          <Label class="flex-shrink-0 w-10 text-center"> -->
+        <!--            {{ n }} 个 -->
+        <!--          </Label> -->
+        <!--        </div> -->
+        <!--        <div v-if="selected === 'custom'" class="flex gap-2"> -->
+        <!--          <Input v-model="latexInput" /> -->
+        <!--          <Button @click="convert"> -->
+        <!--            确定 -->
+        <!--          </Button> -->
+        <!--        </div> -->
+        <!--        <Slider v-model="range" :min="-10" :max="10" /> -->
         <!--        <Slider v-model="right" :min="left[0]" :max="19" /> -->
       </div>
     </template>

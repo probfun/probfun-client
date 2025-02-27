@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { fetchFavoriteExperimentsApi } from '@/api/experiment/experimentApi.ts';
 import { fetchUserApi } from '@/api/user/userApi';
 import NavBar from '@/components/NavBar.vue';
 import SideBar from '@/components/SideBar.vue';
@@ -20,6 +21,13 @@ onMounted(async () => {
   catch (error) {
     console.error('Error during fetching user:', error);
     await router.push('/login');
+  }
+  try {
+    const response = await fetchFavoriteExperimentsApi();
+    userStore.favoriteExperiments = response.experiments;
+  }
+  catch (error) {
+    console.error('Error during fetching favorite experiments:', error);
   }
 })
 </script>

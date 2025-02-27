@@ -142,6 +142,8 @@ declare module 'vue' {
     PopoverTrigger: typeof import('./src/components/ui/popover/PopoverTrigger.vue')['default']
     PositiveTest: typeof import('./src/components/experiment/chapter1/PositiveTest.vue')['default']
     ProcessNode: typeof import('./src/components/diagram/diagram-test/ProcessNode.vue')['default']
+    RadioGroup: typeof import('./src/components/ui/radio-group/RadioGroup.vue')['default']
+    RadioGroupItem: typeof import('./src/components/ui/radio-group/RadioGroupItem.vue')['default']
     RegisterCard: typeof import('./src/components/auth/RegisterCard.vue')['default']
     ResizableHandle: typeof import('./src/components/ui/resizable/ResizableHandle.vue')['default']
     ResizablePanelGroup: typeof import('./src/components/ui/resizable/ResizablePanelGroup.vue')['default']
