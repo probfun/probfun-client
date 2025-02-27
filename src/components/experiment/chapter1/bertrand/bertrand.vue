@@ -122,7 +122,7 @@ function calculateChordLength2(p1: [number, number], p2: [number, number]): numb
 /**
  * 生成弦（直径中点法）
  */
- function generateRadialMidpoint() {
+function generateRadialMidpoint() {
   // 生成随机直径
   const theta = Math.random() * 2 * Math.PI;
   const x1 = Math.cos(theta);
@@ -182,7 +182,7 @@ function calculateChordLength2(p1: [number, number], p2: [number, number]): numb
 }
 
 
-// 方法三相关变量
+/// 方法三相关变量
 const chord3 = ref<ChordEndPoints>({ x1: 0, y1: 0, x2: 0, y2: 0 });
 const chord3Color = ref('blue');
 // 记录方法三生成弦的总数
@@ -245,7 +245,6 @@ function generateRandomMidpoint() {
   console.log(`方法三长弦占比: ${(longChordRatio3.value * 100).toFixed(2)}%`);
 }
 
-
 const bertrandDisplay = ref<{
   autoGameRound: number[]
   simulationInterval: number | null
@@ -289,8 +288,8 @@ const bertrandDisplay = ref<{
     longChords2.value = 0;
     longChordRatio2.value = 0;
     totalChords3.value = 0;
-  longChords3.value = 0;
-  longChordRatio3.value = 0;
+    longChords3.value = 0;
+    longChordRatio3.value = 0;
 
     // 停止模拟
     autoGaming.value = false;
@@ -436,7 +435,7 @@ function toggleMethod(methodName: MethodName) {
     </template>
 
     <template #parameter>
-      <div v-if="bertrandDisplay" class="p-2 grid grid-cols-2 gap-2 h-full">
+      <div v-if="bertrandDisplay" class="p-2 grid grid-cols-2 gap-2 h-full overflow-y-hidden unselectable">
         <!-- 配置区 -->
         <div class="flex flex-col gap-2">
           <Card class="flex-1 flex flex-col">
@@ -464,22 +463,22 @@ function toggleMethod(methodName: MethodName) {
             <CardContent class="flex items-center flex-col">
               <div class="grid grid-cols-2 gap-y-4 gap-x-10 justify-between">
                 <Label class="flex items-center flex-shrink-0">
-                  方法一实验频率： {{ (longChordRatio * 100).toFixed(2) }}%
+                  方法一实验频率： {{ longChordRatio ? (longChordRatio * 100).toFixed(2) + '%' : '0.00%' }}
                 </Label>
                 <Label class="flex items-center flex-shrink-0">
-                  方法一理论频率： {{ 0.333 }}
+                  方法一理论频率： {{ (0.333).toFixed(3) }}
                 </Label>
                 <Label class="flex items-center flex-shrink-0">
-                  方法二实验频率： {{ (longChordRatio2 * 100).toFixed(2) }}%
+                  方法二实验频率： {{  longChordRatio2 ? (longChordRatio2 * 100).toFixed(2) + '%' : '0.00%' }}
                 </Label>
                 <Label class="flex items-center flex-shrink-0">
-                  方法二理论频率： {{ 0.50 }}
+                  方法二理论频率： {{ (0.500).toFixed(3) }}
                 </Label>
                 <Label class="flex items-center flex-shrink-0">
-                  方法三实验频率：{{ (longChordRatio3 * 100).toFixed(2) }}%
+                  方法三实验频率：{{  longChordRatio3 ? (longChordRatio3 * 100).toFixed(2) + '%' : '0.00%' }}
                 </Label>
                 <Label class="flex items-center flex-shrink-0">
-                  方法三理论频率： {{ 0.250 }}
+                  方法三理论频率： {{ (0.250).toFixed(3) }}
                 </Label>
               </div>
             </CardContent>
@@ -567,5 +566,12 @@ function toggleMethod(methodName: MethodName) {
 
 .controls button:hover {
   background-color: #0056b3;
+}
+
+div, label {
+  user-select: none;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none;    /* Firefox */
+  -ms-user-select: none;     /* IE/Edge */
 }
 </style>
