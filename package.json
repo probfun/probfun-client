@@ -37,6 +37,7 @@
     "markdown": "^0.5.0",
     "markdown-it": "^14.1.0",
     "markdown-it-katex": "^2.0.3",
+    "marked": "^15.0.7",
     "mathjs": "^14.2.1",
     "nerdamer": "^1.1.13",
     "openai": "^4.68.4",

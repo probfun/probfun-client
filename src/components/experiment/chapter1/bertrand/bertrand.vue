@@ -189,17 +189,17 @@ const methodsData = {
   randomEndpoint: {
     name: '随机端点法',
     image: randomEndpointGif, // 替换为实际的图片路径
-    description: '随机端点法指固定弦的一个端点，另一个端点在圆周上随机选取，即 $P(A) = $（计算公式）',
+    description: '随机端点法指固定弦的一个端点，另一个端点在圆周上随机选取，即 $P(A) = \\frac{小圆面积}{大圆面积} = \\frac{1}{4}$。',
   },
   randomMidpoint: {
     name: '随机中点法',
     image: randomMidpointGif, // 替换为实际的图片路径
-    description: '随机中点法指弦的中点在单位圆内随机选取，即',
+    description: '随机中点法指弦的中点在单位圆内随机选取，即 $$P(A) = \\frac{\\frac{1}{3}弧长}{周长} = \\frac{1}{3}$$',
   },
   diameterMidpoint: {
     name: '直径中点法',
     image: diameterMidpointGif, // 替换为实际的图片路径
-    description: '直径中点法指任选一直径，垂直于该直径的弦的中点在该直径上随机选取，即',
+    description: '直径中点法指任选一直径，垂直于该直径的弦的中点在该直径上随机选取，即 <br><br> $P(A) = \\frac{\\frac{1}{2}直径}{直径} = \\frac{1}{2}$',
   },
 };
 
