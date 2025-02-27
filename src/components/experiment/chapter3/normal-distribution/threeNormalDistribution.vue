@@ -7,7 +7,7 @@ import { toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import Slider from 'primevue/slider';
 import { computed, onMounted, ref, watch } from 'vue';
-
+import { GraduationCap, Lightbulb, MessagesSquare } from 'lucide-vue-next';
 import ThreeNormalDiagram from './threeNormalDiagram.vue';
 import 'katex/dist/katex.min.css';
 
@@ -224,15 +224,33 @@ f(x,y) = \\frac{1}{2\\pi|Σ|^\\frac{1}{2}}e^{-(x-μ)'·Σ^{-1}(x-μ)}。
 - **3. 相关性**：如果$ρ = 0$,则$X$和$Y$是独立的，如果$ρ = ±1$，则$X$和$Y$完全线性相关。
 
 `
+const discussTabList = [
+  {
+    id: 0,
+    label: '参考公式',
+    name: 'discuss',
+    icon: Lightbulb,
+  },
+  {
+    id: 1,
+    label: '实验结论',
+    name: 'conclusion',
+    icon: GraduationCap,
+  },
+  {
+    id: 2,
+    label: '讨论区',
+    name: 'comment',
+    icon: MessagesSquare,
+  },
+];
 </script>
 
 <template>
-  <ExperimentBoard :panel-size="70">
+  <ExperimentBoard :panel-size="70" :discuss-tab-list="discussTabList">
     <template #experiment>
-      <ThreeNormalDiagram
-        :mean1="mean1" :mean2="mean2" :sigma1="sigma1" :sigma2="sigma2"
-        :density="density" :is-chart3="isChart3" :fixed-x="x" :fixed-y="y" class="w-full h-full"
-      />
+      <ThreeNormalDiagram :mean1="mean1" :mean2="mean2" :sigma1="sigma1" :sigma2="sigma2" :density="density"
+        :is-chart3="isChart3" :fixed-x="x" :fixed-y="y" class="w-full h-full" />
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center gap-3 p-3">
@@ -327,10 +345,7 @@ f(x,y) = \\frac{1}{2\\pi|Σ|^\\frac{1}{2}}e^{-(x-μ)'·Σ^{-1}(x-μ)}。
                 <Button tabindex="0" role="button" class="m-0">
                   点我切换
                 </Button>
-                <ul
-                  tabindex="0"
-                  class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
-                >
+                <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                   <li @click="toggleChart1">
                     <a>二维正态联合与边缘分布</a>
                   </li>
@@ -351,6 +366,9 @@ f(x,y) = \\frac{1}{2\\pi|Σ|^\\frac{1}{2}}e^{-(x-μ)'·Σ^{-1}(x-μ)}。
     </template>
     <template #comment>
       <CommentPanel exp-id="2DnormalDistribution" />
+    </template>
+    <template #formula>
+      <div></div>
     </template>
   </ExperimentBoard>
 </template>
