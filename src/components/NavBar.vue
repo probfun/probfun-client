@@ -226,7 +226,7 @@ function updateExperiment() {
     tags.value = ['分组检测'];
   }
   else if (path === 'central-limit-theorem') {
-    title.value = '中心极限定理';
+    title.value = '高尔顿钉板实验';
     tags.value = ['正态分布'];
   }
   else if (path === 'bertrand') {
