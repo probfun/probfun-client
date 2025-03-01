@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import {
   getChartData,
+  getChartDataMulti,
   getChartOption,
+  getChartOptionMulti,
 } from '@/components/experiment/chapter5/distribution-clt/config';
 import FFT from 'fft.js';
 import { onMounted, ref, watch } from 'vue';
@@ -13,12 +15,14 @@ const props = defineProps<{
     right: number
     dx: number
     n: number
+    multi: boolean
   }
 }>();
 
 const xs = ref<number[]>([]);
 const y1s = ref<number[]>([]);
 const y2s = ref<number[]>([]);
+const yns = ref<number[][]>([]);
 const chartData = ref(getChartData(xs.value, y1s.value, y2s.value));
 const chartOption = ref(getChartOption(y1s.value, y2s.value));
 
@@ -154,15 +158,61 @@ function calculatePoints() {
   chartOption.value = getChartOption(y1, y2);
 }
 
+function calculatePointsMulti() {
+  const { f, left, right, dx } = props.args;
+  const n = 30;
+  const x = [];
+  const yn = Array.from({ length: 30 }).map(() => []) as number[][];
+  const y2 = [];
+
+  const { mean, variance } = calculateMeanAndVariance();
+  const cur_mean = mean * n;
+  const cur_variance = variance * n;
+
+  // const ff = selfConvolution(f, n, left * n, right * n);
+  const len = (right - left) * n;
+
+  for (let j = 1; j <= 30; j++) {
+    const fn = selfConvolution(f, j, left * j, right * j);
+    for (let i = left * n - 0.5 * len; i <= right * n + 0.5 * len; i += dx * n) {
+      i = Math.round(i * 100) / 100;
+      yn[j - 1].push(fn(i));
+    }
+  }
+  for (let i = left * n - 0.5 * len; i <= right * n + 0.5 * len; i += dx * n) {
+    i = Math.round(i * 100) / 100;
+    x.push(i);
+    y2.push(1 / Math.sqrt(2 * Math.PI * cur_variance) * Math.exp(-0.5 * (i - cur_mean) ** 2 / cur_variance));
+  }
+
+  xs.value = x;
+  yns.value = yn;
+  y2s.value = y2;
+
+  chartOption.value = getChartOptionMulti(yn, y2);
+}
+
 watch(() => props.args, () => {
-  calculatePoints();
   console.log('calculatePoints');
-  chartData.value = getChartData(xs.value, y1s.value, y2s.value);
+  if (props.args.multi) {
+    calculatePointsMulti();
+    chartData.value = getChartDataMulti(xs.value, yns.value, y2s.value);
+  }
+  else {
+    calculatePoints();
+    chartData.value = getChartData(xs.value, y1s.value, y2s.value);
+  }
 }, { deep: true });
 
 onMounted(() => {
-  calculatePoints();
-  chartData.value = getChartData(xs.value, y1s.value, y2s.value);
+  if (props.args.multi) {
+    calculatePointsMulti();
+    chartData.value = getChartDataMulti(xs.value, yns.value, y2s.value);
+  }
+  else {
+    calculatePoints();
+    chartData.value = getChartData(xs.value, y1s.value, y2s.value);
+  }
 });
 </script>
 

@@ -143,6 +143,56 @@ watch([oneFormula, twoFormula, threeFormula], () => {
   renderFormula();
 });
 
+
+const discuss = `
+## **二维正态的联合与边缘分布概率密度函数（PDF）**
+
+如果$(X,Y) \\sim N(μ_x,μ_y;σ_x²,σ_y²;ρ),$ 则
+   $ X \\sim N(μ_x,σ_x²) , $
+    $Y \\sim N(μ_y,σ_y²)。$
+
+当满足：
+$σ_x>0,σ_y>0,|ρ|<1,$
+则二维正态分布的概率密度函数为:
+$$
+f(x, y) = 
+\\frac{1}{2\\piσ_xσ_y\\sqrt{1-ρ^2}}  e^{\\frac{-1}{2(1-ρ^2)}[\\frac{(x-μ_x)^2}{σ_x^2}-2ρ\\frac{(x-μ_x)(y-μ_y)}{σ_xσ_y}+\\frac{(y-μ_y)^2}{σ_y^2}]} 
+$$
+边缘分布概率密度函数为:
+$$
+f_X(x) = \\frac{1}{\\sqrt{2\\pi} σ_x}e^{-\\frac{(x-μ_x)^2}{2σ_x²}} ,  -∞<x<+∞
+$$
+$$
+f_Y(y) = \\frac{1}{\\sqrt{2\\pi} σ_y}e^{-\\frac{(y-μ_y)^2}{2σ_y²}} , -∞<y<+∞
+$$
+
+## **二维正态的条件分布**
+
+$$
+f_{Y|X}(y | x) = 
+\\frac{f(x,y)}{f_X(x)}=
+\\frac{1}{\\sqrt{2\\pi} σ_y \\sqrt{1-ρ^2}} e^{\\frac{1}{2(1-ρ^2)}[\\frac{x-μ_x}{σ_x}-ρ\\frac{y-μ_y}{σ_y}]^2}
+$$
+$$
+f_{X|Y}(x | y) = 
+\\frac{f(x,y)}{f_Y(y)}=
+\\frac{1}{\\sqrt{2\\pi} σ_x \\sqrt{1-ρ^2}} e^{\\frac{1}{2(1-ρ^2)}[\\frac{x-μ_x}{σ_x}-ρ\\frac{y-μ_y}{σ_y}]^2}
+$$
+
+因此，如果 $Y = y$,
+
+它的条件分布仍然是一个正态分布，满足：
+$$
+N(μ_x+ρ\\frac{σ_x}{σ_y}(y-μ_y) , (1-ρ^2)σ_x²)
+$$
+如果 $X = x$,
+它的条件分布仍然是一个正态分布，满足：
+$$
+N(μ_y+ρ\\frac{σ_y}{σ_x}(x-μ_x) , (1-ρ^2)σ_y²
+$$
+`
+
+
 const content = `
 ## **概述**
 二维正态分布$(Two-dimensional\\ Normal\\ Distribution)$是正态分布在二维空间中的扩展，描述了二维随机变量的联合分布。二维正态分布通常用于建模在两个相关变量之间的关系，这些变量具有正态分布的特征，且它们可能存在一定的线性相关性。二维正态分布广泛应用于统计学、金融、信号处理等领域。
@@ -228,7 +278,7 @@ const discussTabList = [
   {
     id: 0,
     label: '参考公式',
-    name: 'discuss',
+    name: 'formula',
     icon: Lightbulb,
   },
   {
@@ -254,7 +304,7 @@ const discussTabList = [
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center gap-3 p-3">
-        <Card class="w-full h-1/2 card overflow-y-auto">
+        <!-- <Card class="w-full h-1/2 card overflow-y-auto">
           <CardHeader>
             <CardTitle v-if="isChart1">
               二维正态的联合与边缘分布概率密度函数（PDF）
@@ -267,7 +317,7 @@ const discussTabList = [
             <div v-show="isChart1" ref="oneContainer" class="text-base" />
             <div v-show="isChart3" ref="threeContainer" class="text-base" />
           </CardContent>
-        </Card>
+        </Card> -->
 
         <Card class="w-full flex-1 flex flex-col">
           <CardHeader>
@@ -368,7 +418,9 @@ const discussTabList = [
       <CommentPanel exp-id="2DnormalDistribution" />
     </template>
     <template #formula>
-      <div></div>
+      <div class="w-full h-full p-5">
+        <div class="prose-sm max-w-full " v-html="toMarkdown(discuss)" />
+      </div>
     </template>
   </ExperimentBoard>
 </template>

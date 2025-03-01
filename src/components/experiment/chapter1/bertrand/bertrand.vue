@@ -17,12 +17,12 @@ import randomMidpointGif from '/public/Bertrand/random_midpoint.gif';
 const autoGaming = ref(false);
 
 // 定义弦端点对象的类型
-type ChordEndPoints = {
-  x1: number;
-  y1: number;
-  x2: number;
-  y2: number;
-};
+interface ChordEndPoints {
+  x1: number
+  y1: number
+  x2: number
+  y2: number
+}
 
 // 创建响应式的弦端点对象和颜色对象
 const chord1 = ref<ChordEndPoints>({ x1: 0, y1: 0, x2: 0, y2: 0 });
@@ -74,7 +74,7 @@ function generateRandomEndPoints() {
     x1: point1[0],
     y1: point1[1],
     x2: point2[0],
-    y2: point2[1]
+    y2: point2[1],
   };
 
   console.log('chord1:', chord1.value); // 输出弦的坐标，检查是否更新
@@ -95,7 +95,6 @@ function generateRandomEndPoints() {
   longChordRatio.value = totalChords.value > 0 ? longChords.value / totalChords.value : 0;
   console.log(`长弦占比: ${(longChordRatio.value * 100).toFixed(2)}%`);
 }
-
 
 // 方法二相关变量
 const chord2 = ref<ChordEndPoints>({ x1: 0, y1: 0, x2: 0, y2: 0 });
@@ -127,8 +126,8 @@ function generateRadialMidpoint() {
   const theta = Math.random() * 2 * Math.PI;
   const x1 = Math.cos(theta);
   const y1 = Math.sin(theta);
-  const x2 = -x1;
-  const y2 = -y1;
+  // const x2 = -x1;
+  // const y2 = -y1;
 
   // 在直径上随机选一个点
   const distanceFromCenter = Math.random(); // 生成 0 到 1 之间的随机距离
@@ -138,7 +137,7 @@ function generateRadialMidpoint() {
 
   // 根据中点到圆心的距离计算弦长
   const halfChordLength = Math.sqrt(1 - distanceFromCenter ** 2);
-  const chordLength = 2 * halfChordLength;
+  // const chordLength = 2 * halfChordLength;
 
   let dx, dy;
   if (distanceFromCenter === 0) {
@@ -146,7 +145,8 @@ function generateRadialMidpoint() {
     const angle = Math.random() * 2 * Math.PI;
     dx = halfChordLength * Math.cos(angle);
     dy = halfChordLength * Math.sin(angle);
-  } else {
+  }
+  else {
     // 中点不为圆心
     const perpendicularX = -midY;
     const perpendicularY = midX;
@@ -165,7 +165,7 @@ function generateRadialMidpoint() {
     x1: chordX1,
     y1: chordY1,
     x2: chordX2,
-    y2: chordY2
+    y2: chordY2,
   };
 
   console.log('chord2:', chord2.value);
@@ -180,7 +180,6 @@ function generateRadialMidpoint() {
   longChordRatio2.value = totalChords2.value > 0 ? longChords2.value / totalChords2.value : 0;
   console.log(`方法二长弦占比: ${(longChordRatio2.value * 100).toFixed(2)}%`);
 }
-
 
 /// 方法三相关变量
 const chord3 = ref<ChordEndPoints>({ x1: 0, y1: 0, x2: 0, y2: 0 });
@@ -217,7 +216,8 @@ function generateRandomMidpoint() {
     const theta = Math.random() * 2 * Math.PI;
     dx = L * Math.cos(theta);
     dy = L * Math.sin(theta);
-  } else {
+  }
+  else {
     // 中点不为圆心
     dx = (-y0 / d) * L;
     dy = (x0 / d) * L;
@@ -228,7 +228,7 @@ function generateRandomMidpoint() {
     x1: x0 + dx,
     y1: y0 + dy,
     x2: x0 - dx,
-    y2: y0 - dy
+    y2: y0 - dy,
   };
 
   // 计算弦长
@@ -251,54 +251,54 @@ const bertrandDisplay = ref<{
   simulateGame: () => void
   stopSimulation: () => void
 }>({
-  autoGameRound: [100], // 默认模拟轮数为100
-  simulationInterval: null, // 用于存储定时器 ID
-  simulateGame() {
-    console.log('开始模拟！');
-    let round = 0;
-    this.simulationInterval = setInterval(() => {
-      if (round >= this.autoGameRound[0] || !autoGaming.value) {
+      autoGameRound: [100], // 默认模拟轮数为100
+      simulationInterval: null, // 用于存储定时器 ID
+      simulateGame() {
+        console.log('开始模拟！');
+        let round = 0;
+        this.simulationInterval = setInterval(() => {
+          if (round >= this.autoGameRound[0] || !autoGaming.value) {
+            if (this.simulationInterval) {
+              clearInterval(this.simulationInterval);
+            }
+            this.simulationInterval = null;
+            return;
+          }
+          // 确保每次更新的数据是响应式的
+          generateRandomEndPoints();
+          generateRadialMidpoint();
+          generateRandomMidpoint();
+          round++;
+        }, 100) as unknown as number; // 强制类型转换
+      },
+      // 停止模拟并清除所有图像
+      stopSimulation() {
+        console.log('停止模拟！');
+        // 清空所有弦数据
+        chord1.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
+        chord2.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
+        chord3.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
+        chord1Color.value = 'blue';
+        chord2Color.value = 'blue';
+        chord3Color.value = 'blue';
+        totalChords.value = 0;
+        longChords.value = 0;
+        longChordRatio.value = 0;
+        totalChords2.value = 0;
+        longChords2.value = 0;
+        longChordRatio2.value = 0;
+        totalChords3.value = 0;
+        longChords3.value = 0;
+        longChordRatio3.value = 0;
+
+        // 停止模拟
+        autoGaming.value = false;
         if (this.simulationInterval) {
           clearInterval(this.simulationInterval);
+          this.simulationInterval = null;
         }
-        this.simulationInterval = null;
-        return;
-      }
-      // 确保每次更新的数据是响应式的
-      generateRandomEndPoints();
-      generateRadialMidpoint();
-      generateRandomMidpoint();
-      round++;
-    }, 100) as unknown as number; // 强制类型转换
-  },
-  // 停止模拟并清除所有图像
-  stopSimulation() {
-    console.log('停止模拟！');
-    // 清空所有弦数据
-    chord1.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
-    chord2.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
-    chord3.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
-    chord1Color.value = 'blue';
-    chord2Color.value = 'blue';
-    chord3Color.value = 'blue';
-    totalChords.value = 0;
-    longChords.value = 0;
-    longChordRatio.value = 0;
-    totalChords2.value = 0;
-    longChords2.value = 0;
-    longChordRatio2.value = 0;
-    totalChords3.value = 0;
-    longChords3.value = 0;
-    longChordRatio3.value = 0;
-
-    // 停止模拟
-    autoGaming.value = false;
-    if (this.simulationInterval) {
-      clearInterval(this.simulationInterval);
-      this.simulationInterval = null;
-    }
-  },
-});
+      },
+    });
 
 function limitInput(e: { target: { value: string } }) {
   const value = Number.parseInt(e.target.value);
@@ -397,8 +397,10 @@ function toggleMethod(methodName: MethodName) {
           <svg width="200" height="200" viewBox="0 -10 170 190">
             <circle cx="80" cy="80" r="80" fill="none" stroke="black" />
             <!-- 在此绘制第一种策略的弦 -->
-            <line :x1="80 + chord1.x1 * 80" :y1="80 + chord1.y1 * 80" :x2="80 + chord1.x2 * 80"
-              :y2="80 + chord1.y2 * 80" :stroke="chord1Color" stroke-width="2" />
+            <line
+              :x1="80 + chord1.x1 * 80" :y1="80 + chord1.y1 * 80" :x2="80 + chord1.x2 * 80"
+              :y2="80 + chord1.y2 * 80" :stroke="chord1Color" stroke-width="2"
+            />
 
           </svg>
           <div class="circle-label">
@@ -410,8 +412,10 @@ function toggleMethod(methodName: MethodName) {
           <svg width="200" height="200" viewBox="0 -10 170 190">
             <circle cx="80" cy="80" r="80" fill="none" stroke="black" />
             <!-- 在此绘制第二种策略的弦 -->
-            <line :x1="80 + chord2.x1 * 80" :y1="80 + chord2.y1 * 80" :x2="80 + chord2.x2 * 80"
-              :y2="80 + chord2.y2 * 80" :stroke="chord2Color" stroke-width="2" />
+            <line
+              :x1="80 + chord2.x1 * 80" :y1="80 + chord2.y1 * 80" :x2="80 + chord2.x2 * 80"
+              :y2="80 + chord2.y2 * 80" :stroke="chord2Color" stroke-width="2"
+            />
 
           </svg>
           <div class="circle-label">
@@ -423,8 +427,10 @@ function toggleMethod(methodName: MethodName) {
           <svg width="200" height="200" viewBox="0 -10 180 190">
             <circle cx="80" cy="80" r="80" fill="none" stroke="black" />
             <!-- 在此绘制第三种策略的弦 -->
-            <line :x1="80 + chord3.x1 * 80" :y1="80 + chord3.y1 * 80" :x2="80 + chord3.x2 * 80"
-              :y2="80 + chord3.y2 * 80" :stroke="chord3Color" stroke-width="2" />
+            <line
+              :x1="80 + chord3.x1 * 80" :y1="80 + chord3.y1 * 80" :x2="80 + chord3.x2 * 80"
+              :y2="80 + chord3.y2 * 80" :stroke="chord3Color" stroke-width="2"
+            />
 
           </svg>
           <div class="circle-label">
@@ -463,19 +469,19 @@ function toggleMethod(methodName: MethodName) {
             <CardContent class="flex items-center flex-col">
               <div class="grid grid-cols-2 gap-y-4 gap-x-10 justify-between">
                 <Label class="flex items-center flex-shrink-0">
-                  方法一实验频率： {{ longChordRatio ? (longChordRatio * 100).toFixed(2) + '%' : '0.00%' }}
+                  方法一实验频率： {{ longChordRatio ? `${(longChordRatio * 100).toFixed(2)}%` : '0.00%' }}
                 </Label>
                 <Label class="flex items-center flex-shrink-0">
                   方法一理论频率： {{ (0.333).toFixed(3) }}
                 </Label>
                 <Label class="flex items-center flex-shrink-0">
-                  方法二实验频率： {{  longChordRatio2 ? (longChordRatio2 * 100).toFixed(2) + '%' : '0.00%' }}
+                  方法二实验频率： {{ longChordRatio2 ? `${(longChordRatio2 * 100).toFixed(2)}%` : '0.00%' }}
                 </Label>
                 <Label class="flex items-center flex-shrink-0">
                   方法二理论频率： {{ (0.500).toFixed(3) }}
                 </Label>
                 <Label class="flex items-center flex-shrink-0">
-                  方法三实验频率：{{  longChordRatio3 ? (longChordRatio3 * 100).toFixed(2) + '%' : '0.00%' }}
+                  方法三实验频率：{{ longChordRatio3 ? `${(longChordRatio3 * 100).toFixed(2)}%` : '0.00%' }}
                 </Label>
                 <Label class="flex items-center flex-shrink-0">
                   方法三理论频率： {{ (0.250).toFixed(3) }}
