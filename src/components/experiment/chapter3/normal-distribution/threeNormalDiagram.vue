@@ -13,7 +13,7 @@ const props = defineProps<{
   fixedY: number,
 }>();
 
-const plotlyChart1 = ref<HTMLElement | null>(null);
+const plotlyChart1 = ref<HTMLElement | null>(null); // 3D二维正态分布图
 function createPlotlyChart1() {
   // 设置均值和协方差矩阵
   const mean = [props.mean1, props.mean2];
@@ -109,22 +109,13 @@ function createPlotlyChart1() {
       zaxis: { title: 'Probability Density' },
     },
     margin: {
-      t: 5,  // 顶部空白
-      b: 5,  // 底部空白
-      l: 5,  // 左侧空白
-      r: 5,  // 右侧空白
+      t: 0,  // 顶部空白
+      b: 30,  // 底部空白
+      l: 30,  // 左侧空白
+      r: 30,  // 右侧空白
     },
     title: '',
-    legend: {
-      x: 1,  // 将图例放到右侧
-      y: 1,  // 将图例放到上方
-      traceorder: 'normal',
-      font: {
-        family: 'sans-serif',
-        size: 12,
-        color: '#000',
-      },
-    },
+    showlegend: false,
   };
   const config = {
     displayModeBar: false,  // 禁用交互菜单
@@ -135,7 +126,7 @@ function createPlotlyChart1() {
   }
 }
 
-const plotlyChart2 = ref<HTMLElement | null>(null);
+const plotlyChart2 = ref<HTMLElement | null>(null); // X的边缘分布图表
 function createPlotlyChart2() {
   // 设置均值和协方差矩阵
   const mean = [props.mean1, props.mean2];
@@ -165,22 +156,22 @@ function createPlotlyChart2() {
   const data = [
     {
       type: 'bar',
-      x,
+      x: x,
       y: marginalX,
       name: 'Marginal X',
-      marker: { color: 'blue' },
+      marker: { color: 'rgba(255, 0, 0, 0.9)' },
     },
   ];
-
+ 
   // 设置布局
   const layout = {
     xaxis: { title: '' },
     yaxis: { title: '' },
     margin: {
-      t: 5,  // 顶部空白
-      b: 20,  // 底部空白
-      l: 25,  // 左侧空白
-      r: 5,  // 右侧空白
+      t: 0,  // 顶部空白
+      b: 30,  // 底部空白
+      l: 50,  // 左侧空白
+      r: 30,  // 右侧空白
     },
     title: '',
   };
@@ -195,7 +186,7 @@ function createPlotlyChart2() {
   }
 }
 
-const plotlyChart3 = ref<HTMLElement | null>(null);
+const plotlyChart3 = ref<HTMLElement | null>(null); // 二维正态分布样本散点图
 function createPlotlyChart3() {
   // 设置均值和协方差矩阵
   const mean = [props.mean1, props.mean2];
@@ -232,7 +223,7 @@ function createPlotlyChart3() {
   }
 
   // 生成 500 个样本点
-  const n = 500;
+  const n = 2000;
   const samples = generateBivariateNormalSamples(n, mean, cov);
 
   // 将样本点分解为 x 和 y 坐标
@@ -256,6 +247,12 @@ function createPlotlyChart3() {
 
   // 设置布局
   const layout = {
+    margin: {
+      t: 30,  // 顶部空白
+      b: 30,  // 底部空白
+      l: 50,  // 左侧空白
+      r: 30,  // 右侧空白
+    },
     xaxis: {
       title: 'X',
       zeroline: true,
@@ -280,7 +277,7 @@ function createPlotlyChart3() {
   }
 }
 
-const plotlyChart4 = ref<HTMLElement | null>(null);
+const plotlyChart4 = ref<HTMLElement | null>(null); // Y的边缘分布图表
 function createPlotlyChart4() {
   // 设置均值和协方差矩阵
   const mean = [props.mean1, props.mean2];
@@ -314,7 +311,7 @@ function createPlotlyChart4() {
       y,
       name: 'Marginal Y',
       orientation: 'h', // 设置柱状图为水平
-      marker: { color: 'blue' },
+      marker: { color: 'rgba(255, 0, 0, 0.9)' },
     },
   ];
 
@@ -323,10 +320,10 @@ function createPlotlyChart4() {
     xaxis: { title: '' },
     yaxis: { title: '' },
     margin: {
-      t: 5,  // 顶部空白
-      b: 20,  // 底部空白
-      l: 25,  // 左侧空白
-      r: 5,  // 右侧空白
+      t: 30,  // 顶部空白
+      b: 30,  // 底部空白
+      l: 30,  // 左侧空白
+      r: 30,  // 右侧空白
     },
     title: '',
   };
@@ -341,7 +338,7 @@ function createPlotlyChart4() {
   }
 }
 
-const plotlyChart5 = ref<HTMLElement | null>(null);
+const plotlyChart5 = ref<HTMLElement | null>(null); // X的条件分布图表
 function createPlotlyChart5() {
   // 设置均值和协方差矩阵
   const mean = [props.mean1, props.mean2];
@@ -453,7 +450,7 @@ function createPlotlyChart5() {
   }
 }
 
-const plotlyChart6 = ref<HTMLElement | null>(null);
+const plotlyChart6 = ref<HTMLElement | null>(null); // Y的条件分布图表
 function createPlotlyChart6() {
   // 设置均值和协方差矩阵
   const mean = [props.mean1, props.mean2];
@@ -590,13 +587,16 @@ watch(() => props.isChart3, async () => {
 </script>
 
 <template>
-  <div class="grid grid-cols-2 gap-4">
-    <div id="plotly-chart2" ref="plotlyChart2" class="w-full h-64" v-if="!props.isChart3"></div>
-    <div id="plotly-chart5" ref="plotlyChart5" class="w-full h-64" v-if="props.isChart3"></div>
-    <div id="plotly-chart1" ref="plotlyChart1" class="w-full h-64"></div>
-    <div id="plotly-chart3" ref="plotlyChart3" class="w-full h-96"></div>
-    <div id="plotly-chart4" ref="plotlyChart4" class="w-64 h-full" v-if="!props.isChart3"></div>
-    <div id="plotly-chart6" ref="plotlyChart6" class="w-full h-64" v-if="props.isChart3"></div>
+  <div class="flex flex-col w-full h-full">
+    <div class="flex w-full h-full">
+      <div id="plotly-chart2" ref="plotlyChart2" class="w-[550px] h-[320px]" v-if="!props.isChart3"></div>
+      <div id="plotly-chart5" ref="plotlyChart5" class="w-96 h-96" v-if="props.isChart3"></div>
+      <div id="plotly-chart1" ref="plotlyChart1" class="w-[400px] h-[320px]"></div>
+    </div>
+    <div class="flex w-full h-full">
+      <div id="plotly-chart3" ref="plotlyChart3" class="w-[550px] h-[550px]"></div>
+      <div id="plotly-chart4" ref="plotlyChart4" class="w-[400px] h-[550px]" v-if="!props.isChart3"></div>
+      <div id="plotly-chart6" ref="plotlyChart6" class="w-96 h-96" v-if="props.isChart3"></div>
+    </div>
   </div>
-
 </template>

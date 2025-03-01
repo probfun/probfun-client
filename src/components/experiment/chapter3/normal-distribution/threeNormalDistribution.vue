@@ -15,7 +15,7 @@ const mean1 = ref(0);
 const mean2 = ref(0);
 const sigma1 = ref(1);
 const sigma2 = ref(1);
-const density = ref(0.5);
+const density = ref(0);
 const x = ref(1);
 const y = ref(1)
 
