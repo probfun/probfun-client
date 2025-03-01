@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import Plotly from 'plotly.js-dist';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch, nextTick } from 'vue';
 
 const props = defineProps<{
-    mean1: number,
-    mean2: number,
-    sigma1: number,
-    sigma2: number,
-    density: number,
-    isChart3: boolean,
-    fixedX: number,
-    fixedY: number,
+  mean1: number,
+  mean2: number,
+  sigma1: number,
+  sigma2: number,
+  density: number,
+  isChart3: boolean,
+  fixedX: number,
+  fixedY: number,
 }>();
 
 const plotlyChart1 = ref<HTMLElement | null>(null);
@@ -101,35 +101,35 @@ function createPlotlyChart1() {
     },
   ];
 
-    // 设置布局
-    const layout = {
-        scene: {
-            xaxis: { title: '' },
-            yaxis: { title: '' },
-            zaxis: { title: 'Probability Density' },
-        },
-        margin: {
-            t: 5,  // 顶部空白
-            b: 5,  // 底部空白
-            l: 5,  // 左侧空白
-            r: 5,  // 右侧空白
-        },
-        title: '',
-        legend: {
-            x: 1,  // 将图例放到右侧
-            y: 1,  // 将图例放到上方
-            traceorder: 'normal',
-            font: {
-                family: 'sans-serif',
-                size: 12,
-                color: '#000',
-            },
-        },
-    };
-    const config = {
-        displayModeBar: false,  // 禁用交互菜单
-    };
-    // 渲染图表
+  // 设置布局
+  const layout = {
+    scene: {
+      xaxis: { title: '' },
+      yaxis: { title: '' },
+      zaxis: { title: 'Probability Density' },
+    },
+    margin: {
+      t: 5,  // 顶部空白
+      b: 5,  // 底部空白
+      l: 5,  // 左侧空白
+      r: 5,  // 右侧空白
+    },
+    title: '',
+    legend: {
+      x: 1,  // 将图例放到右侧
+      y: 1,  // 将图例放到上方
+      traceorder: 'normal',
+      font: {
+        family: 'sans-serif',
+        size: 12,
+        color: '#000',
+      },
+    },
+  };
+  const config = {
+    displayModeBar: false,  // 禁用交互菜单
+  };
+  // 渲染图表
   if (plotlyChart1.value) {
     Plotly.react(plotlyChart1.value, data, layout, config);
   }
@@ -172,18 +172,18 @@ function createPlotlyChart2() {
     },
   ];
 
-    // 设置布局
-    const layout = {
-        xaxis: { title: '' },
-        yaxis: { title: '' },
-        margin: {
-            t: 5,  // 顶部空白
-            b: 20,  // 底部空白
-            l: 25,  // 左侧空白
-            r: 5,  // 右侧空白
-        },
-        title: '',
-    };
+  // 设置布局
+  const layout = {
+    xaxis: { title: '' },
+    yaxis: { title: '' },
+    margin: {
+      t: 5,  // 顶部空白
+      b: 20,  // 底部空白
+      l: 25,  // 左侧空白
+      r: 5,  // 右侧空白
+    },
+    title: '',
+  };
 
   const config = {
     displayModeBar: false, // 禁用交互菜单
@@ -254,21 +254,21 @@ function createPlotlyChart3() {
     },
   ];
 
-    // 设置布局
-    const layout = {
-        xaxis: {
-            title: 'X',
-            zeroline: true,
-        },
-        yaxis: {
-            title: 'Y',
-            zeroline: true,
-            scaleanchor: 'x',  // 将 y 轴的比例锚定到 x 轴
-            scaleratio: 1,     // 确保 y 轴的比例与 x 轴相同
-        },
-        showlegend: false,
-        grid: { rows: 1, columns: 1 }
-    };
+  // 设置布局
+  const layout = {
+    xaxis: {
+      title: 'X',
+      zeroline: true,
+    },
+    yaxis: {
+      title: 'Y',
+      zeroline: true,
+      scaleanchor: 'x',  // 将 y 轴的比例锚定到 x 轴
+      scaleratio: 1,     // 确保 y 轴的比例与 x 轴相同
+    },
+    showlegend: false,
+    grid: { rows: 1, columns: 1 }
+  };
 
   const config = {
     displayModeBar: false, // 禁用交互菜单
@@ -318,278 +318,285 @@ function createPlotlyChart4() {
     },
   ];
 
-    // 设置布局
-    const layout = {
-        xaxis: { title: '' },
-        yaxis: { title: '' },
-        margin: {
-            t: 5,  // 顶部空白
-            b: 20,  // 底部空白
-            l: 25,  // 左侧空白
-            r: 5,  // 右侧空白
-        },
-        title: '',
-    };
+  // 设置布局
+  const layout = {
+    xaxis: { title: '' },
+    yaxis: { title: '' },
+    margin: {
+      t: 5,  // 顶部空白
+      b: 20,  // 底部空白
+      l: 25,  // 左侧空白
+      r: 5,  // 右侧空白
+    },
+    title: '',
+  };
 
   const config = {
     displayModeBar: false, // 禁用交互菜单
   };
 
-    // 渲染图表
-    if (plotlyChart4.value) {
-        Plotly.react(plotlyChart4.value, data, layout, config);
-    }
+  // 渲染图表
+  if (plotlyChart4.value) {
+    Plotly.react(plotlyChart4.value, data, layout, config);
+  }
 }
 
 const plotlyChart5 = ref<HTMLElement | null>(null);
 function createPlotlyChart5() {
-    // 设置均值和协方差矩阵
-    const mean = [props.mean1, props.mean2];
-    const cov = [
-        [Math.pow(props.sigma1, 2), props.density * props.sigma1 * props.sigma2],  // cov[0][0] = sigma1^2, cov[0][1] = rho * sigma1 * sigma2
-        [props.density * props.sigma1 * props.sigma2, Math.pow(props.sigma2, 2)]   // cov[1][0] = rho * sigma1 * sigma2, cov[1][1] = sigma2^2
-    ];
+  // 设置均值和协方差矩阵
+  const mean = [props.mean1, props.mean2];
+  const cov = [
+    [Math.pow(props.sigma1, 2), props.density * props.sigma1 * props.sigma2],  // cov[0][0] = sigma1^2, cov[0][1] = rho * sigma1 * sigma2
+    [props.density * props.sigma1 * props.sigma2, Math.pow(props.sigma2, 2)]   // cov[1][0] = rho * sigma1 * sigma2, cov[1][1] = sigma2^2
+  ];
 
-    // 创建网格点
-    const linspace = (start: number, stop: number, num: number) => {
-        const step = (stop - start) / (num - 1);
-        return Array.from({ length: num }, (_, i) => start + i * step);
-    };
+  // 创建网格点
+  const linspace = (start: number, stop: number, num: number) => {
+    const step = (stop - start) / (num - 1);
+    return Array.from({ length: num }, (_, i) => start + i * step);
+  };
 
-    const meshgrid = (x: number[], y: number[]) => {
-        const X: number[][] = [];
-        const Y: number[][] = [];
-        for (let i = 0; i < y.length; i++) {
-            X.push(x);
-            Y.push(Array(x.length).fill(y[i]));
-        }
-        return { X, Y };
-    };
-
-    const x = linspace(-10, 10, 200);
-    const y = linspace(-10, 10, 200);
-    const { X, Y } = meshgrid(x, y);
-
-    // 创建二维正态分布的概率密度函数
-    const rvPdf = (x: number, y: number) => {
-        const det = cov[0][0] * cov[1][1] - cov[0][1] * cov[1][0];
-        const invCov = [
-            [cov[1][1] / det, -cov[0][1] / det],
-            [-cov[1][0] / det, cov[0][0] / det]
-        ];
-        const diff = [x - mean[0], y - mean[1]];
-        const expTerm = -0.5 * (diff[0] * (invCov[0][0] * diff[0] + invCov[0][1] * diff[1]) +
-            diff[1] * (invCov[1][0] * diff[0] + invCov[1][1] * diff[1]));
-        const norm = 2 * Math.PI * Math.sqrt(det);
-        return Math.exp(expTerm) / norm;
-    };
-
-    const Z = X.map((row, i) => row.map((_, j) => rvPdf(X[i][j], Y[i][j])));
-
-    // 选择一个固定的 x 值来创建截面
-    const fixedX = props.fixedX;
-    const fixedXIndex = Math.round((fixedX - x[0]) / (x[1] - x[0]));
-
-    // 计算截面的交线
-    const sectionX = X[fixedXIndex];
-    const sectionY = Y[fixedXIndex];
-    const sectionZ = Z[fixedXIndex];
-
-    // 创建图表
-    const data = [
-        {
-            type: 'surface',
-            z: Z,
-            x: X,  // 使用 X 和 Y 作为二维网格
-            y: Y,  // 使用 X 和 Y 作为二维网格
-            colorscale: 'Viridis',
-            opacity: 0.7,
-            showscale: false,  // 完全隐藏颜色条
-        },
-        {
-            type: 'scatter3d',
-            x: sectionX,
-            y: sectionY,
-            z: sectionZ,
-            mode: 'lines',
-            line: {
-                color: 'red',
-                width: 3
-            }
-        }
-    ];
-
-    // 设置布局
-    const layout = {
-        scene: {
-            xaxis: { title: '' },
-            yaxis: { title: '' },
-            zaxis: { title: 'Y的条件分布' },
-        },
-        margin: {
-            t: 5,  // 顶部空白
-            b: 5,  // 底部空白
-            l: 5,  // 左侧空白
-            r: 5,  // 右侧空白
-        },
-        title: '',
-        legend: {
-            x: 1,  // 将图例放到右侧
-            y: 1,  // 将图例放到上方
-            traceorder: 'normal',
-            font: {
-                family: 'sans-serif',
-                size: 12,
-                color: '#000',
-            },
-        },
-    };
-    const config = {
-        displayModeBar: false,  // 禁用交互菜单
-    };
-    // 渲染图表
-    if (plotlyChart5.value) {
-        Plotly.react(plotlyChart5.value, data, layout, config);
+  const meshgrid = (x: number[], y: number[]) => {
+    const X: number[][] = [];
+    const Y: number[][] = [];
+    for (let i = 0; i < y.length; i++) {
+      X.push(x);
+      Y.push(Array(x.length).fill(y[i]));
     }
+    return { X, Y };
+  };
+
+  const x = linspace(-10, 10, 200);
+  const y = linspace(-10, 10, 200);
+  const { X, Y } = meshgrid(x, y);
+
+  // 创建二维正态分布的概率密度函数
+  const rvPdf = (x: number, y: number) => {
+    const det = cov[0][0] * cov[1][1] - cov[0][1] * cov[1][0];
+    const invCov = [
+      [cov[1][1] / det, -cov[0][1] / det],
+      [-cov[1][0] / det, cov[0][0] / det]
+    ];
+    const diff = [x - mean[0], y - mean[1]];
+    const expTerm = -0.5 * (diff[0] * (invCov[0][0] * diff[0] + invCov[0][1] * diff[1]) +
+      diff[1] * (invCov[1][0] * diff[0] + invCov[1][1] * diff[1]));
+    const norm = 2 * Math.PI * Math.sqrt(det);
+    return Math.exp(expTerm) / norm;
+  };
+
+  const Z = X.map((row, i) => row.map((_, j) => rvPdf(X[i][j], Y[i][j])));
+
+  // 选择一个固定的 x 值来创建截面
+  const fixedX = props.fixedX;
+  const fixedXIndex = Math.round((fixedX - x[0]) / (x[1] - x[0]));
+
+  // 计算截面的交线
+  const sectionX = X[fixedXIndex];
+  const sectionY = Y[fixedXIndex];
+  const sectionZ = Z[fixedXIndex];
+
+  // 创建图表
+  const data = [
+    {
+      type: 'surface',
+      z: Z,
+      x: X,  // 使用 X 和 Y 作为二维网格
+      y: Y,  // 使用 X 和 Y 作为二维网格
+      colorscale: 'Viridis',
+      opacity: 0.7,
+      showscale: false,  // 完全隐藏颜色条
+    },
+    {
+      type: 'scatter3d',
+      x: sectionX,
+      y: sectionY,
+      z: sectionZ,
+      mode: 'lines',
+      line: {
+        color: 'red',
+        width: 3
+      }
+    }
+  ];
+
+  // 设置布局
+  const layout = {
+    scene: {
+      xaxis: { title: '' },
+      yaxis: { title: '' },
+      zaxis: { title: 'Y的条件分布' },
+    },
+    margin: {
+      t: 5,  // 顶部空白
+      b: 5,  // 底部空白
+      l: 5,  // 左侧空白
+      r: 5,  // 右侧空白
+    },
+    title: '',
+    legend: {
+      x: 1,  // 将图例放到右侧
+      y: 1,  // 将图例放到上方
+      traceorder: 'normal',
+      font: {
+        family: 'sans-serif',
+        size: 12,
+        color: '#000',
+      },
+    },
+  };
+  const config = {
+    displayModeBar: false,  // 禁用交互菜单
+  };
+  // 渲染图表
+  if (plotlyChart5.value) {
+    Plotly.react(plotlyChart5.value, data, layout, config);
+  }
 }
 
 const plotlyChart6 = ref<HTMLElement | null>(null);
 function createPlotlyChart6() {
-    // 设置均值和协方差矩阵
-    const mean = [props.mean1, props.mean2];
-    const cov = [
-        [Math.pow(props.sigma1, 2), props.density * props.sigma1 * props.sigma2],  // cov[0][0] = sigma1^2, cov[0][1] = rho * sigma1 * sigma2
-        [props.density * props.sigma1 * props.sigma2, Math.pow(props.sigma2, 2)]   // cov[1][0] = rho * sigma1 * sigma2, cov[1][1] = sigma2^2
-    ];
+  // 设置均值和协方差矩阵
+  const mean = [props.mean1, props.mean2];
+  const cov = [
+    [Math.pow(props.sigma1, 2), props.density * props.sigma1 * props.sigma2],  // cov[0][0] = sigma1^2, cov[0][1] = rho * sigma1 * sigma2
+    [props.density * props.sigma1 * props.sigma2, Math.pow(props.sigma2, 2)]   // cov[1][0] = rho * sigma1 * sigma2, cov[1][1] = sigma2^2
+  ];
 
-    // 创建网格点
-    const linspace = (start: number, stop: number, num: number) => {
-        const step = (stop - start) / (num - 1);
-        return Array.from({ length: num }, (_, i) => start + i * step);
-    };
+  // 创建网格点
+  const linspace = (start: number, stop: number, num: number) => {
+    const step = (stop - start) / (num - 1);
+    return Array.from({ length: num }, (_, i) => start + i * step);
+  };
 
-    const meshgrid = (x: number[], y: number[]) => {
-        const X: number[][] = [];
-        const Y: number[][] = [];
-        for (let i = 0; i < y.length; i++) {
-            X.push(x);
-            Y.push(Array(x.length).fill(y[i]));
-        }
-        return { X, Y };
-    };
-
-    const x = linspace(-10, 10, 200);
-    const y = linspace(-10, 10, 200);
-    const { X, Y } = meshgrid(x, y);
-
-    // 创建二维正态分布的概率密度函数
-    const rvPdf = (x: number, y: number) => {
-        const det = cov[0][0] * cov[1][1] - cov[0][1] * cov[1][0];
-        const invCov = [
-            [cov[1][1] / det, -cov[0][1] / det],
-            [-cov[1][0] / det, cov[0][0] / det]
-        ];
-        const diff = [x - mean[0], y - mean[1]];
-        const expTerm = -0.5 * (diff[0] * (invCov[0][0] * diff[0] + invCov[0][1] * diff[1]) +
-            diff[1] * (invCov[1][0] * diff[0] + invCov[1][1] * diff[1]));
-        const norm = 2 * Math.PI * Math.sqrt(det);
-        return Math.exp(expTerm) / norm;
-    };
-
-    const Z = X.map((row, i) => row.map((_, j) => rvPdf(X[i][j], Y[i][j])));
-
-    const fixedY = props.fixedY;
-    const fixedXIndex = Math.round((fixedY - x[0]) / (x[1] - x[0]));
-
-    // 计算截面的交线
-    const sectionX = X[fixedXIndex];
-    const sectionY = Y[fixedXIndex];
-    const sectionZ = Z[fixedXIndex];
-
-    // 创建图表
-    const data = [
-        {
-            type: 'surface',
-            z: Z,
-            x: X,  // 使用 X 和 Y 作为二维网格
-            y: Y,  // 使用 X 和 Y 作为二维网格
-            colorscale: 'Viridis',
-            opacity: 0.7,
-            showscale: false,  // 完全隐藏颜色条
-        },
-        {
-            type: 'scatter3d',
-            x: sectionX,
-            y: sectionY,
-            z: sectionZ,
-            mode: 'lines',
-            line: {
-                color: 'red',
-                width: 3
-            }
-        }
-    ];
-
-    // 设置布局
-    const layout = {
-        scene: {
-            xaxis: { title: '' },
-            yaxis: { title: '' },
-            zaxis: { title: 'X的条件分布' },
-        },
-        margin: {
-            t: 5,  // 顶部空白
-            b: 5,  // 底部空白
-            l: 5,  // 左侧空白
-            r: 5,  // 右侧空白
-        },
-        title: '',
-        legend: {
-            x: 1,  // 将图例放到右侧
-            y: 1,  // 将图例放到上方
-            traceorder: 'normal',
-            font: {
-                family: 'sans-serif',
-                size: 12,
-                color: '#000',
-            },
-        },
-    };
-    const config = {
-        displayModeBar: false,  // 禁用交互菜单
-    };
-    // 渲染图表
-    if (plotlyChart6.value) {
-        Plotly.react(plotlyChart6.value, data, layout, config);
+  const meshgrid = (x: number[], y: number[]) => {
+    const X: number[][] = [];
+    const Y: number[][] = [];
+    for (let i = 0; i < y.length; i++) {
+      X.push(x);
+      Y.push(Array(x.length).fill(y[i]));
     }
+    return { X, Y };
+  };
+
+  const x = linspace(-10, 10, 200);
+  const y = linspace(-10, 10, 200);
+  const { X, Y } = meshgrid(x, y);
+
+  // 创建二维正态分布的概率密度函数
+  const rvPdf = (x: number, y: number) => {
+    const det = cov[0][0] * cov[1][1] - cov[0][1] * cov[1][0];
+    const invCov = [
+      [cov[1][1] / det, -cov[0][1] / det],
+      [-cov[1][0] / det, cov[0][0] / det]
+    ];
+    const diff = [x - mean[0], y - mean[1]];
+    const expTerm = -0.5 * (diff[0] * (invCov[0][0] * diff[0] + invCov[0][1] * diff[1]) +
+      diff[1] * (invCov[1][0] * diff[0] + invCov[1][1] * diff[1]));
+    const norm = 2 * Math.PI * Math.sqrt(det);
+    return Math.exp(expTerm) / norm;
+  };
+
+  const Z = X.map((row, i) => row.map((_, j) => rvPdf(X[i][j], Y[i][j])));
+
+  const fixedY = props.fixedY;
+  const fixedXIndex = Math.round((fixedY - x[0]) / (x[1] - x[0]));
+
+  // 计算截面的交线
+  const sectionX = X[fixedXIndex];
+  const sectionY = Y[fixedXIndex];
+  const sectionZ = Z[fixedXIndex];
+
+  // 创建图表
+  const data = [
+    {
+      type: 'surface',
+      z: Z,
+      x: X,  // 使用 X 和 Y 作为二维网格
+      y: Y,  // 使用 X 和 Y 作为二维网格
+      colorscale: 'Viridis',
+      opacity: 0.7,
+      showscale: false,  // 完全隐藏颜色条
+    },
+    {
+      type: 'scatter3d',
+      x: sectionX,
+      y: sectionY,
+      z: sectionZ,
+      mode: 'lines',
+      line: {
+        color: 'red',
+        width: 3
+      }
+    }
+  ];
+
+  // 设置布局
+  const layout = {
+    scene: {
+      xaxis: { title: '' },
+      yaxis: { title: '' },
+      zaxis: { title: 'X的条件分布' },
+    },
+    margin: {
+      t: 5,  // 顶部空白
+      b: 5,  // 底部空白
+      l: 5,  // 左侧空白
+      r: 5,  // 右侧空白
+    },
+    title: '',
+    legend: {
+      x: 1,  // 将图例放到右侧
+      y: 1,  // 将图例放到上方
+      traceorder: 'normal',
+      font: {
+        family: 'sans-serif',
+        size: 12,
+        color: '#000',
+      },
+    },
+  };
+  const config = {
+    displayModeBar: false,  // 禁用交互菜单
+  };
+  // 渲染图表
+  if (plotlyChart6.value) {
+    Plotly.react(plotlyChart6.value, data, layout, config);
+  }
 }
 
 onMounted(() => {
-    createPlotlyChart1();
-    createPlotlyChart2();
-    createPlotlyChart3();
-    createPlotlyChart4();
-    createPlotlyChart5();
-    createPlotlyChart6();
+  createPlotlyChart1();
+  createPlotlyChart2();
+  createPlotlyChart3();
+  createPlotlyChart4();
+  createPlotlyChart5();
+  createPlotlyChart6();
 });
 watch(() => [props.mean1, props.mean2, props.sigma1, props.sigma2, props.density, props.isChart3, props.fixedX, props.fixedY], () => {
-    createPlotlyChart1();
-    createPlotlyChart2();
-    createPlotlyChart3();
-    createPlotlyChart4();
-    createPlotlyChart5();
-    createPlotlyChart6();
+  createPlotlyChart1();
+  createPlotlyChart2();
+  createPlotlyChart3();
+  createPlotlyChart4();
+  createPlotlyChart5();
+  createPlotlyChart6();
 });
+watch(() => props.isChart3, async () => {
+  await nextTick();
+  createPlotlyChart2();
+  createPlotlyChart4();
+  createPlotlyChart5();
+  createPlotlyChart6();
+})
 </script>
 
 <template>
-    <div class="grid grid-cols-2 gap-4">
-        <div id="plotly-chart2" ref="plotlyChart2" class="w-full h-64" v-if="!props.isChart3"></div>
-        <div id="plotly-chart5" ref="plotlyChart5" class="w-full h-64" v-if="props.isChart3"></div>
-        <div id="plotly-chart1" ref="plotlyChart1" class="w-full h-64"></div>
-        <div id="plotly-chart3" ref="plotlyChart3" class="w-full h-96"></div>
-        <div id="plotly-chart4" ref="plotlyChart4" class="w-64 h-full" v-if="!props.isChart3"></div>
-        <div id="plotly-chart6" ref="plotlyChart6" class="w-full h-64" v-if="props.isChart3"></div>
-    </div>
+  <div class="grid grid-cols-2 gap-4">
+    <div id="plotly-chart2" ref="plotlyChart2" class="w-full h-64" v-if="!props.isChart3"></div>
+    <div id="plotly-chart5" ref="plotlyChart5" class="w-full h-64" v-if="props.isChart3"></div>
+    <div id="plotly-chart1" ref="plotlyChart1" class="w-full h-64"></div>
+    <div id="plotly-chart3" ref="plotlyChart3" class="w-full h-96"></div>
+    <div id="plotly-chart4" ref="plotlyChart4" class="w-64 h-full" v-if="!props.isChart3"></div>
+    <div id="plotly-chart6" ref="plotlyChart6" class="w-full h-64" v-if="props.isChart3"></div>
+  </div>
 
 </template>
