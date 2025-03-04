@@ -29,8 +29,8 @@ export default defineConfig({
         changeOrigin: true,
       },
       '/ai': {
-        // target: 'ws://192.144.199.178',
-        target: 'ws://127.0.0.1:8000',
+        // target: 'ws://192.144.199.178:8000', // 本地调试 本地用这个 把下面的注释掉 推上去的时候再反过来然后现在能正常用ai了这个意思？
+        target: 'ws://127.0.0.1:8000',    // 线上部署 
         ws: true,
         // target: 'http://127.0.0.1:4523/m1/4811506-4465979-default',
         changeOrigin: true,
