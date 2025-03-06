@@ -3,11 +3,10 @@ import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ThreeUniformDiagram from '@/components/experiment/chapter3/uniform-distribution/threeUniformDiagram.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { toMarkdown } from '@/utils/markdown';
+import { renderLatex, toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
-import Slider from 'primevue/slider';
 
+import Slider from 'primevue/slider';
 import { computed, onMounted, ref, watch } from 'vue';
 import UniformDiagram from '../../distribution/UniformDiagram.vue';
 import 'katex/dist/katex.min.css';
@@ -16,21 +15,6 @@ const x1 = ref(0);
 const x2 = ref(1);
 const y1 = ref(0);
 const y2 = ref(1);
-
-// 定义渲染 LaTeX 的函数
-const renderLatex = (text) => {
-  try {
-    // 查找文本中的 LaTeX 代码（用 \( 和 \) 包裹）
-    const latexRegex = /\\\((.*?)\\\)/g;
-    return text.replace(latexRegex, (match, latex) => {
-      // 使用 katex 渲染 LaTeX 代码
-      return katex.renderToString(latex, { throwOnError: false });
-    });
-  } catch (error) {
-    console.error('LaTeX 渲染出错:', error);
-    return text;
-  }
-};
 
 const oneContainer = ref<HTMLElement | null>(null);
 const twoContainer = ref<HTMLElement | null>(null);
@@ -261,7 +245,7 @@ $$
             <div class="grid grid-cols-2 gap-10">
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-3">
-                  <div v-html="renderLatex('\\(x_1\\)')"></div>
+                  <div v-html="renderLatex('\\(x_1\\)')" />
 
                   <div class="max-w-xl space-y-3">
                     <Input v-model="x1" fluid />
@@ -271,7 +255,7 @@ $$
               </div>
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-3">
-                  <div v-html="renderLatex('\\(x_2\\)')"></div>
+                  <div v-html="renderLatex('\\(x_2\\)')" />
 
                   <div class="max-w-xl space-y-3">
                     <Input v-model="x2" fluid />
@@ -281,7 +265,7 @@ $$
               </div>
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-3">
-                  <div v-html="renderLatex('\\(y_1\\)')"></div>
+                  <div v-html="renderLatex('\\(y_1\\)')" />
 
                   <div class="max-w-xl space-y-3">
                     <Input v-model="y1" fluid />
@@ -291,7 +275,7 @@ $$
               </div>
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-3">
-                  <div v-html="renderLatex('\\(y_2\\)')"></div>
+                  <div v-html="renderLatex('\\(y_2\\)')" />
 
                   <div class="max-w-xl space-y-3">
                     <Input v-model="y2" fluid />

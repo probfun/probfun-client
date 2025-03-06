@@ -1,6 +1,5 @@
 import type { NodeOptions } from '@/api/distribution/distributionType';
 import { useDistributionStore } from '@/store';
-import katex from 'katex';
 import 'katex/dist/katex.min.css';
 
 let nodeIdCounter = 1; // 初始化计数器
@@ -46,7 +45,7 @@ const defaultEdgeOptions = {
     color: '#000',
   },
   animated: false,
-  style: { strokeWidth: 3, stroke: '#80a8c9' },
+  style: { strokeWidth: 30, stroke: '#80a8c9' },
 };
 
 interface EdgeOptions {
@@ -64,9 +63,9 @@ function createEdge({ id, source, target, label = '', options = {} }: EdgeOption
   const { stroke } = style;
   // 新增 labelStyle 用于设置 label 的样式
   const labelStyle = {
-    fontSize: '15px' // 这里设置 label 的字号，可根据需要调整
+    fontSize: '15px', // 这里设置 label 的字号，可根据需要调整
   };
-  
+
   return {
     id,
     source,
@@ -74,12 +73,11 @@ function createEdge({ id, source, target, label = '', options = {} }: EdgeOption
     label,
     type: 'smoothstep',
     ...defaultEdgeOptions,
-    ...options,
+    // ...options,
     defaultStroke: stroke ?? '#80a8c9',
-    labelStyle // 将 labelStyle 添加到返回的边配置中
+    labelStyle, // 将 labelStyle 添加到返回的边配置中
   };
 }
-
 
 export function initialEdges() {
   return [

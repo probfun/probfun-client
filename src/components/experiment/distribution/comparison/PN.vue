@@ -1,28 +1,14 @@
 <script setup lang="ts">
+import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
-import PNDiagram from './PNDiagram.vue';
-import { toMarkdown } from '@/utils/markdown';
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { renderLatex, toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue';
+import PNDiagram from './PNDiagram.vue';
 import 'katex/dist/katex.min.css';
-import { number } from 'echarts/core';
 
 const lambda = ref([30]);
-
-// 定义渲染 LaTeX 的函数
-const renderLatex = (text) => {
-  try {
-    // 查找文本中的 LaTeX 代码（用 \( 和 \) 包裹）
-    const latexRegex = /\\\((.*?)\\\)/g;
-    return text.replace(latexRegex, (match, latex) => {
-      // 使用 katex 渲染 LaTeX 代码
-      return katex.renderToString(latex, { throwOnError: false });
-    });
-  } catch (error) {
-    console.error('LaTeX 渲染出错:', error);
-    return text;
-  }
-};
 
 const poissonFormula = computed(() => `P(X = k) = \\frac{${lambda.value[0]}^k e^{-${lambda.value[0]}}}{k!}`);
 const normalFormula = computed(() => `N(X) = \\frac{1}{\\sqrt{2\\pi \\cdot ${lambda.value[0]}}} e^{-\\frac{(X - ${lambda.value[0]})^2}{2 \\cdot ${lambda.value[0]}}}`);
@@ -168,7 +154,7 @@ $$
 <template>
   <ExperimentBoard title="泊松分布与正态分布" :tags="[]">
     <template #experiment>
-      <PNDiagram :lambda="lambda[0]"></PNDiagram>
+      <PNDiagram :lambda="lambda[0]" />
     </template>
     <!-- <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
@@ -193,35 +179,33 @@ $$
         </div>
       </div>
     </template> -->
-   
+
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center p-3 gap-3">
-      <Card  class = "w-full h-1/2 flex gap-3">
-        <Card class="w-1/2 gap-3 ">
-          <CardHeader>
-            <div class = "flex  gap-5">
-            <CardTitle >泊松分布公式</CardTitle> 
-            <div class="w-10 h-1 mt-1 bg-blue-500">
-            </div>
-          </div>
-          </CardHeader>
-          <CardContent class="flex w-full justify-center ">
-            <div ref="poissonContainer" class="text-base" />
-          </CardContent>
+        <Card class="w-full h-1/2 flex gap-3">
+          <Card class="w-1/2 gap-3 ">
+            <CardHeader>
+              <div class="flex  gap-5">
+                <CardTitle>泊松分布公式</CardTitle>
+                <div class="w-10 h-1 mt-1 bg-blue-500" />
+              </div>
+            </CardHeader>
+            <CardContent class="flex w-full justify-center ">
+              <div ref="poissonContainer" class="text-base" />
+            </CardContent>
+          </Card>
+          <Card class="w-1/2 gap-3 ">
+            <CardHeader>
+              <div class="flex  gap-5">
+                <CardTitle>正态分布公式</CardTitle>
+                <div class="w-10 h-1 mt-1 bg-red-500" />
+              </div>
+            </CardHeader>
+            <CardContent class="flex w-full justify-center ">
+              <div ref="normalContainer" class="text-base" />
+            </CardContent>
+          </Card>
         </Card>
-        <Card class="w-1/2 gap-3 ">
-          <CardHeader>
-            <div class = "flex  gap-5">
-            <CardTitle >正态分布公式</CardTitle> 
-            <div class="w-10 h-1 mt-1 bg-red-500">
-            </div>
-          </div>
-          </CardHeader>
-          <CardContent class="flex w-full justify-center ">
-            <div ref="normalContainer" class="text-base" />
-          </CardContent>
-        </Card>
-      </Card>
         <Card class="w-full  flex-1 flex flex-col">
           <CardHeader>
             <CardTitle>
@@ -231,16 +215,14 @@ $$
           <CardContent class="flex-1 flex flex-col justify-center ">
             <div class="flex gap-4 pb-8">
               <div class="flex flex-col flex-1 items-center justify-center space-y-2">
-                <div v-html="renderLatex('\\(λ\\)')"></div>
+                <div v-html="renderLatex('\\(λ\\)')" />
 
                 <div class="max-w-xl space-y-3">
                   <Input v-model.number="lambda[0]" />
                   <Slider v-model="lambda" :min="30" :max="100" :step="1" class="w-48" />
                 </div>
               </div>
-
-          </div>
-
+            </div>
           </CardContent>
         </Card>
       </div>

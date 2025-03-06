@@ -3,9 +3,8 @@ import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { toMarkdown } from '@/utils/markdown';
+import { renderLatex, toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue'
 import GeometricDiagram from './GeometricDiagram.vue';
@@ -19,20 +18,6 @@ const isChart1 = ref(true);
 const isChart2 = ref(false);
 const isChart3 = ref(false);
 
-// 定义渲染 LaTeX 的函数
-const renderLatex = (text) => {
-  try {
-    // 查找文本中的 LaTeX 代码（用 \( 和 \) 包裹）
-    const latexRegex = /\\\((.*?)\\\)/g;
-    return text.replace(latexRegex, (match, latex) => {
-      // 使用 katex 渲染 LaTeX 代码
-      return katex.renderToString(latex, { throwOnError: false });
-    });
-  } catch (error) {
-    console.error('LaTeX 渲染出错:', error);
-    return text;
-  }
-};
 function toggleChart1() {
   isChart1.value = true;
   isChart2.value = false;
@@ -239,8 +224,7 @@ $$
             </div>
             <div class="flex gap-4 pb-1 w-full">
               <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                
-                <div v-html="renderLatex('成功概率\\(p\\)')"></div>
+                <div v-html="renderLatex('成功概率\\(p\\)')" />
 
                 <div class="max-w-xl space-y-3">
                   <Input v-model="probability[0]" type="number" />
@@ -248,16 +232,14 @@ $$
                 </div>
               </div>
               <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                
-                <div v-html="renderLatex('成功前的尝试次数（包含）\\( k \\)')"></div>
+                <div v-html="renderLatex('成功前的尝试次数（包含）\\( k \\)')" />
                 <div class="max-w-xl space-y-3">
                   <Input v-model="numberk[0]" type="number" />
                   <Slider v-model="numberk" :min="1" :max="60" :step="1" />
                 </div>
               </div>
               <div v-if="isChart3" class="flex flex-col flex-1 items-center justify-center space-y-5">
-                
-                <div v-html="renderLatex('固定实验次数')"></div>
+                <div v-html="renderLatex('固定实验次数')" />
                 <div class="max-w-xl space-y-3">
                   <Input v-model="fixedN[0]" type="number" />
                   <Slider v-model="fixedN" :min="0" :max="9" :step="1" />

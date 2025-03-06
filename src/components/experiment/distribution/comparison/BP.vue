@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
-import BPDiagram from './BPDiagram.vue';
-import { toMarkdown } from '@/utils/markdown';
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { renderLatex, toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue';
+import BPDiagram from './BPDiagram.vue';
+
 import 'katex/dist/katex.min.css';
 
 const number = ref([10]);
@@ -11,32 +14,17 @@ const probability = ref([0.1]);
 const numberk = ref([1]);
 const lambda = computed(() => number.value[0] * probability.value[0]);
 
-
-// 定义渲染 LaTeX 的函数
-const renderLatex = (text) => {
-  try {
-    // 查找文本中的 LaTeX 代码（用 \( 和 \) 包裹）
-    const latexRegex = /\\\((.*?)\\\)/g;
-    return text.replace(latexRegex, (match, latex) => {
-      // 使用 katex 渲染 LaTeX 代码
-      return katex.renderToString(latex, { throwOnError: false });
-    });
-  } catch (error) {
-    console.error('LaTeX 渲染出错:', error);
-    return text;
-  }
-};
-
 // 计算组合数的函数
-const BinomialCoefficient = (n: number, k: number): number => {
-  if (k > n) return 0;
+function BinomialCoefficient(n: number, k: number): number {
+  if (k > n)
+    return 0;
 
   const factorial = (num: number): number => {
     return num <= 1 ? 1 : num * factorial(num - 1);
   };
 
   return factorial(n) / (factorial(k) * factorial(n - k));
-};
+}
 
 // 计算最终结果
 const finalResultB = computed(() => {
@@ -44,7 +32,7 @@ const finalResultB = computed(() => {
   const k = numberk.value[0];
   const p = probability.value[0];
   const coefficient = BinomialCoefficient(n, k);
-  return coefficient * Math.pow(p, k) * Math.pow(1 - p, n - k);
+  return coefficient * p ** k * (1 - p) ** (n - k);
 });
 
 // 计算阶乘
@@ -60,14 +48,13 @@ function factor(n: number) {
 
 const finalResultP = computed(() => {
   const k = numberk.value[0];
-  const probabilityOfK = (lambda.value ** k * Math.exp(-lambda.value)) / factor(k);
-  return probabilityOfK;
+  return (lambda.value ** k * Math.exp(-lambda.value)) / factor(k);
 });
 
 const binomialFormula = computed(() => {
   const absValue = Math.abs(finalResultB.value);
   const exponent = Math.floor(Math.log10(absValue)); // 获取指数
-  const mantissa = (finalResultB.value / Math.pow(10, exponent)).toFixed(3); // 计算尾数并保留5位小数
+  const mantissa = (finalResultB.value / 10 ** exponent).toFixed(3); // 计算尾数并保留5位小数
   const resultB = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
 
   return `
@@ -80,10 +67,9 @@ P(X = k) &= \\binom{n}{k} p^k (1-p)^{n-k} \\\\
 const binomialContainer = ref<HTMLElement | null>(null);
 
 const poissonFormula = computed(() => {
-
   const absValue = Math.abs(finalResultP.value);
   const exponent = Math.floor(Math.log10(absValue)); // 获取指数
-  const mantissa = (finalResultP.value / Math.pow(10, exponent)).toFixed(3); // 计算尾数并保留5位小数
+  const mantissa = (finalResultP.value / 10 ** exponent).toFixed(3); // 计算尾数并保留5位小数
   const resultP = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
 
   return ` λ = np = {${number.value}} * {${probability.value}}={{ ${(number.value[0] * probability.value[0]).toFixed(2)}}}\\\\
@@ -214,7 +200,7 @@ $$
 <template>
   <ExperimentBoard title="二项分布与泊松分布" :tags="[]">
     <template #experiment>
-      <BPDiagram :n="number[0]" :p="probability[0]"></BPDiagram>
+      <BPDiagram :n="number[0]" :p="probability[0]" />
     </template>
     <!-- <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
@@ -253,32 +239,30 @@ $$
 
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center p-3 gap-3">
-      <Card  class = "w-full h-1/2 flex gap-3">
-        <Card class="w-1/2">
-          <CardHeader>
-           <div class = "flex  gap-5">
-            <CardTitle >二项分布公式</CardTitle> 
-            <div class="w-10 h-1 mt-1 bg-red-500">
-            </div>
-          </div>
-          </CardHeader>
-          <CardContent class="flex w-full justify-center">
-            <div ref="binomialContainer" class="text-base" />
-          </CardContent>
+        <Card class="w-full h-1/2 flex gap-3">
+          <Card class="w-1/2">
+            <CardHeader>
+              <div class="flex  gap-5">
+                <CardTitle>二项分布公式</CardTitle>
+                <div class="w-10 h-1 mt-1 bg-red-500" />
+              </div>
+            </CardHeader>
+            <CardContent class="flex w-full justify-center">
+              <div ref="binomialContainer" class="text-base" />
+            </CardContent>
+          </Card>
+          <Card class="w-1/2 gap-3 space-y-2">
+            <CardHeader>
+              <div class="flex  gap-5">
+                <CardTitle>泊松分布公式</CardTitle>
+                <div class="w-10 h-1 mt-1 bg-blue-500" />
+              </div>
+            </CardHeader>
+            <CardContent class="flex w-full justify-center">
+              <div ref="poissonContainer" class="text-base" />
+            </CardContent>
+          </Card>
         </Card>
-        <Card class="w-1/2 gap-3 space-y-2">
-          <CardHeader>
-            <div class = "flex  gap-5">
-            <CardTitle >泊松分布公式</CardTitle> 
-            <div class="w-10 h-1 mt-1 bg-blue-500">
-            </div>
-          </div>
-          </CardHeader>
-          <CardContent class="flex w-full justify-center">
-            <div ref="poissonContainer" class="text-base" />
-          </CardContent>
-        </Card>
-      </Card>
         <Card class="w-full  flex-1 flex flex-col">
           <CardHeader>
             <CardTitle>
@@ -288,7 +272,7 @@ $$
           <CardContent class="flex-1 flex flex-col justify-center ">
             <div class="flex gap-4 pb-8">
               <div class="flex flex-col flex-1 items-center justify-center space-y-2">
-                <div v-html="renderLatex(' 实验次数\\(n\\)')"></div>
+                <div v-html="renderLatex(' 实验次数\\(n\\)')" />
 
                 <div class="max-w-xl space-y-3">
                   <Input v-model.number="number[0]" />
@@ -296,7 +280,7 @@ $$
                 </div>
               </div>
               <div class="flex flex-col flex-1 items-center justify-center space-y-2">
-                <div v-html="renderLatex('  成功次数\\(k\\)')"></div>
+                <div v-html="renderLatex('  成功次数\\(k\\)')" />
 
                 <div class="max-w-xl space-y-3">
                   <Input v-model.number="numberk[0]" />
@@ -304,20 +288,18 @@ $$
                 </div>
               </div>
               <div class="flex flex-col flex-1 items-center justify-center space-y-2">
-                <div v-html="renderLatex(' 成功概率\\(p\\)')"></div>
+                <div v-html="renderLatex(' 成功概率\\(p\\)')" />
 
                 <div class="max-w-xl space-y-3">
-                  <Input  v-model.number="probability[0]" :min-fraction-digits="2" />
+                  <Input v-model.number="probability[0]" :min-fraction-digits="2" />
                   <Slider v-model="probability" :min="0" :max="1" :step="0.01" class="w-48" />
+                </div>
               </div>
             </div>
-          </div>
-
           </CardContent>
         </Card>
       </div>
     </template>
-
 
     <template #conclusion>
       <div class="w-full h-full p-5">

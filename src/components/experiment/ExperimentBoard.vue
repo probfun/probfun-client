@@ -7,11 +7,12 @@ import {
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
 import { ChartColumnIncreasing, GraduationCap, MessagesSquare, Presentation } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
-withDefaults(defineProps<{
+const args = withDefaults(defineProps<{
   discussTabList?: Tab[]
   panelSize?: number
+  layout?: number
 }>(), {
   discussTabList: () => [
     {
@@ -28,6 +29,7 @@ withDefaults(defineProps<{
     },
   ],
   panelSize: 40,
+  layout: 0,
 });
 
 const displayTabList = ref([{
@@ -41,6 +43,10 @@ const parameterTabList = ref([{
   label: '调整参数',
   icon: ChartColumnIncreasing,
 }]);
+
+onMounted(() => {
+  console.log(args.layout)
+})
 
 // const resizeObserver = ref<ResizeObserver | null>(null);
 //
@@ -71,7 +77,7 @@ const parameterTabList = ref([{
       class="rounded-lg"
     >
       <ResizablePanel id="demo-panel-2" :default-size="70" :min-size="20" :max-size="80">
-        <ResizablePanelGroup id="demo-group-2" direction="vertical">
+        <ResizablePanelGroup id="demo-group-2" :direction="layout === 1 ? 'horizontal' : 'vertical'">
           <ResizablePanel id="demo-panel-3" :default-size="panelSize">
             <div class="flex h-full items-center justify-center p-1">
               <Container class="h-full w-full" :tabs="displayTabList">

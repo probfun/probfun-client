@@ -112,3 +112,14 @@ export async function generateTitleApi(messages: ChatMessage[]) {
     title: string
   }>('/ai/title', { messages });
 }
+
+export async function generateDistributionFunctionApi(distribution: string) {
+  return await postRaw<{
+    function: string
+    latex: string
+    min: number
+    max: number
+  }>('/ai/distribution_function', { distribution }, {
+    timeout: 20000,
+  });
+}

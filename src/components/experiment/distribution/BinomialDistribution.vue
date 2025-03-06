@@ -3,33 +3,16 @@ import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox'
-import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { toMarkdown } from '@/utils/markdown';
+import { renderLatex, toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue';
 import BinomialDiagram from './BinomialDiagram.vue';
 import 'katex/dist/katex.min.css';
 
-
 const number = ref([1]); // Number of experiments (n)
 const probability = ref([0]); // Probability of success (p)
 const numberk = ref([1]); // Number of success (k)
-
-// 定义渲染 LaTeX 的函数
-const renderLatex = (text) => {
-  try {
-    // 查找文本中的 LaTeX 代码（用 \( 和 \) 包裹）
-    const latexRegex = /\\\((.*?)\\\)/g;
-    return text.replace(latexRegex, (match, latex) => {
-      // 使用 katex 渲染 LaTeX 代码
-      return katex.renderToString(latex, { throwOnError: false });
-    });
-  } catch (error) {
-    console.error('LaTeX 渲染出错:', error);
-    return text;
-  }
-};
 
 const chartDataO = ref();
 function setChartData() {
@@ -322,23 +305,21 @@ $$
           <CardContent class="flex-1 flex flex-col justify-center gap-5">
             <div class="flex gap-4 pb-8">
               <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-                <div v-html="renderLatex('试验次数 \\(n\\)')"></div>
+                <div v-html="renderLatex('试验次数 \\(n\\)')" />
                 <div class="max-w-xl space-y-3">
                   <Input v-model="number[0]" />
                   <Slider v-model="number" :min="1" :max="100" :step="1" />
                 </div>
               </div>
               <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-                
-                <div v-html="renderLatex('成功次数 \\(k\\)')"></div>
+                <div v-html="renderLatex('成功次数 \\(k\\)')" />
                 <div class="max-w-xl space-y-3">
                   <Input v-model="numberk[0]" />
                   <Slider v-model="numberk" :min="1" :max="maxK" :step="1" />
                 </div>
               </div>
               <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-             
-                <div v-html="renderLatex('成功率 \\(p\\)')"></div>
+                <div v-html="renderLatex('成功率 \\(p\\)')" />
 
                 <div class="max-w-xl space-y-3">
                   <Input v-model="probability[0]" :min-fraction-digits="1" />
@@ -347,15 +328,17 @@ $$
               </div>
             </div>
             <div class="flex gap-2 items-center justify-center">
-              <Checkbox id="terms" @update:checked="(checked: boolean) => {
-                if (checked) {
-                  saveImg();
-                }
-                else {
-                  back();
-                }
-                console.log(checked)
-              }" />
+              <Checkbox
+                id="terms" @update:checked="(checked: boolean) => {
+                  if (checked) {
+                    saveImg();
+                  }
+                  else {
+                    back();
+                  }
+                  console.log(checked)
+                }"
+              />
               <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
             </div>
           </CardContent>

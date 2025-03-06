@@ -3,8 +3,7 @@ import CommentPanel from '@/components/comment/CommentPanel.vue';
 import DistributionDiagram from '@/components/experiment/distribution/normal-distribution/NormalDiagram.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { toMarkdown } from '@/utils/markdown';
+import { renderLatex, toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue'
 import 'katex/dist/katex.min.css';
@@ -18,23 +17,6 @@ const transformedVariance = ref(0);
 const transformedMeanY = ref(0);
 const transformedVarianceY = ref(0);
 const lineShow = ref(false);
-
-
-// 定义渲染 LaTeX 的函数
-const renderLatex = (text) => {
-  try {
-    // 查找文本中的 LaTeX 代码（用 \( 和 \) 包裹）
-    const latexRegex = /\\\((.*?)\\\)/g;
-    return text.replace(latexRegex, (match, latex) => {
-      // 使用 katex 渲染 LaTeX 代码
-      return katex.renderToString(latex, { throwOnError: false });
-    });
-  } catch (error) {
-    console.error('LaTeX 渲染出错:', error);
-    return text;
-  }
-};
-
 
 const save = ref(false);
 function saveImg() {
@@ -269,8 +251,7 @@ $$
             <div class="grid grid-cols-2 gap-10 ">
               <div class="flex flex-col  gap-8 pb-5">
                 <div class="flex flex-col  md:w-full w-1/2 flex-1 items-center justify-center space-y-5">
-                 
-                  <div v-html="renderLatex('均值\\(μ\\)')"></div>
+                  <div v-html="renderLatex('均值\\(μ\\)')" />
 
                   <div class="max-w-xl space-y-3">
                     <Input v-model.number="mean[0]" fluid :min-fraction-digits="1" />
@@ -278,8 +259,7 @@ $$
                   </div>
                 </div>
                 <div class="flex flex-col  md:w-full w-1/2 flex-1 items-center justify-center space-y-5">
-                  
-                  <div v-html="renderLatex(' 方差\\(σ^2\\)')"></div>
+                  <div v-html="renderLatex(' 方差\\(σ^2\\)')" />
 
                   <div class="max-w-xl space-y-3">
                     <Input v-model.number="stdDev[0]" fluid :min-fraction-digits="1" />
@@ -289,16 +269,14 @@ $$
               </div>
               <div class="flex flex-col gap-8 pb-5">
                 <div class="flex flex-col  md:w-full w-1/2 flex-1 items-center justify-center space-y-5">
-              
-                  <div v-html="renderLatex('\\(a\\)')"></div>
+                  <div v-html="renderLatex('\\(a\\)')" />
 
                   <div class="max-w-xl space-y-3">
                     <Input v-model.number="a[0]" fluid :invalid="a[0] === 0" :min-fraction-digits="1" />
                     <Slider v-model="a" :min="-10" :max="10" :step="0.01" class="w-full" />
                   </div>
                   <div class="flex flex-col  md:w-full w-1/2 flex-1 items-center justify-center space-y-5">
-                  
-                    <div v-html="renderLatex('\\(b\\)')"></div>
+                    <div v-html="renderLatex('\\(b\\)')" />
 
                     <div class="max-w-xl space-y-3">
                       <Input v-model.number="b[0]" fluid :min-fraction-digits="1" />

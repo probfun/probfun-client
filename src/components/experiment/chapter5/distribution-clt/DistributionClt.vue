@@ -1,20 +1,24 @@
 <script setup lang="ts">
+import { generateDistributionFunctionApi } from '@/api/ai/aiApi.ts';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
+import { getConvergeFuncData, getConvergeFuncOption } from '@/components/experiment/chapter5/distribution-clt/config.ts';
 import DistributionCltDiagram from '@/components/experiment/chapter5/distribution-clt/DistributionCltDiagram.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Select } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { toMarkdown } from '@/utils/markdown.ts';
 import { all, create } from 'mathjs';
-import { onMounted, ref, watch } from 'vue';
+import { nextTick, onMounted, ref, watch } from 'vue';
 import { content } from './content';
-import 'nerdamer/Calculus';
-import 'nerdamer/Algebra';
-import 'nerdamer/Solve';
+// import 'nerdamer/Calculus';
+// import 'nerdamer/Algebra';
+// import 'nerdamer/Solve';
 
+const distributionCltDiagram = ref<typeof DistributionCltDiagram | null>(null);
 const latexInput = ref('e^{-x^2}');
+const aiInput = ref('T分布');
 const displayLatexInput = ref('e^{-x^2}');
 const range = ref([0, 10]);
 const math = create(all);
@@ -238,20 +242,82 @@ const selected = ref<FunctionLabel>(functionLabel[0]);
 
 const n_list = ref<number[]>([2]);
 const n = ref(2);
+
+const xs = ref<number[]>([]);
+const ys = ref<number[]>([]);
+const chartData = ref(getConvergeFuncData(xs.value, ys.value));
+const chartOption = ref(getConvergeFuncOption());
+
 watch(() => n_list, () => {
   n.value = n_list.value[0];
+}, { deep: true });
+
+function refreshConvergeFunc() {
+  if (distributionCltDiagram.value) {
+    const { x, y } = distributionCltDiagram.value.calculateConvergeFuncPoints();
+    xs.value = x;
+    ys.value = y;
+    chartData.value = getConvergeFuncData(xs.value, ys.value);
+  }
+}
+
+watch([fAny, range, n], () => {
+  nextTick(() => {
+    refreshConvergeFunc();
+  });
 }, { deep: true });
 
 onMounted(() => {
   fAny.value = fAnyWrap(functionList[selected.value].f);
   range.value = [functionList[selected.value].left, functionList[selected.value].right];
+  refreshConvergeFunc();
 });
+
+const generating = ref(false);
+async function generate() {
+  if (generating.value) {
+    return;
+  }
+  try {
+    generating.value = true;
+    const response = await generateDistributionFunctionApi(aiInput.value);
+    const funcStr = response.function;
+    const functionMatch = funcStr.match(/function\s+(\w+)\s*\((.*?)\)\s*\{([\s\S]*)\}/);
+    if (functionMatch) {
+      const functionName = functionMatch[1]; // "distribution"
+      const args = functionMatch[2]; // "x"
+      const body = functionMatch[3]; // function body
+      console.log(functionName, args, body);
+      // eslint-disable-next-line no-new-func
+      fAny.value = new Function(args, body) as (x: number) => number;
+    }
+    displayLatexInput.value = response.latex;
+    range.value[0] = response.min;
+    range.value[1] = response.max;
+  }
+  catch (error) {
+    console.error(error);
+  }
+  finally {
+    generating.value = false;
+  }
+}
+
+const distanceContent = String.raw`
+我们使用 $ D_{KS}(P||Q) = \max_x |P(x) - Q(x)|$ 衡量两个分布之间的距离。有：
+
+$$
+\text{Distance}(i) = D_{KS}(F_i||N_i), \quad i = 1,\ 2, \dots,\ 30
+$$
+
+作为叠加 $i$ 个分布后的分布 $F_i$ 与其对应的正态分布 $N_i$ 之间的距离。可以以此判断叠加分布是否收敛于正态分布。
+`;
 </script>
 
 <template>
   <ExperimentBoard>
     <template #experiment>
-      <DistributionCltDiagram v-if="fAny" :args="{ f: fAny, dx: 0.01, left: range[0], right: range[1], n, multi }" />
+      <DistributionCltDiagram v-if="fAny" ref="distributionCltDiagram" :args="{ f: fAny, dx: 0.01, left: range[0], right: range[1], n, multi }" />
     </template>
     <template #parameter>
       <div class="p-2 grid grid-cols-2 gap-2 h-full w-full">
@@ -292,8 +358,17 @@ onMounted(() => {
                     确定
                   </Button>
                 </div>
+                <Label v-if="selected === 'ai'" class="flex-shrink-0">
+                  想要生成的分布名称：
+                </Label>
+                <div v-if="selected === 'ai'" class="gap-2 flex">
+                  <Input v-model="aiInput" />
+                  <Button :disabled="generating" @click="generate">
+                    生成
+                  </Button>
+                </div>
               </div>
-              <div v-if="fAny" class="w-full prose items-center mt-3" v-html="toMarkdown(`$$\n${selected === 'custom' ? `f(x)=${displayLatexInput}` : functionList[selected].latex}\n$$`)" />
+              <div v-if="fAny" class="w-full prose items-center mt-3" v-html="toMarkdown(`$$\n${selected === 'ai' ? displayLatexInput : selected === 'custom' ? `f(x)=${displayLatexInput}` : functionList[selected].latex}\n$$`)" />
               <div v-else class="w-full pt-3 flex justify-center items-center">
                 <Label class="text-destructive">
                   你输入的概率密度函数无法解析，请检查输入
@@ -355,11 +430,14 @@ onMounted(() => {
             </CardContent>
           </Card>
         </div>
-        <Card>
+        <Card class="flex flex-col">
           <CardHeader class="p-4">
             <CardTitle> 收敛速度 </CardTitle>
           </CardHeader>
-          <CardContent />
+          <CardContent class="flex-1 flex flex-col">
+            <div class="w-full" v-html="toMarkdown(distanceContent)" />
+            <chart type="line" :data="chartData" class="w-full flex-1" :options="chartOption" />
+          </CardContent>
         </Card>
         <!--        <div class="flex gap-2 items-center"> -->
         <!--          <Label class="flex-shrink-0"> -->

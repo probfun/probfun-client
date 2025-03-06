@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import Plotly from 'plotly.js-dist';
-import { onMounted, ref, watch, nextTick } from 'vue';
+import { nextTick, onMounted, ref, watch } from 'vue';
 
 const props = defineProps<{
-  mean1: number,
-  mean2: number,
-  sigma1: number,
-  sigma2: number,
-  density: number,
-  isChart3: boolean,
-  fixedX: number,
-  fixedY: number,
+  mean1: number
+  mean2: number
+  sigma1: number
+  sigma2: number
+  density: number
+  isChart3: boolean
+  fixedX: number
+  fixedY: number
 }>();
 
 const plotlyChart1 = ref<HTMLElement | null>(null); // 3D二维正态分布图
@@ -109,16 +109,16 @@ function createPlotlyChart1() {
       zaxis: { title: 'Probability Density' },
     },
     margin: {
-      t: 0,  // 顶部空白
-      b: 30,  // 底部空白
-      l: 30,  // 左侧空白
-      r: 30,  // 右侧空白
+      t: 0, // 顶部空白
+      b: 30, // 底部空白
+      l: 30, // 左侧空白
+      r: 30, // 右侧空白
     },
     title: '',
     showlegend: false,
   };
   const config = {
-    displayModeBar: false,  // 禁用交互菜单
+    displayModeBar: false, // 禁用交互菜单
   };
   // 渲染图表
   if (plotlyChart1.value) {
@@ -156,22 +156,22 @@ function createPlotlyChart2() {
   const data = [
     {
       type: 'bar',
-      x: x,
+      x,
       y: marginalX,
       name: 'Marginal X',
       marker: { color: 'rgba(255, 0, 0, 0.9)' },
     },
   ];
- 
+
   // 设置布局
   const layout = {
     xaxis: { title: '' },
     yaxis: { title: '' },
     margin: {
-      t: 0,  // 顶部空白
-      b: 30,  // 底部空白
-      l: 50,  // 左侧空白
-      r: 30,  // 右侧空白
+      t: 0, // 顶部空白
+      b: 30, // 底部空白
+      l: 50, // 左侧空白
+      r: 30, // 右侧空白
     },
     title: '',
   };
@@ -248,10 +248,10 @@ function createPlotlyChart3() {
   // 设置布局
   const layout = {
     margin: {
-      t: 30,  // 顶部空白
-      b: 30,  // 底部空白
-      l: 50,  // 左侧空白
-      r: 30,  // 右侧空白
+      t: 30, // 顶部空白
+      b: 30, // 底部空白
+      l: 50, // 左侧空白
+      r: 30, // 右侧空白
     },
     xaxis: {
       title: 'X',
@@ -260,11 +260,11 @@ function createPlotlyChart3() {
     yaxis: {
       title: 'Y',
       zeroline: true,
-      scaleanchor: 'x',  // 将 y 轴的比例锚定到 x 轴
-      scaleratio: 1,     // 确保 y 轴的比例与 x 轴相同
+      scaleanchor: 'x', // 将 y 轴的比例锚定到 x 轴
+      scaleratio: 1, // 确保 y 轴的比例与 x 轴相同
     },
     showlegend: false,
-    grid: { rows: 1, columns: 1 }
+    grid: { rows: 1, columns: 1 },
   };
 
   const config = {
@@ -320,10 +320,10 @@ function createPlotlyChart4() {
     xaxis: { title: '' },
     yaxis: { title: '' },
     margin: {
-      t: 30,  // 顶部空白
-      b: 30,  // 底部空白
-      l: 30,  // 左侧空白
-      r: 30,  // 右侧空白
+      t: 30, // 顶部空白
+      b: 30, // 底部空白
+      l: 30, // 左侧空白
+      r: 30, // 右侧空白
     },
     title: '',
   };
@@ -343,8 +343,8 @@ function createPlotlyChart5() {
   // 设置均值和协方差矩阵
   const mean = [props.mean1, props.mean2];
   const cov = [
-    [Math.pow(props.sigma1, 2), props.density * props.sigma1 * props.sigma2],  // cov[0][0] = sigma1^2, cov[0][1] = rho * sigma1 * sigma2
-    [props.density * props.sigma1 * props.sigma2, Math.pow(props.sigma2, 2)]   // cov[1][0] = rho * sigma1 * sigma2, cov[1][1] = sigma2^2
+    [props.sigma1 ** 2, props.density * props.sigma1 * props.sigma2], // cov[0][0] = sigma1^2, cov[0][1] = rho * sigma1 * sigma2
+    [props.density * props.sigma1 * props.sigma2, props.sigma2 ** 2], // cov[1][0] = rho * sigma1 * sigma2, cov[1][1] = sigma2^2
   ];
 
   // 创建网格点
@@ -353,30 +353,30 @@ function createPlotlyChart5() {
     return Array.from({ length: num }, (_, i) => start + i * step);
   };
 
-  const meshgrid = (x: number[], y: number[]) => {
+  const meshGrid = (x: number[], y: number[]) => {
     const X: number[][] = [];
     const Y: number[][] = [];
     for (let i = 0; i < y.length; i++) {
       X.push(x);
-      Y.push(Array(x.length).fill(y[i]));
+      Y.push(Array.from({ length: x.length }).fill(y[i]) as number[]);
     }
     return { X, Y };
   };
 
   const x = linspace(-10, 10, 200);
   const y = linspace(-10, 10, 200);
-  const { X, Y } = meshgrid(x, y);
+  const { X, Y } = meshGrid(x, y);
 
   // 创建二维正态分布的概率密度函数
   const rvPdf = (x: number, y: number) => {
     const det = cov[0][0] * cov[1][1] - cov[0][1] * cov[1][0];
     const invCov = [
       [cov[1][1] / det, -cov[0][1] / det],
-      [-cov[1][0] / det, cov[0][0] / det]
+      [-cov[1][0] / det, cov[0][0] / det],
     ];
     const diff = [x - mean[0], y - mean[1]];
-    const expTerm = -0.5 * (diff[0] * (invCov[0][0] * diff[0] + invCov[0][1] * diff[1]) +
-      diff[1] * (invCov[1][0] * diff[0] + invCov[1][1] * diff[1]));
+    const expTerm = -0.5 * (diff[0] * (invCov[0][0] * diff[0] + invCov[0][1] * diff[1])
+      + diff[1] * (invCov[1][0] * diff[0] + invCov[1][1] * diff[1]));
     const norm = 2 * Math.PI * Math.sqrt(det);
     return Math.exp(expTerm) / norm;
   };
@@ -397,11 +397,11 @@ function createPlotlyChart5() {
     {
       type: 'surface',
       z: Z,
-      x: X,  // 使用 X 和 Y 作为二维网格
-      y: Y,  // 使用 X 和 Y 作为二维网格
+      x: X, // 使用 X 和 Y 作为二维网格
+      y: Y, // 使用 X 和 Y 作为二维网格
       colorscale: 'Viridis',
       opacity: 0.7,
-      showscale: false,  // 完全隐藏颜色条
+      showscale: false, // 完全隐藏颜色条
     },
     {
       type: 'scatter3d',
@@ -411,9 +411,9 @@ function createPlotlyChart5() {
       mode: 'lines',
       line: {
         color: 'red',
-        width: 3
-      }
-    }
+        width: 3,
+      },
+    },
   ];
 
   // 设置布局
@@ -424,15 +424,15 @@ function createPlotlyChart5() {
       zaxis: { title: 'Y的条件分布' },
     },
     margin: {
-      t: 5,  // 顶部空白
-      b: 5,  // 底部空白
-      l: 5,  // 左侧空白
-      r: 5,  // 右侧空白
+      t: 5, // 顶部空白
+      b: 5, // 底部空白
+      l: 5, // 左侧空白
+      r: 5, // 右侧空白
     },
     title: '',
     legend: {
-      x: 1,  // 将图例放到右侧
-      y: 1,  // 将图例放到上方
+      x: 1, // 将图例放到右侧
+      y: 1, // 将图例放到上方
       traceorder: 'normal',
       font: {
         family: 'sans-serif',
@@ -442,7 +442,7 @@ function createPlotlyChart5() {
     },
   };
   const config = {
-    displayModeBar: false,  // 禁用交互菜单
+    displayModeBar: false, // 禁用交互菜单
   };
   // 渲染图表
   if (plotlyChart5.value) {
@@ -455,8 +455,8 @@ function createPlotlyChart6() {
   // 设置均值和协方差矩阵
   const mean = [props.mean1, props.mean2];
   const cov = [
-    [Math.pow(props.sigma1, 2), props.density * props.sigma1 * props.sigma2],  // cov[0][0] = sigma1^2, cov[0][1] = rho * sigma1 * sigma2
-    [props.density * props.sigma1 * props.sigma2, Math.pow(props.sigma2, 2)]   // cov[1][0] = rho * sigma1 * sigma2, cov[1][1] = sigma2^2
+    [props.sigma1 ** 2, props.density * props.sigma1 * props.sigma2], // cov[0][0] = sigma1^2, cov[0][1] = rho * sigma1 * sigma2
+    [props.density * props.sigma1 * props.sigma2, props.sigma2 ** 2], // cov[1][0] = rho * sigma1 * sigma2, cov[1][1] = sigma2^2
   ];
 
   // 创建网格点
@@ -465,30 +465,30 @@ function createPlotlyChart6() {
     return Array.from({ length: num }, (_, i) => start + i * step);
   };
 
-  const meshgrid = (x: number[], y: number[]) => {
+  const meshGrid = (x: number[], y: number[]) => {
     const X: number[][] = [];
     const Y: number[][] = [];
     for (let i = 0; i < y.length; i++) {
       X.push(x);
-      Y.push(Array(x.length).fill(y[i]));
+      Y.push(Array.from({ length: x.length }).fill(y[i]) as number[]);
     }
     return { X, Y };
   };
 
   const x = linspace(-10, 10, 200);
   const y = linspace(-10, 10, 200);
-  const { X, Y } = meshgrid(x, y);
+  const { X, Y } = meshGrid(x, y);
 
   // 创建二维正态分布的概率密度函数
   const rvPdf = (x: number, y: number) => {
     const det = cov[0][0] * cov[1][1] - cov[0][1] * cov[1][0];
     const invCov = [
       [cov[1][1] / det, -cov[0][1] / det],
-      [-cov[1][0] / det, cov[0][0] / det]
+      [-cov[1][0] / det, cov[0][0] / det],
     ];
     const diff = [x - mean[0], y - mean[1]];
-    const expTerm = -0.5 * (diff[0] * (invCov[0][0] * diff[0] + invCov[0][1] * diff[1]) +
-      diff[1] * (invCov[1][0] * diff[0] + invCov[1][1] * diff[1]));
+    const expTerm = -0.5 * (diff[0] * (invCov[0][0] * diff[0] + invCov[0][1] * diff[1])
+      + diff[1] * (invCov[1][0] * diff[0] + invCov[1][1] * diff[1]));
     const norm = 2 * Math.PI * Math.sqrt(det);
     return Math.exp(expTerm) / norm;
   };
@@ -508,11 +508,11 @@ function createPlotlyChart6() {
     {
       type: 'surface',
       z: Z,
-      x: X,  // 使用 X 和 Y 作为二维网格
-      y: Y,  // 使用 X 和 Y 作为二维网格
+      x: X, // 使用 X 和 Y 作为二维网格
+      y: Y, // 使用 X 和 Y 作为二维网格
       colorscale: 'Viridis',
       opacity: 0.7,
-      showscale: false,  // 完全隐藏颜色条
+      showscale: false, // 完全隐藏颜色条
     },
     {
       type: 'scatter3d',
@@ -522,9 +522,9 @@ function createPlotlyChart6() {
       mode: 'lines',
       line: {
         color: 'red',
-        width: 3
-      }
-    }
+        width: 3,
+      },
+    },
   ];
 
   // 设置布局
@@ -535,15 +535,15 @@ function createPlotlyChart6() {
       zaxis: { title: 'X的条件分布' },
     },
     margin: {
-      t: 5,  // 顶部空白
-      b: 5,  // 底部空白
-      l: 5,  // 左侧空白
-      r: 5,  // 右侧空白
+      t: 5, // 顶部空白
+      b: 5, // 底部空白
+      l: 5, // 左侧空白
+      r: 5, // 右侧空白
     },
     title: '',
     legend: {
-      x: 1,  // 将图例放到右侧
-      y: 1,  // 将图例放到上方
+      x: 1, // 将图例放到右侧
+      y: 1, // 将图例放到上方
       traceorder: 'normal',
       font: {
         family: 'sans-serif',
@@ -553,7 +553,7 @@ function createPlotlyChart6() {
     },
   };
   const config = {
-    displayModeBar: false,  // 禁用交互菜单
+    displayModeBar: false, // 禁用交互菜单
   };
   // 渲染图表
   if (plotlyChart6.value) {
@@ -589,14 +589,14 @@ watch(() => props.isChart3, async () => {
 <template>
   <div class="flex flex-col w-full h-full">
     <div class="flex w-full h-full">
-      <div id="plotly-chart2" ref="plotlyChart2" class="w-[550px] h-[320px]" v-if="!props.isChart3"></div>
-      <div id="plotly-chart5" ref="plotlyChart5" class="w-96 h-96" v-if="props.isChart3"></div>
-      <div id="plotly-chart1" ref="plotlyChart1" class="w-[400px] h-[320px]"></div>
+      <div v-if="!props.isChart3" id="plotly-chart2" ref="plotlyChart2" class="w-[550px] h-[320px]" />
+      <div v-if="props.isChart3" id="plotly-chart5" ref="plotlyChart5" class="w-96 h-96" />
+      <div id="plotly-chart1" ref="plotlyChart1" class="w-[400px] h-[320px]" />
     </div>
     <div class="flex w-full h-full">
-      <div id="plotly-chart3" ref="plotlyChart3" class="w-[550px] h-[550px]"></div>
-      <div id="plotly-chart4" ref="plotlyChart4" class="w-[400px] h-[550px]" v-if="!props.isChart3"></div>
-      <div id="plotly-chart6" ref="plotlyChart6" class="w-96 h-96" v-if="props.isChart3"></div>
+      <div id="plotly-chart3" ref="plotlyChart3" class="w-[550px] h-[550px]" />
+      <div v-if="!props.isChart3" id="plotly-chart4" ref="plotlyChart4" class="w-[400px] h-[550px]" />
+      <div v-if="props.isChart3" id="plotly-chart6" ref="plotlyChart6" class="w-96 h-96" />
     </div>
   </div>
 </template>

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import { Button } from '@/components/ui/button';
-import { toMarkdown } from '@/utils/markdown';
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { renderLatex, toMarkdown } from '@/utils/markdown';
 import Chart from 'primevue/chart';
 import InputNumber from 'primevue/inputnumber';
 import Slider from 'primevue/slider';
@@ -16,21 +17,6 @@ const chartOptions = ref();
 const binCounts = ref<number[]>([]);
 const path = ref<number[]>([]);
 let isSimulating = false;
-
-// 定义渲染 LaTeX 的函数
-const renderLatex = (text) => {
-  try {
-    // 查找文本中的 LaTeX 代码（用 \( 和 \) 包裹）
-    const latexRegex = /\\\((.*?)\\\)/g;
-    return text.replace(latexRegex, (match, latex) => {
-      // 使用 katex 渲染 LaTeX 代码
-      return katex.renderToString(latex, { throwOnError: false });
-    });
-  } catch (error) {
-    console.error('LaTeX 渲染出错:', error);
-    return text;
-  }
-};
 
 function setChartData() {
   const documentStyle = getComputedStyle(document.documentElement);
@@ -359,26 +345,24 @@ $$
 <template>
   <ExperimentBoard :panel-size="70">
     <template #experiment>
-
-        <div class="flex flex-col gap-4 h-full">
-          <div class="flex justify-center items-center">
-            <div>
-              <canvas ref="canvasRef" width="400" height="250" />
-            </div>
-          </div>
-          <div class="flex justify-center items-center h-full">
-            <Chart type="bar" :data="chartData" :options="chartOptions" class="h-full w-2/3" />
-          </div>
-          <div class="flex justify-center items-center">
-            <Button class="m-1" @click="startSimulation()">
-              开始模拟
-            </Button>
-            <Button class="m-1" @click="stopSimulation()">
-              停止模拟
-            </Button>
+      <div class="flex flex-col gap-4 h-full">
+        <div class="flex justify-center items-center">
+          <div>
+            <canvas ref="canvasRef" width="400" height="250" />
           </div>
         </div>
-
+        <div class="flex justify-center items-center h-full">
+          <Chart type="bar" :data="chartData" :options="chartOptions" class="h-full w-2/3" />
+        </div>
+        <div class="flex justify-center items-center">
+          <Button class="m-1" @click="startSimulation()">
+            开始模拟
+          </Button>
+          <Button class="m-1" @click="stopSimulation()">
+            停止模拟
+          </Button>
+        </div>
+      </div>
     </template>
     <template #parameter>
       <div class="w-full h-full p-3">
@@ -390,7 +374,7 @@ $$
             <div class="grid grid-cols-2 gap-10">
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <div v-html="renderLatex('框的数量')"></div>
+                  <div v-html="renderLatex('框的数量')" />
 
                   <div class="max-w-xl space-y-3">
                     <InputNumber v-model="n" fluid />
@@ -400,7 +384,7 @@ $$
               </div>
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <div v-html="renderLatex('球的数量(大于50时不予展示每个小球下落的路径)')"></div>
+                  <div v-html="renderLatex('球的数量(大于50时不予展示每个小球下落的路径)')" />
 
                   <div class="max-w-xl space-y-3">
                     <InputNumber v-model="ball" fluid />

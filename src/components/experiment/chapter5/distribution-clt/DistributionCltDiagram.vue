@@ -158,6 +158,34 @@ function calculatePoints() {
   chartOption.value = getChartOption(y1, y2);
 }
 
+function calculateConvergeFuncPoints() {
+  const { f, left, right, dx } = props.args;
+  const n = 30;
+  const x = [];
+  const y = [];
+
+  const { mean, variance } = calculateMeanAndVariance();
+
+  for (let j = 1; j <= 30; j++) {
+    const cur_mean = mean * j;
+    const cur_variance = variance * j;
+    const len = (right - left) * j;
+
+    const fn = selfConvolution(f, j, left * j, right * j);
+    let maxDiff = 0;
+    for (let i = left * n - 0.5 * len; i <= right * n + 0.5 * len; i += dx * n) {
+      i = Math.round(i * 100) / 100;
+      const y1 = fn(i);
+      const y2 = 1 / Math.sqrt(2 * Math.PI * cur_variance) * Math.exp(-0.5 * (i - cur_mean) ** 2 / cur_variance);
+      maxDiff = Math.max(maxDiff, Math.abs(y1 - y2));
+    }
+    x.push(j);
+    y.push(maxDiff);
+  }
+
+  return { x, y };
+}
+
 function calculatePointsMulti() {
   const { f, left, right, dx } = props.args;
   const n = 30;
@@ -213,6 +241,10 @@ onMounted(() => {
     calculatePoints();
     chartData.value = getChartData(xs.value, y1s.value, y2s.value);
   }
+});
+
+defineExpose({
+  calculateConvergeFuncPoints,
 });
 </script>
 

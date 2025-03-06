@@ -2,12 +2,11 @@
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { toMarkdown } from '@/utils/markdown';
+import { renderLatex, toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
+import { GraduationCap, Lightbulb, MessagesSquare } from 'lucide-vue-next';
 import Slider from 'primevue/slider';
 import { computed, onMounted, ref, watch } from 'vue';
-import { GraduationCap, Lightbulb, MessagesSquare } from 'lucide-vue-next';
 import ThreeNormalDiagram from './threeNormalDiagram.vue';
 import 'katex/dist/katex.min.css';
 
@@ -20,19 +19,6 @@ const x = ref(1);
 const y = ref(1)
 
 // 定义渲染 LaTeX 的函数
-const renderLatex = (text) => {
-  try {
-    // 查找文本中的 LaTeX 代码（用 \( 和 \) 包裹）
-    const latexRegex = /\\\((.*?)\\\)/g;
-    return text.replace(latexRegex, (match, latex) => {
-      // 使用 katex 渲染 LaTeX 代码
-      return katex.renderToString(latex, { throwOnError: false });
-    });
-  } catch (error) {
-    console.error('LaTeX 渲染出错:', error);
-    return text;
-  }
-};
 
 const oneContainer = ref<HTMLElement | null>(null);
 const twoContainer = ref<HTMLElement | null>(null);
@@ -158,7 +144,6 @@ watch([oneFormula, twoFormula, threeFormula], () => {
   renderFormula();
 });
 
-
 const discuss = `
 ## **二维正态的联合与边缘分布概率密度函数（PDF）**
 
@@ -206,7 +191,6 @@ $$
 N(μ_y+ρ\\frac{σ_y}{σ_x}(x-μ_x) , (1-ρ^2)σ_y²
 $$
 `
-
 
 const content = `
 ## **概述**
@@ -312,10 +296,12 @@ const discussTabList = [
 </script>
 
 <template>
-  <ExperimentBoard :panel-size="70" :discuss-tab-list="discussTabList">
+  <ExperimentBoard :layout="1" :panel-size="70" :discuss-tab-list="discussTabList">
     <template #experiment>
-      <ThreeNormalDiagram :mean1="mean1" :mean2="mean2" :sigma1="sigma1" :sigma2="sigma2" :density="density"
-        :is-chart3="isChart3" :fixed-x="x" :fixed-y="y" class="w-full h-full" />
+      <ThreeNormalDiagram
+        :mean1="mean1" :mean2="mean2" :sigma1="sigma1" :sigma2="sigma2" :density="density"
+        :is-chart3="isChart3" :fixed-x="x" :fixed-y="y" class="w-full h-full"
+      />
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center gap-3 p-3">
@@ -340,11 +326,11 @@ const discussTabList = [
               参数调整
             </CardTitle>
           </CardHeader>
-          <CardContent class=" flex  justify-center items-center gap-3">
-            <div class="grid grid-cols-8 gap-10">
+          <CardContent class="flex flex-col justify-center items-center gap-3">
+            <div class="grid grid-cols-2 gap-10">
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <div v-html="renderLatex('\\(μ_x\\)')"></div>
+                  <div v-html="renderLatex('\\(μ_x\\)')" />
 
                   <div class="max-w-xl space-y-3">
                     <Input v-model="mean1" fluid />
@@ -354,7 +340,7 @@ const discussTabList = [
               </div>
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <div v-html="renderLatex('\\(μ_y\\)')"></div>
+                  <div v-html="renderLatex('\\(μ_y\\)')" />
 
                   <div class="max-w-xl space-y-3">
                     <Input v-model="mean2" fluid />
@@ -364,7 +350,7 @@ const discussTabList = [
               </div>
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <div v-html="renderLatex('\\(σ_x\\)')"></div>
+                  <div v-html="renderLatex('\\(σ_x\\)')" />
 
                   <div class="max-w-xl space-y-3">
                     <Input v-model="sigma1" fluid />
@@ -374,7 +360,7 @@ const discussTabList = [
               </div>
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <div v-html="renderLatex('\\(σ_y\\)')"></div>
+                  <div v-html="renderLatex('\\(σ_y\\)')" />
 
                   <div class="max-w-xl space-y-3">
                     <Input v-model="sigma2" fluid />
@@ -384,7 +370,7 @@ const discussTabList = [
               </div>
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <div v-html="renderLatex('\\(ρ\\)')"></div>
+                  <div v-html="renderLatex('\\(ρ\\)')" />
 
                   <div class="max-w-xl space-y-3">
                     <Input v-model="density" fluid />
@@ -395,7 +381,7 @@ const discussTabList = [
 
               <div v-if="isChart3" class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <div v-html="renderLatex('\\(y\\)')"></div>
+                  <div v-html="renderLatex('\\(y\\)')" />
 
                   <div class="max-w-xl space-y-3">
                     <Input v-model="y" fluid />
@@ -405,7 +391,7 @@ const discussTabList = [
               </div>
               <div v-if="isChart3" class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <div v-html="renderLatex('\\(x\\)')"></div>
+                  <div v-html="renderLatex('\\(x\\)')" />
 
                   <div class="max-w-xl space-y-3">
                     <Input v-model="x" fluid />
@@ -413,19 +399,19 @@ const discussTabList = [
                   </div>
                 </div>
               </div>
-              <div class="dropdown dropdown-top dropdown-end transform translate-x-1/4 mt-6">
-                <Button tabindex="0" role="button" class="m-0">
-                  点我切换
-                </Button>
-                <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-                  <li @click="toggleChart1">
-                    <a>二维正态联合与边缘分布</a>
-                  </li>
-                  <li @click="toggleChart3">
-                    <a>二维正态分布的条件分布</a>
-                  </li>
-                </ul>
-              </div>
+            </div>
+            <div class="dropdown dropdown-top dropdown-end mt-6">
+              <Button tabindex="0" role="button" class="m-0">
+                点我切换
+              </Button>
+              <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                <li @click="toggleChart1">
+                  <a>二维正态联合与边缘分布</a>
+                </li>
+                <li @click="toggleChart3">
+                  <a>二维正态分布的条件分布</a>
+                </li>
+              </ul>
             </div>
           </CardContent>
         </Card>
