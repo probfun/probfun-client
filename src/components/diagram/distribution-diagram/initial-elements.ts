@@ -44,7 +44,7 @@ const defaultEdgeOptions = {
     color: '#000',
   },
   animated: false,
-  style: { strokeWidth: 2, stroke: '#80a8c9' },
+  style: { strokeWidth: 3, stroke: '#80a8c9' },
 };
 
 interface EdgeOptions {
@@ -60,6 +60,10 @@ interface EdgeOptions {
 function createEdge({ id, source, target, label = '', options = {} }: EdgeOptions) {
   const { style = {} } = options;
   const { stroke } = style;
+  // 新增 labelStyle 用于设置 label 的样式
+  const labelStyle = {
+    fontSize: '15px' // 这里设置 label 的字号，可根据需要调整
+  };
   return {
     id,
     source,
@@ -69,8 +73,10 @@ function createEdge({ id, source, target, label = '', options = {} }: EdgeOption
     ...defaultEdgeOptions,
     ...options,
     defaultStroke: stroke ?? '#80a8c9',
+    labelStyle // 将 labelStyle 添加到返回的边配置中
   };
 }
+
 
 export function initialEdges() {
   return [
@@ -387,7 +393,7 @@ export function initialEdges() {
       markerEnd: { type: 'arrowclosed', color: '#80a8c9' },
       labelStyle: { transform: 'translate(-15px, -45px)' },
     } }),
-    createEdge({ id: 'e51-46', source: '51', target: '46', label: 'vector α = α', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: { type: 'arrowclosed', color: '#f78c6c' } }),
+    createEdge({ id: 'e51-46', source: '51', target: '46', label: 'vector α = α', style: { strokeWidth: 5, stroke: '#f78c6c' }, markerEnd: { type: 'arrowclosed', color: '#f78c6c' } }),
     createEdge({
       id: 'e57-46',
       source: '57',

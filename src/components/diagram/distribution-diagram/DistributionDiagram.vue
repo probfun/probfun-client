@@ -27,9 +27,9 @@ const searchQuery = ref('');
 const configStore = useConfigStore();
 
 const customViewport = {
-  x: -500, // 初始 X 坐标
-  y: 50, // 初始 Y 坐标
-  zoom: 0.5, // 初始缩放比例
+  x: -2300, // 初始 X 坐标
+  y: -300, // 初始 Y 坐标
+  zoom: 0.95, // 初始缩放比例
 };
 
 function moveToNode(nodeId: string) {
