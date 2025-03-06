@@ -20,8 +20,9 @@ import Select from 'primevue/select';
 import Textarea from 'primevue/textarea';
 import { useToast } from 'primevue/usetoast';
 import { onMounted, ref, watch } from 'vue';
-import { fetchCommentsApi } from '@/api/class/teacher/teacherApi';
+import { fetchCommentsApi, fetchClickCountApi, fetchCommentCountApi, fetchFavoriteCountApi, fetchTimeApi } from '@/api/class/teacher/teacherApi';
 import { Comment } from '@/api/comment/commentType';
+import type { ClickCount, CommentCount, FavoriteCount, Time } from '@/api/class/classType'
 
 const userStore = useUserStore();
 const defaultValue = 'item-1'
@@ -143,6 +144,10 @@ async function sendPost() {
 
 const postList = ref<Post[] | null>(null);
 const commentList = ref<Comment[] | null>(null);
+const clickList = ref<ClickCount[] | null>(null);
+const favoriteList = ref<FavoriteCount[] | null>(null);
+const timeList = ref<Time[] | null>(null);
+const commentCountList = ref<CommentCount[] | null>(null);
 
 async function getPost() {
   try {
@@ -185,10 +190,79 @@ async function getComments() {
   }
 }
 
+async function getClickCount() {
+  try {
+    const result = await fetchClickCountApi(selectedClass.value.name, 'ALL_TIME');
+    clickList.value = result.clicks;
+    console.log('dianji', clickList.value);
+    clickList.value.forEach(clickCount => {
+      click.value.push({
+        expName: clickCount.experiment.expName,
+        times: clickCount.clickCount
+      })
+    });
+  }
+  catch (error) {
+    console.error('Error during fetching click count:', error);
+  }
+}
+async function getFavoriteCount() {
+  try {
+    const result = await fetchFavoriteCountApi(selectedClass.value.name, 'ALL_TIME');
+    favoriteList.value = result.favorites;
+    console.log('shoucang', favoriteList.value);
+    favoriteList.value.forEach(favoriteCount => {
+      star.value.push({
+        expName: favoriteCount.experiment.expName,
+        times: favoriteCount.favoriteCount
+      })
+    })
+  }
+  catch (error) {
+    console.error('Error during fetching favorite count:', error);
+  }
+}
+async function getTime() {
+  try {
+    const result = await fetchTimeApi(selectedClass.value.name, 'ALL_TIME');
+    timeList.value = result.times;
+    console.log('liulan', timeList.value);
+    timeList.value.forEach(time => {
+      browse.value.push({
+        expName: time.experiment.expName,
+        times: time.time
+      })
+    })
+  }
+  catch (error) {
+    console.error('Error during fetching time:', error);
+  }
+}
+async function getCommentCount() {
+  try {
+    const result = await fetchCommentCountApi(selectedClass.value.name, 'ALL_TIME');
+    commentCountList.value = result.comments;
+    console.log('pinglunshu', commentCountList.value);
+    commentCountList.value.forEach(comments => {
+      comment.value.push({
+        expName: comments.experiment.expName,
+        times: comments.commentCount
+      })
+    })
+  }
+  catch (error) {
+    console.error('Error during fetching comment count:', error);
+  }
+}
+
 onMounted(async () => {
   await getClasses();
   await getPost();
   await getComments();
+  await getClickCount();
+  await getFavoriteCount();
+  await getTime();
+  await getCommentCount();
 })
 watch([selectedClass], () => {
   getPost();

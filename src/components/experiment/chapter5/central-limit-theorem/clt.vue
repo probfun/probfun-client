@@ -344,13 +344,12 @@ $$
 <template>
   <ExperimentBoard :panel-size="70">
     <template #experiment>
-      <div>
-        <div class="flex flex-col gap-4 h-1/2">
+
+        <div class="flex flex-col gap-4 h-full">
           <div class="flex justify-center items-center">
             <div>
               <canvas ref="canvasRef" width="400" height="250" />
             </div>
-
           </div>
           <div class="flex justify-center items-center h-full">
             <Chart type="bar" :data="chartData" :options="chartOptions" class="h-full w-2/3" />
@@ -365,7 +364,6 @@ $$
           </div>
         </div>
 
-      </div>
     </template>
     <template #parameter>
       <div class="w-full h-full p-3">

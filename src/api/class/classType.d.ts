@@ -1,8 +1,29 @@
 import type { UserPublic } from '@/api/user/userType';
+import { Experiment } from '@/api/experiment/experimentType';
 
 export interface Post {
-    title: string
-    content: string
-    timestamp: string
-    user: UserPublic
-  }
+  title: string
+  content: string
+  timestamp: string
+  user: UserPublic
+}
+
+export interface ClickCount {
+  experiment: Experiment
+  clickCount: number
+}
+
+export interface CommentCount {
+  experiment: Experiment
+  commentCount: number
+}
+
+export interface FavoriteCount {
+  experiment: Experiment
+  favoriteCount: number
+}
+
+export interface Time {
+  experiment: Experiment
+  time: number
+}
