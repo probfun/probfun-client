@@ -15,6 +15,22 @@ const mean = computed(() => number.value[0] * probability.value[0]);
 const variance = computed(() => number.value[0] * probability.value[0] * (1 - probability.value[0]));
 // const stdDev = computed(() => Math.sqrt(variance.value));
 
+
+// 定义渲染 LaTeX 的函数
+const renderLatex = (text) => {
+  try {
+    // 查找文本中的 LaTeX 代码（用 \( 和 \) 包裹）
+    const latexRegex = /\\\((.*?)\\\)/g;
+    return text.replace(latexRegex, (match, latex) => {
+      // 使用 katex 渲染 LaTeX 代码
+      return katex.renderToString(latex, { throwOnError: false });
+    });
+  } catch (error) {
+    console.error('LaTeX 渲染出错:', error);
+    return text;
+  }
+};
+
 const binomialFormula = computed(() => ` \\\\P(X = k) = \\binom{${number.value[0]}}{k} ${probability.value[0]}^k (1-${probability.value[0]})^{${number.value[0]}-k}`);
 const binomialContainer = ref<HTMLElement | null>(null);
 
@@ -161,14 +177,17 @@ $$
           <CardContent class="flex-1 flex flex-col justify-center ">
             <div class="flex gap-4 pb-8">
               <div class="flex flex-col flex-1 items-center justify-center space-y-2">
-                <Label> 实验次数n </Label>
+            
+                <div v-html="renderLatex('实验次数\\(n\\)')"></div>
+
                 <div class="max-w-xl space-y-3">
                   <Input v-model.number="number[0]" />
                   <Slider v-model="number" :min="20" :max="100" :step="1" class="w-48" />
                 </div>
               </div>
               <div class="flex flex-col flex-1 items-center justify-center space-y-2">
-                <Label> 成功概率 p </Label>
+                <div v-html="renderLatex('成功概率\\(p\\)')"></div>
+
                 <div class="max-w-xl space-y-3">
                   <Input v-model.number="probability[0]" :min-fraction-digits="2" />
                   <Slider v-model="probability" :min="0" :max="1" :step="0.01" class="w-48" />
