@@ -1,5 +1,7 @@
 import type { NodeOptions } from '@/api/distribution/distributionType';
 import { useDistributionStore } from '@/store';
+import katex from 'katex';
+import 'katex/dist/katex.min.css';
 
 let nodeIdCounter = 1; // 初始化计数器
 // const defaultStyle = {
@@ -64,6 +66,7 @@ function createEdge({ id, source, target, label = '', options = {} }: EdgeOption
   const labelStyle = {
     fontSize: '15px' // 这里设置 label 的字号，可根据需要调整
   };
+  
   return {
     id,
     source,
@@ -91,7 +94,7 @@ export function initialEdges() {
       label: 'n → ∞',
       options: {
         animated: true, // 单独为这条边启用动画
-        style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
       },
     }),
     createEdge({ id: 'e8-7', source: '8', target: '7', label: 'A(c) = -log(1-c)' }),
@@ -104,7 +107,7 @@ export function initialEdges() {
       label: 'μ~gamma',
       options: {
         animated: true, // 单独为这条边启用动画
-        style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
       },
     }),
     createEdge({
@@ -114,7 +117,7 @@ export function initialEdges() {
       label: 'μ = np,n→∞',
       options: {
         animated: true, // 单独为这条边启用动画
-        style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
       },
     }),
     createEdge({
@@ -124,7 +127,7 @@ export function initialEdges() {
       label: 'p~beta',
       options: {
         animated: true, // 单独为这条边启用动画
-        style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
       },
     }),
     createEdge({
@@ -134,7 +137,7 @@ export function initialEdges() {
       label: 'p = n1/n3,n3 → ∞,n1 → ∞,n2 = n',
       options: {
         animated: true, // 单独为这条边启用动画
-        style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
       },
     }),
     createEdge({
@@ -144,7 +147,7 @@ export function initialEdges() {
       label: 'p = n1/n3,n = n2,n3 → ∞',
       options: {
         animated: true, // 单独为这条边启用动画
-        style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
       },
     }),
     createEdge({ id: 'e13-14', source: '13', target: '14', label: 'n = 1', options: {
@@ -162,7 +165,7 @@ export function initialEdges() {
       label: 'p~beta',
       options: {
         animated: true, // 单独为这条边启用动画
-        style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
       },
     }),
     createEdge({ id: 'e12-16', source: '12', target: '16', label: 'α = (1-p)/p,β = n' }),
@@ -173,7 +176,7 @@ export function initialEdges() {
       label: 'n → ∞,μ = n/p',
       options: {
         animated: true, // 单独为这条边启用动画
-        style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
       },
     }),
     createEdge({
@@ -183,7 +186,7 @@ export function initialEdges() {
       label: 'σ² = μ，μ → ∞',
       options: {
         animated: true, // 单独为这条边启用动画
-        style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
       },
     }),
     createEdge({
@@ -193,7 +196,7 @@ export function initialEdges() {
       label: 'μ = np，σ² = np(1-p),n → ∞',
       options: {
         animated: true, // 单独为这条边启用动画
-        style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
       },
     }),
     createEdge({ id: 'e18-13', source: '18', target: '13', label: 'β = 0' }),
@@ -212,7 +215,7 @@ export function initialEdges() {
       label: 'μ = n(1-p),n → ∞',
       options: {
         animated: true, // 单独为这条边启用动画
-        style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
       },
     }),
     createEdge({
@@ -222,7 +225,7 @@ export function initialEdges() {
       label: 'α ~ inverted gamma',
       options: {
         animated: true, // 单独为这条边启用动画
-        style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
       },
     }),
     createEdge({ id: 'e20-15', source: '20', target: '15', label: 'β = 1' }),
@@ -248,7 +251,7 @@ export function initialEdges() {
       label: 'β = γ → ∞',
       options: {
         animated: true, // 单独为这条边启用动画
-        style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
       },
     }),
     createEdge({
@@ -258,7 +261,7 @@ export function initialEdges() {
       label: 'μ = αβ,σ² = α²β,β → ∞',
       options: {
         animated: true, // 单独为这条边启用动画
-        style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
       },
     }),
     createEdge({ id: 'e17-36', source: '17', target: '36', label: 'Σ[(Xi - μ)/σ]²' }),
@@ -269,7 +272,7 @@ export function initialEdges() {
       label: 'δ → 0',
       options: {
         animated: true, // 单独为这条边启用动画
-        style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
       },
     }),
     createEdge({
@@ -279,7 +282,7 @@ export function initialEdges() {
       label: 'β → ∞',
       options: {
         animated: true, // 单独为这条边启用动画
-        style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
       },
     }),
     createEdge({ id: 'e27-32', source: '27', target: '32', label: 'γ = 1' }),
@@ -295,7 +298,7 @@ export function initialEdges() {
       label: 'β → ∞',
       options: {
         animated: true, // 单独为这条边启用动画
-        style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
       },
     }),
     createEdge({
@@ -305,7 +308,7 @@ export function initialEdges() {
       label: 'n → ∞',
       options: {
         animated: true, // 单独为这条边启用动画
-        style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
       },
     }),
     createEdge({ id: 'e21-39', source: '21', target: '39', label: 'X1/X2' }),
@@ -383,7 +386,7 @@ export function initialEdges() {
       label: 'δ → 0',
       options: {
         animated: true, // 单独为这条边启用动画,虚线单箭头
-        style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
       },
     }),
     createEdge({ id: 'e46-51', source: '46', target: '51', label: 'Mixture', options: {
@@ -401,7 +404,7 @@ export function initialEdges() {
       label: 'δ = κ → 0,α = 1/γ',
       options: {
         animated: true, // 单独为这条边启用动画,虚线单箭头
-        style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
       },
     }),
     createEdge({ id: 'e61-46', source: '61', target: '46', label: 'X²', options: {
@@ -433,7 +436,7 @@ export function initialEdges() {
     createEdge({ id: 'e54-48', source: '54', target: '48', label: '{log[1-(logX)(logκ)]/δ}/logκ' }),
     createEdge({ id: 'e52-46', source: '52', target: '46', label: 'κ → 0,α = 1', options: {
       animated: true, // 单独为这条边启用动画,虚线单箭头
-      style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+      style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
     } }),
     createEdge({ id: 'e58-46', source: '58', target: '46', label: '|X|,α1 = α2', options: {
       animated: true, // 单独为这条边启用动画
@@ -472,7 +475,7 @@ export function initialEdges() {
     createEdge({ id: 'e55-59', source: '55', target: '59', label: 'γ = 1' }),
     createEdge({ id: 'e60-56', source: '60', target: '56', label: 'γ → 0', options: {
       animated: true, // 单独为这条边启用动画,虚线单箭头
-      style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+      style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
     } }),
     createEdge({ id: 'e57-61', source: '57', target: '61', label: 'δ = 2/α，γ = 0' }),
     createEdge({ id: 'e64-59', source: '64', target: '59', label: 'α = 1' }),
@@ -496,7 +499,7 @@ export function initialEdges() {
     } }),
     createEdge({ id: 'e72-69', source: '72', target: '69', label: 'κ → 0', options: {
       animated: true, // 单独为这条边启用动画,虚线单箭头
-      style: { stroke: '#80a8c9' }, // 覆盖默认颜色
+      style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
     } }),
     createEdge({ id: 'e66-74', source: '66', target: '74', label: 'logX' }),
 

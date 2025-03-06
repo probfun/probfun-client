@@ -13,6 +13,21 @@ const lambda = computed(() => 60 / time.value[0]);
 const exponential = ref(true);
 const poisson = ref(false);
 
+// 定义渲染 LaTeX 的函数
+const renderLatex = (text) => {
+  try {
+    // 查找文本中的 LaTeX 代码（用 \( 和 \) 包裹）
+    const latexRegex = /\\\((.*?)\\\)/g;
+    return text.replace(latexRegex, (match, latex) => {
+      // 使用 katex 渲染 LaTeX 代码
+      return katex.renderToString(latex, { throwOnError: false });
+    });
+  } catch (error) {
+    console.error('LaTeX 渲染出错:', error);
+    return text;
+  }
+};
+
 const exponentialFormula = computed(() => `f(x) = \\frac{1}{${time.value[0]}} e^{-\\frac{x}{${time.value[0]}}}, \\quad x \\geq 0`);
 const exponentialContainer = ref<HTMLElement | null>(null);
 
@@ -313,6 +328,7 @@ $$
               <div v-if="exponential">
                 平均等车时间{{ time[0] }}分钟
               </div>
+              
             </CardContent>
           </Card>
           <Card class="w-1/2 gap-3 ">
@@ -336,7 +352,8 @@ $$
           <CardContent class="flex-1 flex flex-col justify-center ">
             <div class="flex gap-4 pb-8">
               <div class="flex flex-col flex-1 items-center justify-center space-y-2">
-                <Label> 公交车的发车间隔（min） </Label>
+                <div v-html="renderLatex('公交车的发车间隔(\\(min\\))')"></div>
+
                 <div class="max-w-xl space-y-3">
                   <Input v-model="time[0]" type="number" :min="1" :max="30" />
                   <Slider v-model="time" :min="5" :max="30" :step="5" class="w-48" />

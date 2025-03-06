@@ -17,6 +17,21 @@ const binCounts = ref<number[]>([]);
 const path = ref<number[]>([]);
 let isSimulating = false;
 
+// 定义渲染 LaTeX 的函数
+const renderLatex = (text) => {
+  try {
+    // 查找文本中的 LaTeX 代码（用 \( 和 \) 包裹）
+    const latexRegex = /\\\((.*?)\\\)/g;
+    return text.replace(latexRegex, (match, latex) => {
+      // 使用 katex 渲染 LaTeX 代码
+      return katex.renderToString(latex, { throwOnError: false });
+    });
+  } catch (error) {
+    console.error('LaTeX 渲染出错:', error);
+    return text;
+  }
+};
+
 function setChartData() {
   const documentStyle = getComputedStyle(document.documentElement);
 
@@ -377,7 +392,8 @@ $$
             <div class="grid grid-cols-2 gap-10">
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <Label>框的数量</Label>
+                  <div v-html="renderLatex('框的数量')"></div>
+
                   <div class="max-w-xl space-y-3">
                     <InputNumber v-model="n" fluid />
                     <Slider v-model="n" :min="3" :max="15" :step="2" class="w-full" />
@@ -386,7 +402,8 @@ $$
               </div>
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <Label>球的数量(大于50时不予展示每个小球下落的路径)</Label>
+                  <div v-html="renderLatex('球的数量(大于50时不予展示每个小球下落的路径)')"></div>
+
                   <div class="max-w-xl space-y-3">
                     <InputNumber v-model="ball" fluid />
                     <Slider v-model="ball" :min="5" :max="1000" :step="5" class="w-full" />

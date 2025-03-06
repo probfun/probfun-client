@@ -19,6 +19,21 @@ const density = ref(0);
 const x = ref(1);
 const y = ref(1)
 
+// 定义渲染 LaTeX 的函数
+const renderLatex = (text) => {
+  try {
+    // 查找文本中的 LaTeX 代码（用 \( 和 \) 包裹）
+    const latexRegex = /\\\((.*?)\\\)/g;
+    return text.replace(latexRegex, (match, latex) => {
+      // 使用 katex 渲染 LaTeX 代码
+      return katex.renderToString(latex, { throwOnError: false });
+    });
+  } catch (error) {
+    console.error('LaTeX 渲染出错:', error);
+    return text;
+  }
+};
+
 const oneContainer = ref<HTMLElement | null>(null);
 const twoContainer = ref<HTMLElement | null>(null);
 const threeContainer = ref<HTMLElement | null>(null);
@@ -329,7 +344,8 @@ const discussTabList = [
             <div class="grid grid-cols-8 gap-10">
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <Label>μ_x</Label>
+                  <div v-html="renderLatex('\\(μ_x\\)')"></div>
+
                   <div class="max-w-xl space-y-3">
                     <Input v-model="mean1" fluid />
                     <Slider v-model="mean1" :min="-10" :max="10" :step="0.1" class="w-full" />
@@ -338,7 +354,8 @@ const discussTabList = [
               </div>
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <Label>μ_y</Label>
+                  <div v-html="renderLatex('\\(μ_y\\)')"></div>
+
                   <div class="max-w-xl space-y-3">
                     <Input v-model="mean2" fluid />
                     <Slider v-model="mean2" :min="-10" :max="10" :step="0.1" class="w-full" />
@@ -347,7 +364,8 @@ const discussTabList = [
               </div>
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <Label>σ_x</Label>
+                  <div v-html="renderLatex('\\(σ_x\\)')"></div>
+
                   <div class="max-w-xl space-y-3">
                     <Input v-model="sigma1" fluid />
                     <Slider v-model="sigma1" :min="0.1" :max="2" :step="0.1" class="w-full" />
@@ -356,7 +374,8 @@ const discussTabList = [
               </div>
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <Label>σ_y</Label>
+                  <div v-html="renderLatex('\\(σ_y\\)')"></div>
+
                   <div class="max-w-xl space-y-3">
                     <Input v-model="sigma2" fluid />
                     <Slider v-model="sigma2" :min="0.1" :max="2" :step="0.1" class="w-full" />
@@ -365,7 +384,8 @@ const discussTabList = [
               </div>
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <Label>ρ</Label>
+                  <div v-html="renderLatex('\\(ρ\\)')"></div>
+
                   <div class="max-w-xl space-y-3">
                     <Input v-model="density" fluid />
                     <Slider v-model="density" :min="-0.9" :max="0.9" :step="0.1" class="w-full" />
@@ -375,7 +395,8 @@ const discussTabList = [
 
               <div v-if="isChart3" class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <Label>y</Label>
+                  <div v-html="renderLatex('\\(y\\)')"></div>
+
                   <div class="max-w-xl space-y-3">
                     <Input v-model="y" fluid />
                     <Slider v-model="y" :min="-10" :max="10" :step="1" class="w-full" />
@@ -384,7 +405,8 @@ const discussTabList = [
               </div>
               <div v-if="isChart3" class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <Label>x</Label>
+                  <div v-html="renderLatex('\\(x\\)')"></div>
+
                   <div class="max-w-xl space-y-3">
                     <Input v-model="x" fluid />
                     <Slider v-model="x" :min="-10" :max="10" :step="1" class="w-full" />

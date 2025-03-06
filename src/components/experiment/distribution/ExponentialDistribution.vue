@@ -13,6 +13,21 @@ const rate = ref([2]);
 const shift = ref([1]);
 const numberx = ref([1]);
 
+// 定义渲染 LaTeX 的函数
+const renderLatex = (text) => {
+  try {
+    // 查找文本中的 LaTeX 代码（用 \( 和 \) 包裹）
+    const latexRegex = /\\\((.*?)\\\)/g;
+    return text.replace(latexRegex, (match, latex) => {
+      // 使用 katex 渲染 LaTeX 代码
+      return katex.renderToString(latex, { throwOnError: false });
+    });
+  } catch (error) {
+    console.error('LaTeX 渲染出错:', error);
+    return text;
+  }
+};
+
 const save = ref(false);
 function saveImg() {
   save.value = true;
@@ -223,14 +238,16 @@ $$
             </div>
             <div class="flex gap-4 pb-1 w-full">
               <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                <Label> 事件发生的速率参数λ </Label>
+                <div v-html="renderLatex('事件发生的速率参数\\(λ\\)')"></div>
+
                 <div class="max-w-xl space-y-3">
                   <Input v-model.number="rate[0]" :min-fraction-digits="1" />
                   <Slider v-model="rate" :min="0" :max="10" :step="0.1" class="w-48" />
                 </div>
               </div>
               <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                <Label> 间隔/等待时间x </Label>
+                <div v-html="renderLatex('间隔/等待时间\\(x\\)')"></div>
+
                 <div class="max-w-xl space-y-3">
                   <Input v-model.number="numberx[0]" />
                   <Slider v-model="numberx" :min="1" :max="10" :step="0.2" class="w-48" />
@@ -238,7 +255,9 @@ $$
               </div>
 
               <div v-if="isChart2" class="flex flex-col flex-1 items-center justify-center space-y-5">
-                <Label> 固定值 </Label>
+ 
+                <div v-html="renderLatex('固定值')"></div>
+
                 <div class="max-w-xl space-y-3">
                   <Input v-model.number="shift[0]" :min-fraction-digits="1" />
                   <Slider v-model="shift" :min="0" :max="5" :step="0.1" class="w-48" />
