@@ -322,12 +322,12 @@ const discussTabList = [
 
         <Card class="w-full flex-1 flex flex-col">
           <CardHeader>
-            <CardTitle>
+            <!-- <CardTitle>
               参数调整
-            </CardTitle>
+            </CardTitle> -->
           </CardHeader>
           <CardContent class="flex flex-col justify-center items-center gap-3">
-            <div class="grid grid-cols-2 gap-10">
+            <div class="grid grid-cols-1 gap-10">
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
                   <div v-html="renderLatex('\\(μ_x\\)')" />
@@ -406,10 +406,10 @@ const discussTabList = [
               </Button>
               <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                 <li @click="toggleChart1">
-                  <a>二维正态联合与边缘分布</a>
+                  <a>联合与边缘分布</a>
                 </li>
                 <li @click="toggleChart3">
-                  <a>二维正态分布的条件分布</a>
+                  <a>条件分布</a>
                 </li>
               </ul>
             </div>

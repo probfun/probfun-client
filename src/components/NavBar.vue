@@ -233,6 +233,10 @@ function updateExperiment() {
     title.value = '贝特朗悖论';
     tags.value = ['随机变量产生机制影响事件概率'];
   }
+  else if (path === 'distribution-clt') {
+    title.value = '各种分布的中心极限定理';
+    tags.value = ['分布的可加性'];
+  }
 
   // else if (path === '') {
   // title.value ='';
