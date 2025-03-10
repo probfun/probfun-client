@@ -38,6 +38,13 @@ async function login() {
     error('登录失败，请重试');
   }
 }
+
+function casLogin() {
+  const CAS_SERVER = 'https://auth.bupt.edu.cn/authserver/login';
+  // const SERVICE_URL = encodeURIComponent(`${window.location.origin}/callback`);
+  const SERVICE_URL = encodeURIComponent(`http://192.144.199.178/callback`);
+  window.location.href = `${CAS_SERVER}?service=${SERVICE_URL}`;
+}
 </script>
 
 <template>
@@ -65,9 +72,18 @@ async function login() {
 
     <Button
       type="submit"
-      :disabled="isLoading" class="w-full"
+      :disabled="isLoading" class="w-full mb-3"
     >
       登录
+    </Button>
+
+    <Button
+      type="button"
+      variant="outline"
+      :disabled="isLoading" class="w-full"
+      @click="casLogin"
+    >
+      北邮统一认证
     </Button>
 
     <Label class="w-full flex justify-center mt-5">

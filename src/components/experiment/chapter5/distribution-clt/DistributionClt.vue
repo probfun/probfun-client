@@ -4,27 +4,19 @@ import CommentPanel from '@/components/comment/CommentPanel.vue';
 import { getConvergeFuncData, getConvergeFuncOption } from '@/components/experiment/chapter5/distribution-clt/config.ts';
 import DistributionCltDiagram from '@/components/experiment/chapter5/distribution-clt/DistributionCltDiagram.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
-import { all, create } from 'mathjs';
-import { nextTick, onMounted, ref, watch } from 'vue';
-import { content } from './content';
-import { GraduationCap, Lightbulb, MessagesSquare } from 'lucide-vue-next';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 
-import katex from 'katex'; // 或者使用 MathJax
-import 'katex/dist/katex.min.css'; // 引入 KaTeX 样式
-import { marked } from 'marked'; // 用于 Markdown 渲染
 import { renderLatex, toMarkdown } from '@/utils/markdown';
 
-
+import { GraduationCap, Lightbulb, MessagesSquare } from 'lucide-vue-next'; // 或者使用 MathJax
+import { all, create } from 'mathjs'; // 引入 KaTeX 样式
+import { nextTick, onMounted, ref, watch } from 'vue'; // 用于 Markdown 渲染
+import { content } from './content';
+import 'katex/dist/katex.min.css';
 // import 'nerdamer/Calculus';
 // import 'nerdamer/Algebra';
 // import 'nerdamer/Solve';
@@ -36,13 +28,11 @@ const displayLatexInput = ref('e^{-x^2}');
 const range = ref([0, 10]);
 const math = create(all);
 
-
-
-
 // 目录项
 const chapter1Items = [
   {
     index: 0,
+    title: '\\(1713\\) 年 – 雅各布·伯努利（\\(Jacob Bernoulli\\)）',
     label: '\\(\\scriptsize\\mathbf{大数定律}\\)：雅各布·伯努利提出了大数定律，表明在大量重复试验下，事件频率会趋近于其理论概率。这是研究随机现象极限行为的起点。然而，大数定律只说明了平均结果的收敛，却没有描述随机波动的分布情况。',
     icon: 'pi pi-chart-bar',
 
@@ -50,22 +40,26 @@ const chapter1Items = [
   // 可以添加更多章节项
   {
     index: 1,
+    title: '\\(1733\\) 年 – 亚伯拉罕·棣莫弗（\\(Abraham de Moivre\\)）',
     label: '\\(\\scriptsize\\mathbf{中心极限定理的雏形}\\)：棣莫弗在\\(1733\\)年的论文中使用正态分布近似估计抛硬币所得正面次数的分布，这是正态分布在概率论中的首次出现。他利用\\(\\scriptsize\\mathbf{斯特林公式}\\)推导出了二项分布的正态近似。这一成果可被视为伯努利大数定律的延伸，进一步给出了大量抛硬币时正面次数分布的近似形状。不过，棣莫弗当时仅将此视为二项分布的特殊近似，并未意识到正态近似在更一般情形下的普遍性。',
     icon: 'pi pi-chart-bar',
 
   },
   {
     index: 2,
+    title: '\\(1812\\) 年 – 皮埃尔-西蒙·拉普拉斯（\\(Pierre-Simon Laplace\\)）',
     label: '\\(\\scriptsize\\mathbf{更一般形式的中心极限定理}\\)：拉普拉斯在著作《概率论的解析理论》中给出了更一般形式的中心极限定理。他早在\\(1785\\)年就引入了特征函数这一工具，并在\\(1812\\)年发表了较为全面的定理。拉普拉斯证明了对于有界独立随机变量，其和经标准化后趋于正态分布。这是第一个比较一般的中心极限定理，标志着该理论从特殊案例走向普适规律。不过，拉普拉斯的工作在当时并未引起太大反响。',
     icon: 'pi pi-chart-bar',
   },
   {
     index: 3,
+    title: '\\(1824–1829\\) 年 – 西莫恩-德尼·泊松（\\(Siméon-Denis Poisson\\)）',
     label: '\\(\\scriptsize\\mathbf{更严格的论证}\\)：泊松连续发表两篇论文，试图对拉普拉斯的中心极限定理给出更加严格的论证。他引入了类似于现代\\(\\scriptsize\\mathbf{“随机变量”}\\)的概念，并指出中心极限定理并非在任何情形都成立，给出了反例（如具有“厚尾”的柯西分布不满足中心极限定理的条件）。这些工作使人们开始意识到，使用中心极限定理需要对随机变量的条件作出限定。',
     icon: 'pi pi-chart-bar',
   },
   {
     index: 4,
+    title: '\\(19\\) 世纪中期 – 更严格的论证尝试',
     label: '\\(\\scriptsize\\mathbf{德国数学家的贡献}\\)：狄利克雷和贝塞尔在证明中引入了\\(\\scriptsize\\mathbf{“不连续因子”}\\)等技巧，改进了泊松的论证方法，并尝试估计正态近似的误差项。虽然他们对误差界的研究并不完全成功，但这是首次对近似误差进行更深入的探讨。与此同时，法国数学家柯西是最早认真以纯数学视角对待概率论的人之一，他在与比奈讨论\\(\\scriptsize\\mathbf{最小二乘法}\\)时，推导出了正态近似误差的一个上界。然而，这一时期的大多数证明严格性仍不足，定理所需条件往往假设隐含而未明确列出。',
     icon: 'pi pi-chart-bar',
   },
@@ -74,6 +68,7 @@ const chapter1Items = [
 const chapter2Items = [
   {
     index: 0,
+    title: '\\(1887\\) 年 – 帕夫努蒂·切比雪夫（\\(Pafnuty Chebyshev\\)）',
     label: '\\(\\scriptsize\\mathbf{清晰的定理条件}\\)：切比雪夫在\\(1887\\)年发表论文，首次清晰地阐明了中心极限定理成立所需的条件，并将其明确视为一个\\(\\scriptsize\\mathbf{极限分布定理}\\)来研究。他采用\\(\\scriptsize\\mathbf{矩方法}\\)进行论证，证明了适当标准化后的和的各阶矩趋近于相应正态分布的矩。尽管切比雪夫的证明当时仍不够完整严谨，但他开创了用数学分析方法研究中心极限定理的先河。',
     icon: 'pi pi-chart-bar',
 
@@ -81,12 +76,14 @@ const chapter2Items = [
   // 可以添加更多章节项
   {
     index: 1,
+    title: '\\(1898\\) 年 – 安德烈·马尔可夫（\\(Andrey Markov\\)）',
     label: '\\(\\scriptsize\\mathbf{补充必要条件}\\)：马尔可夫细致审视了切比雪夫的结果，补充指出了一项必要条件：即参与求和的随机变量的方差不能随着样本规模增大而趋近于0。这一附加条件避免了平凡情形的干扰。马尔可夫同样使用矩的方法来说明中心极限定理，当随机变量独立同分布且满足上述条件时，规范化后和的分布的矩逐步逼近标准正态分布的矩。',
     icon: 'pi pi-chart-bar',
 
   },
   {
     index: 2,
+    title: '\\(1901\\) 年 – 亚历山大·李亚普诺夫（\\(Aleksandr Lyapunov\\)）',
     label: '\\(\\scriptsize\\mathbf{现代严格证明}\\)：李亚普诺夫在\\(1901\\)年发表论文，给出了第一个现代严格证明的中心极限定理。不同于前辈采用的矩方法，李亚普诺夫重新拾起了拉普拉斯早在\\(1810\\)年就使用过的\\(\\scriptsize\\mathbf{特征函数}\\)方法来处理问题。在\\(\\scriptsize\\mathbf{李亚普诺夫条件}\\)（要求随机变量有有限的第三阶矩等条件）下，他严格证明了独立随机变量和的标准化分布会收敛于正态分布。他的证明本质上证明了规范化和的特征函数收敛到标准正态分布的特征函数，再利用特征函数与分布之间的一一对应关系得出结论。李亚普诺夫的工作标志着中心极限定理从经验事实升华为严格的数学定理。',
     icon: 'pi pi-chart-bar',
   },
@@ -96,6 +93,7 @@ const chapter2Items = [
 const chapter3Items = [
   {
     index: 0,
+    title: '\\(1920\\) 年 – 乔治·波利亚（\\(George Pólya\\)）',
     label: ' \\(\\scriptsize\\mathbf{定理的命名}\\)：波利亚在\\(1920\\)年的论文标题中首次引入“中心极限定理”（\\(Central Limit Theorem\\)）这一名称。他之所以称之为“中心”，一方面是因为该定理在概率论中居于核心地位，另一方面也是指相对于分布两端的尾部行为，它刻画的是分布中心部分的极限行为。波利亚在文章摘要中指出：高斯（正态）分布在反复试验、测量误差的合成以及扩散过程等各种现象中频繁出现，这正是由一个起关键作用的极限定理所解释的。',
     icon: 'pi pi-chart-bar',
 
@@ -103,22 +101,26 @@ const chapter3Items = [
   // 可以添加更多章节项
   {
     index: 1,
+    title: '\\(1922\\) 年 – 雅尔·林德伯格（\\(Jarl Lindeberg\\)）',
     label: ' \\(\\scriptsize\\mathbf{林德伯格条件}\\)：林德伯格发表了中心极限定理的一个新证明，提出了更宽松的充分条件，即后来著名的林德伯格条件。林德伯格定理表明：即使随机变量不完全同分布，只要满足林德伯格条件，独立随机变量之和的标准化仍收敛于正态分布。林德伯格条件比李亚普诺夫条件更弱（要求更少），因此从理论上扩大了定理适用范围。不过，林德伯格条件在某些情形下较难验证，而可以证明凡满足李亚普诺夫条件者必满足林德伯格条件。',
     icon: 'pi pi-chart-bar',
 
   },
   {
     index: 2,
+    title: '\\(1935\\) 年 – 威廉·费勒（\\(William Feller\\)）',
     label: ' \\(\\scriptsize\\mathbf{充要条件}\\)：费勒在\\(1935\\)年前后给出了\\(\\scriptsize\\mathbf{独立同分布情形下}\\)中心极限定理成立的必要和充分条件，使这一极限定理达到了“定理”应有的严谨程度。这一成果后来被称作\\(\\scriptsize\\mathbf{林德伯格-费勒定理}\\)，因为费勒的证明建立在林德伯格条件的基础上，并证明了在一定技术性假设下该条件也是必要的。值得一提的是，保罗·莱维（\\(Paul Lévy\\)）几乎在同一时期独立地找到了类似的结论。',
     icon: 'pi pi-chart-bar',
   },
   {
     index: 3,
+    title: '\\(1936\\) 年 – 哈拉尔德·克拉梅尔（\\(Harald Cramér\\)）',
     label: ' \\(\\scriptsize\\mathbf{克拉梅尔定理}\\)：克拉梅尔证明了费勒和莱维在证明中心极限定理充要条件时所需的一项关键假设。具体来说，他证明了：\\(\\scriptsize\\mathbf{如果两个独立}\\)\\(\\scriptsize\\mathbf{随机变量之和服从正态分布，那么这两个随机变量本身也必定是正态分布。}\\)这一结果（后称为克拉梅尔定理）确保了正态分布在独立和的极限中的独特地位，为中心极限定理的最终严谨证明铺平了道路。',
     icon: 'pi pi-chart-bar',
   },
   {
     index: 4,
+    title: '\\(1937\\) 年 – 定理的完备形式',
     label: ' \\(\\scriptsize\\mathbf{费勒和莱维的最终证明}\\)：利用克拉梅尔的结论，费勒和莱维分别修正并完善了各自对于中心极限定理的证明，在\\(1937\\)年发表了更新的结果。至此，独立随机变量序列的中心极限定理的理论大厦已基本建成。从\\(1733\\)年棣莫弗的先驱性发现到\\(1937\\)年费勒和莱维给出完备条件，经过两百多年的累积，多位数学家的卓越贡献使中心极限定理成为概率论中体系完备、不可或缺的核心定理。',
     icon: 'pi pi-chart-bar',
   },
@@ -127,6 +129,7 @@ const chapter3Items = [
 const chapter4Items = [
   {
     index: 0,
+    title: '',
     label: `
       <p>&emsp;&emsp;中心极限定理在概率论和统计学中具有基础性的作用。</p>
       <p>&emsp;&emsp;一方面，它揭示了\\(\\scriptsize\\mathbf{极限分布}\\)的存在：大数定律说明样本平均值会收敛到期望值，而中心极限定理进一步指出平均值围绕期望值的波动分布近似服从正态分布。这解释了为何\\(\\scriptsize\\mathbf{正态分布}\\)在自然和社会现象中如此常见——许多独立随机因素的累加往往会产生接近正态的结果。</p>
@@ -138,17 +141,24 @@ const chapter4Items = [
   },
 ];
 
-// Tooltip 内容
-const tooltipContent = ref('');
-
-// 显示 Tooltip
-const showTooltip = (content: string) => {
-  tooltipContent.value = content;
-  setTimeout(() => {
-    tooltipContent.value = ''; // 3 秒后隐藏 Tooltip
-  }, 3000);
-};
-
+const chapters = [
+  {
+    title: '18 世纪–19 世纪中期：中心极限定理的起源',
+    items: chapter1Items,
+  },
+  {
+    title: '19 世纪后期：俄国学派的严谨化',
+    items: chapter2Items,
+  },
+  {
+    title: '20 世纪前期：定理的命名与现代完善',
+    items: chapter3Items,
+  },
+  {
+    title: '中心极限定理的影响与应用',
+    items: chapter4Items,
+  },
+]
 
 function uniform(x: number): number {
   if (x >= 0 && x <= 1) {
@@ -440,7 +450,6 @@ $$
 作为叠加 $i$ 个分布后的分布 $F_i$ 与其对应的正态分布 $N_i$ 之间的距离。可以以此判断叠加分布是否收敛于正态分布。
 `;
 
-
 const discussTabList = [
   {
     id: 0,
@@ -461,15 +470,15 @@ const discussTabList = [
     icon: MessagesSquare,
   },
 ];
-
-
 </script>
 
 <template>
   <ExperimentBoard :discuss-tab-list="discussTabList">
     <template #experiment>
-      <DistributionCltDiagram v-if="fAny" ref="distributionCltDiagram"
-        :args="{ f: fAny, dx: 0.01, left: range[0], right: range[1], n, multi }" />
+      <DistributionCltDiagram
+        v-if="fAny" ref="distributionCltDiagram"
+        :args="{ f: fAny, dx: 0.01, left: range[0], right: range[1], n, multi }"
+      />
     </template>
     <template #parameter>
       <div class="p-2 grid grid-cols-2 gap-2 h-full w-full">
@@ -483,13 +492,15 @@ const discussTabList = [
                 <Label class="flex-shrink-0">
                   选择分布：
                 </Label>
-                <Select v-model="selected" @update:model-value="() => {
-                  fAny = fAnyWrap(functionList[selected].f);
-                  range = [functionList[selected].left, functionList[selected].right];
-                  if (selected === 'custom') {
-                    convert();
-                  }
-                }">
+                <Select
+                  v-model="selected" @update:model-value="() => {
+                    fAny = fAnyWrap(functionList[selected].f);
+                    range = [functionList[selected].left, functionList[selected].right];
+                    if (selected === 'custom') {
+                      convert();
+                    }
+                  }"
+                >
                   <SelectTrigger>
                     {{ functionList[selected].chinese }}
                   </SelectTrigger>
@@ -518,8 +529,10 @@ const discussTabList = [
                   </Button>
                 </div>
               </div>
-              <div v-if="fAny" class="w-full prose items-center mt-3"
-                v-html="toMarkdown(`$$\n${selected === 'ai' ? displayLatexInput : selected === 'custom' ? `f(x)=${displayLatexInput}` : functionList[selected].latex}\n$$`)" />
+              <div
+                v-if="fAny" class="w-full prose items-center mt-3"
+                v-html="toMarkdown(`$$\n${selected === 'ai' ? displayLatexInput : selected === 'custom' ? `f(x)=${displayLatexInput}` : functionList[selected].latex}\n$$`)"
+              />
               <div v-else class="w-full pt-3 flex justify-center items-center">
                 <Label class="text-destructive">
                   你输入的概率密度函数无法解析，请检查输入
@@ -550,23 +563,29 @@ const discussTabList = [
                   <!--                  <Label class="flex-shrink-0"> -->
                   <!--                    {{ range[0] }} -->
                   <!--                  </Label> -->
-                  <Input v-model="range[0]" :disabled="selected !== 'custom'" :min="-10" :max="range[1]" type="number"
-                    class="w-16" />
+                  <Input
+                    v-model="range[0]" :disabled="selected !== 'custom'" :min="-10" :max="range[1]" type="number"
+                    class="w-16"
+                  />
                   <Slider v-model="range" :disabled="selected !== 'custom'" :min="-10" :max="10" />
                   <!--                  <Label class="flex-shrink-0"> -->
                   <!--                    {{ range[1] }} -->
                   <!--                  </Label> -->
-                  <Input v-model="range[1]" :disabled="selected !== 'custom'" :min="range[0]" :max="10" type="number"
-                    class="w-16" />
+                  <Input
+                    v-model="range[1]" :disabled="selected !== 'custom'" :min="range[0]" :max="10" type="number"
+                    class="w-16"
+                  />
                 </div>
                 <Label class="flex-shrink-0">
                   展示方式：
                 </Label>
                 <div class="flex justify-center py-2">
-                  <RadioGroup default-value="option-one" class="flex flex-row gap-5" @update:model-value="(value) => {
-                    multi = value === 'option-two';
-                    console.log(multi);
-                  }">
+                  <RadioGroup
+                    default-value="option-one" class="flex flex-row gap-5" @update:model-value="(value) => {
+                      multi = value === 'option-two';
+                      console.log(multi);
+                    }"
+                  >
                     <div class="flex items-center space-x-2">
                       <RadioGroupItem id="option-one" value="option-one" />
                       <Label for="option-one">动态调整</Label>
@@ -590,317 +609,34 @@ const discussTabList = [
             <chart type="line" :data="chartData" class="w-full flex-1" :options="chartOption" />
           </CardContent>
         </Card>
-        <!--        <div class="flex gap-2 items-center"> -->
-        <!--          <Label class="flex-shrink-0"> -->
-        <!--            选择分布： -->
-        <!--          </Label> -->
-        <!--          <Select -->
-        <!--            v-model="selected" @update:model-value="() => { -->
-        <!--              fAny = fAnyWrap(functionList[selected].f); -->
-        <!--              range = [functionList[selected].left, functionList[selected].right]; -->
-        <!--              if (selected === 'custom') { -->
-        <!--                convert(); -->
-        <!--              } -->
-        <!--            }" -->
-        <!--          > -->
-        <!--            <SelectTrigger> -->
-        <!--              {{ functionList[selected].name }} ({{ functionList[selected].chinese }}) -->
-        <!--            </SelectTrigger> -->
-        <!--            <SelectContent> -->
-        <!--              <SelectItem v-for="func in functionLabel" :key="functionList[func].name" :value="func"> -->
-        <!--                {{ functionList[func].name }} ({{ functionList[func].chinese }}) -->
-        <!--              </SelectItem> -->
-        <!--            </SelectContent> -->
-        <!--          </Select> -->
-        <!--        </div> -->
-        <!--        <div class="flex gap-2 items-center"> -->
-        <!--          <Label class="flex-shrink-0"> -->
-        <!--            叠加的分布数量： -->
-        <!--          </Label> -->
-        <!--          <Slider v-model="n_list" :min="1" :max="30" /> -->
-        <!--          <Label class="flex-shrink-0 w-10 text-center"> -->
-        <!--            {{ n }} 个 -->
-        <!--          </Label> -->
-        <!--        </div> -->
-        <!--        <div v-if="selected === 'custom'" class="flex gap-2"> -->
-        <!--          <Input v-model="latexInput" /> -->
-        <!--          <Button @click="convert"> -->
-        <!--            确定 -->
-        <!--          </Button> -->
-        <!--        </div> -->
-        <!--        <Slider v-model="range" :min="-10" :max="10" /> -->
-        <!--        <Slider v-model="right" :min="left[0]" :max="19" /> -->
       </div>
     </template>
     <template #formula>
-
       <!-- 目录部分 -->
-      <ul>
-        <li>
-          <details open>
-            <summary class="font-bold ">
-              <i class="pi pi-bookmark" /> 18 世纪–19 世纪中期：中心极限定理的起源
-            </summary>
-            <ul class="space-y-0">
-              <li>
-                <details>
-                  <summary>
-                    <span v-html="renderLatex('\\(1713\\) 年 – 雅各布·伯努利（\\(Jacob Bernoulli\\)）')" />
-                  </summary>
-                  <ul class="space-y-0">
-                    <li v-for="(item, index) in chapter1Items.filter(item => item.index === 0)" :key="index"> <a
-                        @click="showTooltip(item.label)" class="label-content">
-                        <i :class="item.icon" />
-                        <span v-html="renderLatex(item.label)" />
-                      </a>
-                    </li>
-                  </ul>
-                </details>
-              </li>
-            </ul>
-            <ul class="space-y-0">
-              <li>
-                <details>
-                  <summary>
-                    <span v-html="renderLatex('\\(1733\\) 年 – 亚伯拉罕·棣莫弗（\\(Abraham de Moivre\\)）')" />
-                  </summary>
-                  <ul class="space-y-0">
-                    <li v-for="(item, index) in chapter1Items.filter(item => item.index === 1)" :key="index"> <a
-                        @click="showTooltip(item.label)" class="label-content">
-                        <i :class="item.icon" />
-                        <span v-html="renderLatex(item.label)" />
-                      </a>
-                    </li>
-                  </ul>
-                </details>
-              </li>
-            </ul>
-            <ul class="space-y-0">
-              <li>
-                <details>
-                  <summary>
-                    <span v-html="renderLatex('\\(1812\\) 年 – 皮埃尔-西蒙·拉普拉斯（\\(Pierre-Simon Laplace\\)）')" />
-                  </summary>
-                  <ul class="space-y-0">
-                    <li v-for="(item, index) in chapter1Items.filter(item => item.index === 2)" :key="index"> <a
-                        @click="showTooltip(item.label)" class="label-content">
-                        <i :class="item.icon" />
-                        <span v-html="renderLatex(item.label)" />
-                      </a>
-                    </li>
-                  </ul>
-                </details>
-              </li>
-            </ul>
-            <ul class="space-y-0">
-              <li>
-                <details>
-                  <summary>
-                    <span v-html="renderLatex('\\(1824–1829\\) 年 – 西莫恩-德尼·泊松（\\(Siméon-Denis Poisson\\)）')" />
-                  </summary>
-                  <ul class="space-y-0">
-                    <li v-for="(item, index) in chapter1Items.filter(item => item.index === 3)" :key="index"> <a
-                        @click="showTooltip(item.label)" class="label-content">
-                        <i :class="item.icon" />
-                        <span v-html="renderLatex(item.label)" />
-                      </a>
-                    </li>
-                  </ul>
-                </details>
-              </li>
-            </ul>
-            <ul class="space-y-0">
-              <li>
-                <details>
-                  <summary>
-                    <span v-html="renderLatex('\\(19\\) 世纪中期 – 更严格的论证尝试')" />
-                  </summary>
-                  <ul class="space-y-0">
-                    <li v-for="(item, index) in chapter1Items.filter(item => item.index === 4)" :key="index"> <a
-                        @click="showTooltip(item.label)" class="label-content">
-                        <i :class="item.icon" />
-                        <span v-html="renderLatex(item.label)" />
-                      </a>
-                    </li>
-                  </ul>
-                </details>
-              </li>
-            </ul>
-          </details>
-          <details open>
-            <summary class="font-bold ">
-              <i class="pi pi-bookmark" /> 19 世纪后期：俄国学派的严谨化
-            </summary>
-            <ul class="space-y-0">
-              <li>
-                <details>
-                  <summary>
-                    <span v-html="renderLatex('\\(1887\\) 年 – 帕夫努蒂·切比雪夫（\\(Pafnuty Chebyshev\\)）')" />
-                  </summary>
-                  <ul class="space-y-0">
-                    <li v-for="(item, index) in chapter2Items.filter(item => item.index === 0)" :key="index"> <a
-                        @click="showTooltip(item.label)" class="label-content">
-                        <i :class="item.icon" />
-                        <span v-html="renderLatex(item.label)" />
-                      </a>
-                    </li>
-                  </ul>
-                </details>
-              </li>
-            </ul>
-            <ul class="space-y-0">
-              <li>
-                <details>
-                  <summary>
-                    <span v-html="renderLatex('\\(1898\\) 年 – 安德烈·马尔可夫（\\(Andrey Markov\\)）')" />
-                  </summary>
-                  <ul class="space-y-0">
-                    <li v-for="(item, index) in chapter2Items.filter(item => item.index === 1)" :key="index"> <a
-                        @click="showTooltip(item.label)" class="label-content">
-                        <i :class="item.icon" />
-                        <span v-html="renderLatex(item.label)" />
-                      </a>
-                    </li>
-                  </ul>
-                </details>
-              </li>
-            </ul>
-            <ul class="space-y-0">
-              <li>
-                <details>
-                  <summary>
-                    <span v-html="renderLatex('\\(1901\\) 年 – 亚历山大·李亚普诺夫（\\(Aleksandr Lyapunov\\)）')" />
-                  </summary>
-                  <ul class="space-y-0">
-                    <li v-for="(item, index) in chapter2Items.filter(item => item.index === 2)" :key="index"> <a
-                        @click="showTooltip(item.label)" class="label-content">
-                        <i :class="item.icon" />
-                        <span v-html="renderLatex(item.label)" />
-                      </a>
-                    </li>
-                  </ul>
-                </details>
-              </li>
-            </ul>
-          </details>
-          <details open>
-            <summary class="font-bold">
-              <i class="pi pi-bookmark" /> 20 世纪前期：定理的命名与现代完善
-            </summary>
-            <ul class="space-y-0">
-              <li>
-                <details>
-                  <summary>
-                    <span v-html="renderLatex('\\(1920\\) 年 – 乔治·波利亚（\\(George Pólya\\)）')" />
-                  </summary>
-                  <ul class="space-y-0">
-                    <li v-for="(item, index) in chapter3Items.filter(item => item.index === 0)" :key="index"> <a
-                        @click="showTooltip(item.label)" class="label-content">
-                        <i :class="item.icon" />
-                        <span v-html="renderLatex(item.label)" />
-                      </a>
-                    </li>
-                  </ul>
-                </details>
-              </li>
-            </ul>
-            <ul class="space-y-0">
-              <li>
-                <details>
-                  <summary>
-                    <span v-html="renderLatex('\\(1922\\) 年 – 雅尔·林德伯格（\\(Jarl Lindeberg\\)）')" />
-                  </summary>
-                  <ul class="space-y-0">
-                    <li v-for="(item, index) in chapter3Items.filter(item => item.index === 1)" :key="index"> <a
-                        @click="showTooltip(item.label)" class="label-content">
-                        <i :class="item.icon" />
-                        <span v-html="renderLatex(item.label)" />
-                      </a>
-                    </li>
-                  </ul>
-                </details>
-              </li>
-            </ul>
-            <ul class="space-y-0">
-              <li>
-                <details>
-                  <summary>
-                    <span v-html="renderLatex('\\(1935\\) 年 – 威廉·费勒（\\(William Feller\\)）')" />
-                  </summary>
-                  <ul class="space-y-0">
-                    <li v-for="(item, index) in chapter3Items.filter(item => item.index === 2)" :key="index"> <a
-                        @click="showTooltip(item.label)" class="label-content">
-                        <i :class="item.icon" />
-                        <span v-html="renderLatex(item.label)" />
-                      </a>
-                    </li>
-                  </ul>
-                </details>
-              </li>
-            </ul>
-            <ul class="space-y-0">
-              <li>
-                <details>
-                  <summary>
-                    <span v-html="renderLatex('\\(1936\\) 年 – 哈拉尔德·克拉梅尔（\\(Harald Cramér\\)）')" />
-                  </summary>
-                  <ul class="space-y-0">
-                    <li v-for="(item, index) in chapter3Items.filter(item => item.index === 3)" :key="index"> <a
-                        @click="showTooltip(item.label)" class="label-content">
-                        <i :class="item.icon" />
-                        <span v-html="renderLatex(item.label)" />
-                      </a>
-                    </li>
-                  </ul>
-                </details>
-              </li>
-            </ul>
-            <ul class="space-y-0">
-              <li>
-                <details>
-                  <summary>
-                    <span v-html="renderLatex('\\(1937\\) 年 – 定理的完备形式')" />
-                  </summary>
-                  <ul class="space-y-0">
-                    <li v-for="(item, index) in chapter3Items.filter(item => item.index === 4)" :key="index"> <a
-                        @click="showTooltip(item.label)" class="label-content">
-                        <i :class="item.icon" />
-                        <span v-html="renderLatex(item.label)" class="label-content" />
-                      </a>
-                    </li>
-                  </ul>
-                </details>
-              </li>
-            </ul>
-          </details>
-          <details>
-            <summary class="font-bold">
-              <i class="pi pi-bookmark" /> 中心极限定理的影响与应用
-            </summary>
-            <ul class="space-y-0">
-              <li v-for="(item, index) in chapter4Items.filter(item => item.index === 0)" :key="index"> <a
-                  @click="showTooltip(item.label)" class="label-content">
-                  <i :class="item.icon" />
-                  <span v-html="renderLatex(item.label)" />
-                </a>
-              </li>
-            </ul>
-          </details>
-        </li>
-      </ul>
-
-      <!-- Tooltip 展示文字内容 -->
-      <TooltipProvider :delay-duration="0">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <span></span> <!-- 空的触发器，通过代码控制显示 -->
-          </TooltipTrigger>
-          <TooltipContent side="right" v-if="tooltipContent">
-            <div class="prose-sm max-w-full text-foreground" v-html="renderLatex(tooltipContent)" />
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-
+      <div class="">
+        <Accordion type="multiple" collapsible>
+          <AccordionItem v-for="(chapter, index) in chapters" :key="chapter.title" :value="chapter.title">
+            <AccordionTrigger>
+              <div class="px-4">
+                {{ chapter.title }}
+              </div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <ul v-if="index !== 3" class="space-y-0 px-3">
+                <li v-for="item in chapter.items" :key="item.title" class="cursor-pointer py-2">
+                  <details>
+                    <summary>
+                      <span v-html="renderLatex(item.title)" />
+                    </summary>
+                    <div class="p-3" v-html="renderLatex(item.label)" />
+                  </details>
+                </li>
+              </ul>
+              <div v-else class="px-6" v-html="renderLatex(chapter.items[0].label)" />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </div>
     </template>
     <template #conclusion>
       <div class="w-full h-full p-5">
@@ -914,25 +650,10 @@ const discussTabList = [
 </template>
 
 <style scoped>
-.active {
-  color: #4f46e5;
-  /* 激活状态的颜色 */
-  font-weight: bold;
-}
-
 summary {
   font-size: 1.0em;
-  /* 增大字号，你可以根据需要调整这个值 */
   margin-bottom: 0.1em;
-  /* 增加与下一排的间隔，同样可以根据需要调整 */
   margin-top: 0.5em;
   margin-left: 0.7em;
 }
-
-/* 增加 label 内容的左边距 */
-.label-content {
-  padding-left: 1.7rem;
-  /* 调整左边距 */
-}
-
 </style>

@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
-import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
+
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { renderLatex, toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { GraduationCap, Lightbulb, MessagesSquare } from 'lucide-vue-next';
@@ -321,17 +325,32 @@ const discussTabList = [
         </Card> -->
 
         <Card class="w-full flex-1 flex flex-col">
-          <CardHeader>
-            <!-- <CardTitle>
-              参数调整
-            </CardTitle> -->
-          </CardHeader>
-          <CardContent class="flex flex-col justify-center items-center gap-3">
-            <div class="grid grid-cols-1 gap-10">
+          <CardContent class="flex flex-col justify-center items-center gap-3 pt-6">
+            <RadioGroup
+              default-value="chart1"
+              class="gap-2 py-4"
+              @update:model-value="(value) => {
+                if (value === 'chart1') {
+                  toggleChart1();
+                }
+                else {
+                  toggleChart3();
+                }
+              }"
+            >
+              <div class="flex items-center space-x-2">
+                <RadioGroupItem id="option-one" value="chart1" />
+                <Label for="option-one"> 联合与边缘分布 </Label>
+              </div>
+              <div class="flex items-center space-x-2">
+                <RadioGroupItem id="option-two" value="chart3" />
+                <Label for="option-two"> 条件分布 </Label>
+              </div>
+            </RadioGroup>
+            <div class="grid grid-cols-2 gap-6">
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
                   <div v-html="renderLatex('\\(μ_x\\)')" />
-
                   <div class="max-w-xl space-y-3">
                     <Input v-model="mean1" fluid />
                     <Slider v-model="mean1" :min="-10" :max="10" :step="0.1" class="w-full" />
@@ -400,19 +419,19 @@ const discussTabList = [
                 </div>
               </div>
             </div>
-            <div class="dropdown dropdown-top dropdown-end mt-6">
-              <Button tabindex="0" role="button" class="m-0">
-                点我切换
-              </Button>
-              <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-                <li @click="toggleChart1">
-                  <a>联合与边缘分布</a>
-                </li>
-                <li @click="toggleChart3">
-                  <a>条件分布</a>
-                </li>
-              </ul>
-            </div>
+            <!--            <div class="dropdown dropdown-top dropdown-end mt-6"> -->
+            <!--              <Button tabindex="0" role="button" class="m-0"> -->
+            <!--                点我切换 -->
+            <!--              </Button> -->
+            <!--              <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"> -->
+            <!--                <li @click="toggleChart1"> -->
+            <!--                  <a>联合与边缘分布</a> -->
+            <!--                </li> -->
+            <!--                <li @click="toggleChart3"> -->
+            <!--                  <a>条件分布</a> -->
+            <!--                </li> -->
+            <!--              </ul> -->
+            <!--            </div> -->
           </CardContent>
         </Card>
       </div>

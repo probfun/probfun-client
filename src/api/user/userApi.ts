@@ -90,3 +90,11 @@ export async function putUserAvatarApi(avatar: File) {
   });
   return result.data;
 }
+
+export async function casValidateApi(ticket: string) {
+  const response = await get<{
+    user: User
+    token: string
+  }>(`/api/user/validate?ticket=${ticket}`);
+  return response.data;
+}
