@@ -29,24 +29,24 @@ const defaultValue = 'item-1'
 const products = ref([
   {
     expName: '正态分布',
-    name: '小明',
+    name: '李明',
     studentID: '2023001',
     time: '2023-10-01',
-    comment: '真好。你在写什么知识时法随风倒十分士大夫',
+    comment: '图像非常清晰，实验内容也很有趣。',
   },
   {
     expName: '正态分布',
-    name: '小红',
+    name: '刘红',
     studentID: '2023002',
     time: '2023-10-02',
-    comment: '非常好。',
+    comment: '我学会了很多知识，非常感谢老师。',
   },
   {
     expName: '三门问题',
-    name: '小兰',
+    name: '王小兰',
     studentID: '2023003',
     time: '2023-10-03',
-    comment: '非常好。',
+    comment: '这个游戏激发了我的学习兴趣。',
   },
 ]);
 
@@ -61,7 +61,7 @@ const selectedClass = ref(classes.value[0]);
 const click = ref([
   {
     expName: '正态分布',
-    times: 3,
+    times: 10,
   },
   {
     expName: '三门问题',
@@ -75,15 +75,15 @@ const click = ref([
 const browse = ref([
   {
     expName: '正态分布',
-    times: 3,
+    time: 3,
   },
   {
     expName: '三门问题',
-    times: 2,
+    time: 2,
   },
   {
     expName: '阳性检测',
-    times: 5,
+    time: 5,
   },
 ])
 const comment = ref([
@@ -272,6 +272,194 @@ onMounted(async () => {
 watch([selectedClass], () => {
   getPost();
 })
+
+
+onMounted(() => {
+  chartDataClick.value = setChartDataClick();
+  chartDataBrowse.value = setChartDataBrowse();
+  chartDataComment.value = setChartDataComment();
+  chartDataStar.value = setChartDataStar();
+  chartOptionsClick.value = setChartOptionsClick();
+  chartOptionsBrowse.value = setChartOptionsBrowse();
+  chartOptionsComment.value = setChartOptionsComment();
+  chartOptionsStar.value = setChartOptionsStar();
+});
+
+const chartDataClick = ref();
+const chartDataBrowse = ref();
+const chartDataComment = ref();
+const chartDataStar = ref();
+const chartOptionsClick = ref();
+const chartOptionsBrowse = ref();
+const chartOptionsComment = ref();
+const chartOptionsStar = ref();
+
+const generateRandomColor = (alpha = 0.7) => {
+  const r = Math.floor(Math.random() * 256);
+  const g = Math.floor(Math.random() * 256);
+  const b = Math.floor(Math.random() * 256);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
+const setChartDataClick = () => {
+  return {
+    labels: click.value.map(item => item.expName),
+    datasets: [
+      {
+        label: '各实验点击次数',
+        data: click.value.map(item => item.times),
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1
+      }
+    ]
+  };
+};
+const setChartOptionsClick = () => {
+  const documentStyle = getComputedStyle(document.documentElement);
+  const textColor = documentStyle.getPropertyValue('--p-text-color');
+  const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
+  const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+
+  return {
+    plugins: {
+      legend: {
+        labels: {
+          color: textColor
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: textColorSecondary
+        },
+        grid: {
+          color: surfaceBorder
+        }
+      },
+      y: {
+        beginAtZero: true,
+        ticks: {
+          color: textColorSecondary
+        },
+        grid: {
+          color: surfaceBorder
+        }
+      }
+    }
+  };
+}
+
+const setChartDataStar = () => {
+  const documentStyle = getComputedStyle(document.body);
+
+  return {
+    labels: browse.value.map(item => item.expName),
+    datasets: [
+      {
+        data: browse.value.map(item => item.time),
+        backgroundColor: browse.value.map(() => generateRandomColor(0.7)), // 随机生成背景颜色
+      }
+    ]
+  };
+}
+const setChartOptionsStar = () => {
+  const documentStyle = getComputedStyle(document.documentElement);
+  const textColor = documentStyle.getPropertyValue('--p-text-color');
+
+  return {
+    plugins: {
+      legend: {
+        labels: {
+          usePointStyle: true,
+          color: textColor
+        }
+      }
+    }
+  };
+}
+
+const setChartDataComment = () => {
+  const documentStyle = getComputedStyle(document.body);
+
+  return {
+    labels: comment.value.map(item => item.expName),
+    datasets: [
+      {
+        data: comment.value.map(item => item.times),
+        backgroundColor: browse.value.map(() => generateRandomColor(0.7)), // 随机生成背景颜色
+      }
+    ]
+  };
+}
+const setChartOptionsComment = () => {
+  const documentStyle = getComputedStyle(document.documentElement);
+  const textColor = documentStyle.getPropertyValue('--p-text-color');
+
+  return {
+    plugins: {
+      legend: {
+        labels: {
+          cutout: '60%',
+          color: textColor
+        }
+      }
+    }
+  };
+}
+
+const setChartDataBrowse = () => {
+  const documentStyle = getComputedStyle(document.documentElement);
+
+  return {
+    labels: star.value.map(item => item.expName),
+    datasets: [
+      {
+        label: '各实验收藏次数',
+        data: star.value.map(item => item.times),
+        fill: false,
+        borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
+        tension: 0.4
+      },
+    ]
+  };
+}
+const setChartOptionsBrowse = () => {
+  const documentStyle = getComputedStyle(document.documentElement);
+  const textColor = documentStyle.getPropertyValue('--p-text-color');
+  const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
+  const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+
+  return {
+    plugins: {
+      legend: {
+        labels: {
+          color: textColor
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: textColorSecondary
+        },
+        grid: {
+          color: surfaceBorder
+        }
+      },
+      y: {
+        beginAtZero: true,
+        ticks: {
+          color: textColorSecondary
+        },
+        grid: {
+          color: surfaceBorder
+        }
+      }
+    }
+  };
+}
 </script>
 
 <template>
@@ -381,31 +569,19 @@ watch([selectedClass], () => {
       </div>
       <div v-if="!isTablet" class="h-full">
         <div class="flex my-2">
-          <Panel header="各实验点击次数排行榜" class="w-full mr-2">
-            <DataTable :value="click" scrollable table-style="min-width: 18rem">
-              <Column field="expName" header="实验名称" sortable style="width: 25%" />
-              <Column field="times" header="点击次数" sortable style="width: 25%" />
-            </DataTable>
+          <Panel header="各实验点击次数" class="w-1/2 mr-2">
+            <Chart type="bar" :data="chartDataClick" :options="chartOptionsClick" />
           </Panel>
-          <Panel header="各实验浏览时长排行榜" class="ml-auto w-full">
-            <DataTable :value="browse" scrollable table-style="min-width: 18rem">
-              <Column field="expName" header="实验名称" sortable style="width: 25%" />
-              <Column field="time" header="浏览时长" sortable style="width: 25%" />
-            </DataTable>
+          <Panel header="各实验浏览时长" class="ml-auto w-1/2 justify-center items-center">
+            <Chart type="line" :data="chartDataBrowse" :options="chartOptionsBrowse" />
           </Panel>
         </div>
-        <div class="flex">
-          <Panel header="各实验评论次数排行榜" class="w-full mr-2">
-            <DataTable :value="comment" scrollable table-style="min-width: 18rem">
-              <Column field="expName" header="实验名称" sortable style="width: 50%" />
-              <Column field="times" header="评论次数" sortable style="width: 50%" />
-            </DataTable>
+        <div class="flex my-2">
+          <Panel header="各实验评论次数" class="w-1/2 mr-2">
+            <Chart type="doughnut" :data="chartDataComment" :options="chartOptionsComment" />
           </Panel>
-          <Panel header="各实验收藏次数排行榜" class="ml-auto w-full">
-            <DataTable :value="star" scrollable table-style="min-width: 18rem">
-              <Column field="expName" header="实验名称" sortable style="width: 50%" />
-              <Column field="times" header="收藏次数" sortable style="width: 50%" />
-            </DataTable>
+          <Panel header="各实验收藏次数" class="ml-auto w-1/2">
+            <Chart type="pie" :data="chartDataStar" :options="chartOptionsStar" />
           </Panel>
         </div>
       </div>
