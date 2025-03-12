@@ -115,7 +115,16 @@ function createPlotlyChart1() {
       r: 30, // 右侧空白
     },
     title: '',
-    showlegend: false,
+    legend: {
+      x: 0, // 将图例放到右侧
+      y: 1, // 将图例放到上方
+      traceorder: 'normal',
+      font: {
+        family: 'sans-serif',
+        size: 12,
+        color: '#000',
+      },
+    }
   };
   const config = {
     displayModeBar: false, // 禁用交互菜单
@@ -168,9 +177,9 @@ function createPlotlyChart2() {
     xaxis: { title: '' },
     yaxis: { title: '' },
     margin: {
-      t: 0, // 顶部空白
+      t: 30, // 顶部空白
       b: 30, // 底部空白
-      l: 50, // 左侧空白
+      l: 30, // 左侧空白
       r: 30, // 右侧空白
     },
     title: '',
@@ -250,7 +259,7 @@ function createPlotlyChart3() {
     margin: {
       t: 30, // 顶部空白
       b: 30, // 底部空白
-      l: 50, // 左侧空白
+      l: 30, // 左侧空白
       r: 30, // 右侧空白
     },
     xaxis: {
@@ -579,7 +588,9 @@ watch(() => [props.mean1, props.mean2, props.sigma1, props.sigma2, props.density
 });
 watch(() => props.isChart3, async () => {
   await nextTick();
+  createPlotlyChart1();
   createPlotlyChart2();
+  createPlotlyChart3();
   createPlotlyChart4();
   createPlotlyChart5();
   createPlotlyChart6();
@@ -587,16 +598,24 @@ watch(() => props.isChart3, async () => {
 </script>
 
 <template>
-  <div class="flex flex-col w-full h-full">
-    <div class="flex w-full h-full">
-      <div v-if="!props.isChart3" id="plotly-chart2" ref="plotlyChart2" class="w-[550px] h-[320px]" />
-      <div v-if="props.isChart3" id="plotly-chart5" ref="plotlyChart5" class="w-96 h-96" />
-      <div id="plotly-chart1" ref="plotlyChart1" class="w-[400px] h-[320px]" />
+  <div v-if="!isChart3" class="flex flex-col w-full h-full">
+    <div class="flex w-full h-1/3">
+      <div id="plotly-chart2" ref="plotlyChart2" class="w-[510px] h-full" />
+      <div id="plotly-chart1" ref="plotlyChart1" class="w-1/3 h-full" />
     </div>
-    <div class="flex w-full h-full">
-      <div id="plotly-chart3" ref="plotlyChart3" class="w-[550px] h-[550px]" />
-      <div v-if="!props.isChart3" id="plotly-chart4" ref="plotlyChart4" class="w-[400px] h-[550px]" />
-      <div v-if="props.isChart3" id="plotly-chart6" ref="plotlyChart6" class="w-96 h-96" />
+    <div class="flex w-full h-2/3">
+      <div id="plotly-chart3" ref="plotlyChart3" class="w-[510px] h-full" />
+      <div id="plotly-chart4" ref="plotlyChart4" class="w-1/4 h-full" />
+    </div>
+  </div>
+  <div v-if="isChart3" class="flex flex-col w-full h-full">
+    <div class="flex w-full h-1/2">
+      <div id="plotly-chart5" ref="plotlyChart5" class="w-1/2 h-full" />
+      <div id="plotly-chart1" ref="plotlyChart1" class="w-1/2 h-full" />
+    </div>
+    <div class="flex w-full h-1/2">
+      <div id="plotly-chart3" ref="plotlyChart3" class="w-[400px] h-full" />
+      <div id="plotly-chart6" ref="plotlyChart6" class="w-1/2 h-full" />
     </div>
   </div>
 </template>

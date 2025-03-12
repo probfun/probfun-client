@@ -307,7 +307,7 @@ $$
       </div>
     </template>
     <template #comment>
-      <CommentPanel exp-id="BP" />
+      <CommentPanel exp-id="binomial-poisson" />
     </template>
   </ExperimentBoard>
 </template>

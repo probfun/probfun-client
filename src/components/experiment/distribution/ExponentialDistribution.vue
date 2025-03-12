@@ -273,7 +273,7 @@ $$
       </div>
     </template>
     <template #comment>
-      <CommentPanel exp-id="exponentialDistribution" />
+      <CommentPanel exp-id="exponential-distribution" />
     </template>
   </ExperimentBoard>
 </template>

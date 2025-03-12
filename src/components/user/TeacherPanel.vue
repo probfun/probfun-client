@@ -14,7 +14,7 @@ import { useUserStore } from '@/store'
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 import Dialog from 'primevue/dialog';
-import MultiSelect from 'primevue/multiselect';
+import Chart from 'primevue/chart';
 import Panel from 'primevue/panel';
 import Select from 'primevue/select';
 import Textarea from 'primevue/textarea';
@@ -116,9 +116,14 @@ const star = ref([
 ])
 
 const visible = ref(false);
+const isTablet = ref(true);
 const toast = useToast();
 const title = ref(`${new Date().toLocaleDateString()} 班级公告`);
 const content = ref('');
+
+function toggleTable() {
+  isTablet.value = !isTablet.value;
+}
 
 function cancel() {
 
@@ -290,6 +295,10 @@ watch([selectedClass], () => {
           <span class="text-base font-semibold mb-3">教师姓名：{{ userStore.user?.nickname }}</span>
           <span class="text-base font-semibold">教工号：{{ userStore.user?.studentId }}</span>
         </div>
+        <div class="ml-auto">
+          <Button v-if="isTablet" @click="toggleTable()">点击切换图展示</Button>
+          <Button v-else @click="toggleTable()">点击切换表展示</Button>
+        </div>
       </div>
       <Panel header="已发布公告" class="mx-1 mt-3 mb-5 h-full overflow-auto">
         <Accordion type="single" class="w-full" collapsible :default-value="defaultValue">
@@ -340,7 +349,37 @@ watch([selectedClass], () => {
           </Column>
         </DataTable>
       </Panel>
-      <div class="h-full">
+      <div v-if="isTablet" class="h-full">
+        <div class="flex my-2">
+          <Panel header="各实验点击次数排行榜" class="w-full mr-2">
+            <DataTable :value="click" scrollable table-style="min-width: 18rem">
+              <Column field="expName" header="实验名称" sortable style="width: 25%" />
+              <Column field="times" header="点击次数" sortable style="width: 25%" />
+            </DataTable>
+          </Panel>
+          <Panel header="各实验浏览时长排行榜" class="ml-auto w-full">
+            <DataTable :value="browse" scrollable table-style="min-width: 18rem">
+              <Column field="expName" header="实验名称" sortable style="width: 25%" />
+              <Column field="time" header="浏览时长" sortable style="width: 25%" />
+            </DataTable>
+          </Panel>
+        </div>
+        <div class="flex">
+          <Panel header="各实验评论次数排行榜" class="w-full mr-2">
+            <DataTable :value="comment" scrollable table-style="min-width: 18rem">
+              <Column field="expName" header="实验名称" sortable style="width: 50%" />
+              <Column field="times" header="评论次数" sortable style="width: 50%" />
+            </DataTable>
+          </Panel>
+          <Panel header="各实验收藏次数排行榜" class="ml-auto w-full">
+            <DataTable :value="star" scrollable table-style="min-width: 18rem">
+              <Column field="expName" header="实验名称" sortable style="width: 50%" />
+              <Column field="times" header="收藏次数" sortable style="width: 50%" />
+            </DataTable>
+          </Panel>
+        </div>
+      </div>
+      <div v-if="!isTablet" class="h-full">
         <div class="flex my-2">
           <Panel header="各实验点击次数排行榜" class="w-full mr-2">
             <DataTable :value="click" scrollable table-style="min-width: 18rem">

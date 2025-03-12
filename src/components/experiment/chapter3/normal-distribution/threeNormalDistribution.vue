@@ -309,21 +309,6 @@ const discussTabList = [
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center gap-3 p-3">
-        <!-- <Card class="w-full h-1/2 card overflow-y-auto">
-          <CardHeader>
-            <CardTitle v-if="isChart1">
-              二维正态的联合与边缘分布概率密度函数（PDF）
-            </CardTitle>
-            <CardTitle v-if="isChart3">
-              二维正态的条件分布
-            </CardTitle>
-          </CardHeader>
-          <CardContent class="flex w-full justify-start">
-            <div v-show="isChart1" ref="oneContainer" class="text-base" />
-            <div v-show="isChart3" ref="threeContainer" class="text-base" />
-          </CardContent>
-        </Card> -->
-
         <Card class="w-full flex-1 flex flex-col">
           <CardContent class="flex flex-col justify-center items-center gap-3 pt-6">
             <RadioGroup
@@ -347,7 +332,7 @@ const discussTabList = [
                 <Label for="option-two"> 条件分布 </Label>
               </div>
             </RadioGroup>
-            <div class="grid grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 gap-6">
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
                   <div v-html="renderLatex('\\(μ_x\\)')" />
@@ -411,7 +396,6 @@ const discussTabList = [
               <div v-if="isChart3" class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
                   <div v-html="renderLatex('\\(x\\)')" />
-
                   <div class="max-w-xl space-y-3">
                     <Input v-model="x" fluid />
                     <Slider v-model="x" :min="-10" :max="10" :step="1" class="w-full" />
@@ -419,19 +403,6 @@ const discussTabList = [
                 </div>
               </div>
             </div>
-            <!--            <div class="dropdown dropdown-top dropdown-end mt-6"> -->
-            <!--              <Button tabindex="0" role="button" class="m-0"> -->
-            <!--                点我切换 -->
-            <!--              </Button> -->
-            <!--              <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"> -->
-            <!--                <li @click="toggleChart1"> -->
-            <!--                  <a>联合与边缘分布</a> -->
-            <!--                </li> -->
-            <!--                <li @click="toggleChart3"> -->
-            <!--                  <a>条件分布</a> -->
-            <!--                </li> -->
-            <!--              </ul> -->
-            <!--            </div> -->
           </CardContent>
         </Card>
       </div>
@@ -442,7 +413,7 @@ const discussTabList = [
       </div>
     </template>
     <template #comment>
-      <CommentPanel exp-id="2DnormalDistribution" />
+      <CommentPanel exp-id="2d-normal-distribution" />
     </template>
     <template #formula>
       <div class="w-full h-full p-5">

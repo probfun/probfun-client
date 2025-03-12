@@ -270,7 +270,7 @@ $$
       </div>
     </template>
     <template #comment>
-      <CommentPanel exp-id="geometricDistribution" />
+      <CommentPanel exp-id="geometric-distribution" />
     </template>
   </ExperimentBoard>
 </template>

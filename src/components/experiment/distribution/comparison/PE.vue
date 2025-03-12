@@ -354,7 +354,7 @@ $$
       </div>
     </template>
     <template #comment>
-      <CommentPanel exp-id="PE" />
+      <CommentPanel exp-id="poisson-exponential" />
     </template>
   </ExperimentBoard>
 </template>

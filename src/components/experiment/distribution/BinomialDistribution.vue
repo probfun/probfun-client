@@ -351,7 +351,7 @@ $$
       </div>
     </template>
     <template #comment>
-      <CommentPanel exp-id="binomialDistribution" />
+      <CommentPanel exp-id="binomial-distribution" />
     </template>
   </ExperimentBoard>
 </template>

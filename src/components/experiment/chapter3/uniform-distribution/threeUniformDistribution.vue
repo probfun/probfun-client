@@ -294,7 +294,7 @@ $$
       </div>
     </template>
     <template #comment>
-      <CommentPanel exp-id="2DuniformDistribution" />
+      <CommentPanel exp-id="2d-uniform-distribution" />
     </template>
   </ExperimentBoard>
 </template>

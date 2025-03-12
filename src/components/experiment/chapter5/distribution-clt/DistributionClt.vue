@@ -644,7 +644,7 @@ const discussTabList = [
       </div>
     </template>
     <template #comment>
-      <CommentPanel exp-id="central-limit-theorem" />
+      <CommentPanel exp-id="distribution-clt" />
     </template>
   </ExperimentBoard>
 </template>

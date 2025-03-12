@@ -255,7 +255,7 @@ onMounted(() => {
             正态分布是一种常见的分布。在正态分布中，大多数据都集中在平均值附近，这种分布经常出现在自然现象和日常生活中。
           </CardContent>
           <CardFooter class="flex items-center justify-between gap-2 p-3 pt-0">
-            <router-link class="w-full" to="/dashboard/experiment/normalDistribution">
+            <router-link class="w-full" to="/dashboard/experiment/normal-distribution">
               <Button class="w-full">
                 进入实验
               </Button>

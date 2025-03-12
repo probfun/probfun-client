@@ -187,7 +187,7 @@ $$
       </div>
     </template>
     <template #comment>
-      <CommentPanel exp-id="BN" />
+      <CommentPanel exp-id="binomial-normal" />
     </template>
   </ExperimentBoard>
 </template>

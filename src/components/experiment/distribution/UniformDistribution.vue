@@ -266,7 +266,7 @@ $$
       </div>
     </template>
     <template #comment>
-      <CommentPanel exp-id="uniformDistribution" />
+      <CommentPanel exp-id="uniform-distribution" />
     </template>
   </ExperimentBoard>
 </template>

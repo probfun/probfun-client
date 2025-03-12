@@ -312,7 +312,7 @@ $$
       </div>
     </template>
     <template #comment>
-      <CommentPanel exp-id="normalDistribution" />
+      <CommentPanel exp-id="normal-distribution" />
     </template>
   </ExperimentBoard>
 </template>

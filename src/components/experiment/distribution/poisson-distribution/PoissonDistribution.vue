@@ -162,7 +162,7 @@ $$
       </div>
     </template>
     <template #comment>
-      <CommentPanel exp-id="poissonDistribution" />
+      <CommentPanel exp-id="poisson-distribution" />
     </template>
   </ExperimentBoard>
 </template>

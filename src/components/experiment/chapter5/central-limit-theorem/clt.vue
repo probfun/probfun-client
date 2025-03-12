@@ -403,7 +403,7 @@ $$
       </div>
     </template>
     <template #comment>
-      <CommentPanel exp-id="centralLimitTheorem" />
+      <CommentPanel exp-id="central-limit-theorem" />
     </template>
   </ExperimentBoard>
 </template>
