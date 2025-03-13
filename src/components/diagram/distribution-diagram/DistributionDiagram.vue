@@ -21,7 +21,7 @@ const nodeData = initialNodes();
 const edgeData = initialEdges();
 const nodes = ref(nodeData);
 const searchNodes = ref(nodeData);
-const edges = ref(edgeData);
+const edges = ref<any[]>(edgeData);
 const dark = ref(false);
 const searchQuery = ref('');
 const configStore = useConfigStore();
@@ -65,7 +65,7 @@ function applyAutoLayout() {
   });
 
   // 添加边到 dagre 图
-  edges.value.forEach((edge) => {
+  edges.value.forEach((edge: any) => {
     dagreGraph.setEdge(edge.source, edge.target);
   });
 

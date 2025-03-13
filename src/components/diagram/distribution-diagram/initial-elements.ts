@@ -1,5 +1,6 @@
 import type { NodeOptions } from '@/api/distribution/distributionType';
 import { useDistributionStore } from '@/store';
+import { MarkerType } from '@vue-flow/core';
 import 'katex/dist/katex.min.css';
 
 let nodeIdCounter = 1; // 初始化计数器
@@ -55,7 +56,7 @@ interface EdgeOptions {
   label?: string
   options?: any
   style?: any
-  markerEnd?: any
+  markerEnd?: MarkerType
 }
 
 function createEdge({ id, source, target, label = '', options = {} }: EdgeOptions) {
@@ -73,9 +74,8 @@ function createEdge({ id, source, target, label = '', options = {} }: EdgeOption
     label,
     type: 'smoothstep',
     ...defaultEdgeOptions,
-    // ...options,
     defaultStroke: stroke ?? '#80a8c9',
-    labelStyle, // 将 labelStyle 添加到返回的边配置中
+    ...labelStyle, // 将 labelStyle 添加到返回的边配置中
   };
 }
 
@@ -155,7 +155,7 @@ export function initialEdges() {
       markerEnd: { type: 'arrowclosed', color: '#80a8c9' },
       labelStyle: { transform: 'translate(-15px, -45px)' },
     } }),
-    createEdge({ id: 'e14-13', source: '14', target: '13', label: 'ΣXi(iid)', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: { type: 'arrowclosed', color: '#f78c6c' } }),
+    createEdge({ id: 'e14-13', source: '14', target: '13', label: 'ΣXi(iid)', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: MarkerType.ArrowClosed }),
     createEdge({
       id: 'e16-11',
       source: '16',
@@ -205,7 +205,7 @@ export function initialEdges() {
       markerEnd: { type: 'arrowclosed', color: '#80a8c9' },
       labelStyle: { transform: 'translate(-15px, -45px)' },
     } }),
-    createEdge({ id: 'e16-15', source: '16', target: '15', label: 'n = 1', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: { type: 'arrowclosed', color: '#f78c6c' } }),
+    createEdge({ id: 'e16-15', source: '16', target: '15', label: 'n = 1', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: MarkerType.ArrowClosed }),
     createEdge({
       id: 'e16-17',
       source: '16',
@@ -233,7 +233,7 @@ export function initialEdges() {
       type: 'default',
       labelStyle: { transform: 'translate(-15px, -45px)' },
     } }),
-    createEdge({ id: 'e17-21', source: '17', target: '21', label: 'μ = 0,δ = 1', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: { type: 'arrowclosed', color: '#f78c6c' } }),
+    createEdge({ id: 'e17-21', source: '17', target: '21', label: 'μ = 0,δ = 1', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: MarkerType.ArrowClosed }),
     createEdge({ id: 'e22-17', source: '22', target: '17', label: 'log X,e^X', options: {
       animated: false, // 近似：橘色
       style: { strokeWidth: 3, stroke: '#ff9200' },
@@ -328,7 +328,7 @@ export function initialEdges() {
       markerEnd: { type: 'arrowclosed', color: '#80a8c9' },
       labelStyle: { transform: 'translate(-15px, -45px)' },
     } }),
-    createEdge({ id: 'e54-33', source: '54', target: '33', label: 'X(r),β = r,γ = n-r+1', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: { type: 'arrowclosed', color: '#f78c6c' } }),
+    createEdge({ id: 'e54-33', source: '54', target: '33', label: 'X(r),β = r,γ = n-r+1', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: MarkerType.ArrowClosed }),
     createEdge({ id: 'e34-39', source: '34', target: '39', label: 'α = 1,a = 0', options: {
       animated: false, // 单独为这条边启用动画
       style: { strokeWidth: 2, stroke: '#80a8c9' },
@@ -336,7 +336,7 @@ export function initialEdges() {
       markerEnd: { type: 'arrowclosed', color: '#80a8c9' },
       labelStyle: { transform: 'translate(-15px, -45px)' },
     } }),
-    createEdge({ id: 'e39-34', source: '39', target: '34', label: 'a+αX', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: { type: 'arrowclosed', color: '#f78c6c' } }),
+    createEdge({ id: 'e39-34', source: '39', target: '34', label: 'a+αX', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: MarkerType.ArrowClosed }),
     createEdge({ id: 'e29-35', source: '29', target: '35', label: 'μ = 1' }),
     createEdge({ id: 'e36-42', source: '36', target: '42', label: 'n even,α = 2', options: {
       animated: false, // 单独为这条边启用动画
@@ -345,7 +345,7 @@ export function initialEdges() {
       markerEnd: { type: 'arrowclosed', color: '#80a8c9' },
       labelStyle: { transform: 'translate(-15px, -45px)' },
     } }),
-    createEdge({ id: 'e42-36', source: '42', target: '36', label: '2X/α', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: { type: 'arrowclosed', color: '#f78c6c' } }),
+    createEdge({ id: 'e42-36', source: '42', target: '36', label: '2X/α', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: MarkerType.ArrowClosed }),
     createEdge({ id: 'e45-36', source: '45', target: '36', label: 'n1X,n2 → ∞', options: {
       animated: true, // 单独为这条边启用动画
       style: { strokeWidth: 2, stroke: '#80a8c9' },
@@ -353,14 +353,14 @@ export function initialEdges() {
       markerEnd: { type: 'arrowclosed', color: '#80a8c9' },
       labelStyle: { transform: 'translate(-15px, -45px)' },
     } }),
-    createEdge({ id: 'e36-45', source: '36', target: '45', label: '(X1/n1)/(X2/n2)', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: { type: 'arrowclosed', color: '#f78c6c' } }),
+    createEdge({ id: 'e36-45', source: '36', target: '45', label: '(X1/n1)/(X2/n2)', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: MarkerType.ArrowClosed }),
     createEdge({ id: 'e36-46', source: '36', target: '46', label: 'n = 2,α = 2', options: {
       animated: false, // 近似：橘色
       style: { strokeWidth: 3, stroke: '#ff9200' },
       type: 'default',
       labelStyle: { transform: 'translate(-15px, -45px)' },
     } }),
-    createEdge({ id: 'e46-36', source: '46', target: '36', label: 'α/2 ΣXi(iid)', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: { type: 'arrowclosed', color: '#f78c6c' } }),
+    createEdge({ id: 'e46-36', source: '46', target: '36', label: 'α/2 ΣXi(iid)', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: MarkerType.ArrowClosed }),
     createEdge({ id: 'e40-39', source: '40', target: '39', label: 'n = 1' }),
     createEdge({ id: 'e44-40', source: '44', target: '40', label: 'δ = 0' }),
     createEdge({ id: 'e40-45', source: '40', target: '45', label: 'X²' }),
@@ -373,7 +373,7 @@ export function initialEdges() {
       markerEnd: { type: 'arrowclosed', color: '#80a8c9' },
       labelStyle: { transform: 'translate(-15px, -45px)' },
     } }),
-    createEdge({ id: 'e46-42', source: '46', target: '42', label: 'ΣXi(iid)', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: { type: 'arrowclosed', color: '#f78c6c' } }),
+    createEdge({ id: 'e46-42', source: '46', target: '42', label: 'ΣXi(iid)', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: MarkerType.ArrowClosed }),
     createEdge({ id: 'e43-48', source: '43', target: '48', label: 'γ = 0' }),
     createEdge({ id: 'e50-44', source: '50', target: '44', label: 'γ = 0' }),
     createEdge({ id: 'e46-45', source: '46', target: '45', label: 'α = 1,X1/X2' }),
@@ -394,7 +394,7 @@ export function initialEdges() {
       markerEnd: { type: 'arrowclosed', color: '#80a8c9' },
       labelStyle: { transform: 'translate(-15px, -45px)' },
     } }),
-    createEdge({ id: 'e51-46', source: '51', target: '46', label: 'vector α = α', style: { strokeWidth: 5, stroke: '#f78c6c' }, markerEnd: { type: 'arrowclosed', color: '#f78c6c' } }),
+    createEdge({ id: 'e51-46', source: '51', target: '46', label: 'vector α = α', style: { strokeWidth: 5, stroke: '#f78c6c' }, markerEnd: MarkerType.ArrowClosed }),
     createEdge({
       id: 'e57-46',
       source: '57',
@@ -418,7 +418,7 @@ export function initialEdges() {
       markerEnd: { type: 'arrowclosed', color: '#80a8c9' },
       labelStyle: { transform: 'translate(-15px, -45px)' },
     } }),
-    createEdge({ id: 'e46-65', source: '46', target: '65', label: 'X^(1/β)', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: { type: 'arrowclosed', color: '#f78c6c' } }),
+    createEdge({ id: 'e46-65', source: '46', target: '65', label: 'X^(1/β)', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: MarkerType.ArrowClosed }),
     createEdge({ id: 'e62-46', source: '62', target: '46', label: 'log(X/λ)' }),
     createEdge({ id: 'e47-46', source: '47', target: '46', label: 'β = 1' }),
     createEdge({ id: 'e65-46', source: '65', target: '46', label: 'log[1+(X/(1-X))^(1/κ)]/λ', options: {
@@ -428,7 +428,7 @@ export function initialEdges() {
       markerEnd: { type: 'arrowclosed', color: '#80a8c9' },
       labelStyle: { transform: 'translate(-15px, -45px)' },
     } }),
-    createEdge({ id: 'e46-65', source: '46', target: '65', label: '-αlogX', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: { type: 'arrowclosed', color: '#f78c6c' } }),
+    createEdge({ id: 'e46-65', source: '46', target: '65', label: '-αlogX', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: MarkerType.ArrowClosed }),
     createEdge({ id: 'e54-47', source: '54', target: '47', label: 'n(1-X(n)),n → ∞' }),
     createEdge({ id: 'e54-49', source: '54', target: '49', label: '{log[1-(log(1-X))]/λ}^(1/κ)' }),
     createEdge({ id: 'e54-48', source: '54', target: '48', label: '{log[1-(logX)(logκ)]/δ}/logκ' }),
@@ -443,7 +443,7 @@ export function initialEdges() {
       markerEnd: { type: 'arrowclosed', color: '#80a8c9' },
       labelStyle: { transform: 'translate(-15px, -45px)' },
     } }),
-    createEdge({ id: 'e46-58', source: '46', target: '58', label: 'X1-X2', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: { type: 'arrowclosed', color: '#f78c6c' } }),
+    createEdge({ id: 'e46-58', source: '46', target: '58', label: 'X1-X2', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: MarkerType.ArrowClosed }),
     createEdge({ id: 'e53-58', source: '53', target: '58', label: 'α1 = α2,a = 0,b = α/2,c = 2', options: {
       animated: false, // 近似：橘色
       style: { strokeWidth: 3, stroke: '#ff9200' },
@@ -457,7 +457,7 @@ export function initialEdges() {
       markerEnd: { type: 'arrowclosed', color: '#80a8c9' },
       labelStyle: { transform: 'translate(-15px, -45px)' },
     } }),
-    createEdge({ id: 'e59-54', source: '59', target: '54', label: 'β = 1', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: { type: 'arrowclosed', color: '#f78c6c' } }),
+    createEdge({ id: 'e59-54', source: '59', target: '54', label: 'β = 1', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: MarkerType.ArrowClosed }),
     createEdge({ id: 'e54-69', source: '54', target: '69', label: 'a+(b-a)X', options: {
       animated: true, // 单独为这条边启用动画
       style: { strokeWidth: 2, stroke: '#80a8c9' },
@@ -465,7 +465,7 @@ export function initialEdges() {
       markerEnd: { type: 'arrowclosed', color: '#80a8c9' },
       labelStyle: { transform: 'translate(-15px, -45px)' },
     } }),
-    createEdge({ id: 'e69-54', source: '69', target: '54', label: 'a = 0,b = 1', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: { type: 'arrowclosed', color: '#f78c6c' } }),
+    createEdge({ id: 'e69-54', source: '69', target: '54', label: 'a = 0,b = 1', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: MarkerType.ArrowClosed }),
     createEdge({ id: 'e54-62', source: '54', target: '62', label: 'λX(-1/κ)' }),
     createEdge({ id: 'e54-66', source: '54', target: '66', label: '1/λ·(1-X/X)^(1/κ)' }),
     createEdge({ id: 'e54-67', source: '54', target: '67', label: '⌊10^(X)⌋' }),

@@ -72,7 +72,7 @@ const generating = ref(false);
 const isError = ref(false);
 
 function replaceKeywords(text: string): string {
-  return text.replace(/&&(.+?)&&/g, (match, p1) => ` [${p1}](ai?query=${encodeURIComponent(`请解释一下${p1}是什么`)}) `);
+  return text.replace(/&&(.+?)&&/g, (match, p1) => ` [${p1}](../ai?query=${encodeURIComponent(`请解释一下${p1}是什么`)}) `);
 }
 
 async function generateDescription(subject: string = 'default') {
@@ -128,19 +128,19 @@ function getDescriptionBody(description: string) {
       }
     }"
   >
-  <HoverCardTrigger>
-  <div
-    :class="cn('border-2 rounded-xl p-3 bg-background transition-all border-primary', isHighlight && 'border-destructive border-4')"
-    @click="onSelect"
-  >
-    <div class="text-xl whitespace-pre text-center">
-      {{ data.label }}
-    </div>
+    <HoverCardTrigger>
+      <div
+        :class="cn('border-2 rounded-xl p-3 bg-background transition-all border-primary', isHighlight && 'border-destructive border-4')"
+        @click="onSelect"
+      >
+        <div class="text-xl whitespace-pre text-center">
+          {{ data.label }}
+        </div>
 
-    <Handle id="a" type="source" :position="Position.Top" />
-    <Handle id="b" type="source" :position="Position.Bottom" />
-  </div>
-</HoverCardTrigger>
+        <Handle id="a" type="source" :position="Position.Top" />
+        <Handle id="b" type="source" :position="Position.Bottom" />
+      </div>
+    </HoverCardTrigger>
     <HoverCardContent class="w-auto z-20">
       <Label class="text-base font-bold select-none"> 概率密度函数（PDF） </Label>
       <div class="w-full flex items-center justify-center pt-3 select-none">
