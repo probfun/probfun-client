@@ -499,20 +499,21 @@ const setChartOptionsBrowse = () => {
       <Button label="Show" class="my-3" @click="visible = true">
         发布班级公告
       </Button>
-      <Panel header="已精选评论" class="w-full">
+      <Panel header="已精选评论"  class=" w-full">
         <DataTable :value="products" scrollable table-style="min-width: 60rem">
-          <Column field="expName" header="实验名称" />
-          <Column field="name" header="学生昵称" />
-          <Column field="studentID" header="学工号" />
-          <Column field="time" header="评论时间" />
-          <Column field="comment" header="评论内容" />
-          <Column class="w-24 !text-end">
+                    <Column class="w-24 !text-end">
             <template #body>
               <Button @click="cancel">
                 取消精选
               </Button>
             </template>
           </Column>
+          <Column field="expName" header="实验名称" />
+          <Column field="name" header="学生昵称" />
+          <Column field="studentID" header="学工号" />
+          <Column field="time" header="评论时间" />
+          <Column field="comment" header="评论内容" />
+
         </DataTable>
       </Panel>
       <Dialog v-model:visible="visible" modal header="发布班级公告" :style="{ width: '50rem' }">
@@ -533,8 +534,11 @@ const setChartOptionsBrowse = () => {
     </div>
     <Separator orientation="vertical" />
     <div class="flex flex-col flex-1 w-1/2 p-3 overflow-auto">
-      <Button label="Show" v-if="isTablet" @click="toggleTable()">点击切换图展示</Button>
-      <Button label="Show" v-else @click="toggleTable()">点击切换表展示</Button>
+      <div class="flex items-center gap-5 mb-4">
+    <h2 class="text-lg font-semibold">数据展示与分析</h2>
+    <Button label="Show" v-if="isTablet" @click="toggleTable()">点击切换图展示</Button>
+    <Button label="Show" v-else @click="toggleTable()">点击切换表展示</Button>
+  </div>
       <div v-if="isTablet" class="h-full">
         <div class="flex my-2">
           <Panel header="各实验点击次数排行榜" class="w-full mr-2">
@@ -583,6 +587,9 @@ const setChartOptionsBrowse = () => {
           </Panel>
         </div>
       </div>
+
     </div>
+    
   </div>
+  
 </template>
