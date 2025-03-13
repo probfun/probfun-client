@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { FunctionLabel } from './functions.ts'
 import {
   getChartData,
   getChartDataMulti,
@@ -6,6 +7,7 @@ import {
   getChartOptionMulti,
 } from '@/components/experiment/chapter5/distribution-clt/config';
 import FFT from 'fft.js';
+
 import { onMounted, ref, watch } from 'vue';
 
 const props = defineProps<{
@@ -16,6 +18,8 @@ const props = defineProps<{
     dx: number
     n: number
     multi: boolean
+    type: FunctionLabel
+    args: Record<FunctionLabel, any>
   }
 }>();
 
@@ -26,16 +30,25 @@ const yns = ref<number[][]>([]);
 const chartData = ref(getChartData(xs.value, y1s.value, y2s.value));
 const chartOption = ref(getChartOption(y1s.value, y2s.value));
 
+function convolvedNormal(mean: number, std: number, n: number) {
+  const newMean = n * mean;
+  const newVariance = n * std * std;
+  const coeff = 1 / Math.sqrt(2 * Math.PI * newVariance);
+  return (x: number): number => {
+    return coeff * Math.exp(-((x - newMean) ** 2) / (2 * newVariance));
+  };
+}
+
 function selfConvolution(
   f: (x: number) => number,
   n: number,
   left: number,
   right: number,
 ): (x: number) => number {
-  // if (n === 1)
-  //   return f;
-  // --- 1) 基本参数、采样设置 ---
-  // 区间长度
+  const { args, type } = props.args;
+  if (type === 'normal') {
+    return convolvedNormal(args[type].mean, args[type].std, n);
+  }
   const L = right - left;
   const N = 1024;
   const h = L / N;
@@ -105,7 +118,11 @@ function selfConvolution(
 }
 
 function calculateMeanAndVariance() {
-  const { f, left, right, dx } = props.args;
+  const { f, left, right, dx, type, args } = props.args;
+  if (type === 'normal') {
+    const { mean, std } = args[type];
+    return { mean, variance: std ** 2 };
+  }
   const x = [];
   const fValues = [];
 

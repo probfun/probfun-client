@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { loginApi } from '@/api/user/userApi';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useUserStore } from '@/store';
 import { setLocalToken } from '@/utils/auth';
@@ -23,7 +22,6 @@ async function login() {
     warning('请填写所有字段');
     return;
   }
-
   try {
     const data = await loginApi(studentId.value, password.value);
     success('登录成功');
@@ -48,52 +46,69 @@ function casLogin() {
 </script>
 
 <template>
-<form v-auto-animate class="rounded-lg w-full max-w-sm items-center" @submit.prevent="login">
-  <h1 class="text-center text-3xl font-bold mb-12 select-none">
-    嗨！别来无恙啊
-  </h1>
+  <form v-auto-animate class="rounded-lg w-full max-w-sm items-center" @submit.prevent="login">
+    <h1 class="text-center text-3xl font-bold mb-12 select-none">
+      嗨！别来无恙啊
+    </h1>
 
-  <div class="text-center flex flex-col mb-6">
-    <Button 
-      type="button"
+    <div v-auto-animate class="w-full my-4">
+      <div class="grid gap-2">
+        <Label for="studentId"> 学工号 </Label>
+        <Input id="studentId" v-model="studentId" class="transition-all" placeholder="" required />
+      </div>
+    </div>
 
-      :disabled="isLoading"
-      class="w-full mb-2"
-      @click="casLogin"
-    >
-      北邮统一认证
-    </Button>
+    <div class="w-full grid gap-4 mb-6">
+      <div class="grid gap-2">
+        <Label for="password"> 密码 </Label>
+        <Input id="password" v-model="password" type="password" class="transition-all" placeholder="" required />
+      </div>
+    </div>
 
-    <Button
-      type="submit"
-      variant="outline"
-      :disabled="isLoading"
-      class="w-full mb-3"
-    >
-      游客模式登录
-    </Button>
-  </div>
+    <div class="text-center flex flex-col mb-6">
+      <Button
+        type="submit"
+        :disabled="isLoading" class="w-full mb-4"
+      >
+        登录
+      </Button>
+      <Button
+        type="button"
 
+        :disabled="isLoading"
+        class="w-full mb-4"
+        @click="casLogin"
+      >
+        北邮统一认证
+      </Button>
 
+      <Button
+        type="submit"
+        variant="outline"
+        :disabled="isLoading"
+        class="w-full mb-3"
+      >
+        游客模式登录
+      </Button>
+    </div>
 
     <!-- <Label class="w-full flex justify-center mt-5">
       还没有账号？点击此处<router-link to="/register" class="underline underline-offset-4 hover:text-primary transition-all font-medium px-1"> 注册 </router-link>
     </Label> -->
-        <Label class="w-full flex justify-center mt-3">
-  点击查看
-  <a 
-    href="https://ecnyphosrl4i.feishu.cn/wiki/VpHuwRJ53iDKIUkhfFVcqX9fnVe?from=from_copylink" 
-    target="_blank" 
-    class="underline underline-offset-4 px-1 cursor-pointer text-black-600 hover:text-blue-800"
-  >
-    用户手册
-  </a>
-</Label>
+    <Label class="w-full flex justify-center mt-3">
+      点击查看
+      <a
+        href="https://ecnyphosrl4i.feishu.cn/wiki/VpHuwRJ53iDKIUkhfFVcqX9fnVe?from=from_copylink"
+        target="_blank"
+        class="underline underline-offset-4 px-1 cursor-pointer text-black-600 hover:text-blue-800"
+      >
+        用户手册
+      </a>
+    </Label>
 
     <Label class="w-full flex justify-center mt-3">
       登录遇到问题？请添加QQ群<div class="underline underline-offset-4 px-1 cursor-text">111293253</div>以联系管理员。
     </Label>
-
   </form>
 </template>
 
