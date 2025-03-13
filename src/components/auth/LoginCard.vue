@@ -51,27 +51,27 @@ function casLogin() {
       嗨！别来无恙啊
     </h1>
 
-    <div v-auto-animate class="w-full my-4">
-      <div class="grid gap-2">
-        <Label for="studentId"> 学工号 </Label>
-        <Input id="studentId" v-model="studentId" class="transition-all" placeholder="" required />
-      </div>
-    </div>
+    <!--    <div v-auto-animate class="w-full my-4"> -->
+    <!--      <div class="grid gap-2"> -->
+    <!--        <Label for="studentId"> 学工号 </Label> -->
+    <!--        <Input id="studentId" v-model="studentId" class="transition-all" placeholder="" required /> -->
+    <!--      </div> -->
+    <!--    </div> -->
 
-    <div class="w-full grid gap-4 mb-6">
-      <div class="grid gap-2">
-        <Label for="password"> 密码 </Label>
-        <Input id="password" v-model="password" type="password" class="transition-all" placeholder="" required />
-      </div>
-    </div>
+    <!--    <div class="w-full grid gap-4 mb-6"> -->
+    <!--      <div class="grid gap-2"> -->
+    <!--        <Label for="password"> 密码 </Label> -->
+    <!--        <Input id="password" v-model="password" type="password" class="transition-all" placeholder="" required /> -->
+    <!--      </div> -->
+    <!--    </div> -->
 
     <div class="text-center flex flex-col mb-6">
-      <Button
-        type="submit"
-        :disabled="isLoading" class="w-full mb-4"
-      >
-        登录
-      </Button>
+      <!--      <Button -->
+      <!--        type="submit" -->
+      <!--        :disabled="isLoading" class="w-full mb-4" -->
+      <!--      > -->
+      <!--        登录 -->
+      <!--      </Button> -->
       <Button
         type="button"
 

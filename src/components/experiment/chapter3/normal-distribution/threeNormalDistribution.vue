@@ -308,7 +308,7 @@ const discussTabList = [
       />
     </template>
     <template #parameter>
-      <div class="w-full h-full flex flex-col items-center justify-center gap-3 p-3">
+      <div class="w-full min-h-full flex flex-col items-center justify-center gap-3 p-3">
         <Card class="w-full flex-1 flex flex-col  gap-3 p-3">
           <CardHeader>
             <CardTitle>
