@@ -92,6 +92,17 @@ function casLogin() {
     <Label class="w-full flex justify-center mt-3">
       登录遇到问题？请添加QQ群<div class="underline underline-offset-4 px-1 cursor-text">111293253</div>以联系管理员。
     </Label>
+    <Label class="w-full flex justify-center mt-3">
+  点击查看
+  <a 
+    href="https://ecnyphosrl4i.feishu.cn/wiki/VpHuwRJ53iDKIUkhfFVcqX9fnVe?from=from_copylink" 
+    target="_blank" 
+    class="underline underline-offset-4 px-1 cursor-pointer text-black-600 hover:text-blue-800"
+  >
+    用户手册
+  </a>
+</Label>
+
   </form>
 </template>
 
