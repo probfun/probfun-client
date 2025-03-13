@@ -464,7 +464,7 @@ const setChartOptionsBrowse = () => {
 
 <template>
   <div class="flex">
-    <div class="flex flex-col flex-1 w-1/2 p-3">
+    <div class="flex flex-col flex-1 w-1/2 p-3 overflow-auto">
       <div class="flex mb-[-10px]">
         <span class="text-lg font-bold">2024年秋季学期</span>
         <div class="ml-auto">
@@ -483,10 +483,6 @@ const setChartOptionsBrowse = () => {
           <span class="text-base font-semibold mb-3">教师姓名：{{ userStore.user?.nickname }}</span>
           <span class="text-base font-semibold">教工号：{{ userStore.user?.studentId }}</span>
         </div>
-        <div class="ml-auto">
-          <Button v-if="isTablet" @click="toggleTable()">点击切换图展示</Button>
-          <Button v-else @click="toggleTable()">点击切换表展示</Button>
-        </div>
       </div>
       <Panel header="已发布公告" class="mx-1 mt-3 mb-5 h-full overflow-auto">
         <Accordion type="single" class="w-full" collapsible :default-value="defaultValue">
@@ -503,6 +499,22 @@ const setChartOptionsBrowse = () => {
       <Button label="Show" class="my-3" @click="visible = true">
         发布班级公告
       </Button>
+      <Panel header="已精选评论" class="w-full">
+        <DataTable :value="products" scrollable table-style="min-width: 60rem">
+          <Column field="expName" header="实验名称" />
+          <Column field="name" header="学生昵称" />
+          <Column field="studentID" header="学工号" />
+          <Column field="time" header="评论时间" />
+          <Column field="comment" header="评论内容" />
+          <Column class="w-24 !text-end">
+            <template #body>
+              <Button @click="cancel">
+                取消精选
+              </Button>
+            </template>
+          </Column>
+        </DataTable>
+      </Panel>
       <Dialog v-model:visible="visible" modal header="发布班级公告" :style="{ width: '50rem' }">
         <span class="text-surface-500 dark:text-surface-400 block mb-8">请输入公告内容后，点击发布按钮发布公告。</span>
         <div class="flex items-center gap-4 mb-4">
@@ -521,22 +533,8 @@ const setChartOptionsBrowse = () => {
     </div>
     <Separator orientation="vertical" />
     <div class="flex flex-col flex-1 w-1/2 p-3 overflow-auto">
-      <Panel header="已精选评论" class="w-full h-full">
-        <DataTable :value="products" scrollable table-style="min-width: 60rem">
-          <Column field="expName" header="实验名称" />
-          <Column field="name" header="学生昵称" />
-          <Column field="studentID" header="学工号" />
-          <Column field="time" header="评论时间" />
-          <Column field="comment" header="评论内容" />
-          <Column class="w-24 !text-end">
-            <template #body>
-              <Button @click="cancel">
-                取消精选
-              </Button>
-            </template>
-          </Column>
-        </DataTable>
-      </Panel>
+      <Button label="Show" v-if="isTablet" @click="toggleTable()">点击切换图展示</Button>
+      <Button label="Show" v-else @click="toggleTable()">点击切换表展示</Button>
       <div v-if="isTablet" class="h-full">
         <div class="flex my-2">
           <Panel header="各实验点击次数排行榜" class="w-full mr-2">

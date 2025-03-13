@@ -168,7 +168,7 @@ function createPlotlyChart2() {
       x,
       y: marginalX,
       name: 'Marginal X',
-      marker: { color: 'rgba(255, 0, 0, 0.9)' },
+      marker: { color: 'rgba(0, 0, 255, 0.9)' },
     },
   ];
 
@@ -240,6 +240,14 @@ function createPlotlyChart3() {
   const y = samples.map(point => point[1]);
 
   // 创建散点图数据
+  const center = [props.mean1, props.mean2];
+  const colorValues = samples.map(point => {
+    const dx = point[0] - center[0];
+    const dy = point[1 - center[1]];
+    return -Math.sqrt(dx * dx + dy * dy); // 欧几里得距离
+  });
+
+  // 创建散点图数据
   const data = [
     {
       type: 'scatter',
@@ -248,8 +256,11 @@ function createPlotlyChart3() {
       y,
       name: 'Samples',
       marker: {
-        color: 'rgba(255, 0, 0, 0.5)',
         size: 10,
+        color: colorValues, // 使用距离作为颜色映射的依据
+        colorscale: 'Viridis', // 设置渐变色标尺
+        opacity: 0.8, // 设置透明度
+        showscale: false, // 显示颜色标尺
       },
     },
   ];
