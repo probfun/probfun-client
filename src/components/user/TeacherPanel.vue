@@ -235,7 +235,7 @@ async function getTime() {
     timeList.value.forEach(time => {
       browse.value.push({
         expName: time.experiment.expName,
-        times: time.time
+        time: time.time
       })
     })
   }
