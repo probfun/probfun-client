@@ -309,7 +309,12 @@ const discussTabList = [
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center gap-3 p-3">
-        <Card class="w-full flex-1 flex flex-col">
+        <Card class="w-full flex-1 flex flex-col  gap-3 p-3">
+          <CardHeader>
+            <CardTitle>
+              参数调整
+            </CardTitle>
+          </CardHeader>
           <CardContent class="flex flex-col justify-center items-center gap-3 pt-6">
             <RadioGroup
               default-value="chart1"
