@@ -71,6 +71,10 @@ const click = ref([
     expName: '阳性检测',
     times: 5,
   },
+  {
+    expName: '贝特朗悖论',
+    times: 7,
+  },
 ])
 const browse = ref([
   {
@@ -84,6 +88,10 @@ const browse = ref([
   {
     expName: '阳性检测',
     time: 5,
+  },
+  {
+    expName: '贝特朗悖论',
+    time: 7,
   },
 ])
 const comment = ref([
@@ -99,6 +107,10 @@ const comment = ref([
     expName: '阳性检测',
     times: 5,
   },
+  {
+    expName: '贝特朗悖论',
+    times: 7,
+  },
 ])
 const star = ref([
   {
@@ -112,6 +124,10 @@ const star = ref([
   {
     expName: '阳性检测',
     times: 5,
+  },
+  {
+    expName: '贝特朗悖论',
+    times: 7,
   },
 ])
 
@@ -294,18 +310,12 @@ const chartOptionsBrowse = ref();
 const chartOptionsComment = ref();
 const chartOptionsStar = ref();
 
+
 const generateRandomColor = (alpha = 0.7) => {
-  // 生成两个随机颜色作为渐变的起点和终点
-  const r1 = Math.floor(Math.random() * 256);
-  const g1 = Math.floor(Math.random() * 256);
-  const b1 = Math.floor(Math.random() * 256);
-
-  const r2 = Math.floor(Math.random() * 256);
-  const g2 = Math.floor(Math.random() * 256);
-  const b2 = Math.floor(Math.random() * 256);
-
-  // 返回一个渐变色字符串
-  return `linear-gradient(90deg, rgba(${r1}, ${g1}, ${b1}, ${alpha}), rgba(${r2}, ${g2}, ${b2}, ${alpha}))`;
+  const r = Math.floor(Math.random() * 256);
+  const g = Math.floor(Math.random() * 256);
+  const b = Math.floor(Math.random() * 256);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
 const setChartDataClick = () => {
@@ -427,7 +437,7 @@ const setChartDataBrowse = () => {
         data: star.value.map(item => item.times),
         fill: false,
         borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-        tension: 0.4
+        tension: 0.6
       },
     ]
   };
