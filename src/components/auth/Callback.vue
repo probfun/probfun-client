@@ -23,6 +23,7 @@ onMounted(async () => {
     const response = await casValidateApi(ticket);
     userStore.user = response.user;
     setLocalToken(response.token);
+    await router.push('/dashboard');
   }
   catch (e: any) {
     error('认证失败，请重试');

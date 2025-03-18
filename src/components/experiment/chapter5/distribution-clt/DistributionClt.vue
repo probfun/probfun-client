@@ -1,20 +1,23 @@
 <script setup lang="ts">
+import type { FunctionLabel } from '@/components/experiment/chapter5/distribution-clt/functions.ts';
 import { generateDistributionFunctionApi } from '@/api/ai/aiApi.ts';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import { getConvergeFuncData, getConvergeFuncOption } from '@/components/experiment/chapter5/distribution-clt/config.ts';
 import DistributionCltDiagram from '@/components/experiment/chapter5/distribution-clt/DistributionCltDiagram.vue';
+import { args, functionList } from '@/components/experiment/chapter5/distribution-clt/functions.ts'
+
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 
-import { renderLatex, toMarkdown } from '@/utils/markdown';
-
-import { GraduationCap, Lightbulb, MessagesSquare } from 'lucide-vue-next'; // 或者使用 MathJax
-import { all, create } from 'mathjs'; // 引入 KaTeX 样式
-import { nextTick, onMounted, ref, watch } from 'vue'; // 用于 Markdown 渲染
+import { renderLatex, toMarkdown } from '@/utils/markdown'; // 或者使用 MathJax
+import { GraduationCap, Lightbulb, MessagesSquare } from 'lucide-vue-next'; // 引入 KaTeX 样式
+import { all, create } from 'mathjs'; // 用于 Markdown 渲染
+import { nextTick, onMounted, ref, watch } from 'vue';
 import { content } from './content';
 import 'katex/dist/katex.min.css';
 // import 'nerdamer/Calculus';
@@ -160,150 +163,8 @@ const chapters = [
   },
 ]
 
-function uniform(x: number): number {
-  if (x >= 0 && x <= 1) {
-    return 1;
-  }
-  else {
-    return 0;
-  }
-}
-
-function normal(x: number): number {
-  const mean = 0;
-  const stdDev = 1;
-  return (1 / (Math.sqrt(2 * Math.PI) * stdDev)) * Math.exp(-0.5 * ((x - mean) / stdDev) ** 2);
-}
-
-function exponential(x: number): number {
-  const lambda = 1;
-  if (x < 0)
-    return 0;
-  return lambda * Math.exp(-lambda * x);
-}
-
-function gamma(x: number): number {
-  const k = 2; // shape
-  const theta = 2; // scale
-  if (x < 0)
-    return 0;
-  return (x ** (k - 1) * Math.exp(-x / theta)) / (theta ** k * gammaFunction(k));
-}
-
-function beta(x: number): number {
-  const alpha = 2;
-  const beta = 2;
-  if (x < 0 || x > 1)
-    return 0;
-  return (x ** (alpha - 1) * (1 - x) ** (beta - 1)) / betaFunction(alpha, beta);
-}
-
-function cauchy(x: number): number {
-  const x0 = 0; // location parameter
-  const gamma = 1; // scale parameter
-  return (1 / (Math.PI * gamma)) * (gamma / ((x - x0) ** 2 + gamma ** 2));
-}
-
-function pareto(x: number): number {
-  const xm = 1; // scale parameter
-  const alpha = 3; // shape parameter
-  if (x < xm)
-    return 0;
-  return (alpha * xm ** alpha) / x ** (alpha + 1);
-}
-
-function gammaFunction(n: number): number {
-  if (n === 1)
-    return 1;
-  if (n === 0.5)
-    return Math.sqrt(Math.PI);
-  return (n - 1) * gammaFunction(n - 1);
-}
-
-function betaFunction(a: number, b: number): number {
-  return (gammaFunction(a) * gammaFunction(b)) / gammaFunction(a + b);
-}
-
 const fAny = ref<((x: number) => number) | null>(null);
-const fCustom = ref<((x: number) => number) | null>(null);
 const multi = ref(false);
-
-const functionList = {
-  uniform: {
-    name: 'Uniform',
-    f: uniform,
-    chinese: '均匀分布',
-    latex: 'f(x) = \\begin{cases} 1, & 0 \\leq x \\leq 1 \\\\ 0, & \\text{其他} \\end{cases}',
-    left: 0,
-    right: 1,
-  },
-  normal: {
-    name: 'Normal',
-    f: normal,
-    chinese: '正态分布',
-    latex: 'f(x) = \\frac{1}{\\sqrt{2\\pi}}*e^{-\\frac{(x - \\mu)^2}{2\\sigma^2}}',
-    left: -5,
-    right: 5,
-  },
-  exponential: {
-    name: 'Exponential',
-    f: exponential,
-    chinese: '指数分布',
-    latex: 'f(x) = \\lambda e^{-\\lambda x}',
-    left: 0,
-    right: 10,
-  },
-  gamma: {
-    name: 'Gamma',
-    f: gamma,
-    chinese: '伽玛分布',
-    latex: 'f(x) = \\frac{x^{k-1} e^{-\\frac{x}{\\theta}}}{\\theta^k \\Gamma(k)}',
-    left: 0,
-    right: 10,
-  },
-  beta: {
-    name: 'Beta',
-    f: beta,
-    chinese: '贝塔分布',
-    latex: 'f(x) = \\frac{x^{\\alpha-1} (1-x)^{\\beta-1}}{B(\\alpha, \\beta)}',
-    left: 0,
-    right: 1,
-  },
-  cauchy: {
-    name: 'Cauchy',
-    f: cauchy,
-    chinese: '柯西分布',
-    latex: 'f(x) = \\frac{1}{\\pi\\gamma} \\frac{\\gamma}{(x-x_0)^2 + \\gamma^2}',
-    left: -10,
-    right: 10,
-  },
-  pareto: {
-    name: 'Pareto',
-    f: pareto,
-    chinese: '帕累托分布',
-    latex: 'f(x) = \\frac{\\alpha x_m^\\alpha}{x^{\\alpha+1}}',
-    left: 0,
-    right: 10,
-  },
-  custom: {
-    name: 'Custom',
-    f: fCustom.value,
-    chinese: '自定义...',
-    latex: '',
-    left: 0,
-    right: 1,
-  },
-  ai: {
-    name: 'AI',
-    f: fCustom.value,
-    chinese: 'AI 生成',
-    latex: '',
-    left: 0,
-    right: 1,
-  },
-};
-
-type FunctionLabel = keyof typeof functionList;
 
 const functionLabel: FunctionLabel[] = [
   'uniform',
@@ -470,6 +331,20 @@ const discussTabList = [
     icon: MessagesSquare,
   },
 ];
+
+function getArgs() {
+  if (selected.value === 'normal') {
+    return {
+      mean: 0,
+      std: 1,
+    }
+  }
+  return {};
+}
+
+watch(args, () => {
+  console.log(args);
+});
 </script>
 
 <template>
@@ -477,7 +352,7 @@ const discussTabList = [
     <template #experiment>
       <DistributionCltDiagram
         v-if="fAny" ref="distributionCltDiagram"
-        :args="{ f: fAny, dx: 0.01, left: range[0], right: range[1], n, multi }"
+        :args="{ f: fAny, dx: 0.01, left: range[0], right: range[1], n, multi, type: selected, args }"
       />
     </template>
     <template #parameter>
@@ -538,6 +413,12 @@ const discussTabList = [
                   你输入的概率密度函数无法解析，请检查输入
                 </Label>
               </div>
+              <div class="flex gap-4 items-center justify-center mt-2">
+                <div v-for="(item, param) in args[selected]" :key="param" class="flex gap-2 items-center">
+                  <Label> {{ param }}: </Label>
+                  <Input v-model="args[selected][param]" type="number" class="max-w-32" />
+                </div>
+              </div>
             </CardContent>
           </Card>
           <Card class="flex-1 flex flex-col">
@@ -550,8 +431,8 @@ const discussTabList = [
                   叠加分布数量：
                 </Label>
                 <div class="gap-2 flex items-center">
-                  <Slider v-model="n_list" :disabled="multi" :min="1" :max="30" />
-                  <Input v-model="n" :disabled="multi" :min="1" :max="30" type="number" class="w-16" />
+                  <Slider v-model="n_list" :disabled="multi" :min="1" :max="100" />
+                  <Input v-model="n" :disabled="multi" :min="1" :max="100" type="number" class="w-16" />
                   <Label class="flex-shrink-0">
                     个
                   </Label>
