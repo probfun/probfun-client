@@ -295,10 +295,17 @@ const chartOptionsComment = ref();
 const chartOptionsStar = ref();
 
 const generateRandomColor = (alpha = 0.7) => {
-  const r = Math.floor(Math.random() * 256);
-  const g = Math.floor(Math.random() * 256);
-  const b = Math.floor(Math.random() * 256);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  // 生成两个随机颜色作为渐变的起点和终点
+  const r1 = Math.floor(Math.random() * 256);
+  const g1 = Math.floor(Math.random() * 256);
+  const b1 = Math.floor(Math.random() * 256);
+
+  const r2 = Math.floor(Math.random() * 256);
+  const g2 = Math.floor(Math.random() * 256);
+  const b2 = Math.floor(Math.random() * 256);
+
+  // 返回一个渐变色字符串
+  return `linear-gradient(90deg, rgba(${r1}, ${g1}, ${b1}, ${alpha}), rgba(${r2}, ${g2}, ${b2}, ${alpha}))`;
 };
 
 const setChartDataClick = () => {
@@ -382,7 +389,6 @@ const setChartOptionsStar = () => {
 
 const setChartDataComment = () => {
   const documentStyle = getComputedStyle(document.body);
-
   return {
     labels: comment.value.map(item => item.expName),
     datasets: [
@@ -393,6 +399,7 @@ const setChartDataComment = () => {
     ]
   };
 }
+
 const setChartOptionsComment = () => {
   const documentStyle = getComputedStyle(document.documentElement);
   const textColor = documentStyle.getPropertyValue('--p-text-color');
@@ -499,9 +506,9 @@ const setChartOptionsBrowse = () => {
       <Button label="Show" class="my-3" @click="visible = true">
         发布班级公告
       </Button>
-      <Panel header="已精选评论"  class=" w-full">
+      <Panel header="已精选评论" class=" w-full">
         <DataTable :value="products" scrollable table-style="min-width: 60rem">
-                    <Column class="w-24 !text-end">
+          <Column class="w-24 !text-end">
             <template #body>
               <Button @click="cancel">
                 取消精选
@@ -535,10 +542,10 @@ const setChartOptionsBrowse = () => {
     <Separator orientation="vertical" />
     <div class="flex flex-col flex-1 w-1/2 p-3 overflow-auto">
       <div class="flex items-center gap-5 mb-4">
-    <h2 class="text-lg font-semibold">数据展示与分析</h2>
-    <Button label="Show" v-if="isTablet" @click="toggleTable()">点击切换图展示</Button>
-    <Button label="Show" v-else @click="toggleTable()">点击切换表展示</Button>
-  </div>
+        <h2 class="text-lg font-semibold">数据展示与分析</h2>
+        <Button label="Show" v-if="isTablet" @click="toggleTable()">点击切换图展示</Button>
+        <Button label="Show" v-else @click="toggleTable()">点击切换表展示</Button>
+      </div>
       <div v-if="isTablet" class="h-full">
         <div class="flex my-2">
           <Panel header="各实验点击次数排行榜" class="w-full mr-2">
@@ -589,7 +596,7 @@ const setChartOptionsBrowse = () => {
       </div>
 
     </div>
-    
+
   </div>
-  
+
 </template>
