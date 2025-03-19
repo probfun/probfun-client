@@ -46,7 +46,7 @@ const defaultEdgeOptions = {
     color: '#000',
   },
   animated: false,
-  style: { strokeWidth: 30, stroke: '#80a8c9' },
+  style: { strokeWidth: 2.5, stroke: '#80a8c9' },
 };
 
 interface EdgeOptions {
@@ -430,7 +430,7 @@ export function initialEdges() {
     } }),
     createEdge({ id: 'e46-65', source: '46', target: '65', label: '-αlogX', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: MarkerType.ArrowClosed }),
     createEdge({ id: 'e54-47', source: '54', target: '47', label: 'n(1-X(n)),n → ∞' }),
-    createEdge({ id: 'e54-49', source: '54', target: '49', label: '{log[1-(log(1-X))]/λ}^(1/κ)' }),
+    createEdge({ id: 'e54-49', source: '54', target: '49', label: '{log[1(log(1-X))]/λ}^(1/κ)' }),
     createEdge({ id: 'e54-48', source: '54', target: '48', label: '{log[1-(logX)(logκ)]/δ}/logκ' }),
     createEdge({ id: 'e52-46', source: '52', target: '46', label: 'κ → 0,α = 1', options: {
       animated: true, // 单独为这条边启用动画,虚线单箭头
