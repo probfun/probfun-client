@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils';
 import { useUserStore } from '@/store';
-import { logout } from '@/utils/auth';
+import { isVisitor, logout } from '@/utils/auth';
 import { Book, Bot, CircleHelp, Dices, Home, LogOut, Star, Sun, User } from 'lucide-vue-next';
 import { useToast } from 'primevue/usetoast';
 import { onMounted, ref } from 'vue';
@@ -51,6 +51,10 @@ function isActiveRoute(itemRoute: string) {
 }
 
 const router = useRouter();
+const vistorAllowedItem = [
+  '主页',
+  '目录',
+]
 const sideBarItem = ref<SideBarItem[]>([
   {
     label: '主页',
@@ -471,6 +475,9 @@ const content = ref('');
 const feedbackList = ref<Feedback[] | null>(null);
 
 async function refreshFeedback() {
+  if (isVisitor()) {
+    return;
+  }
   try {
     const result = await fetchFeedbackApi();
     feedbackList.value = result.feedback;
@@ -485,6 +492,10 @@ onMounted(() => {
 });
 
 async function sendFeedback() {
+  if (isVisitor()) {
+    toast.add({ severity: 'warn', summary: '提示', detail: '请先登录', life: 3000 });
+    return;
+  }
   if (content.value === '') {
     toast.add({ severity: 'warn', summary: '提示', detail: '意见反馈不能为空', life: 3000 });
     return;
@@ -526,7 +537,7 @@ function goHome() {
       <div class="">
         <ul class="space-y-2 flex flex-col items-center">
           <li v-for="(item, index) in sideBarItem" :key="index">
-            <TooltipProvider :delay-duration="0">
+            <TooltipProvider v-if="!isVisitor() || vistorAllowedItem.includes(item.label)" :delay-duration="0">
               <Tooltip>
                 <TooltipTrigger>
                   <Button
@@ -552,7 +563,7 @@ function goHome() {
       <div class="mt-auto">
         <ul class="space-y-2">
           <li v-for="(item, index) in sideBarBottomItem" :key="index">
-            <TooltipProvider :delay-duration="0">
+            <TooltipProvider v-if="!isVisitor() || item.label === '切换主题'" :delay-duration="0">
               <Tooltip>
                 <TooltipTrigger>
                   <Button

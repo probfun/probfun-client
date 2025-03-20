@@ -1,20 +1,29 @@
-import { post } from "../request";
-import { Track } from "./trackType";
+import type { Track } from './trackType';
+import { useUserStore } from '@/store';
+import { post } from '../request';
 
 export async function clickApi(actionType: string, entityType: string, entityName: string, pageName: string) {
-    const result = await post<{ track: Track }>('/api/track/click', {
-        actionType,
-        entityType,
-        entityName,
-        pageName
-    })
-    return result.data;
+  const user = useUserStore().user;
+  if (user?.role === -1) {
+    return;
+  }
+  const result = await post<{ track: Track }>('/api/track/click', {
+    actionType,
+    entityType,
+    entityName,
+    pageName,
+  })
+  return result.data;
 }
 
 export async function browseApi(actionType: string, pageName: string) {
-    const result = await post<{ track: Track }>('/api/track/page', {
-        actionType,
-        pageName
-    });
-    return result.data;
+  const user = useUserStore().user;
+  if (user?.role === -1) {
+    return;
+  }
+  const result = await post<{ track: Track }>('/api/track/page', {
+    actionType,
+    pageName,
+  });
+  return result.data;
 }

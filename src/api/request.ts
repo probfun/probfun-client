@@ -42,24 +42,59 @@ service.interceptors.response.use(
 
 // 封装GET请求，带类型定义
 export async function get<T>(url: string, params?: any): Promise<ResponseData<T>> {
-  return service.get(url, { params }).then(response => response.data);
+  const response = await service.get(url, { params });
+  if (response.status === 200 && response.data.status === 200) {
+    return response.data;
+  }
+  else {
+    throw new Error('请求失败');
+  }
 }
 
 // 封装POST请求，带类型定义
 export async function post<T>(url: string, data?: any, config?: any): Promise<ResponseData<T>> {
-  return service.post(url, data, config).then(response => response.data);
+  // return service.post(url, data, config).then(response => response.data);
+  const response = await service.post(url, data, config);
+  if (response.status === 200 && response.data.status === 200) {
+    return response.data;
+  }
+  else {
+    throw new Error('请求失败');
+  }
 }
 
 export async function postRaw<T>(url: string, data?: any, config?: any): Promise<T> {
-  return service.post(url, data, config).then(response => response.data);
+  // return service.post(url, data, config).then(response => response.data);
+
+  const response = await service.post(url, data, config);
+  if (response.status === 200 && response.data.status === 200) {
+    return response.data;
+  }
+  else {
+    throw new Error('请求失败');
+  }
 }
 
 // 封装DELETE请求，带类型定义
 export async function del<T>(url: string, params?: any): Promise<ResponseData<T>> {
-  return service.delete(url, { params }).then(response => response.data);
+  // return service.delete(url, { params }).then(response => response.data);
+  const response = await service.delete(url, { params });
+  if (response.status === 200 && response.data.status === 200) {
+    return response.data;
+  }
+  else {
+    throw new Error('请求失败');
+  }
 }
 
 // 封装PUT请求，带类型定义
 export async function put<T>(url: string, data?: any, config?: any): Promise<ResponseData<T>> {
-  return service.put(url, data, config).then(response => response.data);
+  // return service.put(url, data, config).then(response => response.data);
+  const response = await service.put(url, data, config);
+  if (response.status === 200 && response.data.status === 200) {
+    return response.data;
+  }
+  else {
+    throw new Error('请求失败');
+  }
 }

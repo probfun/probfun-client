@@ -1,5 +1,6 @@
 import AiPanel from '@/components/ai/AiPanel.vue';
 import Callback from '@/components/auth/Callback.vue'
+import CasLoginCard from '@/components/auth/CasLoginCard.vue';
 import LoginCard from '@/components/auth/LoginCard.vue';
 import RegisterCard from '@/components/auth/RegisterCard.vue';
 import Chatper1Diagram from '@/components/diagram/chapter-1/Chapter1Diagram.vue';
@@ -23,6 +24,7 @@ import StudentPanel from '@/components/user/StudentPanel.vue';
 import TeacherPanel from '@/components/user/TeacherPanel.vue';
 import AuthPage from '@/pages/AuthPage.vue';
 import DashBoard from '@/pages/DashBoard.vue';
+import { isVisitor } from '@/utils/auth.ts';
 import { createRouter, createWebHistory } from 'vue-router';
 
 const router = createRouter({
@@ -34,6 +36,10 @@ const router = createRouter({
       children: [
         {
           path: '/login',
+          component: CasLoginCard,
+        },
+        {
+          path: '/login-test',
           component: LoginCard,
         },
         {
@@ -166,23 +172,20 @@ const router = createRouter({
           path: '/dashboard/mindmap/chapter-4',
           component: Chatper4Diagram,
         },
+        {
+          path: '/:pathMatch(.*)*',
+          redirect: '/dashboard',
+        },
       ],
     },
-    // {
-    //   path: '/terms',
-    //   component: () => import('@/pages/TermsPage.vue')
-    // },
-    // {
-    //   path: '/privacy',
-    //   component: () => import('@/pages/PrivacyPage.vue')
-    // },
+
   ],
 });
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token');
   if (to.path === '/') {
-    if (token) {
+    if (token || isVisitor()) {
       next('/dashboard');
     }
     else {
@@ -190,22 +193,14 @@ router.beforeEach((to, from, next) => {
     }
     return;
   }
-  // if (to.path === '/login' || to.path === '/register') {
-  //   if (token) {
-  //     next('/dashboard');
-  //   }
-  //   else {
-  //     next();
-  //   }
-  //   return;
-  // }
   if (to.path === '/dashboard') {
-    if (token) {
+    if (token || isVisitor()) {
       next();
     }
     else {
       next('/login');
     }
+    return;
   }
   next();
 });

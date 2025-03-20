@@ -21,10 +21,12 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
+import { isVisitor } from '@/utils/auth.ts';
 import { error, success, warning } from '@/utils/toast';
 import { vAutoAnimate } from '@formkit/auto-animate';
 import { X } from 'lucide-vue-next';
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const props = defineProps<{
   expId: string
@@ -107,6 +109,7 @@ const isSending = ref(false);
 
 const isOpen = ref(false);
 const readyToDeleteComment = ref<Comment | null>(null);
+const router = useRouter();
 
 const replyComment = ref<Comment | null>(null);
 function reply(comment: Comment) {
@@ -142,7 +145,7 @@ async function send() {
 </script>
 
 <template>
-  <div v-auto-animate class="h-full w-full flex flex-col">
+  <div v-if="!isVisitor()" v-auto-animate class="h-full w-full flex flex-col">
     <ScrollArea v-if="commentList && commentList.length !== 0" ref="scrollArea" v-auto-animate class="h-full w-full">
       <CommentCard
         v-for="(item, index) in commentList" :key="item.commentId" v-model="commentList![index]" @reply="(comment) => {
@@ -248,6 +251,14 @@ async function send() {
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
+  </div>
+  <div v-else class="h-full w-full flex items-center justify-center text-muted-foreground">
+    <Label>
+      游客用户无法查看评论，请先
+    </Label>
+    <Button variant="link" class="p-1" @click="router.push('/login')">
+      登录
+    </Button>
   </div>
 </template>
 

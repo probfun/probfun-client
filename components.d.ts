@@ -50,6 +50,7 @@ declare module 'vue' {
     CardFooter: typeof import('./src/components/ui/card/CardFooter.vue')['default']
     CardHeader: typeof import('./src/components/ui/card/CardHeader.vue')['default']
     CardTitle: typeof import('./src/components/ui/card/CardTitle.vue')['default']
+    CasLoginCard: typeof import('./src/components/auth/CasLoginCard.vue')['default']
     Chapter1Diagram: typeof import('./src/components/diagram/chapter-1/Chapter1Diagram.vue')['default']
     Chapter4Diagram: typeof import('./src/components/diagram/chapter-4/Chapter4Diagram.vue')['default']
     Chart: typeof import('primevue/chart')['default']
