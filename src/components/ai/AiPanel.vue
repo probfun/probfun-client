@@ -347,7 +347,7 @@ function handleCompositionEnd() {
                 <ContextMenu>
                   <ContextMenuTrigger :disabled="status !== 'idle' && aiStore.currentChat !== null && index === aiStore.currentChat.chatBlocks.length - 1">
                     <div v-auto-animate class="rounded-lg bg-muted text-foreground p-3 w-full border">
-                      <div v-if="status !== 'idle' && aiStore.currentChat && index === aiStore.currentChat.chatBlocks.length - 1" class="flex flex-col items-center justify-center">
+                      <div v-if="status === 'loading' && aiStore.currentChat && index === aiStore.currentChat.chatBlocks.length - 1" class="flex flex-col items-center justify-center">
                         <DotLottieVue class="size-32 mb-4" autoplay loop src="https://lottie.host/54344590-688a-4a46-970b-f8dbea72f5d1/3CdMHIQhDO.lottie" />
                         <Label class="mb-6 text-base">
                           AI 正在生成中 ...
