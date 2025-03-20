@@ -27,6 +27,7 @@ import {
   getChatMessages,
   START_BLOCK,
 } from '@/utils/ai';
+import { isVisitor } from '@/utils/auth.ts';
 import { toMarkdown } from '@/utils/markdown'
 import { vAutoAnimate } from '@formkit/auto-animate';
 import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
@@ -222,7 +223,7 @@ function handleCompositionEnd() {
 </script>
 
 <template>
-  <div class="flex p-2 gap-2">
+  <div v-if="!isVisitor()" class="flex p-2 gap-2">
     <AiSidebar :disabled="status !== 'idle'" @send="(question) => send(question)" />
     <Card class="flex-1 flex hover:border-primary flex-col transition-all duration-300">
       <CardHeader v-auto-animate class="py-2 px-4 flex flex-row items-center h-10">
@@ -464,6 +465,13 @@ function handleCompositionEnd() {
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
+  </div>
+  <div v-else class="flex items-center justify-center">
+    <Label>
+      游客用户无法使用 AI 助手，请先
+
+      <router-link to="/login" class="underline text-primary underline-offset-4 hover:text-primary transition-all font-medium px-1"> 登录 </router-link>
+    </Label>
   </div>
 </template>
 

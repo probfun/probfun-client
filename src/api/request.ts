@@ -67,7 +67,7 @@ export async function postRaw<T>(url: string, data?: any, config?: any): Promise
   // return service.post(url, data, config).then(response => response.data);
 
   const response = await service.post(url, data, config);
-  if (response.status === 200 && response.data.status === 200) {
+  if (response.status === 200) {
     return response.data;
   }
   else {
@@ -79,7 +79,7 @@ export async function postRaw<T>(url: string, data?: any, config?: any): Promise
 export async function del<T>(url: string, params?: any): Promise<ResponseData<T>> {
   // return service.delete(url, { params }).then(response => response.data);
   const response = await service.delete(url, { params });
-  if (response.status === 200 && response.data.status === 200) {
+  if (response.status === 200) {
     return response.data;
   }
   else {
