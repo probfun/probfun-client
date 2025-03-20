@@ -175,7 +175,7 @@ function drawBoard() {
         }
         path.value = []
       }
-      else {
+      else if (n.value == 9) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         // 圆的半径
         const radius = 3;
@@ -259,6 +259,97 @@ function drawBoard() {
             ctx.lineTo(fromX + path.value[i] * 15, fromY + 20);
             fromX = fromX + path.value[i] * 15;
             fromY = fromY + 20;
+          }
+          ctx.strokeStyle = 'blue'; // 设置轨迹颜色
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+        path.value = []
+      }
+      else if (3 <= n.value && n.value <= 7) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // 圆的半径
+        const radius = 4;
+        // 层与层之间的垂直间距
+        const verticalSpacing = 30;
+        // 水平圆之间的间距
+        const horizontalSpacing = 35;
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 2;
+
+        // 每层圆的数量
+        const circlesPerLayer = [];
+        for (let i = 0; i < n.value; i++) {
+          circlesPerLayer.push(n.value - i + 1);
+        }
+
+        // 起始 y 坐标
+        let y = canvas.height - radius - 50;
+        let bottomLayerStartX = 0; // 最下面一层的起始 x 坐标
+        circlesPerLayer.forEach((count, layerIndex) => {
+          // 计算该层圆的总宽度（包含间距）
+          const totalWidth = (count - 1) * (2 * radius + horizontalSpacing);
+          // 计算该层第一个圆的起始 x 坐标
+          const layerStartX = (canvas.width - totalWidth) / 2;
+
+          if (layerIndex === circlesPerLayer.length - 1) {
+            // 保存最下面一层的起始 x 坐标
+            bottomLayerStartX = layerStartX;
+          }
+
+          for (let i = 0; i < count; i++) {
+            // 计算当前圆的 x 坐标，考虑水平间距
+            const x = layerStartX + i * (2 * radius + horizontalSpacing);
+
+            // 开始绘制路径
+            ctx.beginPath();
+            // 绘制圆
+            ctx.arc(x, y, radius, 0, 2 * Math.PI);
+            // 设置填充颜色
+            ctx.fillStyle = 'black';
+            // 填充圆
+            ctx.fill();
+            // 设置边框颜色
+            ctx.strokeStyle = 'black';
+            // 设置边框宽度
+            ctx.lineWidth = 2;
+            // 绘制边框
+            ctx.stroke();
+          }
+
+          // 更新 y 坐标到下一层
+          y -= verticalSpacing;
+        });
+
+        // 绘制竖线：保持竖线数量不变
+        let startX = bottomLayerStartX;
+        for (let i = 0; i < n.value + 1; i++) {
+          // 开始一条新路径
+          ctx.beginPath();
+          // 移动到竖线的起始点
+          ctx.moveTo(startX - 43 * (n.value - 1) / 2, 200); // 保持竖线位置与底层圆对齐
+          // 绘制竖线到结束点
+          ctx.lineTo(startX - 43 * (n.value - 1) / 2, 230); // 竖线长度
+          // 绘制路径
+          ctx.stroke();
+          // 更新下一条竖线的起始 x 坐标
+          startX += 43;
+        }
+
+        // 绘制小球轨迹
+        if (path.value.length > 0) {
+          ctx.beginPath();
+          ctx.moveTo(startX - 21.5 * (2 * n.value + 1), 200 - n.value * 30);
+          ctx.lineTo(startX - 21.5 * (2 * n.value + 1), 255 - n.value * 30);
+          let fromX = startX - 21.5 * (2 * n.value + 1);
+          let fromY = 255 - n.value * 30;
+          console.log(path.value);
+
+          for (let i = 0; i < path.value.length; i++) {
+            ctx.moveTo(fromX, fromY);
+            ctx.lineTo(fromX + path.value[i] * 21.5, fromY + 30);
+            fromX = fromX + path.value[i] * 21.5;
+            fromY = fromY + 30;
           }
           ctx.strokeStyle = 'blue'; // 设置轨迹颜色
           ctx.lineWidth = 1;
@@ -352,7 +443,8 @@ $$
           </div>
         </div>
         <div class="flex justify-center items-center h-full">
-          <Chart type="bar" :data="chartData" :options="chartOptions" class="h-full w-1/3" />
+          <Chart v-if="n <= 5" type="bar" :data="chartData" :options="chartOptions" class="h-full w-1/4" />
+          <Chart v-else type="bar" :data="chartData" :options="chartOptions" class="h-full w-1/3" />
         </div>
         <div class="flex justify-center items-center">
           <Button class="m-1" @click="startSimulation()">

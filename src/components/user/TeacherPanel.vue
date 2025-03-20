@@ -71,6 +71,10 @@ const click = ref([
     expName: '阳性检测',
     times: 5,
   },
+  {
+    expName: '贝特朗悖论',
+    times: 7,
+  },
 ])
 const browse = ref([
   {
@@ -84,6 +88,10 @@ const browse = ref([
   {
     expName: '阳性检测',
     time: 5,
+  },
+  {
+    expName: '贝特朗悖论',
+    time: 7,
   },
 ])
 const comment = ref([
@@ -99,6 +107,10 @@ const comment = ref([
     expName: '阳性检测',
     times: 5,
   },
+  {
+    expName: '贝特朗悖论',
+    times: 7,
+  },
 ])
 const star = ref([
   {
@@ -112,6 +124,10 @@ const star = ref([
   {
     expName: '阳性检测',
     times: 5,
+  },
+  {
+    expName: '贝特朗悖论',
+    times: 7,
   },
 ])
 
@@ -294,6 +310,7 @@ const chartOptionsBrowse = ref();
 const chartOptionsComment = ref();
 const chartOptionsStar = ref();
 
+
 const generateRandomColor = (alpha = 0.7) => {
   const r = Math.floor(Math.random() * 256);
   const g = Math.floor(Math.random() * 256);
@@ -382,7 +399,6 @@ const setChartOptionsStar = () => {
 
 const setChartDataComment = () => {
   const documentStyle = getComputedStyle(document.body);
-
   return {
     labels: comment.value.map(item => item.expName),
     datasets: [
@@ -393,6 +409,7 @@ const setChartDataComment = () => {
     ]
   };
 }
+
 const setChartOptionsComment = () => {
   const documentStyle = getComputedStyle(document.documentElement);
   const textColor = documentStyle.getPropertyValue('--p-text-color');
@@ -420,7 +437,7 @@ const setChartDataBrowse = () => {
         data: star.value.map(item => item.times),
         fill: false,
         borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-        tension: 0.4
+        tension: 0.6
       },
     ]
   };
@@ -499,9 +516,9 @@ const setChartOptionsBrowse = () => {
       <Button label="Show" class="my-3" @click="visible = true">
         发布班级公告
       </Button>
-      <Panel header="已精选评论"  class=" w-full">
+      <Panel header="已精选评论" class=" w-full">
         <DataTable :value="products" scrollable table-style="min-width: 60rem">
-                    <Column class="w-24 !text-end">
+          <Column class="w-24 !text-end">
             <template #body>
               <Button @click="cancel">
                 取消精选
@@ -535,10 +552,10 @@ const setChartOptionsBrowse = () => {
     <Separator orientation="vertical" />
     <div class="flex flex-col flex-1 w-1/2 p-3 overflow-auto">
       <div class="flex items-center gap-5 mb-4">
-    <h2 class="text-lg font-semibold">数据展示与分析</h2>
-    <Button label="Show" v-if="isTablet" @click="toggleTable()">点击切换图展示</Button>
-    <Button label="Show" v-else @click="toggleTable()">点击切换表展示</Button>
-  </div>
+        <h2 class="text-lg font-semibold">数据展示与分析</h2>
+        <Button label="Show" v-if="isTablet" @click="toggleTable()">点击切换图展示</Button>
+        <Button label="Show" v-else @click="toggleTable()">点击切换表展示</Button>
+      </div>
       <div v-if="isTablet" class="h-full">
         <div class="flex my-2">
           <Panel header="各实验点击次数排行榜" class="w-full mr-2">
@@ -589,7 +606,7 @@ const setChartOptionsBrowse = () => {
       </div>
 
     </div>
-    
+
   </div>
-  
+
 </template>

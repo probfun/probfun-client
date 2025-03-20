@@ -27,3 +27,24 @@ export interface Time {
   experiment: Experiment
   time: number
 }
+
+export interface PersonalExperimentData {
+  mostClick: Experiment
+  mostTime: Experiment
+}
+
+export interface ClassExperimentData {
+  mostClick: Experiment
+  mostTime: Experiment
+  mostFavorite: Experiment
+  mostComment: Experiment
+}
+
+export interface Mydata {
+  likeCount: number
+  commentCount: number
+  replyCount: number
+  pinCount: number
+  personalExperimentData: PersonalExperimentData
+  classExperimentData: ClassExperimentData
+}
