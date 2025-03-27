@@ -29,6 +29,19 @@ const myData = ref()
 
 async function getPost() {
   try {
+    if (!userStore.user?.classId) {
+      return;
+    }
+    const classId = ref();
+    if (userStore.user.classId == '2025概率过程电管物联9-12') {
+      classId.value = '2025 Probability Process Electrical Management IoT 9-12';
+    }
+    else if (userStore.user.classId == '2025概率统计留学生') {
+      classId.value = '2025 Probability and Statistics for International Students';
+    }
+    else if (userStore.user.classId == '2025概率统计智能科技21-24') {
+      classId.value = '2025 Probability and Statistics for Intelligent Technology 21-24';
+    }
     const result = await fetchPostApi('2023215101');
     postList.value = result.posts;
     console.log('公告', postList);
@@ -41,7 +54,17 @@ async function getPost() {
 async function getMydata() {
   try {
     if (userStore.user?.classId) {
-      const result = await fetchMydataApi(userStore.user.classId)
+      const classId = ref();
+      if (userStore.user.classId == '2025概率过程电管物联9-12') {
+        classId.value = '2025 Probability Process Electrical Management IoT 9-12';
+      }
+      else if (userStore.user.classId == '2025概率统计留学生') {
+        classId.value = '2025 Probability and Statistics for International Students';
+      }
+      else if (userStore.user.classId == '2025概率统计智能科技21-24') {
+        classId.value = '2025 Probability and Statistics for Intelligent Technology 21-24';
+      }
+      const result = await fetchMydataApi(classId.value);
       myData.value = result.mydata;
       console.log('用户信息', myData);
     }
@@ -177,11 +200,11 @@ onMounted(() => {
             本月获赞数
           </div>
           <div class="stat-value text-pink-500">
-            12
+            {{ myData?.likeCount }}
           </div>
-          <div class="stat-desc">
+          <!-- <div class="stat-desc">
             总获赞数：21
-          </div>
+          </div> -->
         </div>
 
         <div class="stat">
@@ -196,11 +219,11 @@ onMounted(() => {
             本月评论数
           </div>
           <div class="stat-value text-blue-600">
-            10
+            {{ myData?.commentCount }}
           </div>
-          <div class="stat-desc">
+          <!-- <div class="stat-desc">
             总评论数：20
-          </div>
+          </div> -->
         </div>
       </div>
 
@@ -216,11 +239,11 @@ onMounted(() => {
             本月被评论数
           </div>
           <div class="stat-value text-purple-500">
-            3
+            {{ myData?.replyCount }}
           </div>
-          <div class="stat-desc">
+          <!-- <div class="stat-desc">
             总被评论数：5
-          </div>
+          </div> -->
         </div>
 
         <div class="stat">
@@ -235,11 +258,11 @@ onMounted(() => {
             本月被精选数
           </div>
           <div class="stat-value text-yellow-400">
-            1
+            {{ myData?.pinCount }}
           </div>
-          <div class="stat-desc">
+          <!-- <div class="stat-desc">
             总被精选数：2
-          </div>
+          </div> -->
         </div>
       </div>
 

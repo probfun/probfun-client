@@ -151,7 +151,17 @@ async function sendPost() {
     return;
   }
   try {
-    await postPostApi(title.value, content.value, [selectedClass.value.name]);
+    const classId = ref();
+    if (selectedClass.value.name == '2025概率过程电管物联9-12') {
+      classId.value = '2025 Probability Process Electrical Management IoT 9-12';
+    }
+    else if (selectedClass.value.name == '2025概率统计留学生') {
+      classId.value = '2025 Probability and Statistics for International Students';
+    }
+    else if (selectedClass.value.name == '2025概率统计智能科技21-24') {
+      classId.value = '2025 Probability and Statistics for Intelligent Technology 21-24';
+    }
+    await postPostApi(title.value, content.value, [classId.value]);
     await getPost();
     toast.add({ severity: 'success', summary: '成功', detail: '发布班级公告成功！', life: 3000 });
     content.value = '';
@@ -172,7 +182,17 @@ const commentCountList = ref<CommentCount[] | null>(null);
 
 async function getPost() {
   try {
-    const result = await fetchPostApi(selectedClass.value.name);
+    const classId = ref();
+    if (selectedClass.value.name == '2025概率过程电管物联9-12') {
+      classId.value = '2025 Probability Process Electrical Management IoT 9-12';
+    }
+    else if (selectedClass.value.name == '2025概率统计留学生') {
+      classId.value = '2025 Probability and Statistics for International Students';
+    }
+    else if (selectedClass.value.name == '2025概率统计智能科技21-24') {
+      classId.value = '2025 Probability and Statistics for Intelligent Technology 21-24';
+    }
+    const result = await fetchPostApi(classId.value);
     postList.value = result.posts;
   }
   catch (error) {
@@ -193,7 +213,17 @@ async function getClasses() {
 
 async function getComments() {
   try {
-    const result = await fetchCommentsApi(selectedClass.value.name, 'ALL_TIME');
+    const classId = ref();
+    if (selectedClass.value.name == '2025概率过程电管物联9-12') {
+      classId.value = '2025 Probability Process Electrical Management IoT 9-12';
+    }
+    else if (selectedClass.value.name == '2025概率统计留学生') {
+      classId.value = '2025 Probability and Statistics for International Students';
+    }
+    else if (selectedClass.value.name == '2025概率统计智能科技21-24') {
+      classId.value = '2025 Probability and Statistics for Intelligent Technology 21-24';
+    }
+    const result = await fetchCommentsApi(classId.value, 'ALL_TIME');
     commentList.value = result.comments;
     console.log('pinglun', commentList.value);
     commentList.value.forEach(comment => {
@@ -213,7 +243,17 @@ async function getComments() {
 
 async function getClickCount() {
   try {
-    const result = await fetchClickCountApi(selectedClass.value.name, 'ALL_TIME');
+    const classId = ref();
+    if (selectedClass.value.name == '2025概率过程电管物联9-12') {
+      classId.value = '2025 Probability Process Electrical Management IoT 9-12';
+    }
+    else if (selectedClass.value.name == '2025概率统计留学生') {
+      classId.value = '2025 Probability and Statistics for International Students';
+    }
+    else if (selectedClass.value.name == '2025概率统计智能科技21-24') {
+      classId.value = '2025 Probability and Statistics for Intelligent Technology 21-24';
+    }
+    const result = await fetchClickCountApi(classId.value, 'ALL_TIME');
     clickList.value = result.clicks;
     console.log('dianji', clickList.value);
     clickList.value.forEach(clickCount => {
@@ -229,7 +269,17 @@ async function getClickCount() {
 }
 async function getFavoriteCount() {
   try {
-    const result = await fetchFavoriteCountApi(selectedClass.value.name, 'ALL_TIME');
+    const classId = ref();
+    if (selectedClass.value.name == '2025概率过程电管物联9-12') {
+      classId.value = '2025 Probability Process Electrical Management IoT 9-12';
+    }
+    else if (selectedClass.value.name == '2025概率统计留学生') {
+      classId.value = '2025 Probability and Statistics for International Students';
+    }
+    else if (selectedClass.value.name == '2025概率统计智能科技21-24') {
+      classId.value = '2025 Probability and Statistics for Intelligent Technology 21-24';
+    }
+    const result = await fetchFavoriteCountApi(classId.value, 'ALL_TIME');
     favoriteList.value = result.favorites;
     console.log('shoucang', favoriteList.value);
     favoriteList.value.forEach(favoriteCount => {
@@ -245,7 +295,17 @@ async function getFavoriteCount() {
 }
 async function getTime() {
   try {
-    const result = await fetchTimeApi(selectedClass.value.name, 'ALL_TIME');
+    const classId = ref();
+    if (selectedClass.value.name == '2025概率过程电管物联9-12') {
+      classId.value = '2025 Probability Process Electrical Management IoT 9-12';
+    }
+    else if (selectedClass.value.name == '2025概率统计留学生') {
+      classId.value = '2025 Probability and Statistics for International Students';
+    }
+    else if (selectedClass.value.name == '2025概率统计智能科技21-24') {
+      classId.value = '2025 Probability and Statistics for Intelligent Technology 21-24';
+    }
+    const result = await fetchTimeApi(classId.value, 'ALL_TIME');
     timeList.value = result.times;
     console.log('liulan', timeList.value);
     timeList.value.forEach(time => {
@@ -261,7 +321,17 @@ async function getTime() {
 }
 async function getCommentCount() {
   try {
-    const result = await fetchCommentCountApi(selectedClass.value.name, 'ALL_TIME');
+    const classId = ref();
+    if (selectedClass.value.name == '2025概率过程电管物联9-12') {
+      classId.value = '2025 Probability Process Electrical Management IoT 9-12';
+    }
+    else if (selectedClass.value.name == '2025概率统计留学生') {
+      classId.value = '2025 Probability and Statistics for International Students';
+    }
+    else if (selectedClass.value.name == '2025概率统计智能科技21-24') {
+      classId.value = '2025 Probability and Statistics for Intelligent Technology 21-24';
+    }
+    const result = await fetchCommentCountApi(classId.value, 'ALL_TIME');
     commentCountList.value = result.comments;
     console.log('pinglunshu', commentCountList.value);
     commentCountList.value.forEach(comments => {
