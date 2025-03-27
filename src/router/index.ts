@@ -43,7 +43,7 @@ const router = createRouter({
           component: LoginCard,
         },
         {
-          path: '/register',
+          path: '/register-test',
           component: RegisterCard,
         },
         {

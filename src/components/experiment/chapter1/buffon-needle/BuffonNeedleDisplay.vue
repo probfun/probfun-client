@@ -65,7 +65,7 @@ async function runSimulation() {
   hits.value = 0;
   ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
   ctx.strokeStyle = 'black';
-  for (let y = 10; y < canvas.value.height; y += floorLineSpacing) {
+  for (let y = floorLineSpacing / 2; y < canvas.value.height; y += floorLineSpacing) {
     ctx.beginPath();
     ctx.moveTo(0, y);
     ctx.lineTo(canvas.value.width, y);
@@ -82,7 +82,8 @@ async function runSimulation() {
 
 function generateRandomNeedle() {
   const xCenter = Math.random() * canvas.value!.width;
-  const yCenter = Math.random() * canvas.value!.height;
+  const actualHeight = Math.floor(canvas.value!.height / floorLineSpacing) * floorLineSpacing;
+  const yCenter = Math.random() * actualHeight;
   const theta = Math.random() * Math.PI;
   const x1 = xCenter - (needleLength / 2) * Math.cos(theta);
   const x2 = xCenter + (needleLength / 2) * Math.cos(theta);
@@ -94,7 +95,8 @@ function generateRandomNeedle() {
 
 function drawNeedle(ctx: CanvasRenderingContext2D, needleData: { x1: number, x2: number, y1: number, y2: number, yCenter: number }) {
   // 检查是否与地板线相交
-  if (Math.floor((needleData.y1 - 10) / floorLineSpacing) !== Math.floor((needleData.y2 - 10) / floorLineSpacing)) {
+  const offset = floorLineSpacing / 2;
+  if (Math.floor((needleData.y1 - offset) / floorLineSpacing) !== Math.floor((needleData.y2 - offset) / floorLineSpacing)) {
     hits.value++;
     ctx.beginPath();
     ctx.moveTo(needleData.x1, needleData.y1);

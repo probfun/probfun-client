@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
-import { Card, CardContent } from '@/components/ui/card';
 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { renderLatex, toMarkdown } from '@/utils/markdown';
+import { toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { GraduationCap, Lightbulb, MessagesSquare } from 'lucide-vue-next';
 import Slider from 'primevue/slider';
@@ -308,108 +307,98 @@ const discussTabList = [
       />
     </template>
     <template #parameter>
-      <div class="w-full min-h-full flex flex-col items-center justify-center gap-3 p-3">
-        <Card class="w-full flex-1 flex flex-col  gap-3 p-3">
-          <CardHeader>
-            <CardTitle>
-              参数调整
-            </CardTitle>
-          </CardHeader>
-          <CardContent class="flex flex-col justify-center items-center gap-3 pt-6">
-            <RadioGroup
-              default-value="chart1"
-              class="gap-2 py-4"
-              @update:model-value="(value) => {
-                if (value === 'chart1') {
-                  toggleChart1();
-                }
-                else {
-                  toggleChart3();
-                }
-              }"
-            >
-              <div class="flex items-center space-x-2">
-                <RadioGroupItem id="option-one" value="chart1" />
-                <Label for="option-one"> 联合与边缘分布 </Label>
-              </div>
-              <div class="flex items-center space-x-2">
-                <RadioGroupItem id="option-two" value="chart3" />
-                <Label for="option-two"> 条件分布 </Label>
-              </div>
-            </RadioGroup>
-            <div class="grid grid-cols-1 gap-6">
-              <div class="flex flex-col gap-8 pb-0">
-                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <div v-html="renderLatex('\\(μ_x\\)')" />
-                  <div class="max-w-xl space-y-3">
-                    <Input v-model="mean1" fluid />
-                    <Slider v-model="mean1" :min="-10" :max="10" :step="0.1" class="w-full" />
-                  </div>
-                </div>
-              </div>
-              <div class="flex flex-col gap-8 pb-0">
-                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <div v-html="renderLatex('\\(μ_y\\)')" />
-
-                  <div class="max-w-xl space-y-3">
-                    <Input v-model="mean2" fluid />
-                    <Slider v-model="mean2" :min="-10" :max="10" :step="0.1" class="w-full" />
-                  </div>
-                </div>
-              </div>
-              <div class="flex flex-col gap-8 pb-0">
-                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <div v-html="renderLatex('\\(σ_x\\)')" />
-
-                  <div class="max-w-xl space-y-3">
-                    <Input v-model="sigma1" fluid />
-                    <Slider v-model="sigma1" :min="0.1" :max="2" :step="0.1" class="w-full" />
-                  </div>
-                </div>
-              </div>
-              <div class="flex flex-col gap-8 pb-0">
-                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <div v-html="renderLatex('\\(σ_y\\)')" />
-
-                  <div class="max-w-xl space-y-3">
-                    <Input v-model="sigma2" fluid />
-                    <Slider v-model="sigma2" :min="0.1" :max="2" :step="0.1" class="w-full" />
-                  </div>
-                </div>
-              </div>
-              <div class="flex flex-col gap-8 pb-0">
-                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <div v-html="renderLatex('\\(ρ\\)')" />
-
-                  <div class="max-w-xl space-y-3">
-                    <Input v-model="density" fluid />
-                    <Slider v-model="density" :min="-0.9" :max="0.9" :step="0.1" class="w-full" />
-                  </div>
-                </div>
-              </div>
-
-              <div v-if="isChart3" class="flex flex-col gap-8 pb-0">
-                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <div v-html="renderLatex('\\(y\\)')" />
-
-                  <div class="max-w-xl space-y-3">
-                    <Input v-model="y" fluid />
-                    <Slider v-model="y" :min="-10" :max="10" :step="1" class="w-full" />
-                  </div>
-                </div>
-              </div>
-              <div v-if="isChart3" class="flex flex-col gap-8 pb-0">
-                <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
-                  <div v-html="renderLatex('\\(x\\)')" />
-                  <div class="max-w-xl space-y-3">
-                    <Input v-model="x" fluid />
-                    <Slider v-model="x" :min="-10" :max="10" :step="1" class="w-full" />
-                  </div>
-                </div>
+      <div class="w-full min-h-full flex flex-col items-center justify-center gap-3 p-6">
+        <RadioGroup
+          default-value="chart1"
+          class="gap-2 py-4"
+          @update:model-value="(value) => {
+            if (value === 'chart1') {
+              toggleChart1();
+            }
+            else {
+              toggleChart3();
+            }
+          }"
+        >
+          <div class="flex items-center space-x-2">
+            <RadioGroupItem id="option-one" value="chart1" />
+            <Label for="option-one" class="text-lg"> 联合与边缘分布 </Label>
+          </div>
+          <div class="flex items-center space-x-2">
+            <RadioGroupItem id="option-two" value="chart3" />
+            <Label for="option-two" class="text-lg"> 条件分布 </Label>
+          </div>
+        </RadioGroup>
+        <div class="grid grid-cols-1 gap-8 pb-12">
+          <div class="flex flex-col gap-8 pb-0 items-center">
+            <div class="flex w-4/5 flex-1 items-center justify-center space-y-1 gap-3">
+              <div class="mb-3" v-html="toMarkdown('$$μ_x=$$')" />
+              <div class="max-w-lg space-y-3">
+                <Input v-model="mean1" class="border-2" />
+                <Slider v-model="mean1" :min="-10" :max="10" :step="0.1" class="w-full" />
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+          <div class="flex flex-col gap-8 pb-0 items-center">
+            <div class="flex w-4/5 flex-1 items-center justify-center space-y-1 gap-3">
+              <div class="mb-3" v-html="toMarkdown('$$μ_y=$$')" />
+              <div class="max-w-lg space-y-3">
+                <Input v-model="mean2" class="border-2" />
+                <Slider v-model="mean2" :min="-10" :max="10" :step="0.1" class="w-full" />
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-8 pb-0 items-center">
+            <div class="flex w-4/5 flex-1 items-center justify-center space-y-1 gap-3">
+              <div class="mb-3" v-html="toMarkdown('$$σ_x=$$')" />
+
+              <div class="max-w-lg space-y-3">
+                <Input v-model="sigma1" class="border-2" />
+                <Slider v-model="sigma1" :min="0.1" :max="2" :step="0.1" class="w-full" />
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-8 pb-0 items-center">
+            <div class="flex w-4/5 flex-1 items-center justify-center space-y-1 gap-3">
+              <div class="mb-3" v-html="toMarkdown('$$σ_y=$$')" />
+
+              <div class="max-w-lg space-y-3">
+                <Input v-model="sigma2" class="border-2" />
+                <Slider v-model="sigma2" :min="0.1" :max="2" :step="0.1" class="w-full" />
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-8 pb-0 items-center">
+            <div class="flex w-4/5 flex-1 items-center justify-center space-y-1 gap-3">
+              <div class="mb-3" v-html="toMarkdown('$$ρ=$$')" />
+
+              <div class="max-w-lg space-y-3">
+                <Input v-model="density" class="border-2" />
+                <Slider v-model="density" :min="-0.9" :max="0.9" :step="0.1" class="w-full" />
+              </div>
+            </div>
+          </div>
+
+          <div v-if="isChart3" class="flex flex-col gap-8 pb-0">
+            <div class="flex w-4/5 flex-1 items-center justify-center space-y-1 gap-3">
+              <div class="mb-3" v-html="toMarkdown('$$y=$$')" />
+
+              <div class="max-w-lg space-y-3">
+                <Input v-model="y" class="border-2" />
+                <Slider v-model="y" :min="-10" :max="10" :step="1" class="w-full" />
+              </div>
+            </div>
+          </div>
+          <div v-if="isChart3" class="flex flex-col gap-8 pb-0">
+            <div class="flex w-4/5 flex-1 items-center justify-center space-y-1 gap-3">
+              <div class="mb-3" v-html="toMarkdown('$$x=$$')" />
+              <div class="max-w-lg space-y-3">
+                <Input v-model="x" />
+                <Slider v-model="x" :min="-10" :max="10" :step="1" class="w-full" />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </template>
     <template #conclusion>
