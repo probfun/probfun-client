@@ -312,7 +312,7 @@ $$
               <div class="flex space-x-10 justify-center items-center">
                 <div class="flex flex-col  space-x-5 flex-1 items-center space-y-3">
                   <div ref="mdContainer" class="markdown-body" v-html="renderedMarkdown" />
-                  <Input v-model="specificity[0]" type="number" :min="2" />
+                  <Input v-model="specificity[0]" type="number" :min="0.1" :max="1.0" :step="0.01" />
                   <Slider v-model="specificity" :min="0.1" :max="1.0" :step="0.01" class="w-full" />
                 </div>
                 <div class="flex flex-col flex-1 items-center space-y-3">
