@@ -29,20 +29,8 @@ const myData = ref()
 
 async function getPost() {
   try {
-    if (!userStore.user?.classId) {
-      return;
-    }
-    const classId = ref();
-    if (userStore.user.classId == '2025概率过程电管物联9-12') {
-      classId.value = '2025 Probability Process Electrical Management IoT 9-12';
-    }
-    else if (userStore.user.classId == '2025概率统计留学生') {
-      classId.value = '2025 Probability and Statistics for International Students';
-    }
-    else if (userStore.user.classId == '2025概率统计智能科技21-24') {
-      classId.value = '2025 Probability and Statistics for Intelligent Technology 21-24';
-    }
-    const result = await fetchPostApi('2023215101');
+    if(!userStore.user?.classId) return;
+    const result = await fetchPostApi(userStore.user.classId);
     postList.value = result.posts;
     console.log('公告', postList);
   }
@@ -54,17 +42,7 @@ async function getPost() {
 async function getMydata() {
   try {
     if (userStore.user?.classId) {
-      const classId = ref();
-      if (userStore.user.classId == '2025概率过程电管物联9-12') {
-        classId.value = '2025 Probability Process Electrical Management IoT 9-12';
-      }
-      else if (userStore.user.classId == '2025概率统计留学生') {
-        classId.value = '2025 Probability and Statistics for International Students';
-      }
-      else if (userStore.user.classId == '2025概率统计智能科技21-24') {
-        classId.value = '2025 Probability and Statistics for Intelligent Technology 21-24';
-      }
-      const result = await fetchMydataApi(classId.value);
+      const result = await fetchMydataApi(userStore.user.classId);
       myData.value = result.mydata;
       console.log('用户信息', myData);
     }

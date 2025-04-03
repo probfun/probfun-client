@@ -158,10 +158,9 @@ function drawBoard() {
         if (path.value.length > 0) {
           ctx.beginPath();
           ctx.moveTo(startX - 12 * (2 * n.value + 1), 230 - n.value * 15);
-          ctx.lineTo(startX - 12 * (2 * n.value + 1), 258 - n.value * 15);
+          ctx.lineTo(startX - 12 * (2 * n.value + 1), 244 - n.value * 15);
           let fromX = startX - 12 * (2 * n.value + 1);
-          let fromY = 258 - n.value * 15;
-          console.log(path.value);
+          let fromY = 244 - n.value * 15;
 
           for (let i = 0; i < path.value.length; i++) {
             ctx.moveTo(fromX, fromY);
@@ -249,9 +248,9 @@ function drawBoard() {
         if (path.value.length > 0) {
           ctx.beginPath();
           ctx.moveTo(startX - 15 * (2 * n.value + 1), 200 - n.value * 20);
-          ctx.lineTo(startX - 15 * (2 * n.value + 1), 238 - n.value * 20);
+          ctx.lineTo(startX - 15 * (2 * n.value + 1), 218 - n.value * 20);
           let fromX = startX - 15 * (2 * n.value + 1);
-          let fromY = 238 - n.value * 20;
+          let fromY = 218 - n.value * 20;
           console.log(path.value);
 
           for (let i = 0; i < path.value.length; i++) {
@@ -340,9 +339,9 @@ function drawBoard() {
         if (path.value.length > 0) {
           ctx.beginPath();
           ctx.moveTo(startX - 21.5 * (2 * n.value + 1), 200 - n.value * 30);
-          ctx.lineTo(startX - 21.5 * (2 * n.value + 1), 255 - n.value * 30);
+          ctx.lineTo(startX - 21.5 * (2 * n.value + 1), 227.5 - n.value * 30);
           let fromX = startX - 21.5 * (2 * n.value + 1);
-          let fromY = 255 - n.value * 30;
+          let fromY = 227.5 - n.value * 30;
           console.log(path.value);
 
           for (let i = 0; i < path.value.length; i++) {
