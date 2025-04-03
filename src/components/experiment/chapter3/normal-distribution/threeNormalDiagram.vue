@@ -243,7 +243,7 @@ function createPlotlyChart3() {
   const center = [props.mean1, props.mean2];
   const colorValues = samples.map(point => {
     const dx = point[0] - center[0];
-    const dy = point[1 - center[1]];
+    const dy = point[1] - center[1];
     return -Math.sqrt(dx * dx + dy * dy); // 欧几里得距离
   });
 
