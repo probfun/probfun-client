@@ -53,6 +53,7 @@ function drawUniformDistribution() {
       id: 'right_side',
       latex: `f_2(x) = ${props.rate} e^{-${props.rate} x} \\{x >= 0\\}`,
       color: Desmos.Colors.BLUE,
+      linewidth: 4.5, // 设置正态分布曲线的宽度
     };
 
     // 如果显示历史记录，将当前表达式加入历史数组
@@ -62,6 +63,7 @@ function drawUniformDistribution() {
         id: `history_${idNumber}`,
         latex: `f(x) = ${props.rate} e^{-${props.rate} x} \\{x >= 0\\}`,
         color: 'rgba(0, 0, 255, 0.2)',
+        linewidth: 4.5, // 设置正态分布曲线的宽度
       };
       historyExpressions.value.push(expression);
     }
@@ -87,12 +89,14 @@ function drawUniformDistribution() {
       id: 'right_side',
       latex: `f_1(x) = e^{-${props.rate} x} \\{x >= 0\\}`,
       color: Desmos.Colors.BLUE,
+      linewidth: 4.5, // 设置正态分布曲线的宽度
     };
 
     const fun2 = {
       id: 'fun2',
       latex: `f_2(x) = e^{-${props.rate} (x + ${props.shift})} \\{x >= 0\\}`,
       color: Desmos.Colors.RED,
+      linewidth: 4.5, // 设置正态分布曲线的宽度
     };
 
     const fun3 = {
@@ -100,6 +104,7 @@ function drawUniformDistribution() {
       latex: `f_3(x) = e^{-${props.rate} (${props.shift})} \\{0 \\leq x \\leq ${props.shift}\\}`,
       color: Desmos.Colors.RED,
       lineStyle: Desmos.Styles.DASHED, // 设置线条为虚线
+      linewidth: 4.5, // 设置正态分布曲线的宽度
     };
 
     // 绘制当前的表达式

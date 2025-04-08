@@ -303,30 +303,39 @@ $$
             </CardTitle>
           </CardHeader>
           <CardContent class="flex-1 flex flex-col justify-center gap-5">
-            <div class="flex gap-4 pb-8">
-              <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-                <div v-html="renderLatex('试验次数 \\(n\\)')" />
-                <div class="max-w-xl space-y-3">
-                  <Input v-model="number[0]" />
-                  <Slider v-model="number" :min="1" :max="100" :step="1" />
+              <div class="flex  grid grid-cols-4">
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('试验次数 \\(n\\) = ')" />
+                  <div class="flex flex-col items-center justify-center w-1/2 space-y-1">
+                    <Input v-model="number[0]" class="w-full mb-2" />
+                    <Slider v-model="number" :min="1" :max="100" :step="1" class="w-full" />
+                  </div>
                 </div>
               </div>
-              <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-                <div v-html="renderLatex('成功次数 \\(k\\)')" />
-                <div class="max-w-xl space-y-3">
-                  <Input v-model="numberk[0]" />
-                  <Slider v-model="numberk" :min="1" :max="maxK" :step="1" />
-                </div>
-              </div>
-              <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-                <div v-html="renderLatex('成功率 \\(p\\)')" />
 
-                <div class="max-w-xl space-y-3">
-                  <Input v-model="probability[0]" :min-fraction-digits="1" />
-                  <Slider v-model="probability" :min="0" :max="1" :step="0.1" />
+           
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('成功次数 \\(k\\) = ')" />
+                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
+                    <Input v-model="numberk[0]" />
+                    <Slider v-model="numberk" :min="1" :max="maxK" :step="1" />
+                  </div>
                 </div>
               </div>
-            </div>
+
+    
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('成功率 \\(p\\) = ')" />
+                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
+                    <Input v-model="probability[0]" :min-fraction-digits="1" />
+                  <Slider v-model="probability" :min="0" :max="1" :step="0.1" />
+                  </div>
+                </div>
+              </div>
+
             <div class="flex gap-2 items-center justify-center">
               <Checkbox
                 id="terms" @update:checked="(checked: boolean) => {
@@ -341,6 +350,10 @@ $$
               />
               <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
             </div>
+              </div>
+            
+
+       
           </CardContent>
         </Card>
       </div>

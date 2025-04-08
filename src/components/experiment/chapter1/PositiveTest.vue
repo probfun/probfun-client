@@ -56,6 +56,7 @@ const katexFormula = computed(() => `
       &= \\frac{感染者中显示为阳性的人数}{感染者中显示为阳性的人数 +检测为阴性的人中的感染人数} \\\\
       &= \\frac{灵敏度 × 真阳性人数}{灵敏度 × 真阳性人数 +  (1 - 特异度) ×未感染新冠的人数} \\\\
       &= \\frac{\\frac{真实阳性}{真实阳性＋假阴性} × 真阳性人数}{\\frac{真阳性}{真阳性＋假阴性} × 真阳性人数 +  (1 - \\frac{真阴性}{真阴性+假阳性}) × 未感染人数} \\\\
+      &= \\frac{b × m}{b × m + n × (1 - a)}\\\\
       &= \\frac{${sensitivity.value[0]} × ${infectionRate.value[0]}}{${sensitivity.value[0]} × ${infectionRate.value[0]} + (1 - ${infectionRate.value[0]}) × (1 - ${specificity.value[0]})} \\\\
       &= ${truePositiveRate.value.toFixed(3)}
   \\end{aligned}
@@ -400,7 +401,7 @@ $$
 
 .custom-font {
   font-family: '你的字体名称', SimHei; /* 替换为你想要的字体 */
-  font-size: 16px; /* 可以根据需要调整 */
+  font-size: 14px; /* 可以根据需要调整 */
 }
 
 div, label {

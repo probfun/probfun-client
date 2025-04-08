@@ -45,7 +45,8 @@ function drawDistributions() {
     id: `points_${idNumber}`,
     latex: `(${points.join('), (')})`,
     color: Desmos.Colors.BLUE,
-    pointSize: 8, // 设置点的大小
+    pointSize: 12, // 设置点的大小
+    lineWidth: 4, // 设置线条宽度
   };
 
   // 辅助函数计算阶乘
@@ -57,6 +58,7 @@ function drawDistributions() {
     id: 'binomial',
     latex: `f(x) = \\frac{${props.n}!}{x!((${props.n} - x)!)} ${props.p}^{x} (1 - ${props.p})^{${props.n} - x} \\{${props.n} >= x >= 0\\}`,
     color: Desmos.Colors.BLUE,
+    lineWidth: 4.5, // 设置线条宽度
   }
 
   if (props.save) {
@@ -65,6 +67,7 @@ function drawDistributions() {
       id: `history_${idNumber}`,
       latex: `f(x) = \\frac{${props.n}!}{x!((${props.n} - x)!)} ${props.p}^{x} (1 - ${props.p})^{${props.n} - x} \\{x >= 0\\}`,
       color: 'rgba(0, 0, 255, 0.2)',
+      lineWidth: 4, // 设置线条宽度
     };
     historyExpressions.value.push(expression1);
   }
