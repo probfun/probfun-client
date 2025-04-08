@@ -153,55 +153,60 @@ const discussTabList = [
     <template #parameter>
       <div v-if="threeDoorsDisplay" class="p-2 grid grid-cols-2 w-full h-full gap-2">
         <div class="flex flex-col gap-2">
-          <Card class="flex-1 flex flex-col">
-            <CardHeader class="p-4">
-              <CardTitle>
-                模拟轮数
-              </CardTitle>
-            </CardHeader>
-            <CardContent class="flex flex-col items-center p-4 pt-0 flex-1">
-              <div class="font-bold h-full justify-center items-center mb-4 gap-3 flex flex-col">
-                <Input v-model="threeDoorsDisplay.autoGameRound[0]" class="" :min="1" :max="500" />
-                <Slider v-model="threeDoorsDisplay.autoGameRound" class="" />
+          <!-- <Card class="flex-1 flex flex-col">
+            <CardContent class="flex justify-center grid grid-cols-2 items-center w-full h-full">
+              <div class="flex flex-1 items-center justify-start">
+                <Label class="font-bold mr-2">模拟轮数 = </Label>
+                <Input v-model="threeDoorsDisplay.autoGameRound[0]" class="flex-1" :min="1" :max="500" />
               </div>
-              <div class="flex justify-center gap-2 w-full">
-                <Button
-                  class="" @click="() => {
-                    if (threeDoorsDisplay === null)
-                      return;
-                    threeDoorsDisplay.autoGaming ? threeDoorsDisplay.autoGaming = false : threeDoorsDisplay.simulateGame();
-                  }"
-                >
+              <div class="flex ml-8">
+                <Button @click="() => {
+                  if (threeDoorsDisplay === null)
+                    return;
+                  threeDoorsDisplay.autoGaming ? threeDoorsDisplay.autoGaming = false : threeDoorsDisplay.simulateGame();
+                }">
                   {{ threeDoorsDisplay.autoGaming ? '终止模拟' : '开始模拟' }}
                 </Button>
               </div>
             </CardContent>
-          </Card>
+          </Card> -->
           <Card class="flex-1 flex flex-col">
             <CardHeader class="p-4">
               <CardTitle>
-                换门策略
+                模拟策略
               </CardTitle>
             </CardHeader>
-            <CardContent class="flex flex-wrap justify-around gap-2 items-center flex-1">
-              <Button
-                :class="cn('transition-all', selectedStrategy !== 'never' && 'opacity-60')"
-                @click="selectedStrategy = 'never'"
-              >
-                每次都不换门
-              </Button>
-              <Button
-                :class="cn('transition-all', selectedStrategy !== 'always' && 'opacity-60')"
-                @click="selectedStrategy = 'always'"
-              >
-                每次都换门
-              </Button>
-              <Button
-                :class="cn('transition-all', selectedStrategy !== 'random' && 'opacity-60')"
-                @click="selectedStrategy = 'random'"
-              >
-                随机换门
-              </Button>
+            <CardContent class="flex-wrap justify-around gap-8 items-center  grid grid-row-2">
+              <div class=" grid grid-cols-3 flex gap-8 justify-center items-center">
+                <Button :class="cn('transition-all', selectedStrategy !== 'never' && 'opacity-60')"
+                  @click="selectedStrategy = 'never'">
+                  每次都不换门
+                </Button>
+                <Button :class="cn('transition-all', selectedStrategy !== 'always' && 'opacity-60')"
+                  @click="selectedStrategy = 'always'">
+                  每次都换门
+                </Button>
+                <Button :class="cn('transition-all', selectedStrategy !== 'random' && 'opacity-60')"
+                  @click="selectedStrategy = 'random'">
+                  随机换门
+                </Button>
+              </div>
+              <div class=" grid grid-cols-2">
+              <div class="flex flex-1 items-center justify-start">
+                <Label class="font-bold mr-2">模拟轮数 = </Label>
+                <Input v-model="threeDoorsDisplay.autoGameRound[0]" class="flex-1" :min="1" :max="500" placeholder="1~500"/>
+                </div>
+                <div class="flex ml-8">
+                  <Button @click="() => {
+                    if (threeDoorsDisplay === null)
+                      return;
+                    threeDoorsDisplay.autoGaming ? threeDoorsDisplay.autoGaming = false : threeDoorsDisplay.simulateGame();
+                  }">
+                    {{ threeDoorsDisplay.autoGaming ? '终止模拟' : '开始模拟' }}
+                  </Button>
+                </div>
+              </div>
+
             </CardContent>
           </card>
           <Card class="flex-1">
@@ -225,10 +230,12 @@ const discussTabList = [
                   不换门失败次数： {{ threeDoorsDisplay.notChangeLoseNum }}
                 </Label>
                 <Label class="flex items-center flex-shrink-0">
-                  不换门胜率： {{ (threeDoorsDisplay.notChangeWinNum / (threeDoorsDisplay.notChangeWinNum + threeDoorsDisplay.notChangeLoseNum)).toFixed(2) }}
+                  不换门胜率： {{ (threeDoorsDisplay.notChangeWinNum / (threeDoorsDisplay.notChangeWinNum +
+                    threeDoorsDisplay.notChangeLoseNum)).toFixed(2) }}
                 </Label>
                 <Label class="flex items-center flex-shrink-0">
-                  换门胜率： {{ (threeDoorsDisplay.changeWinNum / (threeDoorsDisplay.changeWinNum + threeDoorsDisplay.changeLoseNum)).toFixed(2) }}
+                  换门胜率： {{ (threeDoorsDisplay.changeWinNum / (threeDoorsDisplay.changeWinNum +
+                    threeDoorsDisplay.changeLoseNum)).toFixed(2) }}
                 </Label>
               </div>
             </CardContent>
@@ -273,10 +280,15 @@ const discussTabList = [
   </ExperimentBoard>
 </template>
 
-<style scoped>div, label {
+<style scoped>
+div,
+label {
   user-select: none;
-  -webkit-user-select: none; /* Safari */
-  -moz-user-select: none;    /* Firefox */
-  -ms-user-select: none;     /* IE/Edge */
+  -webkit-user-select: none;
+  /* Safari */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* IE/Edge */
 }
 </style>

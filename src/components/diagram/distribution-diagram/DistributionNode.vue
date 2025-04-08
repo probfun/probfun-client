@@ -46,11 +46,13 @@ function updateEdgeStyle() {
   for (const edge of edges) {
     edge.style = {
       stroke: edge.defaultStroke,
+      strokeWidth: 3, // 设置默认边宽为 2
     }
   }
   for (const edge of connectedEdges) {
     edge.style = {
       stroke: 'red',
+      strokeWidth: 4, 
     }
   }
 }
@@ -130,7 +132,7 @@ function getDescriptionBody(description: string) {
   >
     <HoverCardTrigger>
       <div
-        :class="cn('border-2 rounded-xl p-3 bg-background transition-all border-primary', isHighlight && 'border-destructive border-4')"
+        :class="cn('border-1 rounded-lg p-3 bg-blue-500 text-white transition-all border-primary', isHighlight && 'border-destructive border-4')"
         @click="onSelect"
       >
         <div class="text-xl whitespace-pre text-center">

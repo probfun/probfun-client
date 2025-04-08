@@ -64,7 +64,7 @@ function createEdge({ id, source, target, label = '', options = {} }: EdgeOption
   const { stroke } = style;
   // 新增 labelStyle 用于设置 label 的样式
   const labelStyle = {
-    fontSize: '15px', // 这里设置 label 的字号，可根据需要调整
+    fontSize: '16px', // 这里设置 label 的字号，可根据需要调整
   };
 
   return {
