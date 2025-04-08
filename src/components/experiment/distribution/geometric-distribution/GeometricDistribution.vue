@@ -182,10 +182,8 @@ $$
 <template>
   <ExperimentBoard>
     <template #experiment>
-      <GeometricDiagram
-        :p="probability[0]" :n="fixedN[0]" :is-chart1="isChart1" :is-chart2="isChart2"
-        :is-chart3="isChart3" :save="save"
-      />
+      <GeometricDiagram :p="probability[0]" :n="fixedN[0]" :is-chart1="isChart1" :is-chart2="isChart2"
+        :is-chart3="isChart3" :save="save" />
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center gap-3 p-3">
@@ -222,44 +220,55 @@ $$
                 </li>
               </ul>
             </div>
-            <div class="flex gap-4 pb-1 w-full">
-              <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                <div v-html="renderLatex('成功概率\\(p\\)')" />
 
-                <div class="max-w-xl space-y-3">
-                  <Input v-model="probability[0]" type="number" />
-                  <Slider v-model="probability" :min="0" :max="0.95" :step="0.05" />
+
+            <div class="flex  grid grid-cols-3">
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('成功概率\\(p\\) = ')" />
+                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
+                    <Input v-model="probability[0]" type="number" />
+                    <Slider v-model="probability" :min="0" :max="0.95" :step="0.05" />
+                  </div>
                 </div>
               </div>
-              <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                <div v-html="renderLatex('成功前的尝试次数（包含）\\( k \\)')" />
-                <div class="max-w-xl space-y-3">
-                  <Input v-model="numberk[0]" type="number" />
-                  <Slider v-model="numberk" :min="1" :max="60" :step="1" />
+
+
+
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('成功前的尝试次数\\( k \\) = ')" />
+                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
+                    <Input v-model="numberk[0]" type="number" />
+                    <Slider v-model="numberk" :min="1" :max="60" :step="1" />
+                  </div>
                 </div>
               </div>
               <div v-if="isChart3" class="flex flex-col flex-1 items-center justify-center space-y-5">
-                <div v-html="renderLatex('固定实验次数')" />
-                <div class="max-w-xl space-y-3">
-                  <Input v-model="fixedN[0]" type="number" />
-                  <Slider v-model="fixedN" :min="0" :max="9" :step="1" />
+
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('固定实验次数 = ')" />
+                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
+                    <Input v-model="fixedN[0]" type="number" />
+                    <Slider v-model="fixedN" :min="0" :max="9" :step="1" />
+                  </div>
                 </div>
+   </div>
+                <div v-if="isChart1" class="flex gap-2 items-center justify-center">
+                  <Checkbox id="terms" @update:checked="(checked: boolean) => {
+                    if (checked) {
+                      saveImg();
+                    }
+                    else {
+                      back();
+                    }
+                    console.log(checked)
+                  }" />
+                  <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
+             
               </div>
             </div>
-            <div v-if="isChart1" class="flex gap-2 items-center justify-center">
-              <Checkbox
-                id="terms" @update:checked="(checked: boolean) => {
-                  if (checked) {
-                    saveImg();
-                  }
-                  else {
-                    back();
-                  }
-                  console.log(checked)
-                }"
-              />
-              <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
-            </div>
+
           </CardContent>
         </Card>
       </div>
