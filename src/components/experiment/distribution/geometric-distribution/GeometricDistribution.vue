@@ -200,7 +200,7 @@ $$
           </CardContent>
         </Card>
         <Card class="w-full flex-1 flex flex-col">
-          <CardHeader>
+          <CardHeader class="pb-0">
             <CardTitle>
               参数调整
             </CardTitle>
