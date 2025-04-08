@@ -453,25 +453,16 @@ function toggleMethod(methodName: MethodName) {
     <template #parameter>
       <div v-if="bertrandDisplay" class="p-2 grid grid-cols-2 gap-2 h-full overflow-y-hidden unselectable">
         <!-- 配置区 -->
-        <div class="flex flex-col gap-2">
-          <Card class="flex-1 flex flex-col">
-            <CardHeader class="p-4">
-              <!-- <CardTitle>模拟轮数</CardTitle> -->
-            </CardHeader>
-            <CardContent class="flex flex-row items-center p-4  flex-1">
-              <!-- <div class="font-bold h-full justify-center items-center mb-4 gap-3 flex flex-col">
-                <Input v-model="bertrandDisplay.autoGameRound[0]" class="" :min="1" :max="500" @input="limitInput" />
-                <Slider v-model="bertrandDisplay.autoGameRound" class="" :min="1" :max="500" />
-              </div> -->
-              <div class="font-bold w-full justify-center items-center mb-4 gap-3 flex flex-row">
+        <div class="flex flex-col flex-1 gap-2 ">
+          <Card class="flex-1 flex  flex-col ">
+            <CardContent class="flex flex-row items-center  flex-1">
+              <div class="font-bold w-full justify-center items-center flex flex-row">
                 <div class="mb-3" v-html="toMarkdown('模拟轮数$$=$$')" />
-                <div class="max-w-lg space-y-3 flex flex-col  mb-2">
+                <div class=" space-y-3 flex flex-col  mb-2">
                   <Input v-model="bertrandDisplay.autoGameRound" type="text" placeholder="1~500" @input="limitInput"/>
                 </div>
-                <!-- <Slider v-model="bertrandDisplay.autoGameRound" class="" :min="1" :max="500" /> -->
               </div>
-
-              <div class="flex justify-center gap-2 mb-6 w-1/3">
+              <div class="flex  p-4  w-1/3">
                 <Button class="" @click="toggleSimulation">
                   {{ autoGaming ? '终止模拟' : '开始模拟' }}
                 </Button>
@@ -480,28 +471,28 @@ function toggleMethod(methodName: MethodName) {
           </Card>
 
           <!-- 实验结果显示 -->
-          <Card class="flex-1 h-2/3">
+          <Card class="flex-1 ">
             <CardHeader class="p-4">
               <CardTitle>实验结果</CardTitle>
             </CardHeader>
             <CardContent class="flex items-center flex-col">
               <div class="grid grid-cols-2 gap-y-4 gap-x-10 justify-between">
-                <Label class="flex items-center flex-shrink-0">
+                <Label class="flex items-center flex-shrink-0 text-lg">
                   方法一实验频率： {{ longChordRatio ? `${(longChordRatio * 100).toFixed(2)}%` : '0.00%' }}
                 </Label>
-                <Label class="flex items-center flex-shrink-0">
+                <Label class="flex items-center flex-shrink-0 text-lg">
                   方法一理论频率： {{ (0.333).toFixed(3) }}
                 </Label>
-                <Label class="flex items-center flex-shrink-0">
+                <Label class="flex items-center flex-shrink-0 text-lg">
                   方法二实验频率： {{ longChordRatio2 ? `${(longChordRatio2 * 100).toFixed(2)}%` : '0.00%' }}
                 </Label>
-                <Label class="flex items-center flex-shrink-0">
+                <Label class="flex items-center flex-shrink-0 text-lg">
                   方法二理论频率： {{ (0.500).toFixed(3) }}
                 </Label>
-                <Label class="flex items-center flex-shrink-0">
+                <Label class="flex items-center flex-shrink-0 text-lg">
                   方法三实验频率：{{ longChordRatio3 ? `${(longChordRatio3 * 100).toFixed(2)}%` : '0.00%' }}
                 </Label>
-                <Label class="flex items-center flex-shrink-0">
+                <Label class="flex items-center flex-shrink-0 text-lg">
                   方法三理论频率： {{ (0.250).toFixed(3) }}
                 </Label>
               </div>

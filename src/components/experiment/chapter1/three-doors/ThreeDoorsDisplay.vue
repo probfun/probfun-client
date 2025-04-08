@@ -9,7 +9,7 @@ const changeWinNum = ref(0);
 const changeLoseNum = ref(0);
 const notChangeWinNum = ref(0);
 const notChangeLoseNum = ref(0);
-const autoGameRound = ref([500]);
+const autoGameRound = ref([]);
 const autoGaming = ref(false);
 
 const gameState = ref<'End' | 'Select' | 'Reveal' | 'Win' | 'Lose'>('End');

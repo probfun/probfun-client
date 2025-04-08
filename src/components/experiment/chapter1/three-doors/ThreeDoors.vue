@@ -216,26 +216,32 @@ const discussTabList = [
               </CardTitle>
             </CardHeader>
             <CardContent class="flex items-center flex-col">
-              <div class="grid grid-cols-2 gap-y-4 gap-x-10 justify-between">
-                <Label class="flex items-center flex-shrink-0">
+              <div class="grid grid-cols-2 gap-y-3 gap-x-10 justify-between">
+                <Label class="flex items-center flex-shrink-0 text-lg">
                   换门胜利次数： {{ threeDoorsDisplay.changeWinNum }}
                 </Label>
-                <Label class="flex items-center flex-shrink-0">
+                <Label class="flex items-center flex-shrink-0 text-lg">
                   换门失败次数： {{ threeDoorsDisplay.changeLoseNum }}
                 </Label>
-                <Label class="flex items-center flex-shrink-0">
+                <Label class="flex items-center flex-shrink-0 text-lg">
                   不换门胜利次数： {{ threeDoorsDisplay.notChangeWinNum }}
                 </Label>
-                <Label class="flex items-center flex-shrink-0">
+                <Label class="flex items-center flex-shrink-0 text-lg">
                   不换门失败次数： {{ threeDoorsDisplay.notChangeLoseNum }}
                 </Label>
-                <Label class="flex items-center flex-shrink-0">
-                  不换门胜率： {{ (threeDoorsDisplay.notChangeWinNum / (threeDoorsDisplay.notChangeWinNum +
+                <Label class="flex items-center flex-shrink-0 text-lg">
+                  不换门实际胜率： {{ (threeDoorsDisplay.notChangeWinNum / (threeDoorsDisplay.notChangeWinNum +
                     threeDoorsDisplay.notChangeLoseNum)).toFixed(2) }}
                 </Label>
-                <Label class="flex items-center flex-shrink-0">
-                  换门胜率： {{ (threeDoorsDisplay.changeWinNum / (threeDoorsDisplay.changeWinNum +
+                <Label class="flex items-center flex-shrink-0 text-lg">
+                  换门实际胜率： {{ (threeDoorsDisplay.changeWinNum / (threeDoorsDisplay.changeWinNum +
                     threeDoorsDisplay.changeLoseNum)).toFixed(2) }}
+                </Label>
+                <Label class="flex items-center flex-shrink-0 text-lg">
+                  不换门理论胜率：0.33
+                </Label>
+                <Label class="flex items-center flex-shrink-0 text-lg">
+                  换门理论胜率： 0.66
                 </Label>
               </div>
             </CardContent>
