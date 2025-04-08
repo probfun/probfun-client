@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
 
-// 用来存储历史表达式
-
 const props = defineProps<{
-  a: number
-  b: number
-  k: number
-  m: number
-  showHistory: boolean
+  a: number;
+  b: number;
+  k: number;
+  m: number;
+  showHistory: boolean;
 }>();
 
 declare const Desmos: any;
@@ -27,7 +25,6 @@ onMounted(() => {
     lockViewport: false,
     projectorMode: false,
     language: 'zh-CN',
-    
   };
 
   calculator = Desmos.GraphingCalculator(elt.value, options);
@@ -35,15 +32,22 @@ onMounted(() => {
 });
 
 function drawUniformDistribution() {
-  if (!calculator)
-    return;
+  if (!calculator) return;
+
+  // 清除旧的表达式
+  calculator.removeExpression({ id: 'left_side' });
+  calculator.removeExpression({ id: 'middle_section' });
+  calculator.removeExpression({ id: 'right_side' });
+  calculator.removeExpression({ id: 'vertical_line_a' });
+  calculator.removeExpression({ id: 'vertical_line_b' });
 
   // 绘制左侧区间 (x < a)，函数值为 0
   const leftSide = {
     id: 'left_side',
     latex: `f_1(x) = 0 \\{x < ${props.k * props.a + props.m}\\}`,
     color: Desmos.Colors.BLUE,
-    linewidth: 4.5, // 设置正态分布曲线的宽度
+    lineStyle: 'solid', // 确保设置了线型
+    width: 4.5, // Desmos 使用 width 属性
   };
 
   // 绘制中间区间 (a <= x <= b)，函数值为 1 / (b - a)
@@ -51,7 +55,8 @@ function drawUniformDistribution() {
     id: 'middle_section',
     latex: `f_2(x) = \\frac{1}{${props.k}(${props.b} - ${props.a})} \\{${props.k * props.a + props.m} \\leq x \\leq ${props.k * props.b + props.m}\\}`,
     color: Desmos.Colors.BLUE,
-    linewidth: 4.5, // 设置正态分布曲线的宽度
+    lineStyle: 'solid',
+    width: 4.5,
   };
 
   // 绘制右侧区间 (x > b)，函数值为 0
@@ -59,7 +64,8 @@ function drawUniformDistribution() {
     id: 'right_side',
     latex: `f_3(x) = 0 \\{x > ${props.k * props.b + props.m}\\}`,
     color: Desmos.Colors.BLUE,
-    linewidth: 4.5, // 设置正态分布曲线的宽度
+    lineStyle: 'solid',
+    width: 4.5,
   };
 
   // 绘制 x = a 处的垂直线段
@@ -71,7 +77,8 @@ function drawUniformDistribution() {
       max: 1 / (props.k * (props.b - props.a)),
     },
     color: Desmos.Colors.BLUE,
-    linewidth: 4.5, // 设置正态分布曲线的宽度
+    lineStyle: 'solid',
+    width: 4.5,
   };
 
   // 绘制 x = b 处的垂直线段
@@ -83,21 +90,9 @@ function drawUniformDistribution() {
       max: 1 / (props.k * (props.b - props.a)),
     },
     color: Desmos.Colors.BLUE,
-    linewidth: 4.5, // 设置正态分布曲线的宽度
+    lineStyle: 'solid',
+    width: 4.5,
   };
-
-  if (props.showHistory) {
-    idNumber++;
-    const expressions = [
-      { id: `history_${idNumber}_1`, latex: leftSide.latex, color: Desmos.Colors.BLUE },
-      { id: `history_${idNumber}_2`, latex: middleSection.latex, color: Desmos.Colors.BLUE },
-      { id: `history_${idNumber}_3`, latex: rightSide.latex, color: Desmos.Colors.BLUE },
-      { id: `history_${idNumber}_4`, latex: verticalLineA.latex, parametricDomain: verticalLineA.parametricDomain, color: Desmos.Colors.BLUE },
-      { id: `history_${idNumber}_5`, latex: verticalLineB.latex, parametricDomain: verticalLineB.parametricDomain, color: Desmos.Colors.BLUE },
-    ];
-
-    historyExpressions.value.push(...expressions);
-  }
 
   // 设置三个部分的表达式和垂直线
   calculator.setExpression(leftSide);
@@ -105,19 +100,6 @@ function drawUniformDistribution() {
   calculator.setExpression(rightSide);
   calculator.setExpression(verticalLineA);
   calculator.setExpression(verticalLineB);
-
-  if (props.showHistory) {
-    historyExpressions.value.forEach((expression) => {
-      calculator.setExpression(expression);
-    });
-  }
-  else {
-    historyExpressions.value.forEach((expression) => {
-      calculator.removeExpression({ id: expression.id });
-    });
-    // 清空历史表达式数组
-    historyExpressions.value = [];
-  }
 
   // 设置图形边界
   calculator.setMathBounds({
