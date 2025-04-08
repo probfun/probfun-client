@@ -2,11 +2,11 @@
 import { onMounted, ref, watch } from 'vue';
 
 const props = defineProps<{
-  a: number;
-  b: number;
-  k: number;
-  m: number;
-  showHistory: boolean;
+  a: number
+  b: number
+  k: number
+  m: number
+  showHistory: boolean
 }>();
 
 declare const Desmos: any;
@@ -14,8 +14,8 @@ declare const Desmos: any;
 const elt = ref<HTMLDivElement | null>(null);
 let calculator: any = null;
 
-let idNumber = 0;
-const historyExpressions = ref<any[]>([]);
+// const idNumber = 0;
+// const historyExpressions = ref<any[]>([]);
 
 onMounted(() => {
   const options = {
@@ -32,7 +32,8 @@ onMounted(() => {
 });
 
 function drawUniformDistribution() {
-  if (!calculator) return;
+  if (!calculator)
+    return;
 
   // 清除旧的表达式
   calculator.removeExpression({ id: 'left_side' });
@@ -47,7 +48,7 @@ function drawUniformDistribution() {
     latex: `f_1(x) = 0 \\{x < ${props.k * props.a + props.m}\\}`,
     color: Desmos.Colors.BLUE,
     lineStyle: 'solid', // 确保设置了线型
-    width: 4.5, // Desmos 使用 width 属性
+    lineWidth: 4.5, // Desmos 使用 width 属性
   };
 
   // 绘制中间区间 (a <= x <= b)，函数值为 1 / (b - a)
@@ -56,7 +57,7 @@ function drawUniformDistribution() {
     latex: `f_2(x) = \\frac{1}{${props.k}(${props.b} - ${props.a})} \\{${props.k * props.a + props.m} \\leq x \\leq ${props.k * props.b + props.m}\\}`,
     color: Desmos.Colors.BLUE,
     lineStyle: 'solid',
-    width: 4.5,
+    lineWidth: 4.5,
   };
 
   // 绘制右侧区间 (x > b)，函数值为 0
@@ -65,7 +66,7 @@ function drawUniformDistribution() {
     latex: `f_3(x) = 0 \\{x > ${props.k * props.b + props.m}\\}`,
     color: Desmos.Colors.BLUE,
     lineStyle: 'solid',
-    width: 4.5,
+    lineWidth: 4.5,
   };
 
   // 绘制 x = a 处的垂直线段
@@ -78,7 +79,7 @@ function drawUniformDistribution() {
     },
     color: Desmos.Colors.BLUE,
     lineStyle: 'solid',
-    width: 4.5,
+    lineWidth: 4.5,
   };
 
   // 绘制 x = b 处的垂直线段
@@ -91,7 +92,7 @@ function drawUniformDistribution() {
     },
     color: Desmos.Colors.BLUE,
     lineStyle: 'solid',
-    width: 4.5,
+    lineWidth: 4.5,
   };
 
   // 设置三个部分的表达式和垂直线

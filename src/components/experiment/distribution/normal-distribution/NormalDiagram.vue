@@ -35,7 +35,7 @@ onMounted(() => {
     // settingsMenu: false,       // 隐藏设置菜单
     // zoomButtons: false,        // 隐藏缩放按钮
     // border: true,              // 显示边框
-    trace: false,              // 禁用追踪功能
+    trace: false, // 禁用追踪功能
     expressionsCollapsed: false, // 不折叠表达式列表
     lockViewport: false, // 允许缩放和拖动
     projectorMode: false, // 禁用投影模式
@@ -109,7 +109,8 @@ function drawNormalDistribution() {
     historyExpressions.value.forEach((expression) => {
       calculator.setExpression(expression);
     });
-  } else {
+  }
+  else {
     historyExpressions.value.forEach((expression) => {
       calculator.removeExpression({ id: expression.id });
     });
