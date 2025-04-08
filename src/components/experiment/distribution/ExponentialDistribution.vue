@@ -134,10 +134,8 @@ $$
 <template>
   <ExperimentBoard title="二项分布" :tags="[]">
     <template #experiment>
-      <ExponentialDiagram
-        class="flex-1 h-full" :rate="rate[0]" :shift="shift[0]" :show-graph="isChart1"
-        :show-history="save"
-      />
+      <ExponentialDiagram class="flex-1 h-full" :rate="rate[0]" :shift="shift[0]" :show-graph="isChart1"
+        :show-history="save" />
     </template>
     <!-- <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
@@ -220,48 +218,57 @@ $$
                 </li>
               </ul>
             </div>
-            <div class="flex gap-4 pb-1 w-full">
-              <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                <div v-html="renderLatex('事件发生的速率参数\\(λ\\)')" />
+            <div class="items-center justify-center  flex flex-1 gap-4">
 
-                <div class="max-w-xl space-y-3">
-                  <Input v-model.number="rate[0]" :min-fraction-digits="1" />
-                  <Slider v-model="rate" :min="0" :max="10" :step="0.1" class="w-48" />
-                </div>
-              </div>
-              <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                <div v-html="renderLatex('间隔/等待时间\\(x\\)')" />
-
-                <div class="max-w-xl space-y-3">
-                  <Input v-model.number="numberx[0]" />
-                  <Slider v-model="numberx" :min="1" :max="10" :step="0.2" class="w-48" />
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('事件发生的速率参数\\(λ\\) = ')" />
+                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
+                    <Input v-model.number="rate[0]" :min-fraction-digits="1" class="w-full mb-2" />
+                  <Slider v-model="rate" :min="0" :max="10" :step="0.1" class="w-full" />
+                  </div>
                 </div>
               </div>
 
-              <div v-if="isChart2" class="flex flex-col flex-1 items-center justify-center space-y-5">
-                <div v-html="renderLatex('固定值')" />
 
-                <div class="max-w-xl space-y-3">
-                  <Input v-model.number="shift[0]" :min-fraction-digits="1" />
-                  <Slider v-model="shift" :min="0" :max="5" :step="0.1" class="w-48" />
+              
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('间隔时间\\(x\\) = ')" />
+                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
+                    <Input v-model.number="numberx[0]" class="w-full mb-2" />
+                    <Slider v-model="numberx" :min="1" :max="10" :step="0.2" class="w-full" />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div class="flex gap-2 items-center justify-center">
-              <Checkbox
-                id="terms" @update:checked="(checked: boolean) => {
+
+              <!-- 第三组：固定值 -->
+              <div v-if="isChart2" class="flex flex-1 items-center justify-center font-bold ">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('固定值 = ')" />
+                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
+                    <Input v-model.number="shift[0]" :min-fraction-digits="1" class="w-full mb-2" />
+                    <Slider v-model="shift" :min="0" :max="5" :step="0.1" class="w-full" />
+                  </div>
+                </div>
+              </div>
+              
+
+              <!-- 第四组：历史图像模式 -->
+              <div class="flex items-center justify-center">
+                <Checkbox id="terms" @update:checked="(checked: boolean) => {
                   if (checked) {
                     saveImg();
-                  }
-                  else {
+                  } else {
                     back();
                   }
-                  console.log(checked)
-                }"
-              />
-              <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
+                  console.log(checked);
+                }" />
+                <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
+              </div>
             </div>
+
           </CardContent>
         </Card>
       </div>

@@ -465,11 +465,7 @@ function toggleMethod(methodName: MethodName) {
           <Card class="flex flex-col">
             <CardContent class="flex p-12 justify-center items-center gap-3 flex-1">
               <div class="font-bold justify-center items-center flex gap-2">
-<<<<<<< HEAD
-                <div class="mb-1" v-html="toMarkdown('模拟轮数 =')" />
-=======
                 <div class="mb-1 whitespace-nowrap" v-html="toMarkdown('模拟轮数 $$=$$')" />
->>>>>>> 45c470536ab6226a462e5d81f3f880d97be6df3b
                 <div class="flex flex-col">
                   <Input v-model="bertrandDisplay.autoGameRound" type="text" placeholder="1~500" @input="limitInput" />
                 </div>
