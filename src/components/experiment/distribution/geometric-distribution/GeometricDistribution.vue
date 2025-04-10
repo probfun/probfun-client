@@ -246,7 +246,7 @@ $$
               </div>
               <div v-if="isChart3" class="flex flex-col flex-1 items-center justify-center space-y-5">
 
-                <div class="flex flex-1 items-center justify-center">
+                <div class="flex flex-1 items-center justify-center font-bold">
                   <div class="mr-4" v-html="renderLatex('固定实验次数 = ')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
                     <Input v-model="fixedN[0]" type="number" />

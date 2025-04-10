@@ -60,8 +60,8 @@ const binomialFormula = computed(() => {
   return `
   \\begin{aligned}
 P(X = k) &= \\binom{n}{k} p^k (1-p)^{n-k} \\\\
-         &= \\binom{${number.value[0]}}{${numberk.value}} ${probability.value[0]}^${numberk.value} (1-${probability.value[0]})^{${number.value[0]}-${numberk.value}} 
-         = ${resultB}
+         &= \\binom{${number.value[0]}}{${numberk.value}} ${probability.value[0]}^${numberk.value} (1-${probability.value[0]})^{${number.value[0]}-${numberk.value}} \\\\
+         &= ${resultB}
 \\end{aligned}`;
 });
 const binomialContainer = ref<HTMLElement | null>(null);
@@ -72,8 +72,12 @@ const poissonFormula = computed(() => {
   const mantissa = (finalResultP.value / 10 ** exponent).toFixed(3); // 计算尾数并保留5位小数
   const resultP = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
 
-  return ` λ = np = {${number.value}} * {${probability.value}}={{ ${(number.value[0] * probability.value[0]).toFixed(2)}}}\\\\
-P(X = k) = \\frac{{λ}^ke^{-λ}}{k!} = \\frac{${lambda.value.toFixed(2)}^{${numberk.value}} e^{-${lambda.value.toFixed(2)}}}{${numberk.value}!} = ${resultP}`;
+  return ` 
+  \\begin{aligned}
+&λ = np = {${number.value}} * {${probability.value}}={{ ${(number.value[0] * probability.value[0]).toFixed(2)}}}\\\\
+&P(X = k) = \\frac{{λ}^ke^{-λ}}{k!} = \\frac{${lambda.value.toFixed(2)}^{${numberk.value}} e^{-${lambda.value.toFixed(2)}}}{${numberk.value}!} \\\\
+&= ${resultP}
+\\end{aligned}`;
 });
 const poissonContainer = ref<HTMLElement | null>(null);
 
@@ -239,8 +243,8 @@ $$
 
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center p-3 gap-3">
-        <Card class="w-full h-1/2 flex gap-3">
-          <Card class="w-1/2">
+        <Card class="w-full h-full flex gap-3">
+          <Card class="w-1/3">
             <CardHeader>
               <div class="flex  gap-5">
                 <CardTitle>二项分布公式</CardTitle>
@@ -251,7 +255,7 @@ $$
               <div ref="binomialContainer" class="text-base" />
             </CardContent>
           </Card>
-          <Card class="w-1/2 gap-3 space-y-2">
+          <Card class="w-1/3 gap-3 space-y-2">
             <CardHeader>
               <div class="flex  gap-5">
                 <CardTitle>泊松分布公式</CardTitle>
@@ -262,42 +266,81 @@ $$
               <div ref="poissonContainer" class="text-base" />
             </CardContent>
           </Card>
+          <Card class="w-1/3 gap-3 space-y-2">
+
+            <CardContent class="flex w-full justify-center">
+              <div class="flex  grid grid-rows-3 mt-2">
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 mb-2 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('实验次数\\(n\\) = ')" />
+                  <div class="flex flex-col items-center justify-center w-1/2 space-y-1">
+                    <Input v-model.number="number[0]" class="w-full mb-2" />
+                    <Slider v-model="number" :min="1" :max="50" :step="1" class="w-full" />
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 mb-2 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('成功次数\\(k\\) = ')" />
+                  <div class="flex flex-col items-center justify-center w-1/2 space-y-1">
+                    <Input v-model.number="numberk[0]" class="w-full mb-2" />
+                    <Slider v-model="numberk" :min="1" :max="maxK" :step="1" class="w-full" />
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('成功概率\\(p\\) = ')" />
+                  <div class="flex flex-col items-center justify-center w-1/2 space-y-1">
+                    <Input v-model.number="probability[0]" :min-fraction-digits="2" class="w-full mb-2" />
+                    <Slider v-model="probability" :min="0" :max="1" :step="0.01" class="w-full" />
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            </CardContent>
+          </Card>
         </Card>
-        <Card class="w-full  flex-1 flex flex-col">
+        <!-- <Card class="w-full  flex-1 flex flex-col">
           <CardHeader>
             <CardTitle>
               参数调整
             </CardTitle>
           </CardHeader>
           <CardContent class="flex-1 flex flex-col justify-center ">
-            <div class="flex gap-4 pb-8">
-              <div class="flex flex-col flex-1 items-center justify-center space-y-2">
-                <div v-html="renderLatex(' 实验次数\\(n\\)')" />
-
-                <div class="max-w-xl space-y-3">
-                  <Input v-model.number="number[0]" />
-                  <Slider v-model="number" :min="1" :max="50" :step="1" class="w-48" />
+            <div class="flex  grid grid-cols-3">
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('实验次数\\(n\\) = ')" />
+                  <div class="flex flex-col items-center justify-center w-1/2 space-y-1">
+                    <Input v-model.number="number[0]" class="w-full mb-2" />
+                    <Slider v-model="number" :min="1" :max="50" :step="1" class="w-full" />
+                  </div>
                 </div>
               </div>
-              <div class="flex flex-col flex-1 items-center justify-center space-y-2">
-                <div v-html="renderLatex('  成功次数\\(k\\)')" />
-
-                <div class="max-w-xl space-y-3">
-                  <Input v-model.number="numberk[0]" />
-                  <Slider v-model="numberk" :min="1" :max="maxK" :step="1" class="w-48" />
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('成功次数\\(k\\) = ')" />
+                  <div class="flex flex-col items-center justify-center w-1/2 space-y-1">
+                    <Input v-model.number="numberk[0]" class="w-full mb-2" />
+                    <Slider v-model="numberk" :min="1" :max="maxK" :step="1" class="w-full" />
+                  </div>
                 </div>
               </div>
-              <div class="flex flex-col flex-1 items-center justify-center space-y-2">
-                <div v-html="renderLatex(' 成功概率\\(p\\)')" />
-
-                <div class="max-w-xl space-y-3">
-                  <Input v-model.number="probability[0]" :min-fraction-digits="2" />
-                  <Slider v-model="probability" :min="0" :max="1" :step="0.01" class="w-48" />
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('成功概率\\(p\\) = ')" />
+                  <div class="flex flex-col items-center justify-center w-1/2 space-y-1">
+                    <Input v-model.number="probability[0]" :min-fraction-digits="2" class="w-full mb-2" />
+                    <Slider v-model="probability" :min="0" :max="1" :step="0.01" class="w-full" />
+                  </div>
                 </div>
               </div>
+
             </div>
           </CardContent>
-        </Card>
+        </Card> -->
       </div>
     </template>
 
