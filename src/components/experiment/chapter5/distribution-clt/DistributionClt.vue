@@ -433,7 +433,7 @@ watch(args, () => {
                 </Label>
                 <div class="gap-2 flex items-center">
                   <Slider v-model="n_list" :disabled="multi" :min="1" :max="100" />
-                  <Input v-model="n" :disabled="multi" :min="1" :max="100" type="number" class="w-16" />
+                  <Input v-model="n" :disabled="multi" :min="1" :max="100" type="number" class="w-24" placeholder="1~100" />
                   <Label class="flex-shrink-0">
                     个
                   </Label>
@@ -446,7 +446,7 @@ watch(args, () => {
                   <!--                    {{ range[0] }} -->
                   <!--                  </Label> -->
                   <Input
-                    v-model="range[0]" :disabled="selected !== 'custom'" :min="-10" :max="range[1]" type="number"
+                    v-model="range[0]" :disabled="selected !== 'custom'" :min="-10" :max="range[1]" :placeholder="`-10~${range[1]}`" type="number"
                     class="w-16"
                   />
                   <Slider v-model="range" :disabled="selected !== 'custom'" :min="-10" :max="10" />
@@ -454,7 +454,7 @@ watch(args, () => {
                   <!--                    {{ range[1] }} -->
                   <!--                  </Label> -->
                   <Input
-                    v-model="range[1]" :disabled="selected !== 'custom'" :min="range[0]" :max="10" type="number"
+                    v-model="range[1]" :disabled="selected !== 'custom'" :min="range[0]" :max="10" :placeholder="`${range[0]}~10`" type="number"
                     class="w-16"
                   />
                 </div>
