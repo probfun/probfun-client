@@ -54,7 +54,7 @@ const drawDistributions = () => {
         latex: `(${binomialPoints.join('), (')})`,
         color: Desmos.Colors.RED,
         pointSize: 15, // 设置点的大小
-        linewidth:4.5,
+        lineWidth: 4.5, // 设置线条宽度
     
     };
     for (let i = 0; i <= props.n; i++) {
@@ -62,7 +62,7 @@ const drawDistributions = () => {
             id: `lines_${i}`,
             latex: `x = ${i} \\{0<= y <= ${binomialValue[i]}\\}`,
             color: Desmos.Colors.RED,
-            linewidth: 4.5,
+            lineWidth: 4.5, // 设置线条宽度
 
             lineStyle: Desmos.Styles.DASHED,
         }
@@ -74,7 +74,7 @@ const drawDistributions = () => {
         latex: `(${poissonPoints.join('), (')})`,
         color: Desmos.Colors.BLUE,
         pointSize: 15, // 设置点的大小
-        linewidth:4.5,
+        lineWidth: 4.5, // 设置线条宽度
     };
     for (let i = 0; i <= 50; i++) {
         const poissonLine = {

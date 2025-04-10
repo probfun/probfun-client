@@ -100,6 +100,7 @@ function setChartOptions() {
       x: {
         ticks: {
           color: textColorSecondary,
+          
         },
         grid: {
           color: surfaceBorder,
@@ -211,7 +212,7 @@ $$
               <div class="flex  flex-1 items-center font-bold justify-center mt-8 space-x-2">
                 <div v-html="renderLatex('\\(λ\\) = ')" />
 
-                <div class="max-w-xl space-y-3">
+                <div class=" space-y-3">
                   <Input v-model.number="lambda[0]" class="w-full"/>
                   <Slider v-model="lambda" :min="30" :max="100" :step="1" class="w-full" />
                 </div>

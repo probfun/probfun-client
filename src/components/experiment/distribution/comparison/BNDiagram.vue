@@ -46,7 +46,7 @@ const drawDistributions = () => {
         id: 'normal',
         latex: `f(x) = \\frac{1}{\\sqrt{2\\pi} \\cdot ${Math.sqrt(props.n * props.p * (1 - props.p))}} e^{-\\frac{(x - ${props.n * props.p})^2}{2 \\cdot ${props.n * props.p * (1 - props.p)}}} \\{x >= 0\\}`,
         color: Desmos.Colors.BLUE,
-        linewidth:4.5,
+        lineWidth: 4.5, // 设置线条宽度
     };
 
     const binomialPointExpression = {
@@ -54,7 +54,7 @@ const drawDistributions = () => {
         latex: `(${binomialPoints.join('), (')})`,
         color: Desmos.Colors.RED,
         pointSize: 15, // 设置点的大小
-        linewidth:4.5,
+        lineWidth: 4.5, // 设置线条宽度
     };
     for (let i = 0; i <= props.n; i++) {
         const binomialLine = {
@@ -62,7 +62,7 @@ const drawDistributions = () => {
             latex: `x = ${i} \\{0<= y <= ${binomialValue[i]}\\}`,
             color: Desmos.Colors.RED,
             lineStyle: Desmos.Styles.DASHED,
-            linewidth:4.5,
+            lineWidth: 4.5, // 设置线条宽度
         }
         calculator.setExpression(binomialLine)
     }

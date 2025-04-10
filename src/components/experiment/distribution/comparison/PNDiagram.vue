@@ -39,13 +39,16 @@ const drawDistributions = () => {
         id: `points_${idNumber + 1}`,
         latex: `(${poissonPoints.join('), (')})`,
         color: Desmos.Colors.BLUE,
-        pointSize: 8 // 设置点的大小
+        
+        lineWidth: 4.5, // 设置线条宽度
     };
     for (let i = 0; i <= 200; i++) {
         const poissonLine = {
             id: `plines_${i}`,
             latex: `x = ${i} \\{0<= y <= ${poissonValue[i]}\\}`,
             color: Desmos.Colors.BLUE,
+            pointSize: 15, // 设置点的大小
+            lineWidth: 4.5, // 设置线条宽度
         }
         calculator.setExpression(poissonLine)
     }
@@ -57,7 +60,8 @@ const drawDistributions = () => {
     const normal = {
         id: 'normal',
         latex: `f(x) = \\frac{1}{\\sqrt{2\\pi \\cdot ${props.lambda}}} e^{-\\frac{(x - ${props.lambda})^2}{2 \\cdot ${props.lambda}}} \\{x >= 0\\}`,
-        color: Desmos.Colors.RED
+        color: Desmos.Colors.RED,
+        lineWidth: 4.5, // 设置线条宽度
     };
     calculator.setExpression(normal);
 
