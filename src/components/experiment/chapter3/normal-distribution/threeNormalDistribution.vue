@@ -379,9 +379,9 @@ const discussTabList = [
             </div>
           </div>
 
-          <div v-if="isChart3" class="flex flex-col gap-8 pb-0">
-            <div class="flex w-4/5 flex-1 items-center justify-center space-y-1 gap-3">
-              <div class="mb-3" v-html="toMarkdown('$$y=$$')" />
+          <div v-if="isChart3" class="flex flex-col gap-8 pb-0 ">
+            <div class="flex w-4/5 ml-5 flex-1 items-center justify-center space-y-1 gap-3">
+              <div class="mb-3 " v-html="toMarkdown('$$y=$$')" />
 
               <div class="max-w-lg space-y-3">
                 <Input v-model="y" class="border-2" />
@@ -390,8 +390,8 @@ const discussTabList = [
             </div>
           </div>
           <div v-if="isChart3" class="flex flex-col gap-8 pb-0">
-            <div class="flex w-4/5 flex-1 items-center justify-center space-y-1 gap-3">
-              <div class="mb-3" v-html="toMarkdown('$$x=$$')" />
+            <div class="flex w-4/5 ml-5 flex-1 items-center justify-center space-y-1 gap-3">
+              <div class="mb-3  " v-html="toMarkdown('$$x=$$')" />
               <div class="max-w-lg space-y-3">
                 <Input v-model="x" />
                 <Slider v-model="x" :min="-10" :max="10" :step="1" class="w-full" />
