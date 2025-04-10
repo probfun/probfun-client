@@ -305,7 +305,7 @@ const distanceContent = String.raw`
 我们使用 $ D_{KS}(P||Q) = \max_x |P(x) - Q(x)|$ 衡量两个分布之间的距离。有：
 
 $$
-\text{Distance}(i) = D_{KS}(F_i||N_i), \quad i = 1,\ 2, \dots,\ 30
+\text{Distance}(i) = D_{KS}(F_i||N_i), \quad i = 1,\ 2, \dots,\ 100
 $$
 
 作为叠加 $i$ 个分布后的分布 $F_i$ 与其对应的正态分布 $N_i$ 之间的距离。可以以此判断叠加分布是否收敛于正态分布。
@@ -332,19 +332,28 @@ const discussTabList = [
   },
 ];
 
-function getArgs() {
-  if (selected.value === 'normal') {
-    return {
-      mean: 0,
-      std: 1,
-    }
+// function getArgs() {
+//   if (selected.value === 'normal') {
+//     return {
+//       mean: 0,
+//       std: 1,
+//     }
+//   }
+//   return {};
+// }
+
+watch(selected, () => {
+  fAny.value = fAnyWrap(functionList[selected.value].f);
+  range.value = [functionList[selected.value].left, functionList[selected.value].right];
+  if (selected.value === 'custom') {
+    convert();
   }
-  return {};
-}
+}, { deep: true })
 
 watch(args, () => {
-  console.log(args);
-});
+  console.log(args, 123, functionList[selected.value]);
+  range.value = [functionList[selected.value].left, functionList[selected.value].right];
+}, { deep: true });
 </script>
 
 <template>
@@ -367,15 +376,7 @@ watch(args, () => {
                 <Label class="flex-shrink-0">
                   选择分布：
                 </Label>
-                <Select
-                  v-model="selected" @update:model-value="() => {
-                    fAny = fAnyWrap(functionList[selected].f);
-                    range = [functionList[selected].left, functionList[selected].right];
-                    if (selected === 'custom') {
-                      convert();
-                    }
-                  }"
-                >
+                <Select v-model="selected">
                   <SelectTrigger>
                     {{ functionList[selected].chinese }}
                   </SelectTrigger>
