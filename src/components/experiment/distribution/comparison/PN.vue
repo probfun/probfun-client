@@ -100,7 +100,7 @@ function setChartOptions() {
       x: {
         ticks: {
           color: textColorSecondary,
-          
+
         },
         grid: {
           color: surfaceBorder,
@@ -153,7 +153,7 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard title="泊松分布与正态分布" :tags="[]">
+  <ExperimentBoard title="泊松分布与正态分布" :tags="[]" :panel-size="70">
     <template #experiment>
       <PNDiagram :lambda="lambda[0]" />
     </template>
@@ -207,13 +207,12 @@ $$
             </CardContent>
           </Card>
           <Card class="w-1/3 gap-3 ">
-          
             <CardContent class="flex w-full justify-center ">
               <div class="flex  flex-1 items-center font-bold justify-center mt-8 space-x-2">
                 <div v-html="renderLatex('\\(λ\\) = ')" />
 
                 <div class=" space-y-3">
-                  <Input v-model.number="lambda[0]" class="w-full"/>
+                  <Input v-model.number="lambda[0]" class="w-full" />
                   <Slider v-model="lambda" :min="30" :max="100" :step="1" class="w-full" />
                 </div>
               </div>

@@ -299,7 +299,7 @@ const discussTabList = [
 </script>
 
 <template>
-  <ExperimentBoard :layout="1" :panel-size="70" :discuss-tab-list="discussTabList">
+  <ExperimentBoard :layout="1" :panel-size="75" :discuss-tab-list="discussTabList">
     <template #experiment>
       <ThreeNormalDiagram
         :mean1="mean1" :mean2="mean2" :sigma1="sigma1" :sigma2="sigma2" :density="density"

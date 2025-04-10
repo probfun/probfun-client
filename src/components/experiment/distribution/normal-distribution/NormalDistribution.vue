@@ -153,7 +153,7 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard>
+  <ExperimentBoard :panel-size="50">
     <template #experiment>
       <!-- <DistributionDiagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance" :a="a" :b="b"
         :show-history="save" /> -->
@@ -244,7 +244,7 @@ $$
 
         <Card class="w-full  card flex flex-1">
           <div class="flex flex-col w-full ">
-            <div class="flex items-start gap-5 justify-center items-center">
+            <div class="flex gap-5 justify-center items-center">
               <!-- 第一个 CardHeader -->
               <div class="flex-1 w-1/3">
                 <CardHeader class="pb-5">
@@ -252,27 +252,25 @@ $$
                 </CardHeader>
                 <CardContent class="w-full flex flex-col items-start ">
                   <div class="w-full h-1/2 space-y-5">
-              <div ref="katexTransformedFormula" class="text-base" />
-              <div ref="katexMainFormula" class="text-base  pb-5" />
-            </div>
+                    <div ref="katexTransformedFormula" class="text-base" />
+                    <div ref="katexMainFormula" class="text-base  pb-5" />
+                  </div>
                 </CardContent>
               </div>
 
               <!-- 第二个 CardHeader -->
               <div class="flex-1">
                 <CardHeader class="pb-5">
-                  <CardTitle></CardTitle>
+                  <CardTitle />
                 </CardHeader>
                 <CardContent class="w-full flex flex-col items-start gap-10 ">
-              <div ref="katexTransformedFormulaY" class="text-base text-left" />
-              <div ref="katexMainFormulaY" class="text-base " />
+                  <div ref="katexTransformedFormulaY" class="text-base text-left" />
+                  <div ref="katexMainFormulaY" class="text-base " />
                 </CardContent>
               </div>
             </div>
           </div>
         </Card>
-
-
 
         <Card class="h-full w-full cardflex-1 flex flex-col">
           <CardHeader>
@@ -282,45 +280,41 @@ $$
           </CardHeader>
           <CardContent class="grid grid-cols-5 items-center justify-center gap-5">
             <div class="flex flex-1 items-center justify-center font-bold">
-                <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex('均值\\(μ\\) = ')" />
-                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model.number="mean[0]" fluid :min-fraction-digits="1" />
-                    <Slider v-model="mean" :min="-10" :max="10" :step="0.1" class="w-full" />
-                  </div>
+              <div class="flex flex-1 items-center justify-center">
+                <div class="mr-4" v-html="renderLatex('均值\\(μ\\) = ')" />
+                <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
+                  <Input v-model.number="mean[0]" fluid :min-fraction-digits="1" />
+                  <Slider v-model="mean" :min="-10" :max="10" :step="0.1" class="w-full" />
                 </div>
               </div>
-              <div class="flex flex-1 items-center justify-center font-bold">
-                <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex(' 方差\\(σ^2\\) = ')" />
-                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model.number="stdDev[0]" fluid :min-fraction-digits="1" />
-                    <Slider v-model="stdDev" :min="0.1" :max="10" :step="0.05" class="w-full" />
-                  </div>
+            </div>
+            <div class="flex flex-1 items-center justify-center font-bold">
+              <div class="flex flex-1 items-center justify-center">
+                <div class="mr-4" v-html="renderLatex(' 方差\\(σ^2\\) = ')" />
+                <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
+                  <Input v-model.number="stdDev[0]" fluid :min-fraction-digits="1" />
+                  <Slider v-model="stdDev" :min="0.1" :max="10" :step="0.05" class="w-full" />
                 </div>
               </div>
-              <div class="flex flex-1 items-center justify-center font-bold">
-                <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex(' \\(a\\) = ')" />
-                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model.number="a[0]" fluid :invalid="a[0] === 0" :min-fraction-digits="1" />
-                    <Slider v-model="a" :min="-10" :max="10" :step="0.01" class="w-full" />
-                  </div>
+            </div>
+            <div class="flex flex-1 items-center justify-center font-bold">
+              <div class="flex flex-1 items-center justify-center">
+                <div class="mr-4" v-html="renderLatex(' \\(a\\) = ')" />
+                <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
+                  <Input v-model.number="a[0]" fluid :invalid="a[0] === 0" :min-fraction-digits="1" />
+                  <Slider v-model="a" :min="-10" :max="10" :step="0.01" class="w-full" />
                 </div>
               </div>
-              <div class="flex flex-1 items-center justify-center font-bold">
-                <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex(' \\(b\\) = ')" />
-                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model.number="b[0]" fluid :min-fraction-digits="1" />
-                      <Slider v-model="b" :min="-10" :max="10" :step="0.1" class="w-5/6" />
-                  </div>
+            </div>
+            <div class="flex flex-1 items-center justify-center font-bold">
+              <div class="flex flex-1 items-center justify-center">
+                <div class="mr-4" v-html="renderLatex(' \\(b\\) = ')" />
+                <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
+                  <Input v-model.number="b[0]" fluid :min-fraction-digits="1" />
+                  <Slider v-model="b" :min="-10" :max="10" :step="0.1" class="w-5/6" />
                 </div>
               </div>
-            
-
-   
-           
+            </div>
 
             <div class="flex gap-2 items-center justify-center">
               <Checkbox

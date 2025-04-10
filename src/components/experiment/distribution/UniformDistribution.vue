@@ -127,7 +127,7 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard>
+  <ExperimentBoard :panel-size="50">
     <template #experiment>
       <UniformDiagram class="flex-1 h-full" :a="a[0]" :b="b[0]" :k="k[0]" :m="m[0]" :show-history="save" />
       <Chart v-if="!save" type="line" :data="UniformDiagram" class="flex-1 h-full w-full" />
@@ -243,7 +243,7 @@ $$
                   <div class="mr-4" v-html="renderLatex('左边界\\(a\\) = ')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
                     <Input v-model="a[0]" :invalid="a > b" :min-fraction-digits="1" fluid />
-                      <Slider v-model="a" :min="-10" :max="9.9" :step="0.1" class="w-full" />
+                    <Slider v-model="a" :min="-10" :max="9.9" :step="0.1" class="w-full" />
                   </div>
                 </div>
               </div>
@@ -276,22 +276,21 @@ $$
                   </div>
                 </div>
               </div>
-            <div class="flex gap-2 items-center justify-center">
-              <Checkbox id="terms" @update:checked="(checked: boolean) => {
-                if (checked) {
-                  saveImg();
-                }
-                else {
-                  back();
-                }
-                console.log(checked)
-              }" />
-              <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
+              <div class="flex gap-2 items-center justify-center">
+                <Checkbox
+                  id="terms" @update:checked="(checked: boolean) => {
+                    if (checked) {
+                      saveImg();
+                    }
+                    else {
+                      back();
+                    }
+                    console.log(checked)
+                  }"
+                />
+                <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
+              </div>
             </div>
-             
-            </div>
-
-
           </CardContent>
         </Card>
       </div>

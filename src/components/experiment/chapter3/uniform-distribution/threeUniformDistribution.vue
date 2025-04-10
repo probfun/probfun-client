@@ -183,7 +183,7 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard>
+  <ExperimentBoard :panel-size="60">
     <template #experiment>
       <ThreeUniformDiagram v-if="isChart1" class="flex-1 h-full" :x1="x1" :x2="x2" :y1="y1" :y2="y2" />
       <div v-if="isChart2 || isChart3" class="w-full h-full flex">

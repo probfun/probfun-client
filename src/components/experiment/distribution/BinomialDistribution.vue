@@ -281,7 +281,7 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard title="二项分布" :tags="[]">
+  <ExperimentBoard title="二项分布" :tags="[]" :panel-size="60">
     <template #experiment>
       <BinomialDiagram :n="number[0]" :p="probability[0]" :save="save" />
     </template>
@@ -303,7 +303,7 @@ $$
             </CardTitle>
           </CardHeader>
           <CardContent class="flex-1 flex flex-col justify-center gap-5">
-              <div class="flex  grid grid-cols-4">
+            <div class="grid grid-cols-4">
               <div class="flex flex-1 items-center justify-center font-bold">
                 <div class="flex flex-1 items-center justify-center">
                   <div class="mr-4" v-html="renderLatex('试验次数 \\(n\\) = ')" />
@@ -314,7 +314,6 @@ $$
                 </div>
               </div>
 
-           
               <div class="flex flex-1 items-center justify-center font-bold">
                 <div class="flex flex-1 items-center justify-center">
                   <div class="mr-4" v-html="renderLatex('成功次数 \\(k\\) = ')" />
@@ -325,35 +324,31 @@ $$
                 </div>
               </div>
 
-    
               <div class="flex flex-1 items-center justify-center font-bold">
                 <div class="flex flex-1 items-center justify-center">
                   <div class="mr-4" v-html="renderLatex('成功率 \\(p\\) = ')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
                     <Input v-model="probability[0]" :min-fraction-digits="1" />
-                  <Slider v-model="probability" :min="0" :max="1" :step="0.1" />
+                    <Slider v-model="probability" :min="0" :max="1" :step="0.1" />
                   </div>
                 </div>
               </div>
 
-            <div class="flex gap-2 items-center justify-center">
-              <Checkbox
-                id="terms" @update:checked="(checked: boolean) => {
-                  if (checked) {
-                    saveImg();
-                  }
-                  else {
-                    back();
-                  }
-                  console.log(checked)
-                }"
-              />
-              <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
-            </div>
+              <div class="flex gap-2 items-center justify-center">
+                <Checkbox
+                  id="terms" @update:checked="(checked: boolean) => {
+                    if (checked) {
+                      saveImg();
+                    }
+                    else {
+                      back();
+                    }
+                    console.log(checked)
+                  }"
+                />
+                <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
               </div>
-            
-
-       
+            </div>
           </CardContent>
         </Card>
       </div>
