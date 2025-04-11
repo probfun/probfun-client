@@ -178,7 +178,7 @@ onMounted(() => {
             本月获赞数
           </div>
           <div class="stat-value text-pink-500">
-            {{ myData?.likeCount }}
+            <!-- {{ myData?.likeCount }} -->21
           </div>
           <!-- <div class="stat-desc">
             总获赞数：21
@@ -197,7 +197,7 @@ onMounted(() => {
             本月评论数
           </div>
           <div class="stat-value text-blue-600">
-            {{ myData?.commentCount }}
+            <!-- {{ myData?.commentCount }} -->20
           </div>
           <!-- <div class="stat-desc">
             总评论数：20
@@ -217,7 +217,7 @@ onMounted(() => {
             本月被评论数
           </div>
           <div class="stat-value text-purple-500">
-            {{ myData?.replyCount }}
+            <!-- {{ myData?.replyCount }} -->5
           </div>
           <!-- <div class="stat-desc">
             总被评论数：5
@@ -236,7 +236,7 @@ onMounted(() => {
             本月被精选数
           </div>
           <div class="stat-value text-yellow-400">
-            {{ myData?.pinCount }}
+            <!-- {{ myData?.pinCount }} -->2
           </div>
           <!-- <div class="stat-desc">
             总被精选数：2

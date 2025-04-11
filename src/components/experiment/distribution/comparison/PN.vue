@@ -213,7 +213,7 @@ $$
                 <div v-html="renderLatex('\\(λ\\) = ')" />
 
                 <div class=" space-y-3">
-                  <Input v-model.number="lambda[0]" class="w-full"/>
+                  <Input v-model.number="lambda[0]" class="w-full" placeholder="30~100"/>
                   <Slider v-model="lambda" :min="30" :max="100" :step="1" class="w-full" />
                 </div>
               </div>

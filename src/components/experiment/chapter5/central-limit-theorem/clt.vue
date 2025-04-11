@@ -468,7 +468,12 @@ $$
                   <div v-html="renderLatex('框的数量')" />
 
                   <div class="max-w-xl space-y-3">
-                    <InputNumber v-model="n" fluid />
+                    <InputNumber v-model="n" fluid placeholder="3~15的奇数" @update:model-value="v => {
+                      if (v < 3) n = 3;
+                      else if (v > 15) n = 15;
+                      else if (v % 2 == 0) n = v + 1;
+                      else n = v
+                    }" />
                     <Slider v-model="n" :min="3" :max="15" :step="2" class="w-full" />
                   </div>
                 </div>
@@ -478,8 +483,12 @@ $$
                   <div v-html="renderLatex('球的数量(大于50时不予展示每个小球下落的路径)')" />
 
                   <div class="max-w-xl space-y-3">
-                    <InputNumber v-model="ball" fluid />
-                    <Slider v-model="ball" :min="5" :max="1000" :step="5" class="w-full" />
+                    <InputNumber v-model="ball" fluid placeholder="5~10000" @update:model-value="v => {
+                      if (v < 5) ball = 5;
+                      else if (v > 10000) ball = 10000;
+                      else ball = v
+                    }" />
+                    <Slider v-model="ball" :min="5" :max="10000" :step="5" class="w-full" />
                   </div>
                 </div>
               </div>

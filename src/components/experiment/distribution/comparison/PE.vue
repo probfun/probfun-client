@@ -329,13 +329,13 @@ $$
             <CardContent class="flex w-full items-center justify-center flex-col gap-5">
               <div class="flex gap-4 pb-8">
                 <div class="flex mt-16 flex-1 items-center justify-center space-x-2  font-bold">
-    <div v-html="renderLatex('公交车的发车间隔(\\(min\\)) = ')" />
-   <!-- <div class="max-w-xl space-y-3"> -->
-                  <Input class = "w-1/3"v-model="time[0]" type="number" :min="1" :max="30" />
+                  <div v-html="renderLatex('公交车的发车间隔(\\(min\\)) = ')" />
+                  <!-- <div class="max-w-xl space-y-3"> -->
+                  <Input class="w-1/3" v-model="time[0]" type="number" :min="1" :max="30" placeholder="1~30" />
                   <!-- <Slider v-model="time" :min="5" :max="30" :step="5" class="w-48" /> -->
-                <!-- </div> -->
+                  <!-- </div> -->
+                </div>
               </div>
-            </div>
             </CardContent>
           </Card>
         </Card>

@@ -126,7 +126,7 @@ $$
                 <div class="flex flex-1 items-center justify-center">
                   <div class="mr-4" v-html="renderLatex('均值 \\(λ\\) = ')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model="lambda[0]" :min-fraction-digits="1" />
+                    <Input v-model="lambda[0]" :min-fraction-digits="1" placeholder="0~30"/>
                     <Slider v-model="lambda" :min="0" :max="30" :step="0.1" />
                   </div>
                 </div>
@@ -136,7 +136,7 @@ $$
                 <div class="flex flex-1 items-center justify-center">
                   <div class="mr-4" v-html="renderLatex('事件发生的实际次数\\(k\\) = ')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model="an[0]" :min-fraction-digits="1" />
+                    <Input v-model="an[0]" :min-fraction-digits="1" placeholder="最大值为均值的4倍"/>
                     <Slider v-model="an" :min="0" :max="4 * lambda[0]" :step="1" />
                   </div>
                 </div>

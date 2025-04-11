@@ -318,8 +318,8 @@ $$
                 </div>
                 <div class="flex flex-col flex-1 items-center space-y-3">
                   <div ref="mdContainer0" class="markdown-body" v-html="renderedMarkdown" />
-                  <Input v-model="sensitivity[0]" type="number" :min="2" />
-                  <Slider v-model="sensitivity" :min="0.1" :max="1.0" :step="0.01" placeholder="0.1~1.0" class="w-full" />
+                  <Input v-model="sensitivity[0]" type="number" :min="2" placeholder="0.1~1.0"/>
+                  <Slider v-model="sensitivity" :min="0.1" :max="1.0" :step="0.01" class="w-full" />
                 </div>
               </div>
 
@@ -327,13 +327,13 @@ $$
               <div class="flex space-x-10 justify-center items-center">
                 <div class="flex flex-col flex-1 items-center space-y-3">
                   <div ref="mdContainer1" class="markdown-body" v-html="renderedMarkdown" />
-                  <Input v-model="infectionRate[0]" type="number" :min="2" />
-                  <Slider v-model="infectionRate" :min="0.0" :max="1.0" :step="0.001"placeholder="0~1.0" class="w-full" />
+                  <Input v-model="infectionRate[0]" type="number" :min="2" placeholder="0~1.0"/>
+                  <Slider v-model="infectionRate" :min="0.0" :max="1.0" :step="0.001" class="w-full" />
                 </div>
                 <div class="flex flex-col flex-1 items-center space-y-3">
                   <div ref="mdContainer2" class="markdown-body" v-html="renderedMarkdown" />
-                  <Input v-model="population[0]" type="number" />
-                  <Slider v-model="population" :min="1000" :max="1000000" :step="1000" placeholder="1000~1000000" class="w-full" />
+                  <Input v-model="population[0]" type="number" placeholder="1000~1000000"/>
+                  <Slider v-model="population" :min="1000" :max="1000000" :step="1000" class="w-full" />
                 </div>
               </div>
             </div>

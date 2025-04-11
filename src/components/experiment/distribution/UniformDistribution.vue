@@ -242,7 +242,7 @@ $$
                 <div class="flex flex-1 items-center justify-center">
                   <div class="mr-4" v-html="renderLatex('左边界\\(a\\) = ')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model="a[0]" :invalid="a > b" :min-fraction-digits="1" fluid />
+                    <Input v-model="a[0]" :invalid="a > b" :min-fraction-digits="1" fluid placeholder="-10~10"/>
                       <Slider v-model="a" :min="-10" :max="9.9" :step="0.1" class="w-full" />
                   </div>
                 </div>
@@ -252,7 +252,7 @@ $$
                 <div class="flex flex-1 items-center justify-center">
                   <div class="mr-4" v-html="renderLatex('右边界\\(b\\) = ')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model.number="b[0]" :min-fraction-digits="1" fluid />
+                    <Input v-model.number="b[0]" :min-fraction-digits="1" fluid placeholder="a~10"/>
                     <Slider v-model="b" :min="a[0] + 0.1" :max="10" :step="0.1" class="w-full" />
                   </div>
                 </div>
@@ -262,7 +262,7 @@ $$
                 <div class="flex flex-1 items-center justify-center">
                   <div class="mr-4" v-html="renderLatex('\\(K\\) = ')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model.number="k[0]" :min-fraction-digits="1" fluid />
+                    <Input v-model.number="k[0]" :min-fraction-digits="1" fluid placeholder="0~10"/>
                     <Slider v-model="k" :min="0.1" :max="10" :step="0.1" class="w-full" />
                   </div>
                 </div>
@@ -271,7 +271,7 @@ $$
                 <div class="flex flex-1 items-center justify-center">
                   <div class="mr-4" v-html="renderLatex('\\(M\\) = ')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model.number="m[0]" :min-fraction-digits="1" fluid />
+                    <Input v-model.number="m[0]" :min-fraction-digits="1" fluid placeholder="0~10"/>
                     <Slider v-model="m" :min="0" :max="10" :step="0.1" class="w-full" />
                   </div>
                 </div>

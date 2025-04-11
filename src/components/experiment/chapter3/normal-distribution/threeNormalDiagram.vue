@@ -60,15 +60,15 @@ function createPlotlyChart1() {
 
   const Z = X.map((row, i) => row.map((_, j) => rvPdf(X[i][j], Y[i][j])));
 
-  // 计算边缘分布
-  const normPdf = (x: number[], mean: number, stddev: number) => {
-    return x.map((xVal) => {
-      return (1 / Math.sqrt(2 * Math.PI * stddev ** 2)) * Math.exp(-0.5 * ((xVal - mean) / stddev) ** 2);
-    });
-  };
+  // // 计算边缘分布
+  // const normPdf = (x: number[], mean: number, stddev: number) => {
+  //   return x.map((xVal) => {
+  //     return (1 / Math.sqrt(2 * Math.PI * stddev ** 2)) * Math.exp(-0.5 * ((xVal - mean) / stddev) ** 2);
+  //   });
+  // };
 
-  const marginalX = normPdf(x, mean[0], Math.sqrt(cov[0][0]));
-  const marginalY = normPdf(y, mean[1], Math.sqrt(cov[1][1]));
+  // const marginalX = normPdf(x, mean[0], Math.sqrt(cov[0][0]));
+  // const marginalY = normPdf(y, mean[1], Math.sqrt(cov[1][1]));
 
   // 创建图表
   const data = [
@@ -81,24 +81,24 @@ function createPlotlyChart1() {
       opacity: 0.7,
       showscale: false, // 完全隐藏颜色条
     },
-    {
-      type: 'scatter3d',
-      mode: 'lines',
-      x,
-      y: Array.from({ length: x.length }).fill(-3),
-      z: marginalX,
-      name: 'Marginal X',
-      line: { color: 'blue' },
-    },
-    {
-      type: 'scatter3d',
-      mode: 'lines',
-      x: Array.from({ length: y.length }).fill(7),
-      y,
-      z: marginalY,
-      name: 'Marginal Y',
-      line: { color: 'red' },
-    },
+    // {
+    //   type: 'scatter3d',
+    //   mode: 'lines',
+    //   x,
+    //   y: Array.from({ length: x.length }).fill(-3),
+    //   z: marginalX,
+    //   name: 'Marginal X',
+    //   line: { color: 'blue' },
+    // },
+    // {
+    //   type: 'scatter3d',
+    //   mode: 'lines',
+    //   x: Array.from({ length: y.length }).fill(7),
+    //   y,
+    //   z: marginalY,
+    //   name: 'Marginal Y',
+    //   line: { color: 'red' },
+    // },
   ];
 
   // 设置布局

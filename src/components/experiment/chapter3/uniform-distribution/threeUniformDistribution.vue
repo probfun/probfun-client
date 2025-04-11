@@ -225,10 +225,7 @@ $$
                 <Button tabindex="0" role="button" class="m-0">
                   点我切换
                 </Button>
-                <ul
-                  tabindex="0"
-                  class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
-                >
+                <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                   <li @click="toggleChart1">
                     <a>二维均匀分布</a>
                   </li>
@@ -248,7 +245,11 @@ $$
                   <div v-html="renderLatex('\\(x_1\\)')" />
 
                   <div class="max-w-xl space-y-3">
-                    <Input v-model="x1" fluid />
+                    <Input v-model="x1" fluid placeholder="大于-10小于x2" @update:model-value="v => {
+                      if (v < -10) x1 = -10;
+                      else if (v > x2) x1 = x2 - 1;
+                      else x1 = v;
+                    }" />
                     <Slider v-model="x1" :min="-10" :max="x2" :step="1" class="w-full" />
                   </div>
                 </div>
@@ -258,7 +259,7 @@ $$
                   <div v-html="renderLatex('\\(x_2\\)')" />
 
                   <div class="max-w-xl space-y-3">
-                    <Input v-model="x2" fluid />
+                    <Input v-model="x2" fluid placeholder="大于x1小于10" />
                     <Slider v-model="x2" :min="x1" :max="10" :step="1" class="w-full" />
                   </div>
                 </div>
@@ -268,7 +269,7 @@ $$
                   <div v-html="renderLatex('\\(y_1\\)')" />
 
                   <div class="max-w-xl space-y-3">
-                    <Input v-model="y1" fluid />
+                    <Input v-model="y1" fluid placeholder="大于-10小于y2" />
                     <Slider v-model="y1" :min="-10" :max="y2" :step="1" class="w-full" />
                   </div>
                 </div>
@@ -278,7 +279,7 @@ $$
                   <div v-html="renderLatex('\\(y_2\\)')" />
 
                   <div class="max-w-xl space-y-3">
-                    <Input v-model="y2" fluid />
+                    <Input v-model="y2" fluid placeholder="大于y1小于10" />
                     <Slider v-model="y2" :min="y1" :max="10" :step="1" class="w-full" />
                   </div>
                 </div>
