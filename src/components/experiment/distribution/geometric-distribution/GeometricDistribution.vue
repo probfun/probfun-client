@@ -182,10 +182,8 @@ $$
 <template>
   <ExperimentBoard :panel-size="60">
     <template #experiment>
-      <GeometricDiagram
-        :p="probability[0]" :n="fixedN[0]" :is-chart1="isChart1" :is-chart2="isChart2"
-        :is-chart3="isChart3" :save="save"
-      />
+      <GeometricDiagram :p="probability[0]" :n="fixedN[0]" :is-chart1="isChart1" :is-chart2="isChart2"
+        :is-chart3="isChart3" :save="save" />
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center gap-3 p-3">
@@ -205,7 +203,8 @@ $$
               参数调整
             </CardTitle>
           </CardHeader>
-          <CardContent class="flex-1 flex flex-col justify-center items-center gap-3">
+          <CardContent class="flex-1  flex flex-col justify-center items-center gap-3">
+
             <div class="dropdown ">
               <Button tabindex="0" role="button" class="m-1">
                 点我切换
@@ -243,6 +242,9 @@ $$
                   </div>
                 </div>
               </div>
+
+
+
               <div v-if="isChart3" class="flex flex-col flex-1 items-center justify-center space-y-5">
                 <div class="flex flex-1 items-center justify-center font-bold">
                   <div class="mr-4" v-html="renderLatex('固定实验次数 = ')" />
