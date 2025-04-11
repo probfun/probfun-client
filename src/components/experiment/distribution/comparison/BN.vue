@@ -151,20 +151,20 @@ $$
               <div ref="normalContainer" class="text-base" />
             </CardContent>
           </Card>
-          <Card class="w-1/3 space-y-5 justify-center items-center">
-            <CardContent class="flex justify-center items-center p-4">
-              <div class="items-center justify-center font-bold">
-                <div class="w-full flex flex-1 items-center justify-center">
-                  <div class="w-1/2" v-html="renderLatex('实验次数\\(n\\) = ')" />
-                  <div class="w-1/2">
+          <Card class="w-1/3 space-y-5 justify-center items-center flex">
+            <CardContent class="flex justify-center items-center p-4 flex-1">
+              <div class="space-y-4 font-bold">
+                <div class="w-full flex flex-1 items-center justify-center gap-2">
+                  <div v-html="renderLatex('实验次数\\(n\\) = ')" />
+                  <div class="flex-1">
                     <Input v-model.number="number[0]" class="w-full mb-2" placeholder="20~100" />
                     <Slider v-model="number" :min="20" :max="100" :step="1" class="w-full mb-3" />
                   </div>
                 </div>
 
-                <div class="flex items-center justify-between">
-                  <div class="w-1/2" v-html="renderLatex('成功概率\\(p\\) = ')" />
-                  <div class="w-1/2">
+                <div class="flex items-center justify-between gap-2">
+                  <div v-html="renderLatex('成功概率\\(p\\) = ')" />
+                  <div class="flex-1">
                     <Input
                       v-model.number="probability[0]" :min-fraction-digits="2" class="w-full mb-2"
                       placeholder="0~1"

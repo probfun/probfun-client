@@ -455,20 +455,20 @@ const chapter5Items = [
       }
     },
   },
-  {
-    label: '各种分布的中心极限定理',
-    icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/distribution-clt',
-    command: async () => {
-      try {
-        await clickApi('CLICK', 'catalogue', '各种分布的中心极限定理', window.location.href);
-        await router.push('/dashboard/experiment/distribution-clt');
-      }
-      catch (error) {
-        console.error('Error tracking button click:', error);
-      }
-    },
-  },
+  // {
+  //   label: '各种分布的中心极限定理',
+  //   icon: 'pi pi-chart-bar',
+  //   route: '/dashboard/experiment/distribution-clt',
+  //   command: async () => {
+  //     try {
+  //       await clickApi('CLICK', 'catalogue', '各种分布的中心极限定理', window.location.href);
+  //       await router.push('/dashboard/experiment/distribution-clt');
+  //     }
+  //     catch (error) {
+  //       console.error('Error tracking button click:', error);
+  //     }
+  //   },
+  // },
 ]
 const feedback = ref('improvement');
 const content = ref('');

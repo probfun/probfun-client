@@ -36,7 +36,7 @@ const isOpen = ref(false);
 </script>
 
 <template>
-  <div v-if="comment" v-auto-animate>
+  <div v-if="comment && comment.user" v-auto-animate>
     <div class="pt-4 px-6 transition-all hover:bg-secondary/50 flex gap-2 cursor-pointer" @click="isOpen = !isOpen">
       <Avatar class="mt-1">
         <AvatarImage :src="comment.user.avatarUrl" alt="" />

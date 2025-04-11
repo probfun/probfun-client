@@ -320,11 +320,11 @@ const discussTabList = [
         >
           <div class="flex items-center space-x-2">
             <RadioGroupItem id="option-one" value="chart1" />
-            <Label for="option-one" class="text-lg"> 联合与边缘分布 </Label>
+            <Label for="option-one" class="text-base font-bold"> 联合与边缘分布 </Label>
           </div>
           <div class="flex items-center space-x-2">
             <RadioGroupItem id="option-two" value="chart3" />
-            <Label for="option-two" class="text-lg"> 条件分布 </Label>
+            <Label for="option-two" class="text-base font-bold"> 条件分布 </Label>
           </div>
         </RadioGroup>
         <div class="grid grid-cols-1 gap-8 pb-12">

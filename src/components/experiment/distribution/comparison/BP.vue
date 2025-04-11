@@ -244,14 +244,14 @@ $$
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center p-3 gap-3">
         <div class="w-full h-full flex gap-3">
-          <Card class="w-1/3 h-full">
+          <Card class="w-1/3 h-full flex flex-col">
             <CardHeader>
-              <div class="flex  h-full gap-5">
+              <div class="flex h-full gap-5">
                 <CardTitle>二项分布公式</CardTitle>
                 <div class="w-10 h-1 mt-1 bg-red-500" />
               </div>
             </CardHeader>
-            <CardContent class="flex h-full justify-center">
+            <CardContent class="flex flex-1 justify-center">
               <div ref="binomialContainer" class="text-base" />
             </CardContent>
           </Card>
