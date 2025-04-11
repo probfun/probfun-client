@@ -481,7 +481,7 @@ $$
                 <div class="flex flex-1 items-center justify-center">
                   <div class="whitespace-nowrap" v-html="renderLatex('框的数量 = ')" />
                   <div class="flex flex-col items-center justify-center w-2/3 space-y-1 ml-2">
-                    <InputNumber v-model="n" fluid />
+                    <InputNumber v-model="n" fluid placeholder="3~15"/>
                     <Slider v-model="n" :min="3" :max="15" :step="2" class="w-full" />
                   </div>
                 </div>
@@ -489,14 +489,20 @@ $$
 
               <div class="flex flex-1 items-center justify-center font-bold">
                 <div class="flex flex-1 items-center justify-center">
-                  <div v-html="renderLatex('球的数量(大于50时不予展示每个小球下落的路径) = ')" />
+                  <div v-html="renderLatex('球的数量 = ')" />
                   <div class="flex flex-col items-center justify-center w-2/3 space-y-1 ml-2">
-                    <InputNumber v-model="ball" fluid />
+                    <InputNumber v-model="ball" fluid placeholder="5~5000"/>
                     <Slider v-model="ball" :min="5" :max="5000" :step="5" class="w-full" />
                   </div>
                 </div>
               </div>
-
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div v-html="renderLatex('注：球的数量大于50时不予展示每个小球下落的路径')" />
+                 
+                </div>
+              </div>
+           
               <!-- <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
                   <div v-html="renderLatex('球的数量(大于50时不予展示每个小球下落的路径)')" />
