@@ -239,62 +239,62 @@ $$
               </div>
             </div>
             <div class="grid grid-cols-4 items-center justify-center gap-5">
-            <div class="flex flex-1 items-center justify-center font-bold">
-              <div class="flex flex-1 items-center justify-center">
-                <div class="mr-4" v-html="renderLatex('\\(x_1\\) = ')" />
-                <div class="max-w-xl space-y-3">
-                    <Input v-model="x1" placeholder="大于-10小于x2" fluid @update:model-value="v => {
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('\\(x_1\\) = ')" />
+                  <div class="max-w-xl space-y-3">
+                    <Input v-model="x1" placeholder="-10~x2" fluid @update:model-value="v => {
                       if (v < -10) x1 = -10;
                       else if (v > x2) x1 = x2 - 1;
                       else x1 = v;
                     }" />
                     <Slider v-model="x1" :min="-10" :max="x2" :step="1" class="w-full" />
                   </div>
+                </div>
               </div>
-            </div>
 
-            <div class="flex flex-1 items-center justify-center font-bold">
-              <div class="flex flex-1 items-center justify-center">
-                <div class="mr-4" v-html="renderLatex('\\(x_2\\) = ')" />
-                <div class="max-w-xl space-y-3">
-                    <Input v-model="x2" placeholder="大于x1小于10" fluid @update:model-value="v => {
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('\\(x_2\\) = ')" />
+                  <div class="max-w-xl space-y-3">
+                    <Input v-model="x2" placeholder="x1~10" fluid @update:model-value="v => {
                       if (v > 10) x2 = 10;
                       else if (v < x1) x2 = x1 + 1;
                       else x2 = v;
                     }" />
                     <Slider v-model="x2" :min="x1" :max="10" :step="1" class="w-full" />
                   </div>
+                </div>
               </div>
-            </div>
 
-            <div class="flex flex-1 items-center justify-center font-bold">
-              <div class="flex flex-1 items-center justify-center">
-                <div class="mr-4" v-html="renderLatex('\\(y_1\\) = ')" />
-                <div class="max-w-xl space-y-3">
-                    <Input v-model="y1" placeholder="大于-10小于y2" fluid @update:model-value="v => {
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('\\(y_1\\) = ')" />
+                  <div class="max-w-xl space-y-3">
+                    <Input v-model="y1" placeholder="-10~y2" fluid @update:model-value="v => {
                       if (v < -10) y1 = -10;
                       else if (v > y2) y1 = y2 - 1;
                       else y1 = v;
-                    }" />
+                    }" class="custom-placeholder" />
                     <Slider v-model="y1" :min="-10" :max="y2" :step="1" class="w-full" />
                   </div>
+                </div>
               </div>
-            </div>
 
-            <div class="flex flex-1 items-center justify-center font-bold">
-              <div class="flex flex-1 items-center justify-center">
-                <div class="mr-4" v-html="renderLatex('\\(y2\\) = ')" />
-                <div class="max-w-xl space-y-3">
-                    <Input v-model="y2" placeholder="大于y1小于10" fluid @update:model-value="v => {
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('\\(y2\\) = ')" />
+                  <div class="max-w-xl space-y-3">
+                    <Input v-model="y2" placeholder="y1~10" fluid @update:model-value="v => {
                       if (v > 10) y2 = 10;
                       else if (v < y1) y2 = y1 + 1;
                       else y2 = v;
                     }" />
                     <Slider v-model="y2" :min="y1" :max="10" :step="1" class="w-full" />
                   </div>
+                </div>
               </div>
             </div>
-          </div>
 
           </CardContent>
         </Card>

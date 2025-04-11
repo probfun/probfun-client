@@ -318,7 +318,7 @@ $$
                 <div class="flex flex-1 items-center justify-center">
                   <div class="mr-4" v-html="renderLatex('成功次数 \\(k\\) = ')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model="numberk[0]" placeholder="大于0小于n"/>
+                    <Input v-model="numberk[0]" placeholder="0~n"/>
                     <Slider v-model="numberk" :min="1" :max="maxK" :step="1" />
                   </div>
                 </div>

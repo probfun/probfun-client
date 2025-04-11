@@ -226,7 +226,7 @@ $$
                 <div class="flex flex-1 items-center justify-center">
                   <div class="mr-4" v-html="renderLatex('事件发生的速率参数\\(λ\\) = ')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model.number="rate[0]" :min-fraction-digits="1" class="w-full mb-2" />
+                    <Input v-model.number="rate[0]" :min-fraction-digits="1"  placeholder="0~10" class="w-full mb-2" />
                   <Slider v-model="rate" :min="0" :max="10" :step="0.1" class="w-full" />
                   </div>
                 </div>
@@ -240,7 +240,7 @@ $$
                 <div class="flex flex-1 items-center justify-center">
                   <div class="mr-4" v-html="renderLatex('间隔时间\\(x\\) = ')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model.number="numberx[0]" class="w-full mb-2" />
+                    <Input v-model.number="numberx[0]"  placeholder="1~10" class="w-full mb-2" />
                     <Slider v-model="numberx" :min="1" :max="10" :step="0.2" class="w-full" />
                   </div>
                 </div>
@@ -254,7 +254,7 @@ $$
                 <div class="flex flex-1 items-center justify-center">
                   <div class="mr-4" v-html="renderLatex('固定值 = ')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model.number="shift[0]" :min-fraction-digits="1" class="w-full mb-2" />
+                    <Input v-model.number="shift[0]" :min-fraction-digits="1"  placeholder="0~5" class="w-full mb-2" />
                     <Slider v-model="shift" :min="0" :max="5" :step="0.1" class="w-full" />
                   </div>
                 </div>
