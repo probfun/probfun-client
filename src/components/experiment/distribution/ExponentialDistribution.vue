@@ -2,6 +2,8 @@
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { renderLatex, toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue'
@@ -132,12 +134,12 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard title="二项分布" :tags="[]">
+  <ExperimentBoard title="二项分布" :tags="[]" :panel-size="55">
     <template #experiment>
-      <ExponentialDiagram class="flex-1 h-full" :rate="rate[0]" :shift="shift[0]" :show-graph="isChart1"
-        :show-history="save" />
-
-
+      <ExponentialDiagram
+        class="flex-1 h-full" :rate="rate[0]" :shift="shift[0]" :show-graph="isChart1"
+        :show-history="save"
+      />
     </template>
     <!-- <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
@@ -201,53 +203,46 @@ $$
         </Card>
 
         <Card class="w-full flex-1 flex flex-col">
-          <CardHeader>
-            <CardTitle>
-              参数调整
-            </CardTitle>
-          </CardHeader>
-          <CardContent class="flex-1 flex flex-col justify-center items-center gap-3">
-            <div class="dropdown ">
-              <Button tabindex="0" role="button" class="m-0">
-                点我切换
-              </Button>
-              <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-                <li @click="toggleChart1">
-                  <a>一般指数分布</a>
-                </li>
-                <li @click="toggleChart2">
-                  <a>指数分布的无记忆性</a>
-                </li>
-              </ul>
-            </div>
+          <CardContent class="flex-1 flex flex-col justify-center items-center gap-3 p-4">
+            <RadioGroup
+              default-value="option-one" orientation="horizontal" class="w-full gap-6 flex flex-row justify-center py-3" @update:model-value="(value) => {
+                if (value === 'option-one') {
+                  toggleChart1();
+                }
+                else if (value === 'option-two') {
+                  toggleChart2();
+                }
+              }"
+            >
+              <div class="flex items-center space-x-2">
+                <RadioGroupItem id="option-one" value="option-one" />
+                <Label for="option-one" class="text-base font-bold">一般指数分布</Label>
+              </div>
+              <div class="flex items-center space-x-2">
+                <RadioGroupItem id="option-two" value="option-two" />
+                <Label for="option-two" class="text-base font-bold">指数分布的无记忆性</Label>
+              </div>
+            </RadioGroup>
             <div class="items-center justify-center  flex flex-1 gap-4">
-
               <div class="flex flex-1 items-center justify-center font-bold">
                 <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex('事件发生的速率参数\\(λ\\) = ')" />
+                  <div class="mr-4 whitespace-nowrap" v-html="toMarkdown('事件发生的速率参数 $λ$ =')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
                     <Input v-model.number="rate[0]" :min-fraction-digits="1"  placeholder="0~10" class="w-full mb-2" />
-                  <Slider v-model="rate" :min="0" :max="10" :step="0.1" class="w-full" />
+                    <Slider v-model="rate" :min="0" :max="10" :step="0.1" class="w-full" />
                   </div>
                 </div>
               </div>
 
-
-
-
-              
               <div class="flex flex-1 items-center justify-center font-bold">
                 <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex('间隔时间\\(x\\) = ')" />
+                  <div class="mr-4 whitespace-nowrap" v-html="toMarkdown('间隔时间 $x$ =')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
                     <Input v-model.number="numberx[0]"  placeholder="1~10" class="w-full mb-2" />
                     <Slider v-model="numberx" :min="1" :max="10" :step="0.2" class="w-full" />
                   </div>
                 </div>
               </div>
-
-
-
 
               <!-- 第三组：固定值 -->
               <div v-if="isChart2" class="flex flex-1 items-center justify-center font-bold ">
@@ -259,23 +254,24 @@ $$
                   </div>
                 </div>
               </div>
-              
 
               <!-- 第四组：历史图像模式 -->
               <div class="flex items-center justify-center">
-                <Checkbox id="terms" @update:checked="(checked: boolean) => {
-                  if (checked) {
-                    saveImg();
-                  } else {
+                <Checkbox
+                  id="terms" @update:checked="(checked: boolean) => {
+                    if (checked) {
+                      saveImg();
+                    }
+                    else {
 
-                    back();
-                  }
-                  console.log(checked);
-                }" />
+                      back();
+                    }
+                    console.log(checked);
+                  }"
+                />
                 <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
               </div>
             </div>
-
           </CardContent>
         </Card>
       </div>

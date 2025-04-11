@@ -2,7 +2,7 @@
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { renderLatex, toMarkdown } from '@/utils/markdown';
+import { toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue'
 import UniformDiagram from './UniformDiagram.vue';
@@ -231,28 +231,23 @@ $$
           </div>
         </Card>
         <Card class="w-full h-full card flex-1 flex flex-col">
-          <CardHeader>
-            <CardTitle>
-              参数调整
-            </CardTitle>
-          </CardHeader>
-          <CardContent class="flex flex-col items-center justify-center gap-5">
+          <CardContent class="flex flex-col items-center justify-center gap-5 p-4">
             <div class="grid grid-cols-5 gap-10 ">
               <div class="flex flex-1 items-center justify-center font-bold">
                 <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex('左边界\\(a\\) = ')" />
+                  <div class="mr-4 whitespace-nowrap" v-html="toMarkdown('左边界 $a$ =')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model="a[0]" :invalid="a > b" :min-fraction-digits="1" fluid placeholder="-10~10"/>
-                      <Slider v-model="a" :min="-10" :max="9.9" :step="0.1" class="w-full" />
+                    <Input v-model="a[0]" :invalid="a > b" :min-fraction-digits="1" fluid placeholder="-10~10" />
+                    <Slider v-model="a" :min="-10" :max="9.9" :step="0.1" class="w-full" />
                   </div>
                 </div>
               </div>
 
               <div class="flex flex-1 items-center justify-center font-bold">
                 <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex('右边界\\(b\\) = ')" />
+                  <div class="mr-4 whitespace-nowrap" v-html="toMarkdown('右边界 $b$ =')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model.number="b[0]" :min-fraction-digits="1" fluid placeholder="a~10"/>
+                    <Input v-model.number="b[0]" :min-fraction-digits="1" fluid placeholder="a~10" />
                     <Slider v-model="b" :min="a[0] + 0.1" :max="10" :step="0.1" class="w-full" />
                   </div>
                 </div>
@@ -260,18 +255,18 @@ $$
 
               <div class="flex flex-1 items-center justify-center font-bold">
                 <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex('\\(K\\) = ')" />
+                  <div class="mr-4 whitespace-nowrap" v-html="toMarkdown('$K$ =')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model.number="k[0]" :min-fraction-digits="1" fluid placeholder="0~10"/>
+                    <Input v-model.number="k[0]" :min-fraction-digits="1" fluid placeholder="0~10" />
                     <Slider v-model="k" :min="0.1" :max="10" :step="0.1" class="w-full" />
                   </div>
                 </div>
               </div>
               <div class="flex flex-1 items-center justify-center font-bold">
                 <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex('\\(M\\) = ')" />
+                  <div class="mr-4 whitespace-nowrap" v-html="toMarkdown('$M$ =')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model.number="m[0]" :min-fraction-digits="1" fluid placeholder="0~10"/>
+                    <Input v-model.number="m[0]" :min-fraction-digits="1" fluid placeholder="0~10" />
                     <Slider v-model="m" :min="0" :max="10" :step="0.1" class="w-full" />
                   </div>
                 </div>

@@ -209,10 +209,10 @@ $$
           <Card class="w-1/3 gap-3 ">
             <CardContent class="flex w-full justify-center ">
               <div class="flex  flex-1 items-center font-bold justify-center mt-8 space-x-2">
-                <div class = "w-8 mr-4" v-html="renderLatex('\\(λ\\) = ')" />
+                <div class="whitespace-nowrap mr-4" v-html="renderLatex('\\(λ\\) = ')" />
 
                 <div class=" space-y-3">
-                  <Input v-model.number="lambda[0]" class="w-full" placeholder="30~100"/>
+                  <Input v-model.number="lambda[0]" class="w-full" placeholder="30~100" />
                   <Slider v-model="lambda" :min="30" :max="100" :step="1" class="w-full" />
                 </div>
               </div>

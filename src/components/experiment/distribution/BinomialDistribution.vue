@@ -4,7 +4,7 @@ import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox'
 import { Slider } from '@/components/ui/slider';
-import { renderLatex, toMarkdown } from '@/utils/markdown';
+import { toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue';
 import BinomialDiagram from './BinomialDiagram.vue';
@@ -297,18 +297,13 @@ $$
         </Card>
 
         <Card class="w-full flex-1 flex flex-col">
-          <CardHeader>
-            <CardTitle>
-              参数调整
-            </CardTitle>
-          </CardHeader>
-          <CardContent class="flex-1 flex flex-col justify-center gap-5">
+          <CardContent class="flex-1 flex flex-col justify-center gap-5 p-4">
             <div class="grid grid-cols-4">
               <div class="flex flex-1 items-center justify-center font-bold">
                 <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex('试验次数 \\(n\\) = ')" />
+                  <div class="mr-4 whitespace-nowrap" v-html="toMarkdown('试验次数 $n$ =')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-1">
-                    <Input v-model="number[0]" class="w-full mb-2" placeholder="1~100"/>
+                    <Input v-model="number[0]" class="w-full mb-2" placeholder="1~100" />
                     <Slider v-model="number" :min="1" :max="100" :step="1" class="w-full" />
                   </div>
                 </div>
@@ -316,9 +311,9 @@ $$
 
               <div class="flex flex-1 items-center justify-center font-bold">
                 <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex('成功次数 \\(k\\) = ')" />
+                  <div class="mr-4 whitespace-nowrap" v-html="toMarkdown('成功次数 $k$ =')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model="numberk[0]" placeholder="0~n"/>
+                    <Input v-model="numberk[0]" placeholder="0~n" />
                     <Slider v-model="numberk" :min="1" :max="maxK" :step="1" />
                   </div>
                 </div>
@@ -326,10 +321,10 @@ $$
 
               <div class="flex flex-1 items-center justify-center font-bold">
                 <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex('成功率 \\(p\\) = ')" />
+                  <div class="mr-4 whitespace-nowrap" v-html="toMarkdown('成功率 $p$ =')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model="probability[0]" :min-fraction-digits="1" placeholder="0~1"/>
-                  <Slider v-model="probability" :min="0" :max="1" :step="0.1" />
+                    <Input v-model="probability[0]" :min-fraction-digits="1" placeholder="0~1" />
+                    <Slider v-model="probability" :min="0" :max="1" :step="0.1" />
                   </div>
                 </div>
               </div>

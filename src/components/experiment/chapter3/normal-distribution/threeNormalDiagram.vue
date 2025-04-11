@@ -124,7 +124,7 @@ function createPlotlyChart1() {
         size: 12,
         color: '#000',
       },
-    }
+    },
   };
   const config = {
     displayModeBar: false, // 禁用交互菜单
@@ -232,7 +232,7 @@ function createPlotlyChart3() {
   }
 
   // 生成 500 个样本点
-  const n = 2000;
+  const n = 1000;
   const samples = generateBivariateNormalSamples(n, mean, cov);
 
   // 将样本点分解为 x 和 y 坐标
@@ -241,7 +241,7 @@ function createPlotlyChart3() {
 
   // 创建散点图数据
   const center = [props.mean1, props.mean2];
-  const colorValues = samples.map(point => {
+  const colorValues = samples.map((point) => {
     const dx = point[0] - center[0];
     const dy = point[1] - center[1];
     return -Math.sqrt(dx * dx + dy * dy); // 欧几里得距离

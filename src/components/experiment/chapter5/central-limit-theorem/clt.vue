@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import { Button } from '@/components/ui/button';
-import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CardContent } from '@/components/ui/card';
 import { renderLatex, toMarkdown } from '@/utils/markdown';
 import Chart from 'primevue/chart';
 import InputNumber from 'primevue/inputnumber';
@@ -174,7 +174,7 @@ function drawBoard() {
         }
         path.value = []
       }
-      else if (n.value == 9) {
+      else if (n.value === 9) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         // 圆的半径
         const radius = 3;
@@ -265,7 +265,7 @@ function drawBoard() {
         }
         path.value = []
       }
-      else if (3 <= n.value && n.value <= 7) {
+      else if (n.value >= 3 && n.value <= 7) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         // 圆的半径
         const radius = 4;
@@ -433,7 +433,7 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard :panel-size="70">
+  <ExperimentBoard :panel-size="70" :layout="1">
     <template #experiment>
       <div class="flex flex-col gap-4 h-full">
         <div class="flex justify-center items-center">
@@ -442,8 +442,8 @@ $$
           </div>
         </div>
         <div class="flex justify-center items-center h-full">
-          <Chart v-if="n <= 5" type="bar" :data="chartData" :options="chartOptions" class="h-full w-1/4" />
-          <Chart v-else type="bar" :data="chartData" :options="chartOptions" class="h-full w-1/3" />
+          <Chart v-if="n <= 5" type="bar" :data="chartData" :options="chartOptions" class="h-full w-1/3" />
+          <Chart v-else type="bar" :data="chartData" :options="chartOptions" class="h-full w-1/2" />
         </div>
         <!-- <div class="flex justify-center items-center">
           <Button class="m-1" @click="startSimulation()">
@@ -457,11 +457,8 @@ $$
     </template>
     <template #parameter>
       <div class="w-full h-full p-3">
-        <Card class="h-full w-full cardflex-1 flex flex-col overflow-y-auto">
-          <CardHeader>
-            <CardTitle>参数调整</CardTitle>
-          </CardHeader>
-          <CardContent class=" flex flex-col justify-center items-center gap-3">
+        <Card class="h-full w-full flex overflow-y-auto">
+          <CardContent class="flex-1 flex flex-col justify-center items-center gap-3 p-8">
             <!-- <div class="grid grid-cols-2 gap-10">
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
@@ -479,10 +476,10 @@ $$
                 </div>
               </div> -->
 
-            <div class="grid grid-cols-3 gap-3">
+            <div class="flex flex-col gap-8 items-center justify-center">
               <div class="flex flex-1 items-center justify-center font-bold">
                 <div class="flex flex-1 items-center justify-center">
-                  <div v-html="renderLatex('框的数量 = ')" />
+                  <div class="whitespace-nowrap" v-html="renderLatex('框的数量 = ')" />
                   <div class="flex flex-col items-center justify-center w-2/3 space-y-1 ml-2">
                     <InputNumber v-model="n" fluid />
                     <Slider v-model="n" :min="3" :max="15" :step="2" class="w-full" />
@@ -527,7 +524,6 @@ $$
                   </div>
                 </div>
               </div>
-
             </div>
           </CardContent>
         </Card>

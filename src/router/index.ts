@@ -11,10 +11,10 @@ import BirthdayAttack from '@/components/experiment/chapter1/BirthdayAttack.vue'
 import BuffonNeedle from '@/components/experiment/chapter1/buffon-needle/BuffonNeedle.vue';
 import PositiveTest from '@/components/experiment/chapter1/PositiveTest.vue';
 import ThreeDoors from '@/components/experiment/chapter1/three-doors/ThreeDoors.vue';
+import threeNormalDistribution from '@/components/experiment/chapter3/normal-distribution/threeNormalDistribution.vue';
 import GeometricDistribution from '@/components/experiment/distribution/geometric-distribution/GeometricDistribution.vue';
 import NormalDistribution from '@/components/experiment/distribution/normal-distribution/NormalDistribution.vue';
 import PoissonDistribution from '@/components/experiment/distribution/poisson-distribution/PoissonDistribution.vue';
-
 import UniformDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
 
 import FavoritePanel from '@/components/favorite/FavoritePanel.vue';
@@ -126,7 +126,7 @@ const router = createRouter({
         },
         {
           path: '/dashboard/experiment/2d-normal-distribution',
-          component: () => import('@/components/experiment/chapter3/normal-distribution/threeNormalDistribution.vue'),
+          component: threeNormalDistribution,
         },
         {
           path: '/dashboard/experiment/central-limit-theorem',

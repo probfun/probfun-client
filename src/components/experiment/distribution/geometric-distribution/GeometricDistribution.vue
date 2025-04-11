@@ -3,6 +3,8 @@ import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Slider } from '@/components/ui/slider';
 import { renderLatex, toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
@@ -180,10 +182,12 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard :panel-size="60">
+  <ExperimentBoard :panel-size="55">
     <template #experiment>
-      <GeometricDiagram :p="probability[0]" :n="fixedN[0]" :is-chart1="isChart1" :is-chart2="isChart2"
-        :is-chart3="isChart3" :save="save" />
+      <GeometricDiagram
+        :p="probability[0]" :n="fixedN[0]" :is-chart1="isChart1" :is-chart2="isChart2"
+        :is-chart3="isChart3" :save="save"
+      />
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center gap-3 p-3">
@@ -198,36 +202,40 @@ $$
           </CardContent>
         </Card>
         <Card class="w-full flex-1 flex flex-col">
-          <CardHeader class="pb-0">
-            <CardTitle>
-              参数调整
-            </CardTitle>
-          </CardHeader>
-          <CardContent class="flex-1  flex flex-col justify-center items-center gap-3">
-
-            <div class="dropdown ">
-              <Button tabindex="0" role="button" class="m-1">
-                点我切换
-              </Button>
-              <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-                <li @click="toggleChart1">
-                  <a>直到第一次成功的次数</a>
-                </li>
-                <li @click="toggleChart2">
-                  <a>第一次成功前的失败次数</a>
-                </li>
-                <li @click="toggleChart3">
-                  <a>几何分布的无记忆性</a>
-                </li>
-              </ul>
-            </div>
+          <CardContent class="flex-1  flex flex-col justify-center items-center gap-3 p-4">
+            <RadioGroup
+              default-value="option-one" orientation="horizontal" class="w-full flex flex-row justify-center gap-6 py-3" @update:model-value="(value) => {
+                if (value === 'option-one') {
+                  toggleChart1();
+                }
+                else if (value === 'option-two') {
+                  toggleChart2();
+                }
+                else {
+                  toggleChart3();
+                }
+              }"
+            >
+              <div class="flex items-center space-x-2">
+                <RadioGroupItem id="option-one" value="option-one" />
+                <Label for="option-one" class="text-base font-bold ">直到第一次成功的次数</Label>
+              </div>
+              <div class="flex items-center space-x-2">
+                <RadioGroupItem id="option-two" value="option-two" />
+                <Label for="option-two" class="text-base font-bold ">第一次成功前的失败次数</Label>
+              </div>
+              <div class="flex items-center space-x-2">
+                <RadioGroupItem id="option-three" value="option-three" />
+                <Label for="option-three" class="text-base font-bold ">几何分布的无记忆性</Label>
+              </div>
+            </RadioGroup>
 
             <div class="grid grid-cols-3">
               <div class="flex flex-1 items-center justify-center font-bold">
                 <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex('成功概率\\(p\\) = ')" />
+                  <div class="mr-4" v-html="toMarkdown('成功概率 $p$ =')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model="probability[0]" type="number" placeholder="0~1"/>
+                    <Input v-model="probability[0]" type="number" placeholder="0~1" />
                     <Slider v-model="probability" :min="0" :max="0.95" :step="0.05" />
                   </div>
                 </div>
@@ -235,21 +243,19 @@ $$
 
               <div class="flex flex-1 items-center justify-center font-bold">
                 <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex('成功前的尝试次数\\( k \\) = ')" />
+                  <div class="mr-4 whitespace-nowrap" v-html="toMarkdown('成功前的尝试次数 $k$ =')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model="numberk[0]" type="number" placeholder="1~60"/>
+                    <Input v-model="numberk[0]" type="number" placeholder="1~60" />
                     <Slider v-model="numberk" :min="1" :max="60" :step="1" />
                   </div>
                 </div>
               </div>
 
-
-
               <div v-if="isChart3" class="flex flex-col flex-1 items-center justify-center space-y-5">
                 <div class="flex flex-1 items-center justify-center font-bold">
                   <div class="mr-4" v-html="renderLatex('固定实验次数 = ')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model="fixedN[0]" type="number" placeholder="0~9"/>
+                    <Input v-model="fixedN[0]" type="number" placeholder="0~9" />
                     <Slider v-model="fixedN" :min="0" :max="9" :step="1" />
                   </div>
                 </div>

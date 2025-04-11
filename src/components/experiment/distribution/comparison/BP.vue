@@ -202,7 +202,7 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard title="二项分布与泊松分布" :tags="[]" :panel-size="70">
+  <ExperimentBoard title="二项分布与泊松分布" :tags="[]" :panel-size="60">
     <template #experiment>
       <BPDiagram :n="number[0]" :p="probability[0]" />
     </template>
@@ -268,36 +268,35 @@ $$
           </Card>
           <Card class="w-1/3 h-full gap-3 space-y-2">
             <CardContent class="flex w-full justify-center">
-              <div class="flex  grid grid-rows-3 mt-2">
-              <div class="flex flex-1 items-center justify-center font-bold">
-                <div class="flex flex-1 mb-2 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex('实验次数\\(n\\) = ')" />
-                  <div class="flex flex-col items-center justify-center w-1/2 space-y-1">
-                    <Input v-model.number="number[0]" class="w-full mb-2" placeholder="1~50"/>
-                    <Slider v-model="number" :min="1" :max="50" :step="1" class="w-full" />
+              <div class="grid grid-rows-3 mt-2">
+                <div class="flex flex-1 items-center justify-center font-bold">
+                  <div class="flex flex-1 mb-2 items-center justify-center">
+                    <div class="mr-4" v-html="renderLatex('实验次数\\(n\\) = ')" />
+                    <div class="flex flex-col items-center justify-center w-1/2 space-y-1">
+                      <Input v-model.number="number[0]" class="w-full mb-2" placeholder="1~50" />
+                      <Slider v-model="number" :min="1" :max="50" :step="1" class="w-full" />
+                    </div>
+                  </div>
+                </div>
+                <div class="flex flex-1 items-center justify-center font-bold">
+                  <div class="flex flex-1 mb-2 items-center justify-center">
+                    <div class="mr-4" v-html="renderLatex('成功次数\\(k\\) = ')" />
+                    <div class="flex flex-col items-center justify-center w-1/2 space-y-1">
+                      <Input v-model.number="numberk[0]" class="w-full mb-2" placeholder="大于1小于n" />
+                      <Slider v-model="numberk" :min="1" :max="maxK" :step="1" class="w-full" />
+                    </div>
+                  </div>
+                </div>
+                <div class="flex flex-1 items-center justify-center font-bold">
+                  <div class="flex flex-1 items-center justify-center">
+                    <div class="mr-4" v-html="renderLatex('成功概率\\(p\\) = ')" />
+                    <div class="flex flex-col items-center justify-center w-1/2 space-y-1">
+                      <Input v-model.number="probability[0]" :min-fraction-digits="2" class="w-full mb-2" placeholder="0~1" />
+                      <Slider v-model="probability" :min="0" :max="1" :step="0.01" class="w-full" />
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class="flex flex-1 items-center justify-center font-bold">
-                <div class="flex flex-1 mb-2 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex('成功次数\\(k\\) = ')" />
-                  <div class="flex flex-col items-center justify-center w-1/2 space-y-1">
-                    <Input v-model.number="numberk[0]" class="w-full mb-2" placeholder="大于1小于n"/>
-                    <Slider v-model="numberk" :min="1" :max="maxK" :step="1" class="w-full" />
-                  </div>
-                </div>
-              </div>
-              <div class="flex flex-1 items-center justify-center font-bold">
-                <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex('成功概率\\(p\\) = ')" />
-                  <div class="flex flex-col items-center justify-center w-1/2 space-y-1">
-                    <Input v-model.number="probability[0]" :min-fraction-digits="2" class="w-full mb-2" placeholder="0~1"/>
-                    <Slider v-model="probability" :min="0" :max="1" :step="0.01" class="w-full" />
-                  </div>
-                </div>
-              </div>
-
-            </div>
             </CardContent>
           </Card>
         </div>

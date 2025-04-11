@@ -2,12 +2,12 @@
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { toMarkdown } from '@/utils/markdown';
+import { renderLatex, toMarkdown } from '@/utils/markdown';
+
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue';
 import BNDiagram from './BNDiagram.vue';
 import 'katex/dist/katex.min.css';
-import { renderLatex } from '@/utils/markdown';
 
 const number = ref([20]);
 const probability = ref([0.1]);
@@ -93,7 +93,7 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard title="二项分布与正态分布" :tags="[]" :panel-size="70">
+  <ExperimentBoard title="二项分布与正态分布" :tags="[]" :panel-size="65">
     <template #experiment>
       <BNDiagram :n="number[0]" :p="probability[0]" />
     </template>
@@ -151,30 +151,32 @@ $$
               <div ref="normalContainer" class="text-base" />
             </CardContent>
           </Card>
-          <Card class="w-1/3 space-y-5 justify-centeritems-center">
-          <CardContent class="grid grid-rows-2 justify-center items-center">
-            <div class="items-center justify-center font-bold">
-              <div class="w-full flex flex-1 items-center justify-center">
+          <Card class="w-1/3 space-y-5 justify-center items-center">
+            <CardContent class="flex justify-center items-center p-4">
+              <div class="items-center justify-center font-bold">
+                <div class="w-full flex flex-1 items-center justify-center">
                   <div class="w-1/2" v-html="renderLatex('实验次数\\(n\\) = ')" />
                   <div class="w-1/2">
                     <Input v-model.number="number[0]" class="w-full mb-2" placeholder="20~100" />
-                <Slider v-model="number" :min="20" :max="100" :step="1" class="w-full mb-3" />
-              </div>
-            </div>
-             
+                    <Slider v-model="number" :min="20" :max="100" :step="1" class="w-full mb-3" />
+                  </div>
+                </div>
+
                 <div class="flex items-center justify-between">
                   <div class="w-1/2" v-html="renderLatex('成功概率\\(p\\) = ')" />
                   <div class="w-1/2">
-                    <Input v-model.number="probability[0]" :min-fraction-digits="2" class="w-full mb-2"
-                      placeholder="0~1" />
-             
-                <Slider v-model="probability" :min="0" :max="1" :step="0.01" class="w-full" />
+                    <Input
+                      v-model.number="probability[0]" :min-fraction-digits="2" class="w-full mb-2"
+                      placeholder="0~1"
+                    />
+
+                    <Slider v-model="probability" :min="0" :max="1" :step="0.01" class="w-full" />
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          </CardContent>
-        </Card>
-      </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </template>
 

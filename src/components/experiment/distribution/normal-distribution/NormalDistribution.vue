@@ -28,17 +28,17 @@ function back() {
 }
 
 const latexFormula = computed(() => {
-  const meanVal = transformedMean.value.toFixed(1);
-  const varianceVal = transformedVariance.value.toFixed(2);
+  // const meanVal = transformedMean.value.toFixed(1);
+  // const varianceVal = transformedVariance.value.toFixed(2);
 
   // 如果 meanVal 为负数，则添加括号
-  const meanDisplay = transformedMean.value < 0 ? `(${meanVal})` : meanVal;
+  // const meanDisplay = transformedMean.value < 0 ? `(${meanVal})` : meanVal;
   // 如果 varianceVal 为负数（虽然理论上方差不会是负数，但以防万一）
-  const varianceDisplay = transformedVariance.value < 0 ? `(${varianceVal})` : varianceVal;
+  // const varianceDisplay = transformedVariance.value < 0 ? `(${varianceVal})` : varianceVal;
 
   return `f_X(x) = \\frac{1}{\\sqrt{2\\pi}σ} e^{-\\frac{(x-μ)^2}{2{σ}^2}}`;
 });
-//}=\\frac{1}{\\sqrt{2\\pi\\times${varianceDisplay}}} e^{-\\frac{(x-${meanDisplay})^2}{2\\times${varianceDisplay}}
+// }=\\frac{1}{\\sqrt{2\\pi\\times${varianceDisplay}}} e^{-\\frac{(x-${meanDisplay})^2}{2\\times${varianceDisplay}}
 
 watch([mean, stdDev], () => {
   transformedMean.value = mean.value[0];
@@ -51,13 +51,13 @@ watch([a, b], () => {
 }, { deep: true });
 
 const latexFormulaY = computed(() => {
-  const meanValY = transformedMeanY.value.toFixed(2);
-  const varianceValY = transformedVarianceY.value.toFixed(2);
+  // const meanValY = transformedMeanY.value.toFixed(2);
+  // const varianceValY = transformedVarianceY.value.toFixed(2);
 
   // 如果 meanVal 为负数，则添加括号
-  const meanDisplayY = transformedMeanY.value < 0 ? `(${meanValY})` : meanValY;
+  // const meanDisplayY = transformedMeanY.value < 0 ? `(${meanValY})` : meanValY;
   // 如果 varianceVal 为负数（虽然理论上方差不会是负数，但以防万一）
-  const varianceDisplayY = transformedVarianceY.value < 0 ? `(${varianceValY})` : varianceValY;
+  // const varianceDisplayY = transformedVarianceY.value < 0 ? `(${varianceValY})` : varianceValY;
 
   return `f_Y(y) =\\frac{1}{\\sqrt{2\\pi}aσ} e^{-\\frac{(y-(aμ+b))^2}{2{(aσ)^2}} }`;
 });
@@ -155,13 +155,15 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard :panel-size="50">
+  <ExperimentBoard :panel-size="55">
     <template #experiment>
       <!-- <DistributionDiagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance" :a="a" :b="b"
         :show-history="save" /> -->
-      <DistributionDiagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance"
+      <DistributionDiagram
+        class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance"
         :transformed-mean-y="transformedMeanY" :transformed-variance-y="transformedVarianceY" :show-history="save"
-        :line-show="lineShow" line1-color="red" line2-color="blue" />
+        :line-show="lineShow" line1-color="red" line2-color="blue"
+      />
     </template>
 
     <!-- <template #parameter>
@@ -225,7 +227,7 @@ $$
     </template> -->
 
     <template #parameter>
-      <div class="w-full h-full flex flex-col justify-center p-3 gap-3">
+      <div class="w-full h-full flex flex-col p-3 !gap-3">
         <!-- <Card class="h-full w-full card">
           <CardHeader class="pb-10">
             <CardTitle>正态分布公式</CardTitle>
@@ -242,42 +244,30 @@ $$
           </CardContent>
         </Card> -->
 
-        <Card class="w-full  card flex flex-1">
-          <div class="flex flex-col w-full ">
-            <div class="flex gap-5 justify-center items-center">
-              <!-- 第一个 CardHeader -->
-              <div class="flex-1 w-1/3">
-                <CardHeader class="pb-5">
-                  <CardTitle>正态分布公式</CardTitle>
-                </CardHeader>
-                <CardContent class="w-full">
-                  <div class="flex flex-1 mb-4">
-                    <div ref="katexTransformedFormula" class="text-base   mt-1 mr-24" />
-                    <div ref="katexMainFormula" class="text-base " />
-                  </div>
-
-                  <div class="flex flex-1 ">
-                    <div ref="katexTransformedFormulaY" class="text-base mt-2 mr-8" />
-                    <div ref="katexMainFormulaY" class="text-base" />
-                  </div>
-                </CardContent>
-              </div>
+        <Card class="w-full flex flex-col flex-1">
+          <CardHeader class="pb-5">
+            <CardTitle>正态分布公式</CardTitle>
+          </CardHeader>
+          <CardContent class="w-full flex-1">
+            <div class="flex flex-1 mb-4">
+              <div ref="katexTransformedFormula" class="text-base   mt-1 mr-24" />
+              <div ref="katexMainFormula" class="text-base " />
             </div>
-          </div>
+
+            <div class="flex flex-1 ">
+              <div ref="katexTransformedFormulaY" class="text-base mt-2 mr-8" />
+              <div ref="katexMainFormulaY" class="text-base" />
+            </div>
+          </CardContent>
         </Card>
 
-        <Card class="h-full w-full cardflex-1 flex flex-col">
-          <CardHeader>
-            <CardTitle>
-              参数调整
-            </CardTitle>
-          </CardHeader>
-          <CardContent class="grid grid-cols-5 items-center justify-center gap-5">
+        <Card class="w-full">
+          <CardContent class="grid grid-cols-5 items-center justify-center gap-5 p-4">
             <div class="flex flex-1 items-center justify-center font-bold">
               <div class="flex flex-1 items-center justify-center">
                 <div class="mr-4" v-html="renderLatex('均值\\(μ\\) = ')" />
                 <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                  <Input v-model.number="mean[0]" fluid :min-fraction-digits="1"  placeholder="-10~10"/>
+                  <Input v-model.number="mean[0]" fluid :min-fraction-digits="1" placeholder="-10~10" />
                   <Slider v-model="mean" :min="-10" :max="10" :step="0.1" class="w-full" />
                 </div>
               </div>
@@ -286,7 +276,7 @@ $$
               <div class="flex flex-1 items-center justify-center">
                 <div class="mr-4" v-html="renderLatex(' 方差\\(σ^2\\) = ')" />
                 <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                  <Input v-model.number="stdDev[0]" fluid :min-fraction-digits="1"  placeholder="0.1~10"/>
+                  <Input v-model.number="stdDev[0]" fluid :min-fraction-digits="1" placeholder="0.1~10" />
                   <Slider v-model="stdDev" :min="0.1" :max="10" :step="0.05" class="w-full" />
                 </div>
               </div>
@@ -295,7 +285,7 @@ $$
               <div class="flex flex-1 items-center justify-center">
                 <div class="mr-4" v-html="renderLatex(' \\(a\\) = ')" />
                 <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                  <Input v-model.number="a[0]" fluid :invalid="a[0] === 0" :min-fraction-digits="1"  placeholder="-10~10"/>
+                  <Input v-model.number="a[0]" fluid :invalid="a[0] === 0" :min-fraction-digits="1" placeholder="-10~10" />
                   <Slider v-model="a" :min="-10" :max="10" :step="0.01" class="w-full" />
                 </div>
               </div>
@@ -305,21 +295,23 @@ $$
                 <div class="mr-4" v-html="renderLatex(' \\(b\\) = ')" />
                 <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
                   <Input v-model.number="b[0]" fluid :min-fraction-digits="1" />
-                  <Slider v-model="b" :min="-10" :max="10" :step="0.1" class="w-5/6"  placeholder="-10~10"/>
+                  <Slider v-model="b" :min="-10" :max="10" :step="0.1" class="w-5/6" placeholder="-10~10" />
                 </div>
               </div>
             </div>
 
             <div class="flex gap-2 items-center justify-center">
-              <Checkbox id="terms" @update:checked="(checked: boolean) => {
-                if (checked) {
-                  saveImg();
-                }
-                else {
-                  back();
-                }
-                console.log(checked)
-              }" />
+              <Checkbox
+                id="terms" @update:checked="(checked: boolean) => {
+                  if (checked) {
+                    saveImg();
+                  }
+                  else {
+                    back();
+                  }
+                  console.log(checked)
+                }"
+              />
               <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
             </div>
           </CardContent>

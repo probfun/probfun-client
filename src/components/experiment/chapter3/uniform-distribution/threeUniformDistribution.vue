@@ -3,9 +3,11 @@ import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ThreeUniformDiagram from '@/components/experiment/chapter3/uniform-distribution/threeUniformDiagram.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+
 import { renderLatex, toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
-
 import Slider from 'primevue/slider';
 import { computed, onMounted, ref, watch } from 'vue';
 import UniformDiagram from '../../distribution/UniformDiagram.vue';
@@ -183,7 +185,7 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard :panel-size="60">
+  <ExperimentBoard :panel-size="50">
     <template #experiment>
       <ThreeUniformDiagram v-if="isChart1" class="flex-1 h-full" :x1="x1" :x2="x2" :y1="y1" :y2="y2" />
       <div v-if="isChart2 || isChart3" class="w-full h-full flex">
@@ -212,90 +214,117 @@ $$
           </CardContent>
         </Card>
 
-        <Card class="w-1/2 h-full  cardflex-1 flex flex-col">
-          <CardHeader>
-            <CardTitle>
-              参数调整
-            </CardTitle>
-          </CardHeader>
-          <CardContent class="flex-1 flex flex-col justify-center ">
+        <Card class="w-1/2 h-full card flex-1 flex flex-col">
+          <CardContent class="flex-1 flex flex-col justify-center p-4">
             <!-- 居中的按钮 -->
-            <div class="flex justify-center w-full mb-8">
-              <div class="dropdown">
-                <Button tabindex="0" role="button" class="m-0">
-                  点我切换
-                </Button>
-                <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-                  <li @click="toggleChart1">
-                    <a>二维均匀分布</a>
-                  </li>
-                  <li @click="toggleChart2">
-                    <a>二维均匀分布的边缘分布</a>
-                  </li>
-                  <li @click="toggleChart3">
-                    <a>二维均匀分布的条件分布</a>
-                  </li>
-                </ul>
+            <div class="flex flex-col gap-4 justify-center w-full mb-8">
+              <!--              <div class="dropdown"> -->
+              <!--                <Button tabindex="0" role="button" class="m-0"> -->
+              <!--                  点我切换 -->
+              <!--                </Button> -->
+              <!--                <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"> -->
+              <!--                  <li @click="toggleChart1"> -->
+              <!--                    <a>二维均匀分布</a> -->
+              <!--                  </li> -->
+              <!--                  <li @click="toggleChart2"> -->
+              <!--                    <a>二维均匀分布的边缘分布</a> -->
+              <!--                  </li> -->
+              <!--                  <li @click="toggleChart3"> -->
+              <!--                    <a>二维均匀分布的条件分布</a> -->
+              <!--                  </li> -->
+              <!--                </ul> -->
+              <!--              </div> -->
+              <!--            </div> -->
+
+              <RadioGroup
+                default-value="option-one" orientation="vertical" class="w-full justify-center gap-2 py-3" @update:model-value="(value) => {
+                  if (value === 'option-one') {
+                    toggleChart1();
+                  }
+                  else if (value === 'option-two') {
+                    toggleChart2();
+                  }
+                  else {
+                    toggleChart3();
+                  }
+                }"
+              >
+                <div class="flex items-center space-x-2">
+                  <RadioGroupItem id="option-one" value="option-one" />
+                  <Label for="option-one" class="text-base font-bold ">二维均匀分布</Label>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <RadioGroupItem id="option-two" value="option-two" />
+                  <Label for="option-two" class="text-base font-bold ">二维均匀分布的边缘分布</Label>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <RadioGroupItem id="option-three" value="option-three" />
+                  <Label for="option-three" class="text-base font-bold ">二维均匀分布的条件分布</Label>
+                </div>
+              </RadioGroup>
+
+              <div class="grid grid-cols-4 items-center justify-center gap-5">
+                <div class="flex flex-1 items-center justify-center font-bold">
+                  <div class="flex flex-1 items-center justify-center">
+                    <div class="mr-4 whitespace-nowrap" v-html="renderLatex('\\(x_1\\) = ')" />
+                    <div class="max-w-xl space-y-3">
+                      <Input
+                        v-model="x1" placeholder="大于-10小于x2" @input="() => {
+                          if (x1 < -10) x1 = -10;
+                          else if (x1 > x2) x1 = x2 - 1;
+                        }"
+                      />
+                      <Slider v-model="x1" :min="-10" :max="x2" :step="1" class="w-full" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex flex-1 items-center justify-center font-bold">
+                  <div class="flex flex-1 items-center justify-center">
+                    <div class="mr-4 whitespace-nowrap" v-html="renderLatex('\\(x_2\\) = ')" />
+                    <div class="max-w-xl space-y-3">
+                      <Input
+                        v-model="x2" placeholder="大于x1小于10" @input="() => {
+                          if (x2 > 10) x2 = 10;
+                          else if (x2 < x1) x2 = x1 + 1;
+                        }"
+                      />
+                      <Slider v-model="x2" :min="x1" :max="10" :step="1" class="w-full" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex flex-1 items-center justify-center font-bold">
+                  <div class="flex flex-1 items-center justify-center">
+                    <div class="mr-4 whitespace-nowrap" v-html="renderLatex('\\(y_1\\) = ')" />
+                    <div class="max-w-xl space-y-3">
+                      <Input
+                        v-model="y1" placeholder="大于-10小于y2" fluid @input="() => {
+                          if (y1 < -10) y1 = -10;
+                          else if (y1 > y2) y1 = y2 - 1;
+                        }"
+                      />
+                      <Slider v-model="y1" :min="-10" :max="y2" :step="1" class="w-full" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex flex-1 items-center justify-center font-bold">
+                  <div class="flex flex-1 items-center justify-center">
+                    <div class="mr-4 whitespace-nowrap" v-html="renderLatex('\\(y_2\\) = ')" />
+                    <div class="max-w-xl space-y-3">
+                      <Input
+                        v-model="y2" placeholder="大于y1小于10" @input="() => {
+                          if (y2 > 10) y2 = 10;
+                          else if (y2 < y1) y2 = y1 + 1;
+                        }"
+                      />
+                      <Slider v-model="y2" :min="y1" :max="10" :step="1" class="w-full" />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="grid grid-cols-4 items-center justify-center gap-5">
-              <div class="flex flex-1 items-center justify-center font-bold">
-                <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex('\\(x_1\\) = ')" />
-                  <div class="max-w-xl space-y-3">
-                    <Input v-model="x1" placeholder="-10~x2" fluid @update:model-value="v => {
-                      if (v < -10) x1 = -10;
-                      else if (v > x2) x1 = x2 - 1;
-                      else x1 = v;
-                    }" />
-                    <Slider v-model="x1" :min="-10" :max="x2" :step="1" class="w-full" />
-                  </div>
-                </div>
-              </div>
-
-              <div class="flex flex-1 items-center justify-center font-bold">
-                <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex('\\(x_2\\) = ')" />
-                  <div class="max-w-xl space-y-3">
-                    <Input v-model="x2" placeholder="x1~10" fluid @update:model-value="v => {
-                      if (v > 10) x2 = 10;
-                      else if (v < x1) x2 = x1 + 1;
-                      else x2 = v;
-                    }" />
-                    <Slider v-model="x2" :min="x1" :max="10" :step="1" class="w-full" />
-                  </div>
-                </div>
-              </div>
-
-              <div class="flex flex-1 items-center justify-center font-bold">
-                <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex('\\(y_1\\) = ')" />
-                  <div class="max-w-xl space-y-3">
-                    <Input v-model="y1" placeholder="-10~y2" fluid @update:model-value="v => {
-                      if (v < -10) y1 = -10;
-                      else if (v > y2) y1 = y2 - 1;
-                      else y1 = v;
-                    }" class="custom-placeholder" />
-                    <Slider v-model="y1" :min="-10" :max="y2" :step="1" class="w-full" />
-                  </div>
-                </div>
-              </div>
-
-              <div class="flex flex-1 items-center justify-center font-bold">
-                <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex('\\(y2\\) = ')" />
-                  <div class="max-w-xl space-y-3">
-                    <Input v-model="y2" placeholder="y1~10" fluid @update:model-value="v => {
-                      if (v > 10) y2 = 10;
-                      else if (v < y1) y2 = y1 + 1;
-                      else y2 = v;
-                    }" />
-                    <Slider v-model="y2" :min="y1" :max="10" :step="1" class="w-full" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
           </CardContent>
         </Card>
       </div>
