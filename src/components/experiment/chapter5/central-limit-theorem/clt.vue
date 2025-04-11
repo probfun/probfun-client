@@ -158,10 +158,9 @@ function drawBoard() {
         if (path.value.length > 0) {
           ctx.beginPath();
           ctx.moveTo(startX - 12 * (2 * n.value + 1), 230 - n.value * 15);
-          ctx.lineTo(startX - 12 * (2 * n.value + 1), 258 - n.value * 15);
+          ctx.lineTo(startX - 12 * (2 * n.value + 1), 244 - n.value * 15);
           let fromX = startX - 12 * (2 * n.value + 1);
-          let fromY = 258 - n.value * 15;
-          console.log(path.value);
+          let fromY = 244 - n.value * 15;
 
           for (let i = 0; i < path.value.length; i++) {
             ctx.moveTo(fromX, fromY);
@@ -249,9 +248,9 @@ function drawBoard() {
         if (path.value.length > 0) {
           ctx.beginPath();
           ctx.moveTo(startX - 15 * (2 * n.value + 1), 200 - n.value * 20);
-          ctx.lineTo(startX - 15 * (2 * n.value + 1), 238 - n.value * 20);
+          ctx.lineTo(startX - 15 * (2 * n.value + 1), 218 - n.value * 20);
           let fromX = startX - 15 * (2 * n.value + 1);
-          let fromY = 238 - n.value * 20;
+          let fromY = 218 - n.value * 20;
           console.log(path.value);
 
           for (let i = 0; i < path.value.length; i++) {
@@ -340,9 +339,9 @@ function drawBoard() {
         if (path.value.length > 0) {
           ctx.beginPath();
           ctx.moveTo(startX - 21.5 * (2 * n.value + 1), 200 - n.value * 30);
-          ctx.lineTo(startX - 21.5 * (2 * n.value + 1), 255 - n.value * 30);
+          ctx.lineTo(startX - 21.5 * (2 * n.value + 1), 227.5 - n.value * 30);
           let fromX = startX - 21.5 * (2 * n.value + 1);
-          let fromY = 255 - n.value * 30;
+          let fromY = 227.5 - n.value * 30;
           console.log(path.value);
 
           for (let i = 0; i < path.value.length; i++) {
@@ -446,14 +445,14 @@ $$
           <Chart v-if="n <= 5" type="bar" :data="chartData" :options="chartOptions" class="h-full w-1/4" />
           <Chart v-else type="bar" :data="chartData" :options="chartOptions" class="h-full w-1/3" />
         </div>
-        <div class="flex justify-center items-center">
+        <!-- <div class="flex justify-center items-center">
           <Button class="m-1" @click="startSimulation()">
             开始模拟
           </Button>
           <Button class="m-1" @click="stopSimulation()">
             停止模拟
           </Button>
-        </div>
+        </div> -->
       </div>
     </template>
     <template #parameter>
@@ -463,27 +462,72 @@ $$
             <CardTitle>参数调整</CardTitle>
           </CardHeader>
           <CardContent class=" flex flex-col justify-center items-center gap-3">
-            <div class="grid grid-cols-2 gap-10">
+            <!-- <div class="grid grid-cols-2 gap-10">
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
                   <div v-html="renderLatex('框的数量')" />
 
                   <div class="max-w-xl space-y-3">
+                    <InputNumber v-model="n" fluid placeholder="3~15的奇数" @update:model-value="v => {
+                      if (v < 3) n = 3;
+                      else if (v > 15) n = 15;
+                      else if (v % 2 == 0) n = v + 1;
+                      else n = v
+                    }" />
+                    <Slider v-model="n" :min="3" :max="15" :step="2" class="w-full" />
+                  </div>
+                </div>
+              </div> -->
+
+            <div class="grid grid-cols-3 gap-3">
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div v-html="renderLatex('框的数量 = ')" />
+                  <div class="flex flex-col items-center justify-center w-2/3 space-y-1 ml-2">
                     <InputNumber v-model="n" fluid />
                     <Slider v-model="n" :min="3" :max="15" :step="2" class="w-full" />
                   </div>
                 </div>
               </div>
-              <div class="flex flex-col gap-8 pb-0">
+
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div v-html="renderLatex('球的数量(大于50时不予展示每个小球下落的路径) = ')" />
+                  <div class="flex flex-col items-center justify-center w-2/3 space-y-1 ml-2">
+                    <InputNumber v-model="ball" fluid />
+                    <Slider v-model="ball" :min="5" :max="5000" :step="5" class="w-full" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
                   <div v-html="renderLatex('球的数量(大于50时不予展示每个小球下落的路径)')" />
 
                   <div class="max-w-xl space-y-3">
-                    <InputNumber v-model="ball" fluid />
-                    <Slider v-model="ball" :min="5" :max="1000" :step="5" class="w-full" />
+                    <InputNumber v-model="ball" fluid placeholder="5~10000" @update:model-value="v => {
+                      if (v < 5) ball = 5;
+                      else if (v > 10000) ball = 10000;
+                      else ball = v
+                    }" />
+                    <Slider v-model="ball" :min="5" :max="10000" :step="5" class="w-full" />
+                  </div>
+                </div>
+              </div> -->
+
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="flex justify-center items-center gap-3">
+                    <Button class="m-1" @click="startSimulation()">
+                      开始模拟
+                    </Button>
+                    <Button class="m-1" @click="stopSimulation()">
+                      停止模拟
+                    </Button>
                   </div>
                 </div>
               </div>
+
             </div>
           </CardContent>
         </Card>

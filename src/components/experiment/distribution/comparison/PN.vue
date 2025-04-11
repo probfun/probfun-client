@@ -100,6 +100,7 @@ function setChartOptions() {
       x: {
         ticks: {
           color: textColorSecondary,
+
         },
         grid: {
           color: surfaceBorder,
@@ -152,7 +153,7 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard title="泊松分布与正态分布" :tags="[]">
+  <ExperimentBoard title="泊松分布与正态分布" :tags="[]" :panel-size="70">
     <template #experiment>
       <PNDiagram :lambda="lambda[0]" />
     </template>
@@ -182,8 +183,8 @@ $$
 
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center p-3 gap-3">
-        <Card class="w-full h-1/2 flex gap-3">
-          <Card class="w-1/2 gap-3 ">
+        <Card class="w-full h-full flex gap-3">
+          <Card class="w-1/3 gap-3 ">
             <CardHeader>
               <div class="flex  gap-5">
                 <CardTitle>泊松分布公式</CardTitle>
@@ -194,7 +195,7 @@ $$
               <div ref="poissonContainer" class="text-base" />
             </CardContent>
           </Card>
-          <Card class="w-1/2 gap-3 ">
+          <Card class="w-1/3 gap-3 ">
             <CardHeader>
               <div class="flex  gap-5">
                 <CardTitle>正态分布公式</CardTitle>
@@ -205,8 +206,20 @@ $$
               <div ref="normalContainer" class="text-base" />
             </CardContent>
           </Card>
+          <Card class="w-1/3 gap-3 ">
+            <CardContent class="flex w-full justify-center ">
+              <div class="flex  flex-1 items-center font-bold justify-center mt-8 space-x-2">
+                <div v-html="renderLatex('\\(λ\\) = ')" />
+
+                <div class=" space-y-3">
+                  <Input v-model.number="lambda[0]" class="w-full" placeholder="30~100"/>
+                  <Slider v-model="lambda" :min="30" :max="100" :step="1" class="w-full" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </Card>
-        <Card class="w-full  flex-1 flex flex-col">
+        <!-- <Card class="w-full  flex-1 flex flex-col">
           <CardHeader>
             <CardTitle>
               参数调整
@@ -224,7 +237,7 @@ $$
               </div>
             </div>
           </CardContent>
-        </Card>
+        </Card> -->
       </div>
     </template>
     <template #conclusion>

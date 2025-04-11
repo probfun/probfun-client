@@ -27,3 +27,10 @@ export async function browseApi(actionType: string, pageName: string) {
   });
   return result.data;
 }
+
+export async function visitorApi() {
+  const result = await post<{
+    ok: boolean
+  }>('/api/track/visitor');
+  return result.data;
+}

@@ -134,6 +134,7 @@ declare module 'vue' {
     NavBar: typeof import('./src/components/NavBar.vue')['default']
     NormalDiagram: typeof import('./src/components/experiment/distribution/normal-distribution/NormalDiagram.vue')['default']
     NormalDistribution: typeof import('./src/components/experiment/distribution/normal-distribution/NormalDistribution.vue')['default']
+    NumberInput: typeof import('./src/components/argument/NumberInput.vue')['default']
     PE: typeof import('./src/components/experiment/distribution/comparison/PE.vue')['default']
     PN: typeof import('./src/components/experiment/distribution/comparison/PN.vue')['default']
     PNDiagram: typeof import('./src/components/experiment/distribution/comparison/PNDiagram.vue')['default']

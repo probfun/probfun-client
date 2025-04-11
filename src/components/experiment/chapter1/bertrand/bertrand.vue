@@ -251,7 +251,7 @@ const bertrandDisplay = ref<{
   simulateGame: () => void
   stopSimulation: () => void
 }>({
-      autoGameRound: [100], // 默认模拟轮数为100
+      autoGameRound: [], // 默认模拟轮数为100
       simulationInterval: null, // 用于存储定时器 ID
       simulateGame() {
         console.log('开始模拟！');
@@ -300,19 +300,33 @@ const bertrandDisplay = ref<{
       },
     });
 
-function limitInput(e: { target: { value: string } }) {
-  const value = Number.parseInt(e.target.value);
-  if (Number.isNaN(value)) {
-    bertrandDisplay.value.autoGameRound[0] = 1;
+// function limitInput(e: { target: { value: string } }) {
+//   const value = Number.parseInt(e.target.value);
+//   if (Number.isNaN(value)) {
+//     bertrandDisplay.value.autoGameRound[0] = 1;
+//   }
+//   else if (value > 500) {
+//     bertrandDisplay.value.autoGameRound[0] = 500;
+//   }
+//   else if (value < 1) {
+//     bertrandDisplay.value.autoGameRound[0] = 1;
+//   }
+//   else {
+//     bertrandDisplay.value.autoGameRound[0] = value;
+//   }
+// }
+// 限制输入值的方法
+function limitInput(event: Event) {
+  const target = event.target as HTMLInputElement;
+  const value = Number.parseInt(target.value, 10);
+  if (Number.isNaN(value) || value < 1) {
+    bertrandDisplay.value.autoGameRound[0] = 1; // 如果输入无效或小于1，设置为1
   }
   else if (value > 500) {
-    bertrandDisplay.value.autoGameRound[0] = 500;
-  }
-  else if (value < 1) {
-    bertrandDisplay.value.autoGameRound[0] = 1;
+    bertrandDisplay.value.autoGameRound[0] = 500; // 如果大于500，设置为500
   }
   else {
-    bertrandDisplay.value.autoGameRound[0] = value;
+    bertrandDisplay.value.autoGameRound[0] = value; // 否则，设置为输入值
   }
 }
 
@@ -396,6 +410,8 @@ function toggleMethod(methodName: MethodName) {
         <div class="circle">
           <svg width="200" height="200" viewBox="0 -10 170 190">
             <circle cx="80" cy="80" r="80" fill="none" stroke="black" />
+            <!-- 添加内部圆 -->
+            <circle cx="80" cy="80" r="40" fill="yellow" stroke="" stroke-width="2" />
             <!-- 在此绘制第一种策略的弦 -->
             <line
               :x1="80 + chord1.x1 * 80" :y1="80 + chord1.y1 * 80" :x2="80 + chord1.x2 * 80"
@@ -411,6 +427,7 @@ function toggleMethod(methodName: MethodName) {
         <div class="circle">
           <svg width="200" height="200" viewBox="0 -10 170 190">
             <circle cx="80" cy="80" r="80" fill="none" stroke="black" />
+            <circle cx="80" cy="80" r="40" fill="yellow" stroke="" stroke-width="2" />
             <!-- 在此绘制第二种策略的弦 -->
             <line
               :x1="80 + chord2.x1 * 80" :y1="80 + chord2.y1 * 80" :x2="80 + chord2.x2 * 80"
@@ -426,6 +443,7 @@ function toggleMethod(methodName: MethodName) {
         <div class="circle">
           <svg width="200" height="200" viewBox="0 -10 180 190">
             <circle cx="80" cy="80" r="80" fill="none" stroke="black" />
+            <circle cx="80" cy="80" r="40" fill="yellow" stroke="" stroke-width="2" />
             <!-- 在此绘制第三种策略的弦 -->
             <line
               :x1="80 + chord3.x1 * 80" :y1="80 + chord3.y1 * 80" :x2="80 + chord3.x2 * 80"
@@ -443,47 +461,44 @@ function toggleMethod(methodName: MethodName) {
     <template #parameter>
       <div v-if="bertrandDisplay" class="p-2 grid grid-cols-2 gap-2 h-full overflow-y-hidden unselectable">
         <!-- 配置区 -->
-        <div class="flex flex-col gap-2">
-          <Card class="flex-1 flex flex-col">
-            <CardHeader class="p-4">
-              <CardTitle>模拟轮数</CardTitle>
-            </CardHeader>
-            <CardContent class="flex flex-col items-center p-4 pt-0 flex-1">
-              <div class="font-bold h-full justify-center items-center mb-4 gap-3 flex flex-col">
-                <Input v-model="bertrandDisplay.autoGameRound[0]" class="" :min="1" :max="500" @input="limitInput" />
-                <Slider v-model="bertrandDisplay.autoGameRound" class="" :min="1" :max="500" />
+        <div class="flex flex-col flex-1 gap-2 ">
+          <Card class="flex flex-col">
+            <CardContent class="flex p-12 justify-center items-center gap-3 flex-1">
+              <div class="font-bold justify-center items-center flex gap-2">
+                <div class="mb-1 whitespace-nowrap" v-html="toMarkdown('模拟轮数 $$=$$')" />
+                <div class="flex flex-col">
+                  <Input v-model="bertrandDisplay.autoGameRound" type="text" placeholder="1~500" @input="limitInput" />
+                </div>
               </div>
-              <div class="flex justify-center gap-2 w-full">
-                <Button class="" @click="toggleSimulation">
-                  {{ autoGaming ? '终止模拟' : '开始模拟' }}
-                </Button>
-              </div>
+              <Button class="" @click="toggleSimulation">
+                {{ autoGaming ? '终止模拟' : '开始模拟' }}
+              </Button>
             </CardContent>
           </Card>
 
           <!-- 实验结果显示 -->
-          <Card class="flex-1">
+          <Card class="flex-1 ">
             <CardHeader class="p-4">
               <CardTitle>实验结果</CardTitle>
             </CardHeader>
             <CardContent class="flex items-center flex-col">
               <div class="grid grid-cols-2 gap-y-4 gap-x-10 justify-between">
-                <Label class="flex items-center flex-shrink-0">
+                <Label class="flex items-center flex-shrink-0 text-lg">
                   方法一实验频率： {{ longChordRatio ? `${(longChordRatio * 100).toFixed(2)}%` : '0.00%' }}
                 </Label>
-                <Label class="flex items-center flex-shrink-0">
+                <Label class="flex items-center flex-shrink-0 text-lg">
                   方法一理论频率： {{ (0.333).toFixed(3) }}
                 </Label>
-                <Label class="flex items-center flex-shrink-0">
+                <Label class="flex items-center flex-shrink-0 text-lg">
                   方法二实验频率： {{ longChordRatio2 ? `${(longChordRatio2 * 100).toFixed(2)}%` : '0.00%' }}
                 </Label>
-                <Label class="flex items-center flex-shrink-0">
+                <Label class="flex items-center flex-shrink-0 text-lg">
                   方法二理论频率： {{ (0.500).toFixed(3) }}
                 </Label>
-                <Label class="flex items-center flex-shrink-0">
+                <Label class="flex items-center flex-shrink-0 text-lg">
                   方法三实验频率：{{ longChordRatio3 ? `${(longChordRatio3 * 100).toFixed(2)}%` : '0.00%' }}
                 </Label>
-                <Label class="flex items-center flex-shrink-0">
+                <Label class="flex items-center flex-shrink-0 text-lg">
                   方法三理论频率： {{ (0.250).toFixed(3) }}
                 </Label>
               </div>
@@ -553,6 +568,15 @@ function toggleMethod(methodName: MethodName) {
   height: 200px;
 }
 
+/* .circle1 {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 100px;
+} */
+
 .circle-label {
   position: absolute;
   bottom: -20px;
@@ -574,10 +598,14 @@ function toggleMethod(methodName: MethodName) {
   background-color: #0056b3;
 }
 
-div, label {
+div,
+label {
   user-select: none;
-  -webkit-user-select: none; /* Safari */
-  -moz-user-select: none;    /* Firefox */
-  -ms-user-select: none;     /* IE/Edge */
+  -webkit-user-select: none;
+  /* Safari */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* IE/Edge */
 }
 </style>

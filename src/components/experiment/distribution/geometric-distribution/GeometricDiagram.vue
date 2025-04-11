@@ -45,24 +45,32 @@ function drawDistributions() {
     id: 'one',
     latex: `f_1(x) = ((1 - ${props.p}) ^ {x - 1}) ${props.p} \\{x >= 0\\}`,
     color: Desmos.Colors.BLUE,
+    pointSize: 12, // 设置点的大小
+    lineWidth: 4.5, // 设置线条宽度
   };
 
   const geometric2 = {
     id: 'two',
     latex: `f_2(x) = ((1 - ${props.p}) ^ {x}) ${props.p} \\{x >= 0\\}`,
     color: Desmos.Colors.BLUE,
+    pointSize: 12, // 设置点的大小
+    lineWidth: 4.5, // 设置线条宽度
   };
 
   const geometric3 = {
     id: 'three',
     latex: `f_3(x) = ((1 - ${props.p}) ^ {x}) \\{x >= 0\\}`,
     color: Desmos.Colors.BLUE,
+    pointSize: 12, // 设置点的大小
+    lineWidth: 4.5, // 设置线条宽度
   };
 
   const geometricN = {
     id: 'four',
     latex: `f_4(x) = ((1 - ${props.p}) ^ {x + ${props.n}}) \\{x >= 0\\}`,
     color: Desmos.Colors.BLUE,
+    pointSize: 12, // 设置点的大小
+    lineWidth: 4.5, // 设置线条宽度
   }
 
   const geometricX = {
@@ -70,6 +78,8 @@ function drawDistributions() {
     latex: `f_5(x) = (1 - ${props.p}) ^ {${props.n}} \\{${props.n} >= x >= 0\\}`,
     color: Desmos.Colors.RED,
     lineStyle: Desmos.Styles.DASHED,
+    pointSize: 12, // 设置点的大小
+    lineWidth: 4.5, // 设置线条宽度
   }
 
   if (props.isChart1) {
@@ -79,6 +89,8 @@ function drawDistributions() {
         id: `history_${idNumber}`,
         latex: `f(x) = ((1 - ${props.p}) ^ {x - 1}) ${props.p} \\{x >= 0\\}`,
         color: 'rgba(0, 0, 255, 0.2)',
+      
+        lineWidth: 4.5, // 设置线条宽度
       };
       historyExpressions.value.push(expression1);
     }

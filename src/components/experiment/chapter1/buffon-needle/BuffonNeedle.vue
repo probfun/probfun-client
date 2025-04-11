@@ -126,27 +126,28 @@ onMounted(() => {
             <!--              <CardTitle>参数面板</CardTitle> -->
             <!--              &lt;!&ndash;              <CardDescription>Deploy your new project in one-click.</CardDescription> &ndash;&gt; -->
             <!--            </CardHeader> -->
-            <CardContent class="grid gap-2 p-3">
+            <CardContent class="grid grid-cols-2 gap-2 p-3">
               <div class="flex items-center gap-2">
-                <Label for="needleLength" class="text-left flex-shrink-0 font-bold">针的长度</Label>
+                <Label for="needleLength" class="text-left flex-shrink-0 font-bold">针的长度(l) = </Label>
                 <Input
                   id="needleLength" v-model="needleLength" type="number" :min="20"
-                  :max="40" @input="run"
+                  :max="40" placeholder="20~40"@input="run"
                 />
               </div>
               <div class="flex items-center gap-2">
-                <Label for="floorLineSpacing" class="text-left flex-shrink-0 font-bold">线的间距</Label>
+                <Label for="floorLineSpacing" class="text-left flex-shrink-0 font-bold">线的间距(d) = </Label>
                 <Input
                   id="floorLineSpacing" v-model="floorLineSpacing" type="number"
-                  :min="20" :max="80" @input="run"
+                  :min="20" :max="80" placeholder="20~80"@input="run"
                 />
               </div>
               <div class="flex items-center gap-2">
-                <Label for="needleAmount" class="text-left flex-shrink-0 font-bold">抛针数量</Label>
+                <Label for="needleAmount" class="text-left flex-shrink-0 font-bold">抛针数量(N) = </Label>
                 <Input
                   id="needleAmount" v-model="needleAmount" type="number"
-                  :max="5000" @input="run"
+                  :max="5000" placeholder="1~5000" @input="run"
                 />
+                
               </div>
             </CardContent>
             <CardFooter class="flex justify-between gap-2 p-3 pt-0">

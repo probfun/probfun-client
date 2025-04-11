@@ -1,11 +1,11 @@
-import { reactive, ref } from 'vue';
+import { reactive, ref, toRef } from 'vue';
 
 const fCustom = ref<((x: number) => number) | null>(null);
 
-const args = reactive<Record<FunctionLabel, any>>({
+const args = reactive({
   uniform: {
-    a: 0,
-    b: 1,
+    a: ref(0),
+    b: ref(1),
   },
   normal: {
     mean: 0,
@@ -109,14 +109,14 @@ function pareto(x: number): number {
   return (alpha * xm ** alpha) / x ** (alpha + 1);
 }
 
-const functionList = {
+const functionList = reactive({
   uniform: {
     name: 'Uniform',
     f: uniform,
     chinese: '均匀分布',
-    latex: 'f(x) = \\begin{cases} 1, & 0 \\leq x \\leq 1 \\\\ 0, & \\text{其他} \\end{cases}',
-    left: 0,
-    right: 1,
+    latex: 'f(x) = \\begin{cases} \\frac{1}{b-a}, & a \\leq x \\leq b \\\\ 0, & \\text{其他} \\end{cases}',
+    left: toRef(args.uniform, 'a'),
+    right: toRef(args.uniform, 'b'),
   },
   normal: {
     name: 'Normal',
@@ -182,7 +182,7 @@ const functionList = {
     left: 0,
     right: 1,
   },
-};
+});
 
 type FunctionLabel = keyof typeof functionList;
 

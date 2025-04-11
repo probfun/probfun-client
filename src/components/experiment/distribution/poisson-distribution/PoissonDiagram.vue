@@ -20,6 +20,7 @@ onMounted(() => {
         lockViewport: false,
         projectorMode: false,
         language: 'zh-CN',
+        
     };
 
     calculator = Desmos.GraphingCalculator(elt.value, options);
@@ -38,7 +39,8 @@ const drawDistributions = () => {
         id: `points_${idNumber}`,
         latex: `(${points.join('), (')})`,
         color: Desmos.Colors.BLUE,
-        pointSize: 8 // 设置点的大小
+        pointSize: 12, // 设置点的大小
+        lineWidth: 4.5, // 设置线条宽度
     };
 
     // 辅助函数计算阶乘
@@ -49,7 +51,8 @@ const drawDistributions = () => {
     const poisson = {
         id: 'poisson',
         latex: `f(x) = \\frac{${props.lambda}^x e^{- ${props.lambda}}}{x!} \\{x >= 0\\}`,
-        color: Desmos.Colors.BLUE
+        color: Desmos.Colors.BLUE,
+        lineWidth: 4.5, // 设置线条宽度
     };
 
 

@@ -100,7 +100,7 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard>
+  <ExperimentBoard :panel-size="60">
     <template #experiment>
       <PoissonDiagram :lambda="lambda[0]" :save="save" />
     </template>
@@ -121,26 +121,30 @@ $$
             </CardTitle>
           </CardHeader>
           <CardContent class="flex-1 flex flex-col justify-center gap-5">
-            <div class="flex gap-4 pb-8">
-              <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                <div v-html="renderLatex('均值 \\(λ\\)')" />
-                <div class="max-w-xl space-y-3">
-                  <Input v-model="lambda[0]" :min-fraction-digits="1" />
-                  <Slider v-model="lambda" :min="0" :max="30" :step="0.1" />
-                </div>
-              </div>
-              <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                <div v-html="renderLatex('事件发生的实际次数\\(k\\)')" />
-                <div class="max-w-xl space-y-3">
-                  <Input v-model="an[0]" :min-fraction-digits="1" />
-                  <Slider v-model="an" :min="0" :max="4 * lambda[0]" :step="1" />
-                </div>
-              </div>
-            </div>
+ 
 
-            <div class="flex gap-2 items-center justify-center">
-              <Checkbox
-                id="terms" @update:checked="(checked: boolean) => {
+            <div class="flex  grid grid-cols-3">
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('均值 \\(λ\\) = ')" />
+                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
+                    <Input v-model="lambda[0]" :min-fraction-digits="1" placeholder="0~30"/>
+                    <Slider v-model="lambda" :min="0" :max="30" :step="0.1" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('事件发生的实际次数\\(k\\) = ')" />
+                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
+                    <Input v-model="an[0]" :min-fraction-digits="1" placeholder="最大值为均值的4倍"/>
+                    <Slider v-model="an" :min="0" :max="4 * lambda[0]" :step="1" />
+                  </div>
+                </div>
+              </div>
+              <div class="flex gap-2 items-center justify-center">
+                <Checkbox id="terms" @update:checked="(checked: boolean) => {
                   if (checked) {
                     saveImg();
                   }
@@ -148,10 +152,13 @@ $$
                     back();
                   }
                   console.log(checked)
-                }"
-              />
-              <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
+                }" />
+                <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
+              </div>
+
             </div>
+
+
           </CardContent>
         </Card>
       </div>

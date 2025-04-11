@@ -299,27 +299,21 @@ const discussTabList = [
 </script>
 
 <template>
-  <ExperimentBoard :layout="1" :panel-size="70" :discuss-tab-list="discussTabList">
+  <ExperimentBoard :layout="1" :panel-size="75" :discuss-tab-list="discussTabList">
     <template #experiment>
-      <ThreeNormalDiagram
-        :mean1="mean1" :mean2="mean2" :sigma1="sigma1" :sigma2="sigma2" :density="density"
-        :is-chart3="isChart3" :fixed-x="x" :fixed-y="y" class="w-full h-full"
-      />
+      <ThreeNormalDiagram :mean1="mean1" :mean2="mean2" :sigma1="sigma1" :sigma2="sigma2" :density="density"
+        :is-chart3="isChart3" :fixed-x="x" :fixed-y="y" class="w-full h-full" />
     </template>
     <template #parameter>
       <div class="w-full min-h-full flex flex-col items-center justify-center gap-3 p-6">
-        <RadioGroup
-          default-value="chart1"
-          class="gap-2 py-4"
-          @update:model-value="(value) => {
-            if (value === 'chart1') {
-              toggleChart1();
-            }
-            else {
-              toggleChart3();
-            }
-          }"
-        >
+        <RadioGroup default-value="chart1" class="gap-2 py-4" @update:model-value="(value) => {
+          if (value === 'chart1') {
+            toggleChart1();
+          }
+          else {
+            toggleChart3();
+          }
+        }">
           <div class="flex items-center space-x-2">
             <RadioGroupItem id="option-one" value="chart1" />
             <Label for="option-one" class="text-lg"> 联合与边缘分布 </Label>
@@ -334,7 +328,11 @@ const discussTabList = [
             <div class="flex w-4/5 flex-1 items-center justify-center space-y-1 gap-3">
               <div class="mb-3" v-html="toMarkdown('$$μ_x=$$')" />
               <div class="max-w-lg space-y-3">
-                <Input v-model="mean1" class="border-2" />
+                <Input v-model="mean1" class="border-2" placeholder="-10~10" @update:model-value="v => {
+                  const numValue = Number(v);
+                  if (numValue < -10) mean1 = -10;
+                  else if (numValue > 10) mean1 = 10;
+                }" />
                 <Slider v-model="mean1" :min="-10" :max="10" :step="0.1" class="w-full" />
               </div>
             </div>
@@ -343,7 +341,11 @@ const discussTabList = [
             <div class="flex w-4/5 flex-1 items-center justify-center space-y-1 gap-3">
               <div class="mb-3" v-html="toMarkdown('$$μ_y=$$')" />
               <div class="max-w-lg space-y-3">
-                <Input v-model="mean2" class="border-2" />
+                <Input v-model="mean2" class="border-2" placeholder="-10~10" @update:model-value="v => {
+                  const numValue = Number(v);
+                  if (numValue < -10) mean2 = -10;
+                  else if (numValue > 10) mean2 = 10;
+                }" />
                 <Slider v-model="mean2" :min="-10" :max="10" :step="0.1" class="w-full" />
               </div>
             </div>
@@ -353,7 +355,11 @@ const discussTabList = [
               <div class="mb-3" v-html="toMarkdown('$$σ_x=$$')" />
 
               <div class="max-w-lg space-y-3">
-                <Input v-model="sigma1" class="border-2" />
+                <Input v-model="sigma1" class="border-2" placeholder="0.1~2" @update:model-value="v => {
+                  const numValue = Number(v);
+                  if (numValue < 0.1) sigma1 = 0.1;
+                  else if (numValue > 2) sigma1 = 2;
+                }" />
                 <Slider v-model="sigma1" :min="0.1" :max="2" :step="0.1" class="w-full" />
               </div>
             </div>
@@ -363,7 +369,11 @@ const discussTabList = [
               <div class="mb-3" v-html="toMarkdown('$$σ_y=$$')" />
 
               <div class="max-w-lg space-y-3">
-                <Input v-model="sigma2" class="border-2" />
+                <Input v-model="sigma2" class="border-2" placeholder="0.1~2" @update:model-value="v => {
+                  const numValue = Number(v);
+                  if (numValue < 0.1) sigma2 = 0.1;
+                  else if (numValue > 2) sigma2 = 2;
+                }" />
                 <Slider v-model="sigma2" :min="0.1" :max="2" :step="0.1" class="w-full" />
               </div>
             </div>
@@ -373,27 +383,39 @@ const discussTabList = [
               <div class="mb-3" v-html="toMarkdown('$$ρ=$$')" />
 
               <div class="max-w-lg space-y-3">
-                <Input v-model="density" class="border-2" />
+                <Input v-model="density" class="border-2" placeholder="-0.9~0.9" @update:model-value="v => {
+                  const numValue = Number(v);
+                  if (numValue < -0.9) density = -0.9;
+                  else if (numValue > 0.9) density = 0.9;
+                }" />
                 <Slider v-model="density" :min="-0.9" :max="0.9" :step="0.1" class="w-full" />
               </div>
             </div>
           </div>
 
-          <div v-if="isChart3" class="flex flex-col gap-8 pb-0">
-            <div class="flex w-4/5 flex-1 items-center justify-center space-y-1 gap-3">
-              <div class="mb-3" v-html="toMarkdown('$$y=$$')" />
+          <div v-if="isChart3" class="flex flex-col gap-8 pb-0 ">
+            <div class="flex w-4/5 ml-5 flex-1 items-center justify-center space-y-1 gap-3">
+              <div class="mb-3 " v-html="toMarkdown('$$y=$$')" />
 
               <div class="max-w-lg space-y-3">
-                <Input v-model="y" class="border-2" />
+                <Input v-model="y" class="border-2" placeholder="-10~10" @update:model-value="v => {
+                  const numValue = Number(v);
+                  if (numValue < -10) y = -10;
+                  else if (numValue > 10) y = 10;
+                }" />
                 <Slider v-model="y" :min="-10" :max="10" :step="1" class="w-full" />
               </div>
             </div>
           </div>
           <div v-if="isChart3" class="flex flex-col gap-8 pb-0">
-            <div class="flex w-4/5 flex-1 items-center justify-center space-y-1 gap-3">
-              <div class="mb-3" v-html="toMarkdown('$$x=$$')" />
+            <div class="flex w-4/5 ml-5 flex-1 items-center justify-center space-y-1 gap-3">
+              <div class="mb-3  " v-html="toMarkdown('$$x=$$')" />
               <div class="max-w-lg space-y-3">
-                <Input v-model="x" />
+                <Input v-model="x" placeholder="-10~10" @update:model-value="v => {
+                  const numValue = Number(v);
+                  if (numValue < -10) x = -10;
+                  else if (numValue > 10) x = 10;
+                }" />
                 <Slider v-model="x" :min="-10" :max="10" :step="1" class="w-full" />
               </div>
             </div>

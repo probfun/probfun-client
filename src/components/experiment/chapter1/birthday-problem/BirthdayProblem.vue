@@ -444,18 +444,14 @@ watch(bornProb, () => {
   <ExperimentBoard title="生日问题" :tags="['蒙特卡洛方法', '排列组合', '互补事件的概率', '大数定律', '均匀分布']">
     <template #experiment>
       <div v-if="!isSimulating" class="p-5 flex flex-col overflow-hidden h-full w-full">
-        <div
-          class="grid gap-3 overflow-y-auto py-3" :style="{
-            gridTemplateColumns: 'repeat(auto-fill, minmax(65px, 1fr))',
-            gridAutoRows: '1fr',
-          }"
-        >
+        <div class="grid gap-3 overflow-y-auto py-3" :style="{
+          gridTemplateColumns: 'repeat(auto-fill, minmax(65px, 1fr))',
+          gridAutoRows: '1fr',
+        }">
           <div v-for="person in people" :key="person.id" class="flex flex-col items-center justify-center">
-            <Button
-              class="size-10 rounded-full"
+            <Button class="size-10 rounded-full"
               :class="person.birthday === selectedBirthday ? 'bg-green-500 hover:bg-green-500' : 'bg-primary'"
-              @click="selectBirthday(person.birthday)"
-            >
+              @click="selectBirthday(person.birthday)">
               {{ person.id + 1 }}
             </Button>
             <Label class="mt-2">{{ convertDayOfYearToDate(person.birthday) }}</Label>
@@ -489,33 +485,44 @@ watch(bornProb, () => {
       <div class="w-full h-full flex justify-around gap-3 p-3">
         <!--        <div class="flex flex-col justify-around gap-3 items-center w-full h-full max-w-lg"> -->
         <Card class="w-1/3 flex flex-col">
-          <CardHeader class="p-4">
-            <CardTitle>
-              参数调整
-            </CardTitle>
-          </CardHeader>
-          <CardContent class="p-4 flex flex-col gap-8 justify-center items-center flex-1">
+
+          <CardContent class=" flex flex-col gap-8 justify-center items-center flex-1">
             <div class="w-full flex flex-col items-center justify-center gap-4">
-              <div class="flex flex-col w-full gap-2">
-                <Label for="people" class="flex-shrink-0 font-bold text-left">人数 N：</Label>
-                <Input
-                  id="people" v-model.number="peopleCount" type="number" :min="1" :max="100"
-                  :disabled="isSimulating"
-                />
+              <div class="flex flex-col gap-2 grow w-full">
+                <Label class="flex-shrink-0 font-bold text-lg"> 探究实验： </Label>
+                <Select v-model="expType" :disabled="isSimulating" class="custom-select">
+                  <SelectTrigger class="custom-select-trigger">
+                    <SelectValue placeholder="Select a fruit" class="custom-select-value" />
+                  </SelectTrigger>
+                  <SelectContent class="custom-select-content">
+                    <SelectGroup>
+                      <SelectItem value="0" class="custom-select-item">
+                        不同人数下至少有两人同天生日的概率
+                      </SelectItem>
+                      <SelectItem value="1" class="custom-select-item">
+                        有两人同生日的概率超过 p% 的最小人数
+                      </SelectItem>
+                      <SelectItem value="2" class="custom-select-item">
+                        至少有 n 人生日相同的概率
+                      </SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </div>
-              <div class="flex w-full gap-4 items-center justify-center">
-                <Button class="w-1/3 items-center justify-center " :disabled="isSimulating" @click="generatePeople(peopleCount)">
-                  生成
-                </Button>
+
+              <div class="flex flex-1 h-full gap-2 mt-8 justify-center items-center">
+                <Label for="people" class="flex-shrink-0 font-bold text-left">人数(N) = </Label>
+                <Input id="people" v-model.number="peopleCount" type="number" :min="2" :max="300" placeholder="2~300"
+                  :disabled="isSimulating" />
                 <Dialog>
-                  <DialogTrigger class = "w-fu">
+                  <DialogTrigger class="w-full">
                     <Button :disabled="isSimulating" class="flex-1 max-w-full" @click="visible = !visible">
                       设置出生概率
                     </Button>
                   </DialogTrigger>
                   <DialogContent>
-                    <DialogHeader >
-                      <DialogTitle class = "w-1/2  w-full items-center justify-center">设置出生概率</DialogTitle>
+                    <DialogHeader>
+                      <DialogTitle class="w-1/2  w-full items-center justify-center">设置出生概率</DialogTitle>
                       <DialogDescription>
                         默认每个月的出生概率相等，你可以对其进行修改。
                       </DialogDescription>
@@ -545,9 +552,18 @@ watch(bornProb, () => {
                   </DialogContent>
                 </Dialog>
               </div>
+              <div class="flex w-full gap-4 mt-8 items-center justify-center">
+                <Button class="w-1/2 items-center justify-center " :disabled="isSimulating"
+                  @click="generatePeople(peopleCount)">
+                  随机生成生日
+                </Button>
+                <Button class="w-1/2" @click="isSimulating ? stopSimulate() : startSimulate()">
+                  {{ isSimulating ? '停止模拟' : '开始模拟探究实验' }}
+                </Button>
+              </div>
             </div>
             <div class="flex items-center flex-col gap-4 w-full">
-              <div class="flex flex-col gap-2 grow">
+              <!-- <div class="flex flex-col gap-2 grow">
                 <Label class="flex-shrink-0 font-bold"> 探究实验： </Label>
                 <Select v-model="expType" :disabled="isSimulating">
                   <SelectTrigger>
@@ -567,10 +583,8 @@ watch(bornProb, () => {
                     </SelectGroup>
                   </SelectContent>
                 </Select>
-              </div>
-              <Button class="w-full" @click="isSimulating ? stopSimulate() : startSimulate()">
-                {{ isSimulating ? '停止模拟' : '开始模拟' }}
-              </Button>
+              </div> -->
+
             </div>
           </CardContent>
         </Card>
@@ -581,18 +595,12 @@ watch(bornProb, () => {
             </CardTitle>
           </CardHeader>
           <CardContent class="p-2 flex flex-col items-center flex-1">
-            <chart
-              v-if="expType === '0'" class="w-full h-full" type="bar" :data="sameDayChartData"
-              :options="chartOptions"
-            />
-            <chart
-              v-else-if="expType === '1'" class="w-full h-full" type="line" :data="pSameDayChartData"
-              :options="chartOptions"
-            />
-            <chart
-              v-else-if="expType === '2'" class="w-full h-full" type="line" :data="nSameDayChartData"
-              :options="chartOptions"
-            />
+            <chart v-if="expType === '0'" class="w-full h-full" type="bar" :data="sameDayChartData"
+              :options="chartOptions" />
+            <chart v-else-if="expType === '1'" class="w-full h-full" type="line" :data="pSameDayChartData"
+              :options="chartOptions" />
+            <chart v-else-if="expType === '2'" class="w-full h-full" type="line" :data="nSameDayChartData"
+              :options="chartOptions" />
             <Button class="mt-3" :disabled="isSimulating" @click="resetData">
               重置数据
             </Button>
@@ -613,10 +621,25 @@ watch(bornProb, () => {
   </ExperimentBoard>
 </template>
 
-<style scoped>div, label {
+<style scoped>
+div,
+label {
   user-select: none;
-  -webkit-user-select: none; /* Safari */
-  -moz-user-select: none;    /* Firefox */
-  -ms-user-select: none;     /* IE/Edge */
+  -webkit-user-select: none;
+  /* Safari */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* IE/Edge */
+}
+.custom-select-trigger {
+  /* 加大和加粗触发器的字体 */
+  font-size: 1em; /* 加大字号 */
+  font-weight: bold; /* 加粗字体 */
+}
+.custom-select-item {
+  /* 加大和加粗选项的字体 */
+  font-size: 1em; /* 加大字号 */
+  font-weight: semi-bold; /* 加粗字体 */
 }
 </style>

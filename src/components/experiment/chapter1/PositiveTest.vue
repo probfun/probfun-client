@@ -33,20 +33,20 @@ const md = new MarkdownIt()
 
 // 示例 Markdown 内容
 const markdownContent = ref(`
-特异度 = \\frac{真实阳性}{(真实阴性 + 假阳性)}
+特异度(a) = \\frac{真实阳性}{(真实阴性 + 假阳性)}
 `);
 
 const markdownContent0 = ref(`
-灵敏度 = \\frac{真实阴性}{(真实阳性 + 假阴性)}
+灵敏度(b) = \\frac{真实阴性}{(真实阳性 + 假阴性)}
 `);
 
 const markdownContent1 = ref(`
-感染率 = \\frac{感染人数}{总人数}
+感染率(c) = \\frac{感染人数}{总人数}
 
 `);
 
 const markdownContent2 = ref(`
-总人数
+总人数(d)
 `);
 
 const katexFormula = computed(() => `
@@ -56,6 +56,7 @@ const katexFormula = computed(() => `
       &= \\frac{感染者中显示为阳性的人数}{感染者中显示为阳性的人数 +检测为阴性的人中的感染人数} \\\\
       &= \\frac{灵敏度 × 真阳性人数}{灵敏度 × 真阳性人数 +  (1 - 特异度) ×未感染新冠的人数} \\\\
       &= \\frac{\\frac{真实阳性}{真实阳性＋假阴性} × 真阳性人数}{\\frac{真阳性}{真阳性＋假阴性} × 真阳性人数 +  (1 - \\frac{真阴性}{真阴性+假阳性}) × 未感染人数} \\\\
+      &= \\frac{b × m}{b × m + n × (1 - a)}\\\\
       &= \\frac{${sensitivity.value[0]} × ${infectionRate.value[0]}}{${sensitivity.value[0]} × ${infectionRate.value[0]} + (1 - ${infectionRate.value[0]}) × (1 - ${specificity.value[0]})} \\\\
       &= ${truePositiveRate.value.toFixed(3)}
   \\end{aligned}
@@ -312,12 +313,12 @@ $$
               <div class="flex space-x-10 justify-center items-center">
                 <div class="flex flex-col  space-x-5 flex-1 items-center space-y-3">
                   <div ref="mdContainer" class="markdown-body" v-html="renderedMarkdown" />
-                  <Input v-model="specificity[0]" type="number" :min="2" />
+                  <Input v-model="specificity[0]" type="number" :min="0.1" :max="1.0" :step="0.01" placeholder="0.1~1.0" />
                   <Slider v-model="specificity" :min="0.1" :max="1.0" :step="0.01" class="w-full" />
                 </div>
                 <div class="flex flex-col flex-1 items-center space-y-3">
                   <div ref="mdContainer0" class="markdown-body" v-html="renderedMarkdown" />
-                  <Input v-model="sensitivity[0]" type="number" :min="2" />
+                  <Input v-model="sensitivity[0]" type="number" :min="2" placeholder="0.1~1.0"/>
                   <Slider v-model="sensitivity" :min="0.1" :max="1.0" :step="0.01" class="w-full" />
                 </div>
               </div>
@@ -326,12 +327,12 @@ $$
               <div class="flex space-x-10 justify-center items-center">
                 <div class="flex flex-col flex-1 items-center space-y-3">
                   <div ref="mdContainer1" class="markdown-body" v-html="renderedMarkdown" />
-                  <Input v-model="infectionRate[0]" type="number" :min="2" />
+                  <Input v-model="infectionRate[0]" type="number" :min="2" placeholder="0~1.0"/>
                   <Slider v-model="infectionRate" :min="0.0" :max="1.0" :step="0.001" class="w-full" />
                 </div>
                 <div class="flex flex-col flex-1 items-center space-y-3">
                   <div ref="mdContainer2" class="markdown-body" v-html="renderedMarkdown" />
-                  <Input v-model="population[0]" type="number" />
+                  <Input v-model="population[0]" type="number" placeholder="1000~1000000"/>
                   <Slider v-model="population" :min="1000" :max="1000000" :step="1000" class="w-full" />
                 </div>
               </div>
@@ -396,15 +397,11 @@ $$
   /* 设置较大的行间距 */
 }
 
-/* 使用 Tailwind CSS 自定义样式 */
-.markdown-body {
-  @apply p-4 rounded shadow;
-  /* Tailwind CSS 样式 */
-}
+
 
 .custom-font {
   font-family: '你的字体名称', SimHei; /* 替换为你想要的字体 */
-  font-size: 16px; /* 可以根据需要调整 */
+  font-size: 14px; /* 可以根据需要调整 */
 }
 
 div, label {

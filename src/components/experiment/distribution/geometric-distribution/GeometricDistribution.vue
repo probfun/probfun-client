@@ -180,12 +180,10 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard>
+  <ExperimentBoard :panel-size="60">
     <template #experiment>
-      <GeometricDiagram
-        :p="probability[0]" :n="fixedN[0]" :is-chart1="isChart1" :is-chart2="isChart2"
-        :is-chart3="isChart3" :save="save"
-      />
+      <GeometricDiagram :p="probability[0]" :n="fixedN[0]" :is-chart1="isChart1" :is-chart2="isChart2"
+        :is-chart3="isChart3" :save="save" />
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center gap-3 p-3">
@@ -200,12 +198,13 @@ $$
           </CardContent>
         </Card>
         <Card class="w-full flex-1 flex flex-col">
-          <CardHeader>
+          <CardHeader class="pb-0">
             <CardTitle>
               参数调整
             </CardTitle>
           </CardHeader>
-          <CardContent class="flex-1 flex flex-col justify-center items-center gap-3">
+          <CardContent class="flex-1  flex flex-col justify-center items-center gap-3">
+
             <div class="dropdown ">
               <Button tabindex="0" role="button" class="m-1">
                 点我切换
@@ -222,43 +221,53 @@ $$
                 </li>
               </ul>
             </div>
-            <div class="flex gap-4 pb-1 w-full">
-              <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                <div v-html="renderLatex('成功概率\\(p\\)')" />
 
-                <div class="max-w-xl space-y-3">
-                  <Input v-model="probability[0]" type="number" />
-                  <Slider v-model="probability" :min="0" :max="0.95" :step="0.05" />
+            <div class="grid grid-cols-3">
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('成功概率\\(p\\) = ')" />
+                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
+                    <Input v-model="probability[0]" type="number" placeholder="0~1"/>
+                    <Slider v-model="probability" :min="0" :max="0.95" :step="0.05" />
+                  </div>
                 </div>
               </div>
-              <div class="flex flex-col flex-1 items-center justify-center space-y-5">
-                <div v-html="renderLatex('成功前的尝试次数（包含）\\( k \\)')" />
-                <div class="max-w-xl space-y-3">
-                  <Input v-model="numberk[0]" type="number" />
-                  <Slider v-model="numberk" :min="1" :max="60" :step="1" />
+
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('成功前的尝试次数\\( k \\) = ')" />
+                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
+                    <Input v-model="numberk[0]" type="number" placeholder="1~60"/>
+                    <Slider v-model="numberk" :min="1" :max="60" :step="1" />
+                  </div>
                 </div>
               </div>
+
+
+
               <div v-if="isChart3" class="flex flex-col flex-1 items-center justify-center space-y-5">
-                <div v-html="renderLatex('固定实验次数')" />
-                <div class="max-w-xl space-y-3">
-                  <Input v-model="fixedN[0]" type="number" />
-                  <Slider v-model="fixedN" :min="0" :max="9" :step="1" />
+                <div class="flex flex-1 items-center justify-center font-bold">
+                  <div class="mr-4" v-html="renderLatex('固定实验次数 = ')" />
+                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
+                    <Input v-model="fixedN[0]" type="number" placeholder="0~9"/>
+                    <Slider v-model="fixedN" :min="0" :max="9" :step="1" />
+                  </div>
                 </div>
               </div>
-            </div>
-            <div v-if="isChart1" class="flex gap-2 items-center justify-center">
-              <Checkbox
-                id="terms" @update:checked="(checked: boolean) => {
-                  if (checked) {
-                    saveImg();
-                  }
-                  else {
-                    back();
-                  }
-                  console.log(checked)
-                }"
-              />
-              <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
+              <div v-if="isChart1" class="flex gap-2 items-center justify-center">
+                <Checkbox
+                  id="terms" @update:checked="(checked: boolean) => {
+                    if (checked) {
+                      saveImg();
+                    }
+                    else {
+                      back();
+                    }
+                    console.log(checked)
+                  }"
+                />
+                <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
+              </div>
             </div>
           </CardContent>
         </Card>

@@ -7,6 +7,7 @@ import { ref } from 'vue';
 
 export const useUserStore = defineStore('userStore', () => {
   const user = ref<User | null>(null);
+  const visitorId = ref<string | null>(null);
   const favoriteExperiments = ref<Experiment[]>([]);
   function isFavorite(expId: string): boolean {
     return favoriteExperiments.value.some(exp => exp.expId === expId);
@@ -15,6 +16,7 @@ export const useUserStore = defineStore('userStore', () => {
     user,
     favoriteExperiments,
     isFavorite,
+    visitorId,
   }
 }, {
   persist: true,

@@ -10,6 +10,7 @@ const props = withDefaults(defineProps<{
   transformedVarianceY?: number
   showHistory?: boolean
   lineShow?: boolean
+
 }>(), {
   mean: 0,
   stdDev: 1,
@@ -17,6 +18,7 @@ const props = withDefaults(defineProps<{
   transformedVarianceY: 1,
   showHistory: false,
   lineShow: false,
+
 });
 const uid = uuidv4();
 declare const Desmos: any;
@@ -33,7 +35,7 @@ onMounted(() => {
     // settingsMenu: false,       // 隐藏设置菜单
     // zoomButtons: false,        // 隐藏缩放按钮
     // border: true,              // 显示边框
-    // trace: false,              // 禁用追踪功能
+    trace: false, // 禁用追踪功能
     expressionsCollapsed: false, // 不折叠表达式列表
     lockViewport: false, // 允许缩放和拖动
     projectorMode: false, // 禁用投影模式
@@ -54,8 +56,29 @@ onMounted(() => {
 function drawNormalDistribution() {
   if (!calculator)
     return;
+
   const normalDistribution = `f(x) = \\frac{1}{${props.stdDev}\\sqrt{2\\pi}}e^{-\\frac{(x-${props.mean})^2}{2*${props.stdDev}^2}}`;
   const normalDistributionY = `g(x) = \\frac{1}{${props.transformedVarianceY}\\sqrt{2\\pi}}e^{-\\frac{(x-${props.transformedMeanY})^2}{2*${props.transformedVarianceY}^2}}`; // 新的正态分布
+
+  // 设置初始正态分布曲线的样式
+  const initialExpression = {
+    id: 'normal_distribution',
+    latex: normalDistribution,
+    label: 'f(x)',
+    showLabel: true,
+    color: Desmos.Colors.BLUE, // 设置颜色
+    lineWidth: 4.5, // 设置线条宽度为 4.5，加粗效果
+  };
+
+  // 设置第二个正态分布曲线的样式
+  const initialExpressionY = {
+    id: 'normal_distribution_y',
+    latex: normalDistributionY,
+    label: 'f(y)',
+    showLabel: true,
+    color: Desmos.Colors.GREEN, // 设置颜色
+    lineWidth: 4.5, // 设置线条宽度为 4.5，加粗效果
+  };
 
   if (props.showHistory) {
     idNumber = idNumber + 2;
@@ -63,6 +86,8 @@ function drawNormalDistribution() {
       id: `history_${idNumber}`,
       latex: `f(x) = \\frac{1}{${props.stdDev}\\sqrt{2\\pi}}e^{-\\frac{(x-${props.mean})^2}{2*${props.stdDev}^2}}`,
       color: 'rgba(0, 0, 255, 0.2)',
+      pointSize: 12, // 设置点的大小
+      lineWidth: 4.5, // 设置线条宽度
     };
     historyExpressions.value.push(expression1);
     if (props.lineShow) {
@@ -70,12 +95,15 @@ function drawNormalDistribution() {
         id: `history_${idNumber + 1}`,
         latex: `g(x) = \\frac{1}{${props.transformedVarianceY}\\sqrt{2\\pi}}e^{-\\frac{(x-${props.transformedMeanY})^2}{2*${props.transformedVarianceY}^2}}`,
         color: 'rgba(0, 255, 0, 0.2)',
+        pointSize: 12, // 设置点的大小
+        lineWidth: 4.5, // 设置线条宽度
       };
       historyExpressions.value.push(expression2);
     }
   }
-  calculator.setExpression({ id: 'normal_distribution', latex: normalDistribution, label: 'f(x)', showLabel: true });
-  calculator.setExpression({ id: 'normal_distribution_y', latex: normalDistributionY, label: 'f(y)', showLabel: true }); // 绘制第二条线
+
+  calculator.setExpression(initialExpression);
+  calculator.setExpression(initialExpressionY);
 
   if (props.showHistory) {
     historyExpressions.value.forEach((expression) => {
@@ -90,12 +118,12 @@ function drawNormalDistribution() {
     historyExpressions.value = [];
   }
 
-  // calculator.setMathBounds({
-  //   left: props.mean - 4 * props.stdDev,
-  //   right: props.mean + 4 * props.stdDev,
-  //   bottom: -0.1,
-  //   top: 1 / (props.stdDev * Math.sqrt(2 * Math.PI)),
-  // });
+  calculator.setMathBounds({
+    left: props.mean - 4 * props.stdDev,
+    right: props.mean + 4 * props.stdDev,
+    bottom: -0.1,
+    top: 1 / (props.stdDev * Math.sqrt(2 * Math.PI)),
+  });
 }
 
 // 监听 props 的变化以动态更新图像

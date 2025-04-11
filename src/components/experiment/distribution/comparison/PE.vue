@@ -263,7 +263,7 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard title="泊松分布与指数分布" :tags="[]">
+  <ExperimentBoard title="泊松分布与指数分布" :tags="[]" :panel-size="70">
     <template #experiment>
       <div class="w-full flex h-full gap-2 p-2">
         <div class="w-1/2">
@@ -302,31 +302,44 @@ $$
 
     <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center p-3 gap-3">
-        <Card class="w-full h-1/2 flex gap-3">
-          <Card class="w-1/2 gap-3 ">
+        <Card class="w-full h-full flex gap-3">
+          <Card class="w-1/3 gap-3 ">
             <CardHeader>
               <CardTitle>泊松分布</CardTitle>
             </CardHeader>
-            <CardContent class="flex w-full items-center justify-center flex-col gap-5">
+            <CardContent class="flex w-full font-bold items-center justify-center flex-col gap-5">
               <div ref="poissonContainer" class="text-base" />
               <div v-if="exponential">
                 平均等车时间{{ time[0] }}分钟
               </div>
             </CardContent>
           </Card>
-          <Card class="w-1/2 gap-3 ">
+          <Card class="w-1/3 gap-3 ">
             <CardHeader>
               <CardTitle>指数分布</CardTitle>
             </CardHeader>
-            <CardContent class="flex w-full items-center justify-center flex-col gap-5">
+            <CardContent class="flex w-full font-bold items-center justify-center flex-col gap-5">
               <div ref="exponentialContainer" class="text-base" />
               <div>
                 平均每小时到达{{ lambda }}辆车
               </div>
             </CardContent>
           </Card>
+          <Card class="w-1/3 gap-3 ">
+            <CardContent class="flex w-full items-center justify-center flex-col gap-5">
+              <div class="flex gap-4 pb-8">
+                <div class="flex mt-16 flex-1 items-center justify-center space-x-2  font-bold">
+                  <div v-html="renderLatex('公交车的发车间隔(\\(min\\)) = ')" />
+                  <!-- <div class="max-w-xl space-y-3"> -->
+                  <Input class="w-1/3" v-model="time[0]" type="number" :min="1" :max="30" placeholder="1~30" />
+                  <!-- <Slider v-model="time" :min="5" :max="30" :step="5" class="w-48" /> -->
+                  <!-- </div> -->
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </Card>
-        <Card class="w-full  flex-1 flex flex-col">
+        <!-- <Card class="w-full  flex-1 flex flex-col">
           <CardHeader>
             <CardTitle>
               参数调整
@@ -344,7 +357,7 @@ $$
               </div>
             </div>
           </CardContent>
-        </Card>
+        </Card> -->
       </div>
     </template>
 

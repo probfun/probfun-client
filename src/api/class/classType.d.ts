@@ -1,11 +1,17 @@
 import type { UserPublic } from '@/api/user/userType';
 import { Experiment } from '@/api/experiment/experimentType';
+import exp from 'constants';
 
 export interface Post {
   title: string
   content: string
   timestamp: string
   user: UserPublic
+}
+
+export interface Class {
+  classId: string
+  className: string
 }
 
 export interface ClickCount {

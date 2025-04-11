@@ -127,7 +127,7 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard>
+  <ExperimentBoard :panel-size="50">
     <template #experiment>
       <UniformDiagram class="flex-1 h-full" :a="a[0]" :b="b[0]" :k="k[0]" :m="m[0]" :show-history="save" />
       <Chart v-if="!save" type="line" :data="UniformDiagram" class="flex-1 h-full w-full" />
@@ -181,8 +181,8 @@ $$
     </template> -->
 
     <template #parameter>
-      <div class="w-full h-full flex flex-row justify-center p-3 gap-3">
-        <Card class="w-3/5 h-full card">
+      <div class="w-full h-full flex flex-col justify-center p-3 gap-3">
+        <!-- <Card class="w-3/5 h-full card flex flex-1">
           <CardHeader class="pb-5">
             <CardTitle>均匀分布概率密度函数</CardTitle>
           </CardHeader>
@@ -199,61 +199,97 @@ $$
           <CardContent class="w-full flex flex-col items-start gap-10 ">
             <div ref="twoContainer" class="text-sm" />
           </CardContent>
+        </Card> -->
+
+        <Card class="w-full h-full card flex flex-1">
+          <div class="flex flex-col w-full h-full">
+            <div class="flex items-start gap-5">
+              <!-- 第一个 CardHeader -->
+              <div class="flex-1">
+                <CardHeader class="pb-5">
+                  <CardTitle>均匀分布概率密度函数</CardTitle>
+                </CardHeader>
+                <CardContent class="w-full flex flex-col items-start">
+                  <div ref="oneContainer" class="text-sm" />
+                </CardContent>
+              </div>
+
+              <!-- 第二个 CardHeader -->
+              <div class="flex-1">
+                <CardHeader class="pb-5">
+                  <CardTitle class="flex items-center gap-1">
+                    函数
+                    <div v-html="toMarkdown('$$Y=KX+M\\ (K \\ge 0)$$')" />
+                    的概率密度函数
+                  </CardTitle>
+                </CardHeader>
+                <CardContent class="w-full flex flex-col items-start gap-10">
+                  <div ref="twoContainer" class="text-sm" />
+                </CardContent>
+              </div>
+            </div>
+          </div>
         </Card>
-        <Card class="w-2/5 h-full card flex-1 flex flex-col">
+        <Card class="w-full h-full card flex-1 flex flex-col">
           <CardHeader>
             <CardTitle>
               参数调整
             </CardTitle>
           </CardHeader>
           <CardContent class="flex flex-col items-center justify-center gap-5">
-            <div class="grid grid-cols-2 gap-10 ">
-              <div class="flex flex-col  gap-8 pb-5">
-                <div class="flex flex-col  md:w-full w-1/2 flex-1 items-center justify-center space-y-5">
-                  <div v-html="renderLatex('左边界\\(a\\)')" />
-                  <div class="max-w-xl space-y-3">
-                    <Input v-model="a[0]" :invalid="a > b" :min-fraction-digits="1" fluid />
-                    <Slider v-model="a" :min="-10" :max="9.9" :step="0.1" class="w-full" />
+            <div class="grid grid-cols-5 gap-10 ">
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('左边界\\(a\\) = ')" />
+                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
+                    <Input v-model="a[0]" :invalid="a > b" :min-fraction-digits="1" fluid placeholder="-10~10"/>
+                      <Slider v-model="a" :min="-10" :max="9.9" :step="0.1" class="w-full" />
                   </div>
                 </div>
-                <div class="flex flex-col  md:w-full w-1/2 flex-1 items-center justify-center space-y-5">
-                  <div v-html="renderLatex('右边界\\(b\\)')" />
-                  <div class="max-w-xl space-y-3">
-                    <Input v-model.number="b[0]" :min-fraction-digits="1" fluid />
+              </div>
+
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('右边界\\(b\\) = ')" />
+                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
+                    <Input v-model.number="b[0]" :min-fraction-digits="1" fluid placeholder="a~10"/>
                     <Slider v-model="b" :min="a[0] + 0.1" :max="10" :step="0.1" class="w-full" />
                   </div>
                 </div>
               </div>
-              <div class="flex flex-col gap-8 pb-5">
-                <div class="flex flex-col  md:w-full w-1/2 flex-1 items-center justify-center space-y-5">
-                  <div v-html="renderLatex('\\(K\\)')" />
-                  <div class="max-w-xl space-y-3">
-                    <Input v-model.number="k[0]" :min-fraction-digits="1" fluid />
+
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('\\(K\\) = ')" />
+                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
+                    <Input v-model.number="k[0]" :min-fraction-digits="1" fluid placeholder="0~10"/>
                     <Slider v-model="k" :min="0.1" :max="10" :step="0.1" class="w-full" />
                   </div>
                 </div>
-                <div class="flex flex-col  md:w-full w-1/2 flex-1 items-center justify-center space-y-5">
-                  <div v-html="renderLatex('\\(M\\)')" />                  <div class="max-w-xl space-y-3">
-                    <Input v-model.number="m[0]" :min-fraction-digits="1" fluid />
+              </div>
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="mr-4" v-html="renderLatex('\\(M\\) = ')" />
+                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
+                    <Input v-model.number="m[0]" :min-fraction-digits="1" fluid placeholder="0~10"/>
                     <Slider v-model="m" :min="0" :max="10" :step="0.1" class="w-full" />
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div class="flex gap-2 items-center justify-center">
-              <Checkbox
-                id="terms" @update:checked="(checked: boolean) => {
-                  if (checked) {
-                    saveImg();
-                  }
-                  else {
-                    back();
-                  }
-                  console.log(checked)
-                }"
-              />
-              <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
+              <div class="flex gap-2 items-center justify-center">
+                <Checkbox
+                  id="terms" @update:checked="(checked: boolean) => {
+                    if (checked) {
+                      saveImg();
+                    }
+                    else {
+                      back();
+                    }
+                    console.log(checked)
+                  }"
+                />
+                <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
+              </div>
             </div>
           </CardContent>
         </Card>

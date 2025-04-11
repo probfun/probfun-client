@@ -27,9 +27,9 @@ const searchQuery = ref('');
 const configStore = useConfigStore();
 
 const customViewport = {
-  x: -2300, // 初始 X 坐标
+  x: -1500, // 初始 X 坐标
   y: -300, // 初始 Y 坐标
-  zoom: 0.95, // 初始缩放比例
+  zoom: 0.65, // 初始缩放比例
 };
 
 function moveToNode(nodeId: string) {
@@ -155,7 +155,7 @@ const collapse = ref(false);
         </div>
         <div class="flex gap-3 p-3 flex-col flex-1 overflow-y-auto">
           <Button
-            v-for="distribution in searchNodes" :key="distribution.id" variant="outline" :class="cn('flex flex-col h-auto transition-all', configStore.targetNodeId === distribution.id && 'border-primary text-primary')" @click="() => {
+            v-for="distribution in searchNodes" :key="distribution.id" variant="outline" :class="cn('flex flex-col h-auto transition-all', configStore.targetNodeId === distribution.id && '!bg-primary !text-primary-foreground font-bold')" @click="() => {
               if (configStore.targetNodeId === distribution.id) {
                 configStore.targetNodeId = null;
                 resetEdges();
