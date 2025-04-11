@@ -46,14 +46,16 @@ function updateEdgeStyle() {
   for (const edge of edges) {
     edge.style = {
       stroke: edge.defaultStroke,
-      strokeWidth: 3, // 设置默认边宽为 2
+      strokeWidth: 4, // 设置默认边宽为 2
     }
+    edge.labelStyle!.fill = 'black';
   }
   for (const edge of connectedEdges) {
     edge.style = {
       stroke: 'red',
-      strokeWidth: 4, 
+      strokeWidth: 4,
     }
+    edge.labelStyle!.fill = 'red';
   }
 }
 

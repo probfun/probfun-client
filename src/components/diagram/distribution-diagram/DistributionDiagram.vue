@@ -87,11 +87,10 @@ function applyAutoLayout() {
 }
 
 function resetEdges() {
-  const edges = getEdges.value as unknown as (GraphEdge & { defaultStroke: string })[];
+  const edges = getEdges.value as unknown as (GraphEdge & { defaultStroke: string, style: any })[];
   for (const edge of edges) {
-    edge.style = {
-      stroke: edge.defaultStroke,
-    }
+    edge.style.stroke = edge.defaultStroke;
+    edge.labelStyle!.fill = 'black';
   }
 }
 
@@ -216,7 +215,7 @@ const collapse = ref(false);
           color: 'white',
           padding: '10px',
           borderRadius: '5px',
-          zIndex: 1000,
+          zIndex: 100,
         }" class="tooltip"
       >
         <div class="tooltip-content">
