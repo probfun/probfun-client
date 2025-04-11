@@ -1,4 +1,5 @@
 import type { NodeOptions } from '@/api/distribution/distributionType';
+import type { DefaultEdge, DefaultEdgeOptions } from '@vue-flow/core';
 import { useDistributionStore } from '@/store';
 import { MarkerType } from '@vue-flow/core';
 import 'katex/dist/katex.min.css';
@@ -40,32 +41,21 @@ export function initialNodes() {
   })
 }
 
-const defaultEdgeOptions = {
-  markerEnd: {
-    type: 'arrowclosed',
-    color: '#000',
-  },
+const defaultEdgeOptions: DefaultEdgeOptions = {
+  markerEnd: MarkerType.ArrowClosed,
   animated: false,
-  style: { strokeWidth: 2.5, stroke: '#80a8c9' },
+  style: { strokeWidth: 4, stroke: '#80a8c9' },
 };
 
-interface EdgeOptions {
-  id: string
-  source: string
-  target: string
-  label?: string
-  options?: any
-  style?: any
-  markerEnd?: MarkerType
-}
+type CustomEdge = DefaultEdge & { defaultStroke?: string };
 
-function createEdge({ id, source, target, label = '', options = {} }: EdgeOptions) {
+function createEdge({ id, source, target, label = '' }: DefaultEdge, options: any = {}): CustomEdge {
   const { style = {} } = options;
   const { stroke } = style;
   // 新增 labelStyle 用于设置 label 的样式
-  const labelStyle = {
-    fontSize: '16px', // 这里设置 label 的字号，可根据需要调整
-  };
+  // const labelStyle = {
+  //   fontSize: '20px', // 这里设置 label 的字号，可根据需要调整
+  // };
 
   return {
     id,
@@ -75,7 +65,7 @@ function createEdge({ id, source, target, label = '', options = {} }: EdgeOption
     type: 'smoothstep',
     ...defaultEdgeOptions,
     defaultStroke: stroke ?? '#80a8c9',
-    ...labelStyle, // 将 labelStyle 添加到返回的边配置中
+    // fontSize: '5px',
   };
 }
 
@@ -90,10 +80,9 @@ export function initialEdges() {
       source: '1',
       target: '6',
       label: 'n → ∞',
-      options: {
-        animated: true, // 单独为这条边启用动画
-        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
-      },
+    }, {
+      animated: true, // 单独为这条边启用动画
+      style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
     }),
     createEdge({ id: 'e8-7', source: '8', target: '7', label: 'A(c) = -log(1-c)' }),
     createEdge({ id: 'e8-9', source: '8', target: '9', label: 'A(c) = e^c,μ = c' }),
@@ -103,68 +92,67 @@ export function initialEdges() {
       source: '9',
       target: '12',
       label: 'μ~gamma',
-      options: {
-        animated: true, // 单独为这条边启用动画
-        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
-      },
+    }, {
+      animated: true, // 单独为这条边启用动画
+      style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
     }),
     createEdge({
       id: 'e13-9',
       source: '13',
       target: '9',
       label: 'μ = np,n→∞',
-      options: {
-        animated: true, // 单独为这条边启用动画
-        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
-      },
+    }, {
+      animated: true, // 单独为这条边启用动画
+      style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
     }),
     createEdge({
       id: 'e13-4',
       source: '13',
       target: '4',
       label: 'p~beta',
-      options: {
-        animated: true, // 单独为这条边启用动画
-        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
-      },
+    }, {
+      animated: true, // 单独为这条边启用动画
+      style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
     }),
     createEdge({
       id: 'e5-13',
       source: '5',
       target: '13',
       label: 'p = n1/n3,n3 → ∞,n1 → ∞,n2 = n',
-      options: {
-        animated: true, // 单独为这条边启用动画
-        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
-      },
+    }, {
+      animated: true, // 单独为这条边启用动画
+      style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
     }),
     createEdge({
       id: 'e10-13',
       source: '10',
       target: '13',
       label: 'p = n1/n3,n = n2,n3 → ∞',
-      options: {
-        animated: true, // 单独为这条边启用动画
-        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
-      },
+    }, {
+      animated: true, // 单独为这条边启用动画
+      style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
     }),
-    createEdge({ id: 'e13-14', source: '13', target: '14', label: 'n = 1', options: {
+    createEdge({
+      id: 'e13-14',
+      source: '13',
+      target: '14',
+      label: 'n = 1',
+    }, {
       animated: false, // 单独为这条边启用动画
       style: { strokeWidth: 2, stroke: '#80a8c9' },
       type: 'default',
       markerEnd: { type: 'arrowclosed', color: '#80a8c9' },
       labelStyle: { transform: 'translate(-15px, -45px)' },
-    } }),
+    }),
     createEdge({ id: 'e14-13', source: '14', target: '13', label: 'ΣXi(iid)', style: { strokeWidth: 2, stroke: '#f78c6c' }, markerEnd: MarkerType.ArrowClosed }),
     createEdge({
       id: 'e16-11',
       source: '16',
       target: '11',
       label: 'p~beta',
-      options: {
-        animated: true, // 单独为这条边启用动画
-        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
-      },
+    }, {
+      animated: true, // 单独为这条边启用动画
+      style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
     }),
     createEdge({ id: 'e12-16', source: '12', target: '16', label: 'α = (1-p)/p,β = n' }),
     createEdge({
@@ -172,10 +160,9 @@ export function initialEdges() {
       source: '16',
       target: '9',
       label: 'n → ∞,μ = n/p',
-      options: {
-        animated: true, // 单独为这条边启用动画
-        style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
-      },
+    }, {
+      animated: true, // 单独为这条边启用动画
+      style: { strokeWidth: 3, stroke: '#80a8c9' }, // 覆盖默认颜色
     }),
     createEdge({
       id: 'e9-17',
