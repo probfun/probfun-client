@@ -8,7 +8,11 @@ import { computed, onMounted, ref, watch } from 'vue';
 import 'katex/dist/katex.min.css';
 
 const time = ref([10]);
-const lambda = computed(() => 60 / time.value[0]);
+// const lambda = computed(() => 60 / time.value[0]);
+const lambda = computed(() => {
+  const result = 60 / time.value[0];
+  return Math.floor(result); // 向下取整
+});
 const exponential = ref(true);
 const poisson = ref(false);
 
