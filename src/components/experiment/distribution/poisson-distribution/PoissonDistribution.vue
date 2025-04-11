@@ -121,16 +121,7 @@ $$
             </CardTitle>
           </CardHeader>
           <CardContent class="flex-1 flex flex-col justify-center gap-5">
-            <div class="grid grid-cols-3">
-              <div class="flex flex-1 items-center justify-center font-bold">
-                <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex('均值 \\(λ\\) = ')" />
-                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model="lambda[0]" :min-fraction-digits="1" />
-                    <Slider v-model="lambda" :min="0" :max="30" :step="0.1" />
-                  </div>
-                </div>
-              </div> -->
+ 
 
             <div class="flex  grid grid-cols-3">
               <div class="flex flex-1 items-center justify-center font-bold">
