@@ -7,6 +7,7 @@ import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue';
 import BNDiagram from './BNDiagram.vue';
 import 'katex/dist/katex.min.css';
+import { renderLatex } from '@/utils/markdown';
 
 const number = ref([20]);
 const probability = ref([0.1]);
@@ -150,35 +151,31 @@ $$
               <div ref="normalContainer" class="text-base" />
             </CardContent>
           </Card>
-          <Card class="w-full  flex-1 flex flex-col">
-            <!-- <CardHeader>
-            <CardTitle>
-              参数调整
-            </CardTitle>
-          </CardHeader> -->
-          <CardContent class="flex-1 flex flex-col justify-center ">
-   
-            <div class="grid grid-rows-2 ">
-              <div class="flex flex-1 items-center justify-center font-bold ">
-                <div class="flex flex-1 items-center justify-center mt-4">
-                  <div class="mr-4 " v-html="renderLatex('实验次数\\(n\\) = ')" />
-                  <div class="flex flex-col items-center justify-center w-1/2 space-y-">
+       <Card class="w-full  flex-1 flex flex-col">
+
+          <CardContent class="grid grid-rows-2  justify-center ">
+              <div class="grid grid-cols-2 items-center justify-center font-bold ">
+                <div class="w-1/2 items-center justify-center">
+                  <div class="w-full " v-html="renderLatex('实验次数\\(n\\) = ')" />
+                  <div class=" flex flex-col items-center justify-center ">
                     <Input v-model.number="number[0]"  class="w-full mb-2" placeholder="20~100"/>
                   <Slider v-model="number" :min="20" :max="100" :step="1" class="w-full mb-3" />
                   </div>
                 </div>
-              </div>
-              <div class="flex flex-1 items-center justify-center font-bold">
-                <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex('成功概率\\(p\\) = ')" />
-                  <div class="flex flex-col items-center justify-center w-1/2 space-y-1">
+              
+              <div class="w-1/2 items-center justify-center font-bold">
+                <div class="w-1/2 items-center justify-center">
+                  <div class="" v-html="renderLatex('成功概率\\(p\\) = ')" />
+                  <div class=" flex flex-col items-center justify-center ">
                     <Input v-model.number="probability[0]" :min-fraction-digits="2" class="w-full mb-2" placeholder="0~1"/>
                   <Slider v-model="probability" :min="0" :max="1" :step="0.01" class="w-full" />
                   </div>
                 </div>
               </div>
+            </div>
+        
             </CardContent>
-          </Card>
+          </Card> 
         </Card>
       </div>
     </template>

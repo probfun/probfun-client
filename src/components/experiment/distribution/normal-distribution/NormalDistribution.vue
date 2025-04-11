@@ -36,8 +36,9 @@ const latexFormula = computed(() => {
   // 如果 varianceVal 为负数（虽然理论上方差不会是负数，但以防万一）
   const varianceDisplay = transformedVariance.value < 0 ? `(${varianceVal})` : varianceVal;
 
-  return `f(x) = \\frac{1}{\\sqrt{2\\pi{σ}^2}} e^{-\\frac{(x-μ)^2}{2{σ}^2}}=\\frac{1}{\\sqrt{2\\pi\\times${varianceDisplay}}} e^{-\\frac{(x-${meanDisplay})^2}{2\\times${varianceDisplay}}}`;
+  return `f_X(x) = \\frac{1}{\\sqrt{2\\pi{σ}^2}} e^{-\\frac{(x-μ)^2}{2{σ}^2}}`;
 });
+//}=\\frac{1}{\\sqrt{2\\pi\\times${varianceDisplay}}} e^{-\\frac{(x-${meanDisplay})^2}{2\\times${varianceDisplay}}
 
 watch([mean, stdDev], () => {
   transformedMean.value = mean.value[0];
@@ -58,8 +59,9 @@ const latexFormulaY = computed(() => {
   // 如果 varianceVal 为负数（虽然理论上方差不会是负数，但以防万一）
   const varianceDisplayY = transformedVarianceY.value < 0 ? `(${varianceValY})` : varianceValY;
 
-  return `f(y) = \\frac{1}{\\sqrt{2\\pi{σ'}^2}} e^{-\\frac{(x-μ')^2}{2{σ'}^2}}=\\frac{1}{\\sqrt{2\\pi{(aσ)^2}}} e^{-\\frac{(x-(aμ+b))^2}{2{(aσ)^2}}} = \\frac{1}{\\sqrt{2\\pi\\times${varianceDisplayY}}} e^{-\\frac{(x-${meanDisplayY})^2}{2\\times${varianceDisplayY}}}`;
+  return `f_Y(y) =\\frac{1}{\\sqrt{2\\pi}aσ} e^{-\\frac{(x-(aμ+b))^2}{2{(aσ)^2}} }`;
 });
+// \\frac{1}{\\sqrt{2\\pi{σ'}^2}} e^{-\\frac{(x-μ')^2}{2{σ'}^2}}= \\frac{1}{\\sqrt{2\\pi\\times${varianceDisplayY}}} e^{-\\frac{(x-${meanDisplayY})^2}{2\\times${varianceDisplayY}}
 
 const transformedFormula = computed(() => {
   // 计算均值和方差
@@ -157,11 +159,9 @@ $$
     <template #experiment>
       <!-- <DistributionDiagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance" :a="a" :b="b"
         :show-history="save" /> -->
-      <DistributionDiagram
-        class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance"
+      <DistributionDiagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance"
         :transformed-mean-y="transformedMeanY" :transformed-variance-y="transformedVarianceY" :show-history="save"
-        :line-show="lineShow" line1-color="red" line2-color="blue"
-      />
+        :line-show="lineShow" line1-color="red" line2-color="blue" />
     </template>
 
     <!-- <template #parameter>
@@ -250,22 +250,16 @@ $$
                 <CardHeader class="pb-5">
                   <CardTitle>正态分布公式</CardTitle>
                 </CardHeader>
-                <CardContent class="w-full flex flex-col items-start ">
-                  <div class="w-full h-1/2 space-y-5">
-                    <div ref="katexTransformedFormula" class="text-base" />
-                    <div ref="katexMainFormula" class="text-base  pb-5" />
+                <CardContent class="w-full">
+                  <div class="flex flex-1 mb-4">
+                    <div ref="katexTransformedFormula" class="text-base   mt-1 mr-24" />
+                    <div ref="katexMainFormula" class="text-base " />
                   </div>
-                </CardContent>
-              </div>
 
-              <!-- 第二个 CardHeader -->
-              <div class="flex-1">
-                <CardHeader class="pb-5">
-                  <CardTitle />
-                </CardHeader>
-                <CardContent class="w-full flex flex-col items-start gap-10 ">
-                  <div ref="katexTransformedFormulaY" class="text-base text-left" />
-                  <div ref="katexMainFormulaY" class="text-base " />
+                  <div class="flex flex-1 ">
+                    <div ref="katexTransformedFormulaY" class="text-base mt-2 mr-8" />
+                    <div ref="katexMainFormulaY" class="text-base" />
+                  </div>
                 </CardContent>
               </div>
             </div>
@@ -317,17 +311,15 @@ $$
             </div>
 
             <div class="flex gap-2 items-center justify-center">
-              <Checkbox
-                id="terms" @update:checked="(checked: boolean) => {
-                  if (checked) {
-                    saveImg();
-                  }
-                  else {
-                    back();
-                  }
-                  console.log(checked)
-                }"
-              />
+              <Checkbox id="terms" @update:checked="(checked: boolean) => {
+                if (checked) {
+                  saveImg();
+                }
+                else {
+                  back();
+                }
+                console.log(checked)
+              }" />
               <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
             </div>
           </CardContent>
@@ -346,4 +338,8 @@ $$
   </ExperimentBoard>
 </template>
 
-<style scoped></style>
+<style scoped>
+.flex {
+  gap: 0; /* 设置间距为1rem */
+}
+</style>
