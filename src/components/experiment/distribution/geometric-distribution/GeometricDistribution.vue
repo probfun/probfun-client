@@ -180,7 +180,7 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard>
+  <ExperimentBoard :panel-size="60">
     <template #experiment>
       <GeometricDiagram :p="probability[0]" :n="fixedN[0]" :is-chart1="isChart1" :is-chart2="isChart2"
         :is-chart3="isChart3" :save="save" />
@@ -203,7 +203,8 @@ $$
               参数调整
             </CardTitle>
           </CardHeader>
-          <CardContent class="flex-1 flex flex-col justify-center items-center gap-3">
+          <CardContent class="flex-1  flex flex-col justify-center items-center gap-3">
+
             <div class="dropdown ">
               <Button tabindex="0" role="button" class="m-1">
                 点我切换
@@ -221,8 +222,7 @@ $$
               </ul>
             </div>
 
-
-            <div class="flex  grid grid-cols-3">
+            <div class="grid grid-cols-3">
               <div class="flex flex-1 items-center justify-center font-bold">
                 <div class="flex flex-1 items-center justify-center">
                   <div class="mr-4" v-html="renderLatex('成功概率\\(p\\) = ')" />
@@ -233,8 +233,6 @@ $$
                 </div>
               </div>
 
-
-
               <div class="flex flex-1 items-center justify-center font-bold">
                 <div class="flex flex-1 items-center justify-center">
                   <div class="mr-4" v-html="renderLatex('成功前的尝试次数\\( k \\) = ')" />
@@ -244,8 +242,10 @@ $$
                   </div>
                 </div>
               </div>
-              <div v-if="isChart3" class="flex flex-col flex-1 items-center justify-center space-y-5">
 
+
+
+              <div v-if="isChart3" class="flex flex-col flex-1 items-center justify-center space-y-5">
                 <div class="flex flex-1 items-center justify-center font-bold">
                   <div class="mr-4" v-html="renderLatex('固定实验次数 = ')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
@@ -253,9 +253,10 @@ $$
                     <Slider v-model="fixedN" :min="0" :max="9" :step="1" />
                   </div>
                 </div>
-   </div>
-                <div v-if="isChart1" class="flex gap-2 items-center justify-center">
-                  <Checkbox id="terms" @update:checked="(checked: boolean) => {
+              </div>
+              <div v-if="isChart1" class="flex gap-2 items-center justify-center">
+                <Checkbox
+                  id="terms" @update:checked="(checked: boolean) => {
                     if (checked) {
                       saveImg();
                     }
@@ -263,12 +264,11 @@ $$
                       back();
                     }
                     console.log(checked)
-                  }" />
-                  <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
-             
+                  }"
+                />
+                <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
               </div>
             </div>
-
           </CardContent>
         </Card>
       </div>

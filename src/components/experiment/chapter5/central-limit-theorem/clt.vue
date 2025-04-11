@@ -445,14 +445,14 @@ $$
           <Chart v-if="n <= 5" type="bar" :data="chartData" :options="chartOptions" class="h-full w-1/4" />
           <Chart v-else type="bar" :data="chartData" :options="chartOptions" class="h-full w-1/3" />
         </div>
-        <div class="flex justify-center items-center">
+        <!-- <div class="flex justify-center items-center">
           <Button class="m-1" @click="startSimulation()">
             开始模拟
           </Button>
           <Button class="m-1" @click="stopSimulation()">
             停止模拟
           </Button>
-        </div>
+        </div> -->
       </div>
     </template>
     <template #parameter>
@@ -462,7 +462,7 @@ $$
             <CardTitle>参数调整</CardTitle>
           </CardHeader>
           <CardContent class=" flex flex-col justify-center items-center gap-3">
-            <div class="grid grid-cols-2 gap-10">
+            <!-- <div class="grid grid-cols-2 gap-10">
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
                   <div v-html="renderLatex('框的数量')" />
@@ -477,8 +477,30 @@ $$
                     <Slider v-model="n" :min="3" :max="15" :step="2" class="w-full" />
                   </div>
                 </div>
+              </div> -->
+
+            <div class="grid grid-cols-3 gap-3">
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div v-html="renderLatex('框的数量 = ')" />
+                  <div class="flex flex-col items-center justify-center w-2/3 space-y-1 ml-2">
+                    <InputNumber v-model="n" fluid />
+                    <Slider v-model="n" :min="3" :max="15" :step="2" class="w-full" />
+                  </div>
+                </div>
               </div>
-              <div class="flex flex-col gap-8 pb-0">
+
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div v-html="renderLatex('球的数量(大于50时不予展示每个小球下落的路径) = ')" />
+                  <div class="flex flex-col items-center justify-center w-2/3 space-y-1 ml-2">
+                    <InputNumber v-model="ball" fluid />
+                    <Slider v-model="ball" :min="5" :max="5000" :step="5" class="w-full" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
                   <div v-html="renderLatex('球的数量(大于50时不予展示每个小球下落的路径)')" />
 
@@ -491,7 +513,21 @@ $$
                     <Slider v-model="ball" :min="5" :max="10000" :step="5" class="w-full" />
                   </div>
                 </div>
+              </div> -->
+
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div class="flex justify-center items-center gap-3">
+                    <Button class="m-1" @click="startSimulation()">
+                      开始模拟
+                    </Button>
+                    <Button class="m-1" @click="stopSimulation()">
+                      停止模拟
+                    </Button>
+                  </div>
+                </div>
               </div>
+
             </div>
           </CardContent>
         </Card>

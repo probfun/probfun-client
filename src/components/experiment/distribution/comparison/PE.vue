@@ -263,7 +263,7 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard title="泊松分布与指数分布" :tags="[]">
+  <ExperimentBoard title="泊松分布与指数分布" :tags="[]" :panel-size="70">
     <template #experiment>
       <div class="w-full flex h-full gap-2 p-2">
         <div class="w-1/2">

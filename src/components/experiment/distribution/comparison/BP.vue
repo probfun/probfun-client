@@ -202,7 +202,7 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard title="二项分布与泊松分布" :tags="[]">
+  <ExperimentBoard title="二项分布与泊松分布" :tags="[]" :panel-size="70">
     <template #experiment>
       <BPDiagram :n="number[0]" :p="probability[0]" />
     </template>
@@ -267,7 +267,6 @@ $$
             </CardContent>
           </Card>
           <Card class="w-1/3 gap-3 space-y-2">
-
             <CardContent class="flex w-full justify-center">
               <div class="flex  grid grid-rows-3 mt-2">
               <div class="flex flex-1 items-center justify-center font-bold">

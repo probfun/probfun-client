@@ -2,7 +2,7 @@
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { renderLatex, toMarkdown } from '@/utils/markdown';
+import { toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue';
 import BNDiagram from './BNDiagram.vue';
@@ -92,7 +92,7 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard title="二项分布与正态分布" :tags="[]">
+  <ExperimentBoard title="二项分布与正态分布" :tags="[]" :panel-size="70">
     <template #experiment>
       <BNDiagram :n="number[0]" :p="probability[0]" />
     </template>
@@ -150,8 +150,8 @@ $$
               <div ref="normalContainer" class="text-base" />
             </CardContent>
           </Card>
-                  <Card class="w-full  flex-1 flex flex-col">
-          <!-- <CardHeader>
+          <Card class="w-full  flex-1 flex flex-col">
+            <!-- <CardHeader>
             <CardTitle>
               参数调整
             </CardTitle>
@@ -177,12 +177,9 @@ $$
                   </div>
                 </div>
               </div>
-
-            </div>
-          </CardContent>
+            </CardContent>
+          </Card>
         </Card>
-        </Card>
-
       </div>
     </template>
 

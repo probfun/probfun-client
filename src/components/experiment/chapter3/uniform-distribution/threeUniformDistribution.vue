@@ -183,7 +183,7 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard>
+  <ExperimentBoard :panel-size="60">
     <template #experiment>
       <ThreeUniformDiagram v-if="isChart1" class="flex-1 h-full" :x1="x1" :x2="x2" :y1="y1" :y2="y2" />
       <div v-if="isChart2 || isChart3" class="w-full h-full flex">
@@ -193,7 +193,7 @@ $$
     </template>
     <template #parameter>
       <div class="w-full h-full flex flex-row  justify-center gap-3 p-3">
-        <Card class="w-full card">
+        <Card class="w-1/2 ">
           <CardHeader>
             <CardTitle v-if="isChart1">
               二维均匀的联合概率密度函数（PDF）
@@ -212,15 +212,15 @@ $$
           </CardContent>
         </Card>
 
-        <Card class="h-full w-1/2 cardflex-1 flex flex-col">
+        <Card class="w-1/2 h-full  cardflex-1 flex flex-col">
           <CardHeader>
             <CardTitle>
               参数调整
             </CardTitle>
           </CardHeader>
-          <CardContent class=" flex flex-col justify-center items-center gap-3">
+          <CardContent class="flex-1 flex flex-col justify-center ">
             <!-- 居中的按钮 -->
-            <div class="flex justify-center w-full">
+            <div class="flex justify-center w-full mb-8">
               <div class="dropdown">
                 <Button tabindex="0" role="button" class="m-0">
                   点我切换
@@ -254,6 +254,12 @@ $$
                   </div>
                 </div>
               </div>
+
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div v-html="renderLatex('\\(x_2\\) = ')" />
+                  <div class="flex flex-col items-center justify-center w-2/3 space-y-1 ml-2">
+                    <Input v-model="x2" fluid class="w-full mb-1" />
               <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-3">
                   <div v-html="renderLatex('\\(x_2\\)')" />
@@ -270,6 +276,12 @@ $$
 
                   <div class="max-w-xl space-y-3">
                     <Input v-model="y1" fluid placeholder="大于-10小于y2" />
+
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div v-html="renderLatex('\\(y_1\\) = ')" />
+                  <div class="flex flex-col items-center justify-center w-2/3 space-y-1 ml-2">
+                    <Input v-model="y1" fluid class="w-full mb-1" />
                     <Slider v-model="y1" :min="-10" :max="y2" :step="1" class="w-full" />
                   </div>
                 </div>
@@ -280,6 +292,12 @@ $$
 
                   <div class="max-w-xl space-y-3">
                     <Input v-model="y2" fluid placeholder="大于y1小于10" />
+
+              <div class="flex flex-1 items-center justify-center font-bold">
+                <div class="flex flex-1 items-center justify-center">
+                  <div v-html="renderLatex('\\(y_2\\) = ')" />
+                  <div class="flex flex-col items-center justify-center w-2/3 space-y-1 ml-2">
+                    <Input v-model="y2" fluid class="w-full mb-1" />
                     <Slider v-model="y2" :min="y1" :max="10" :step="1" class="w-full" />
                   </div>
                 </div>

@@ -132,10 +132,12 @@ $$
 </script>
 
 <template>
-  <ExperimentBoard title="二项分布" :tags="[]">
+  <ExperimentBoard title="二项分布" :tags="[]" :panel-size="60">
     <template #experiment>
-      <ExponentialDiagram class="flex-1 h-full" :rate="rate[0]" :shift="shift[0]" :show-graph="isChart1"
-        :show-history="save" />
+      <ExponentialDiagram
+        class="flex-1 h-full" :rate="rate[0]" :shift="shift[0]" :show-graph="isChart1"
+        :show-history="save"
+      />
     </template>
     <!-- <template #parameter>
       <div class="w-full h-full flex flex-col items-center justify-center">
@@ -219,7 +221,6 @@ $$
               </ul>
             </div>
             <div class="items-center justify-center  flex flex-1 gap-4">
-
               <div class="flex flex-1 items-center justify-center font-bold">
                 <div class="flex flex-1 items-center justify-center">
                   <div class="mr-4" v-html="renderLatex('事件发生的速率参数\\(λ\\) = ')" />
@@ -230,8 +231,6 @@ $$
                 </div>
               </div>
 
-
-              
               <div class="flex flex-1 items-center justify-center font-bold">
                 <div class="flex flex-1 items-center justify-center">
                   <div class="mr-4" v-html="renderLatex('间隔时间\\(x\\) = ')" />
@@ -241,7 +240,6 @@ $$
                   </div>
                 </div>
               </div>
-
 
               <!-- 第三组：固定值 -->
               <div v-if="isChart2" class="flex flex-1 items-center justify-center font-bold ">
@@ -253,22 +251,23 @@ $$
                   </div>
                 </div>
               </div>
-              
 
               <!-- 第四组：历史图像模式 -->
               <div class="flex items-center justify-center">
-                <Checkbox id="terms" @update:checked="(checked: boolean) => {
-                  if (checked) {
-                    saveImg();
-                  } else {
-                    back();
-                  }
-                  console.log(checked);
-                }" />
+                <Checkbox
+                  id="terms" @update:checked="(checked: boolean) => {
+                    if (checked) {
+                      saveImg();
+                    }
+                    else {
+                      back();
+                    }
+                    console.log(checked);
+                  }"
+                />
                 <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
               </div>
             </div>
-
           </CardContent>
         </Card>
       </div>

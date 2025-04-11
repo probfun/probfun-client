@@ -50,7 +50,7 @@ function selfConvolution(
     return convolvedNormal(args[type].mean, args[type].std, n);
   }
   const L = right - left;
-  const N = 1024;
+  const N = 2048; // 增加采样点提高精度
   const h = L / N;
   const M = 2 * N;
 
@@ -75,12 +75,23 @@ function selfConvolution(
   for (let k = 0; k < M; k++) {
     const realPart = fftOutput[2 * k];
     const imagPart = fftOutput[2 * k + 1];
-    const r = Math.sqrt(realPart * realPart + imagPart * imagPart);
-    const phi = Math.atan2(imagPart, realPart);
-    const rPow = r === 0 ? 0 : r ** n;
-    const phiN = phi * n;
-    fftOutput[2 * k] = rPow * Math.cos(phiN);
-    fftOutput[2 * k + 1] = rPow * Math.sin(phiN);
+
+    if (Math.abs(realPart) < 1e-10 && Math.abs(imagPart) < 1e-10) {
+      fftOutput[2 * k] = 0;
+      fftOutput[2 * k + 1] = 0;
+    }
+    else {
+      const r = Math.sqrt(realPart * realPart + imagPart * imagPart);
+      const phi = Math.atan2(imagPart, realPart);
+
+      // 使用对数计算避免数值溢出
+      const logR = r > 0 ? n * Math.log(r) : -Infinity;
+      const rPow = r > 0 ? Math.exp(logR) : 0;
+      const phiN = phi * n;
+
+      fftOutput[2 * k] = rPow * Math.cos(phiN);
+      fftOutput[2 * k + 1] = rPow * Math.sin(phiN);
+    }
   }
 
   const ifftOutput = Array.from({ length: 2 * M }) as number[];
@@ -88,12 +99,21 @@ function selfConvolution(
 
   const conv = Array.from({ length: M }) as number[];
   for (let i = 0; i < M; i++) {
-    conv[i] = ifftOutput[2 * i] / M;
+    // 防止精度问题导致的负值
+    conv[i] = Math.max(0, ifftOutput[2 * i] / M);
   }
 
-  const sum = conv.reduce((acc, v) => acc + v, 0) * h;
-  for (let i = 0; i < M; i++) {
-    conv[i] /= sum;
+  // 使用梯形积分法提高归一化精度
+  let sum = 0;
+  for (let i = 0; i < M - 1; i++) {
+    sum += (conv[i] + conv[i + 1]) * h / 2;
+  }
+
+  // 避免除以接近零的数
+  if (sum > 1e-10) {
+    for (let i = 0; i < M; i++) {
+      conv[i] /= sum;
+    }
   }
 
   return (x: number) => {
@@ -177,13 +197,13 @@ function calculatePoints() {
 
 function calculateConvergeFuncPoints() {
   const { f, left, right, dx } = props.args;
-  const n = 30;
+  const n = 100;
   const x = [];
   const y = [];
 
   const { mean, variance } = calculateMeanAndVariance();
 
-  for (let j = 1; j <= 30; j++) {
+  for (let j = 1; j <= 100; j++) {
     const cur_mean = mean * j;
     const cur_variance = variance * j;
     const len = (right - left) * j;

@@ -299,7 +299,7 @@ const discussTabList = [
 </script>
 
 <template>
-  <ExperimentBoard :layout="1" :panel-size="70" :discuss-tab-list="discussTabList">
+  <ExperimentBoard :layout="1" :panel-size="75" :discuss-tab-list="discussTabList">
     <template #experiment>
       <ThreeNormalDiagram :mean1="mean1" :mean2="mean2" :sigma1="sigma1" :sigma2="sigma2" :density="density"
         :is-chart3="isChart3" :fixed-x="x" :fixed-y="y" class="w-full h-full" />
@@ -393,9 +393,9 @@ const discussTabList = [
             </div>
           </div>
 
-          <div v-if="isChart3" class="flex flex-col gap-8 pb-0">
-            <div class="flex w-4/5 flex-1 items-center justify-center space-y-1 gap-3">
-              <div class="mb-3" v-html="toMarkdown('$$y=$$')" />
+          <div v-if="isChart3" class="flex flex-col gap-8 pb-0 ">
+            <div class="flex w-4/5 ml-5 flex-1 items-center justify-center space-y-1 gap-3">
+              <div class="mb-3 " v-html="toMarkdown('$$y=$$')" />
 
               <div class="max-w-lg space-y-3">
                 <Input v-model="y" class="border-2" placeholder="-10~10" @update:model-value="v => {
@@ -408,8 +408,8 @@ const discussTabList = [
             </div>
           </div>
           <div v-if="isChart3" class="flex flex-col gap-8 pb-0">
-            <div class="flex w-4/5 flex-1 items-center justify-center space-y-1 gap-3">
-              <div class="mb-3" v-html="toMarkdown('$$x=$$')" />
+            <div class="flex w-4/5 ml-5 flex-1 items-center justify-center space-y-1 gap-3">
+              <div class="mb-3  " v-html="toMarkdown('$$x=$$')" />
               <div class="max-w-lg space-y-3">
                 <Input v-model="x" placeholder="-10~10" @update:model-value="v => {
                   const numValue = Number(v);
