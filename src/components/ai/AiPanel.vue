@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import type { ChatBlock, ChatData, ReceiveData, Tool, ToolArgs } from '@/api/ai/aiType';
+import type { ChatBlock, ChatData, ReceiveData, ToolArgs } from '@/api/ai/aiType';
 import type { Textarea } from '@/components/ui/textarea';
 import { aiApi, generateTitleApi } from '@/api/ai/aiApi';
 import AiSidebar from '@/components/ai/AiSidebar.vue';
+import Tool from '@/components/ai/tool/Tool.vue'
 import {
   AlertDialog,
   AlertDialogAction,
