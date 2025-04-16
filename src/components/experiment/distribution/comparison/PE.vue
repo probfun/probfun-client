@@ -274,7 +274,7 @@ $$
           <Chart v-model="poisson" type="bar" :data="chartData2" :options="chartOptions2" class="h-full" />
         </div>
         <div class="w-1/2">
-          <Chart v-model="exponential" type="bar" :data="chartData" :options="chartOptions" class="h-full" />
+          <Chart v-model="exponential" type="line" :data="chartData" :options="chartOptions" class="h-full" />
         </div>
       </div>
     </template>
