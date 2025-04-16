@@ -314,7 +314,7 @@ $$
             <CardContent class="flex w-full font-bold items-center justify-center flex-col gap-5">
               <div ref="poissonContainer" class="text-base" />
               <div v-if="exponential">
-                平均等车时间{{ time[0] }}分钟
+                平均每小时到达{{ lambda }}辆车
               </div>
             </CardContent>
           </Card>
@@ -325,7 +325,8 @@ $$
             <CardContent class="flex w-full font-bold items-center justify-center flex-col gap-5">
               <div ref="exponentialContainer" class="text-base" />
               <div>
-                平均每小时到达{{ lambda }}辆车
+                平均等车时间{{ time[0] }}分钟
+                
               </div>
             </CardContent>
           </Card>
@@ -335,7 +336,7 @@ $$
                 <div class="flex mt-16 flex-1 items-center justify-center space-x-2  font-bold">
                   <div class="whitespace-nowrap" v-html="renderLatex('公交车的发车间隔 (\\(min\\)) = ')" />
                   <!-- <div class="max-w-xl space-y-3"> -->
-                  <Input v-model="time[0]" class="w-1/3" type="number" :min="1" :max="30" placeholder="1~30" />
+                  <Input v-model="time[0]" class="w-1/3" type="number" :min="1" :max="30" placeholder="5~30" />
                   <!-- <Slider v-model="time" :min="5" :max="30" :step="5" class="w-48" /> -->
                   <!-- </div> -->
                 </div>
