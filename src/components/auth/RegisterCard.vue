@@ -191,7 +191,7 @@ async function register() {
     </div>
 
     <Label class="w-full flex justify-center mt-5">
-      已有账号？点击此处<router-link to="/login" class="underline underline-offset-4 hover:text-primary transition-all font-medium px-1"> 登录 </router-link>
+      已有账号？点击此处<router-link to="/login-test" class="underline underline-offset-4 hover:text-primary transition-all font-medium px-1"> 登录 </router-link>
     </Label>
     <Label class="w-full flex justify-center mt-3">
       注册遇到问题？请添加QQ群<div class="underline underline-offset-4 px-1 cursor-text">111293253</div>以联系管理员。
