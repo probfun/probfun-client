@@ -27,17 +27,21 @@ export function createDistributionNode({ label, position, chineseTranslation, pd
 export function initialNodes() {
   const distributionStore = useDistributionStore();
   const nodeData = distributionStore.nodeData;
-  const sortedNodeData = nodeData.sort((a, b) => {
-    if (a.description && !b.description)
+
+  nodeIdCounter = 1;
+  const nodeOptions = nodeData.map((data) => {
+    return createDistributionNode(data);
+  });
+
+  console.log(nodeOptions);
+
+  return nodeOptions.sort((a, b) => {
+    if (a.data.description && !b.data.description)
       return -1;
-    if (!a.description && b.description)
+    if (!a.data.description && b.data.description)
       return 1;
     return 0;
   });
-  nodeIdCounter = 1;
-  return sortedNodeData.map((data) => {
-    return createDistributionNode(data);
-  })
 }
 
 const defaultEdgeOptions = {

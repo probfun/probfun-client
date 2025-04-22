@@ -494,7 +494,7 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       pdf: '$$f(x) = \\frac{\\lambda}{\\kappa} \\left(1 + \\frac{x}{\\kappa}\\right)^{-(\\lambda + 1)}, \\quad x \\ge 0$$',
     },
   ]);
-  const version = ref(2);
+  const version = ref(3);
   return {
     nodeData,
     version,
@@ -505,7 +505,7 @@ export const useDistributionStore = defineStore('distributionStore', () => {
     storage: localStorage,
     beforeHydrate: () => {
       const stored = JSON.parse(localStorage.getItem('distributionStore') || '{}')
-      if (stored.version !== 2) {
+      if (stored.version !== 3) {
         localStorage.removeItem('distributionStore') // 版本不一致，移除旧数据
       }
     },
