@@ -97,7 +97,7 @@ function createEdge({ id, source, target, label = '', options = {} }: EdgeOption
 
 export function initialEdges() {
   return [
-    createEdge({ id: 'e1-2', source: '1', target: '2', label: 'a = 0, a = 1, b = n' }),
+    createEdge({ id: 'e1-2', source: '1', target: '2', label: 'a = 0, α = 1, b = n' }),
     createEdge({ id: 'e2-3', source: '2', target: '3', label: 'a = 0, b = n' }),
     createEdge({ id: 'e4-3', source: '4', target: '3', label: 'a = b = 1' }),
     createEdge({ id: 'e4-5', source: '4', target: '5', label: 'n = n1, a = n2, b = n3' }),
