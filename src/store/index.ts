@@ -493,6 +493,36 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       chineseTranslation: 'Lomax 分布(λ, κ)\nV',
       pdf: '$$f(x) = \\frac{\\lambda}{\\kappa} \\left(1 + \\frac{x}{\\kappa}\\right)^{-(\\lambda + 1)}, \\quad x \\ge 0$$',
     },
+    {
+      label: 'von Mises(κ,μ)\nS',
+      position: { x: -350, y: 100 },
+      chineseTranslation: '冯·米塞斯分布(κ, μ)\nS',
+      pdf: '$$f(x) = \\frac{1}{2\\pi I_0(\\kappa)} e^{\\kappa \\cos(x - \\mu)}$$',
+    },
+    {
+      label: 'Generalized Pareto(δ,κ,γ)',
+      position: { x: -350, y: 100 },
+      chineseTranslation: '广义帕累托分布(δ, κ, γ)',
+      pdf: '$$f(x) = \\frac{1}{\\gamma} \\left(1 + \\frac{x}{\\delta}\\right)^{-\\kappa - 1}, \\quad x \\ge -\\delta$$',
+    },
+    {
+      label: 'Logistic(κ,γ)\nS,V',
+      position: { x: -350, y: 100 },
+      chineseTranslation: '逻辑斯蒂分布(κ, γ)\nS, V',
+      pdf: '$$f(x) = \\frac{e^{-(x - \\mu)/\\gamma}}{\\gamma (1 + e^{-(x - \\mu)/\\gamma})^2}$$',
+    },
+    {
+      label: 'Triangular(a,b,m)\nV',
+      position: { x: -350, y: 100 },
+      chineseTranslation: '三角分布(a, b, m)\nV',
+      pdf: '$$f(x) = \\begin{cases} \\frac{2(x - a)}{(b - a)(m - a)}, & a \\le x < m \\\\ \\frac{2(b - x)}{(b - a)(b - m)}, & m \\le x < b \\\\ 0, & \\text{otherwise} \\end{cases}$$',
+    },
+    {
+      label: 'Kolmogorov-Smirnov(n)\nV(1-4)',
+      position: { x: -350, y: 100 },
+      chineseTranslation: 'Kolmogorov-Smirnov(n)\nV(1-4)',
+      pdf: null,
+    },
   ]);
   const version = ref(3);
   return {
