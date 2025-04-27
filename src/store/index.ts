@@ -524,7 +524,7 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       pdf: null,
     },
   ]);
-  const version = ref(3);
+  const version = ref(4);
   return {
     nodeData,
     version,
@@ -535,7 +535,7 @@ export const useDistributionStore = defineStore('distributionStore', () => {
     storage: localStorage,
     beforeHydrate: () => {
       const stored = JSON.parse(localStorage.getItem('distributionStore') || '{}')
-      if (stored.version !== 3) {
+      if (stored.version !== 4) {
         localStorage.removeItem('distributionStore') // 版本不一致，移除旧数据
       }
     },
