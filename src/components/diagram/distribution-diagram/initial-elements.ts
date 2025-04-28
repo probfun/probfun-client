@@ -27,17 +27,21 @@ export function createDistributionNode({ label, position, chineseTranslation, pd
 export function initialNodes() {
   const distributionStore = useDistributionStore();
   const nodeData = distributionStore.nodeData;
-  const sortedNodeData = nodeData.sort((a, b) => {
-    if (a.description && !b.description)
+
+  nodeIdCounter = 1;
+  const nodeOptions = nodeData.map((data) => {
+    return createDistributionNode(data);
+  });
+
+  console.log(nodeOptions);
+
+  return nodeOptions.sort((a, b) => {
+    if (a.data.description && !b.data.description)
       return -1;
-    if (!a.description && b.description)
+    if (!a.data.description && b.data.description)
       return 1;
     return 0;
   });
-  nodeIdCounter = 1;
-  return sortedNodeData.map((data) => {
-    return createDistributionNode(data);
-  })
 }
 
 const defaultEdgeOptions = {
@@ -93,7 +97,7 @@ function createEdge({ id, source, target, label = '', options = {} }: EdgeOption
 
 export function initialEdges() {
   return [
-    createEdge({ id: 'e1-2', source: '1', target: '2', label: 'a = 0, a = 1, b = n' }),
+    createEdge({ id: 'e1-2', source: '1', target: '2', label: 'α = 0, a = 1, b = n' }),
     createEdge({ id: 'e2-3', source: '2', target: '3', label: 'a = 0, b = n' }),
     createEdge({ id: 'e4-3', source: '4', target: '3', label: 'a = b = 1' }),
     createEdge({ id: 'e4-5', source: '4', target: '5', label: 'n = n1, a = n2, b = n3' }),
