@@ -145,6 +145,34 @@ const router = createRouter({
           component: () => import('@/components/experiment/chapter5/distribution-clt/DistributionClt.vue'),
         },
         {
+          path: '/dashboard/experiment/coin-tossing',
+          component: () => import('@/components/experiment/chapter6/CoinTossing.vue')
+        },
+        {
+          path: '/dashboard/experiment/black-scholes',
+          component: () => import('@/components/experiment/chapter6/BlackScholesModel.vue')
+        },
+        {
+          path: '/dashboard/experiment/american-option',
+          component: () => import('@/components/experiment/chapter6/PricingofAmericanPutOptions.vue')
+        },
+        {
+          path: '/dashboard/experiment/asset-captial',
+          component: () => import('@/components/experiment/chapter6/AssetCapitalPricing.vue')
+        },
+        {
+          path: '/dashboard/experiment/brownian-motion',
+          component: () => import('@/components/experiment/chapter6/Brownian.vue')
+        },
+        {
+          path: '/dashboard/experiment/geometric-brownian-motion',
+          component: () => import('@/components/experiment/chapter6/GeometricBrownian.vue')
+        },
+        {
+          path: '/dashboard/experiment/poisson-process',
+          component: () => import('@/components/experiment/chapter6/PoissonProcess.vue')
+        },
+        {
           path: '/dashboard/info0',
           component: StudentPanel,
         },
