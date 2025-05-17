@@ -125,6 +125,7 @@ declare module 'vue' {
     FormItem: typeof import('./src/components/ui/form/FormItem.vue')['default']
     FormLabel: typeof import('./src/components/ui/form/FormLabel.vue')['default']
     FormMessage: typeof import('./src/components/ui/form/FormMessage.vue')['default']
+    GeoGebraApplet: typeof import('./src/components/experiment/GeoGebraApplet.vue')['default']
     GeometricBrownian: typeof import('./src/components/experiment/chapter6/GeometricBrownian.vue')['default']
     GeometricDiagram: typeof import('./src/components/experiment/distribution/geometric-distribution/GeometricDiagram.vue')['default']
     GeometricDistribution: typeof import('./src/components/experiment/distribution/geometric-distribution/GeometricDistribution.vue')['default']
@@ -210,5 +211,6 @@ declare module 'vue' {
     TooltipTrigger: typeof import('./src/components/ui/tooltip/TooltipTrigger.vue')['default']
     UniformDiagram: typeof import('./src/components/experiment/distribution/UniformDiagram.vue')['default']
     UniformDistribution: typeof import('./src/components/experiment/distribution/UniformDistribution.vue')['default']
+    Vector: typeof import('./src/components/experiment/chapter6/Vector.vue')['default']
   }
 }

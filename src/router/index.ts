@@ -173,6 +173,10 @@ const router = createRouter({
           component: () => import('@/components/experiment/chapter6/PoissonProcess.vue')
         },
         {
+          path: '/dashboard/experiment/vector',
+          component: () => import('@/components/experiment/chapter6/Vector.vue')
+        },
+        {
           path: '/dashboard/info0',
           component: StudentPanel,
         },

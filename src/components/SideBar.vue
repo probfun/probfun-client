@@ -570,6 +570,20 @@ const chapter6Items = [
       }
     },
   },
+  {
+    label: '二维向量场的线积分',
+    icon: 'pi pi-chart-bar',
+    route: '/dashboard/experiment/vector',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '二维向量场的线积分', window.location.href);
+        await router.push('/dashboard/experiment/vector');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
+  },
 ]
 const feedback = ref('improvement');
 const content = ref('');
