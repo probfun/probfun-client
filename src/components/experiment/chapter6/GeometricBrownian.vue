@@ -1,46 +1,56 @@
 <template>
-  <h1>Geometric Brownian Motion Simulation</h1>
+  <ExperimentBoard :panel-size="100" :discuss-tab-list="discussTabList">
+    <template #experiment>
+      <h1>Geometric Brownian Motion Simulation</h1>
 
-  <div class="slider-container">
-    <label for="numPaths" class="slider-label">Number of Paths:</label>
-    <input type="range" id="numPaths" v-model.number="numPaths" min="1" max="20" step="1">
-    <span>{{ numPaths }}</span>
-  </div>
+      <div class="slider-container">
+        <label for="numPaths" class="slider-label">Number of Paths:</label>
+        <input type="range" id="numPaths" v-model.number="numPaths" min="1" max="20" step="1">
+        <span>{{ numPaths }}</span>
+      </div>
 
-  <div class="slider-container">
-    <label for="timeSteps" class="slider-label">Time Steps:</label>
-    <input type="range" id="timeSteps" v-model.number="timeSteps" min="10" max="500" step="10">
-    <span>{{ timeSteps }}</span>
-  </div>
+      <div class="slider-container">
+        <label for="timeSteps" class="slider-label">Time Steps:</label>
+        <input type="range" id="timeSteps" v-model.number="timeSteps" min="10" max="500" step="10">
+        <span>{{ timeSteps }}</span>
+      </div>
 
-  <div class="slider-container">
-    <label for="totalTime" class="slider-label">Total Time (T):</label>
-    <input type="range" id="totalTime" v-model.number="totalTime" min="1" max="10" step="0.1">
-    <span>{{ totalTime }}</span>
-  </div>
+      <div class="slider-container">
+        <label for="totalTime" class="slider-label">Total Time (T):</label>
+        <input type="range" id="totalTime" v-model.number="totalTime" min="1" max="10" step="0.1">
+        <span>{{ totalTime }}</span>
+      </div>
 
-  <div class="slider-container">
-    <label for="initialPrice" class="slider-label">Initial Price (S₀):</label>
-    <input type="range" id="initialPrice" v-model.number="initialPrice" min="1" max="200" step="1">
-    <span>{{ initialPrice }}</span>
-  </div>
+      <div class="slider-container">
+        <label for="initialPrice" class="slider-label">Initial Price (S₀):</label>
+        <input type="range" id="initialPrice" v-model.number="initialPrice" min="1" max="200" step="1">
+        <span>{{ initialPrice }}</span>
+      </div>
 
-  <div class="slider-container">
-    <label for="drift" class="slider-label">Drift (μ):</label>
-    <input type="range" id="drift" v-model.number="drift" min="-0.5" max="0.5" step="0.01">
-    <span>{{ drift }}</span>
-  </div>
+      <div class="slider-container">
+        <label for="drift" class="slider-label">Drift (μ):</label>
+        <input type="range" id="drift" v-model.number="drift" min="-0.5" max="0.5" step="0.01">
+        <span>{{ drift }}</span>
+      </div>
 
-  <div class="slider-container">
-    <label for="volatility" class="slider-label">Volatility (σ):</label>
-    <input type="range" id="volatility" v-model.number="volatility" min="0.1" max="2" step="0.1">
-    <span>{{ volatility }}</span>
-  </div>
+      <div class="slider-container">
+        <label for="volatility" class="slider-label">Volatility (σ):</label>
+        <input type="range" id="volatility" v-model.number="volatility" min="0.1" max="2" step="0.1">
+        <span>{{ volatility }}</span>
+      </div>
 
-  <div id="plot" style="width: 100%; height: 600px;"></div>
+      <div id="plot" style="width: 100%; height: 600px;"></div>
+    </template>
+    <template #conclusion></template>
+    <template #comment>
+      <CommentPanel exp-id="" />
+    </template>
+  </ExperimentBoard>
 </template>
 
 <script setup>
+import CommentPanel from '@/components/comment/CommentPanel.vue';
+import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { ref, onMounted, watch } from 'vue';
 import Plotly from 'plotly.js-dist';
 
