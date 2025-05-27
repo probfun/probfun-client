@@ -155,6 +155,15 @@ function getDescriptionBody(description: string) {
           </Label>
         </div>
       </div>
+      <Label class="text-base font-bold select-none"> 函数图像展示 </Label>
+      <div class="w-full flex items-center justify-center pt-3 select-none">
+        <img class="w-4/5" :src="data.imgPath" alt="">
+      </div>
+      <!--      <div v-else class=""> -->
+      <!--        <Label> -->
+      <!--          这个分布的函数图像暂未收录 -->
+      <!--        </Label> -->
+      <!--      </div> -->
       <div v-auto-animate :class="cn('mt-3')">
         <div v-if="nodeDataRef?.description" class="p-0">
           <div class="p-2">
