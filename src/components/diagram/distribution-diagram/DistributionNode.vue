@@ -157,7 +157,7 @@ function getDescriptionBody(description: string) {
       </div>
       <Label class="text-base font-bold select-none"> 函数图像展示 </Label>
       <div class="w-full flex items-center justify-center pt-3 select-none">
-        <img class="w-4/5" :src="data.imgPath" alt="">
+        <img class="h-64" :src="data.imgPath" alt="">
       </div>
       <!--      <div v-else class=""> -->
       <!--        <Label> -->

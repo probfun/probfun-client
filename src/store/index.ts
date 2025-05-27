@@ -181,7 +181,7 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       chineseTranslation: '标准正态分布',
       pdf: '$$f(x) = \\frac{1}{\\sqrt{2\\pi}} e^{-\\frac{x^2}{2}}$$',
       expId: 'normal-distribution',
-      imgPath: '@/assets/distribution/standard_normal.png',
+      imgPath: '/distribution/standard_normal.png',
     },
     {
       label: 'Log normal(α，β)\nP',
@@ -493,7 +493,7 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       pdf: '$$f(x) = \\frac{\\lambda}{\\kappa} \\left(1 + \\frac{x}{\\kappa}\\right)^{-(\\lambda + 1)}, \\quad x \\ge 0$$',
     },
   ]);
-  const version = ref(3);
+  const version = ref(2);
   return {
     nodeData,
     version,
@@ -506,6 +506,7 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       const stored = JSON.parse(localStorage.getItem('distributionStore') || '{}')
       if (stored.version !== 4) {
         localStorage.removeItem('distributionStore') // 版本不一致，移除旧数据
+        console.log('Distribution store version mismatch, resetting data.');
       }
     },
   },
