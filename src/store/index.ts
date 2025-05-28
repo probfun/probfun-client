@@ -201,54 +201,64 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       position: { x: 150, y: 600 },
       chineseTranslation: '反正切(λ, Φ)\nS, V',
       pdf: '$$f(x) = \\frac{\\lambda}{\\pi} \\frac{1}{\\lambda^2 + (x - \\Phi)^2}$$',
+      imgPath: '/distribution/arctangent.png',
     },
     {
       label: 'Noncentral chi-square(n,δ)\nC',
       position: { x: 950, y: 750 },
       chineseTranslation: '非中心卡方分布(n, δ)\nC',
       pdf: '$$f(x) = \\frac{1}{2} e^{-(x + \\delta)/2} \\left( \\frac{x}{\\delta} \\right)^{(n/4 - 1/2)} I_{n/2 - 1}(\\sqrt{\\delta x})$$',
+      imgPath: '/distribution/noncentral_chi2.png',
     },
     {
       label: 'Log gamma(α,β)',
       position: { x: 850, y: 800 },
       chineseTranslation: '对数伽马分布(α, β)',
 
+      imgPath: '/distribution/log_gamma.png',
     },
     {
       label: 'Generalized gamma(α，β,γ)',
       position: { x: 800, y: 250 },
       chineseTranslation: '广义伽马分布(α，β, γ)',
       pdf: '$$f(x) = \\frac{\\beta}{\\Gamma(\\alpha / \\gamma)} x^{\\alpha - 1} e^{-(x / \\gamma)^\\beta}, \\quad x > 0$$',
+      imgPath: '/distribution/generalized_gamma.png',
     },
     {
       label: 'Hyperbolic-secant\nV',
       position: { x: 0, y: 800 },
       chineseTranslation: '双曲割线分布\nV',
       pdf: '$$f(x) = \\frac{1}{2} \\text{sech}\\left(\\frac{\\pi x}{2}\\right)$$',
+      imgPath: '/distribution/hyperbolic_secant.png',
     },
     {
       label: 'Inverse Gaussian(λ,μ)\nLμi/(μi²ai)',
       position: { x: 500, y: 350 },
       chineseTranslation: '反高斯分布(λ, μ)\nLμi/(μi²ai)',
       pdf: '$$f(x) = \\left( \\frac{\\lambda}{2\\pi x^3} \\right)^{1/2} e^{-\\frac{\\lambda (x - \\mu)^2}{2 \\mu^2 x}}$$',
+      imgPath: '/distribution/inverse_gaussian.png',
     },
+      // Chi 和 Chi-square 重复!!
     {
       label: 'Chi(n)',
       position: { x: 650, y: 800 },
       chineseTranslation: '卡方分布(n)',
       pdf: '$$f(x) = \\frac{1}{2^{n/2} \\Gamma(n/2)} x^{n/2 - 1} e^{-x / 2}, \\quad x > 0$$',
+      imgPath: '/distribution/chi_square.png',
     },
     {
       label: 'Inverted gamma(α,β)',
       position: { x: 950, y: 1100 },
       chineseTranslation: '反伽马分布(α, β)',
       pdf: '$$f(x) = \\frac{\\beta^\\alpha}{\\Gamma(\\alpha)} x^{-\\alpha - 1} e^{-\\beta / x}, \\quad x > 0$$',
+      imgPath: '/distribution/inverted_gamma.png',
     },
     {
       label: 'Gamma(α,β)\nCα,S',
       position: { x: 950, y: 950 },
       chineseTranslation: '伽马分布(α, β)\nCα, S',
       pdf: '$$f(x) = \\frac{\\beta^\\alpha}{\\Gamma(\\alpha)} x^{\\alpha - 1} e^{-\\beta x}, \\quad x > 0$$',
+      imgPath: '/distribution/gamma.png',
       description: '**应用案例**: 数据传输延迟建模\n\n- **背景**: 在网络通信中，数据包传输的延迟可能受到多种因素的影响，常常呈现出复杂的分布特征。\n- **研究目的**: 对数据传输延迟进行建模，以优化网络性能和资源分配。\n- **方法**: 收集不同条件下的传输延迟数据，使用伽马分布进行拟合，对比不同网络条件下的延迟分布，评估网络质量。',
     },
     {
@@ -256,6 +266,7 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       position: { x: 1150, y: 800 },
       chineseTranslation: '贝塔分布(β, γ)',
       pdf: '$$f(x) = \\frac{\\Gamma(\\beta + \\gamma)}{\\Gamma(\\beta) \\Gamma(\\gamma)} x^{\\beta - 1} (1 - x)^{\\gamma - 1}, \\quad 0 < x < 1$$',
+      imgPath: '/distribution/beta.png',
       description: '**应用案例**: 概率预测与决策支持\n\n- **背景**: Beta分布常用于建模概率和比例，适合在[0, 1]区间内的随机变量建模。\n- **研究目的**: 在项目管理和决策支持系统中，评估某一事件成功的概率。\n- **方法**: 收集历史数据（如项目成功与失败的次数），利用Beta分布进行参数估计，计算成功概率的后验分布。',
     },
     {
@@ -263,11 +274,14 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       position: { x: -100, y: 500 },
       chineseTranslation: '柯西分布(a, α)\nC, I, S, V',
       pdf: '$$f(x) = \\frac{1}{\\pi \\alpha \\left[ 1 + \\left( \\frac{x - a}{\\alpha} \\right)^2 \\right]}$$',
+      imgPath: '/distribution/cauchy.png',
     },
     {
       label: 'Standard Waid(λ)\nS',
       position: { x: 500, y: 600 },
       chineseTranslation: '标准Waid分布(λ)\nS',
+
+      imgPath: '/distribution/standard_waid.png',
       // Assuming it's a typo for Weibull
     },
     {
@@ -275,11 +289,14 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       position: { x: 450, y: 900 },
       chineseTranslation: '卡方分布(n)\nC',
       pdf: '$$f(x) = \\frac{1}{2^{n/2} \\Gamma(n/2)} x^{n/2 - 1} e^{-x / 2}, \\quad x > 0$$',
+      imgPath: '/distribution/chi_square.png',
     },
     {
       label: 'Inverted beta(β,γ)',
       position: { x: 1150, y: 1100 },
       chineseTranslation: '反贝塔分布(β, γ)',
+
+      imgPath: '/distribution/inverted_beta.png',
 
     },
     {
@@ -287,18 +304,21 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       position: { x: 1250, y: 900 },
       chineseTranslation: '反正弦分布\nV',
 
+      imgPath: '/distribution/arcsin.png',
     },
     {
       label: 'Standard Cauchy\nI,S,V',
       position: { x: -300, y: 700 },
       chineseTranslation: '标准柯西分布\nI, S, V',
       pdf: '$$f(x) = \\frac{1}{\\pi (1 + x^2)}$$',
+      imgPath: '/distribution/standard_cauchy.png',
     },
     {
       label: 't(n)',
       position: { x: -450, y: 620 },
       chineseTranslation: 't 分布(n)',
       pdf: '$$f(x) = \\frac{\\Gamma\\left(\\frac{n + 1}{2}\\right)}{\\sqrt{n \\pi} \\, \\Gamma\\left(\\frac{n}{2}\\right)} \\left(1 + \\frac{x^2}{n} \\right)^{-(n + 1)/2}$$',
+      imgPath: '/distribution/t.png',
       description: '**应用案例**: 小样本统计分析\n\n- **背景**: 在电子信息领域的实验研究中，常常面临样本量较小的情况，这时使用t分布可以得到更准确的假设检验结果。\n- **研究目的**: 对实验结果进行显著性检验，判断新算法与传统算法的性能差异。\n- **方法**: 收集不同算法在相同数据集上的实验结果，使用t检验分析两组样本均值是否存在显著差异。',
     },
     {
@@ -306,36 +326,42 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       position: { x: 550, y: 1000 },
       chineseTranslation: '超指数分布(向量 α)\nC',
 
+      imgPath: '/distribution/hypoexponential.png',
     },
     {
       label: 'Erlang(α,n)\nS',
       position: { x: 300, y: 500 },
       chineseTranslation: '厄朗分布(α, n)\nS',
       pdf: '$$f(x) = \\frac{\\beta^{k} x^{k-1} e^{-\\beta x}}{(k-1)!}, \\quad k = n, \\beta = \\alpha$$',
+      imgPath: '/distribution/erlang.png',
     },
     {
       label: 'Makeham(δ,κ,γ)',
       position: { x: -350, y: 100 },
       chineseTranslation: 'Makeham 分布(δ, κ, γ)',
 
+      imgPath: '/distribution/makeham.png',
     },
     {
       label: 'Noncentral t(n,δ)',
       position: { x: -350, y: 100 },
       chineseTranslation: '非中心 t 分布(n, δ)',
 
+      imgPath: '/distribution/noncentral_t.png',
     },
     {
       label: 'F(n1,n2)',
       position: { x: -350, y: 100 },
       chineseTranslation: 'F 分布(n1, n2)',
       pdf: '$$f(x) = \\frac{\\sqrt{\\frac{(n1 x)^{n1} n2^{n2}}{(n1 x + n2)^{n1 + n2}}}}{x B(n1/2, n2/2)}$$',
+      imgPath: '/distribution/f.png',
     },
     {
       label: 'Exponential(α)\nF,M,S,V',
       position: { x: -350, y: 100 },
       chineseTranslation: '指数分布(α)\nF, M, S, V',
       pdf: '$$f(x) = \\alpha e^{-\\alpha x}, \\quad x \\ge 0$$',
+      imgPath: '/distribution/exponential.png',
       expId: 'exponential-distribution',
       description: '**应用案例**: 通信故障的寿命分析\n\n- **背景**: 在电子设备和网络组件中，故障发生时间常常服从指数分布。\n- **研究目的**: 评估设备的平均故障时间，以提前进行维护和更换。\n- **方法**: 收集设备故障时间数据，利用指数分布模型计算设备的可靠性和故障率。',
     },
