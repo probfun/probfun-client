@@ -585,6 +585,65 @@ const chapter6Items = [
     },
   },
 ]
+
+const chapter7Items = [
+  {
+    label: '硬币投掷实验',
+    icon: 'pi pi-chart-bar',
+    route: '/dashboard/experiment/coin-tossing',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '硬币投掷实验', window.location.href);
+        await router.push('/dashboard/experiment/coin-tossing');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
+  },
+  {
+    label: '欧式看涨期权定价',
+    icon: 'pi pi-chart-bar',
+    route: '/dashboard/experiment/black-scholes',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '欧式看涨期权定价', window.location.href);
+        await router.push('/dashboard/experiment/black-scholes');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
+  },
+  {
+    label: '美式看跌期权定价',
+    icon: 'pi pi-chart-bar',
+    route: '/dashboard/experiment/american-option',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '美式看跌期权定价', window.location.href);
+        await router.push('/dashboard/experiment/american-option');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
+  },
+  {
+    label: '股票期望回报率',
+    icon: 'pi pi-chart-bar',
+    route: '/dashboard/experiment/asset-captial',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '股票期望回报率', window.location.href);
+        await router.push('/dashboard/experiment/asset-captial');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
+  },
+]
 const feedback = ref('improvement');
 const content = ref('');
 const feedbackList = ref<Feedback[] | null>(null);
@@ -882,6 +941,29 @@ function goHome() {
                 </summary>
                 <ul class="space-y-0">
                   <li v-for="(item, index) in chapter6Items" :key="item.label">
+                    <a :class="{ active: isActiveRoute(item.route) }"
+                      @click="() => { item.command(); toggleDrawer(); }">
+                      <i :class="item.icon" />
+                      6.{{ index + 1 }}-{{ item.label }}
+                      <Star
+                        v-if="userStore.favoriteExperiments.map(item_ => item_.expId).includes(item.route.substring(item.route.lastIndexOf('/') + 1) || item.route)"
+                        class="size-4 ml-auto" :style="{
+                          fill: '#FFA500',
+                          stroke: '#FFA500',
+                        }" />
+                    </a>
+                  </li>
+                </ul>
+              </details>
+            </li>
+
+            <li>
+              <details open>
+                <summary class="font-bold">
+                  <i class="pi pi-bookmark" /> 第七章-金融数学
+                </summary>
+                <ul class="space-y-0">
+                  <li v-for="(item, index) in chapter7Items" :key="item.label">
                     <a :class="{ active: isActiveRoute(item.route) }"
                       @click="() => { item.command(); toggleDrawer(); }">
                       <i :class="item.icon" />
