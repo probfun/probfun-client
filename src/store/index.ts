@@ -238,7 +238,6 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       pdf: '$$f(x) = \\left( \\frac{\\lambda}{2\\pi x^3} \\right)^{1/2} e^{-\\frac{\\lambda (x - \\mu)^2}{2 \\mu^2 x}}$$',
       imgPath: '/distribution/inverse_gaussian.png',
     },
-      // Chi 和 Chi-square 重复!!
     {
       label: 'Chi(n)',
       position: { x: 650, y: 800 },
