@@ -397,7 +397,7 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       label: 'Hyperexponential',
       position: { x: -350, y: 100 },
       chineseTranslation: '超指数分布',
-      pdf: '$$f(x) = \\Sigma^k_{i=1}p_i\\lambda_i e^{-\\lambda_i x}, \\quad x\\ge 0, \\lambda_i\\ge 0, \\Sigma^k_{i=1}p_i = 1 \\quad(i = 1,2,\\ldots,k)$$',
+      pdf: '$$f(x) = \\Sigma^k_{i=1}p_i\\lambda_i e^{-\\lambda_i x}, \\quad x\\ge 0, \\quad \\lambda_i\\ge 0, \\quad \\Sigma^k_{i=1}p_i = 1 \\quad(i = 1,2,\\ldots,k)$$',
       imgPath: '/distribution/hyperexponential_distribution.png',
     },
     {
