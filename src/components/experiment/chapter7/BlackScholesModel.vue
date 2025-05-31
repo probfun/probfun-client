@@ -54,7 +54,11 @@
 
             </div>
         </template>
-        <template #conclusion></template>
+        <template #conclusion>
+            <div  class="w-full h-full p-5">
+                <div class="prose-sm max-w-full " v-html="toMarkdown(content)" />
+            </div>
+        </template>
         <template #comment>
             <CommentPanel exp-id="central-limit-theorem" />
         </template>
@@ -66,6 +70,7 @@
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { ref } from 'vue';
+import { renderLatex, toMarkdown } from '@/utils/markdown';
 
 // 响应式变量
 const S0 = ref(100);
@@ -75,6 +80,48 @@ const T = ref(1);
 const sigma = ref(0.2);
 const q = ref(0.0);
 const result = ref(null);
+
+const content = ref(`
+## **Black-Scholes模型计算欧式看涨期权价格**
+欧式看涨期权定价，最经典的方法是使用**布莱克-斯科尔斯模型 (Black-Scholes Model)**。简单来说，它是计算在期权到期日之前，以特定价格（行权价）买入股票的权利，现在值多少钱。
+
+**核心思想：**
+
+欧式看涨期权赋予持有者在**到期日**以**行权价**买入标的资产（如股票）的权利，但不是义务。定价就是计算这个权利在当前时刻的公平价值。
+
+布莱克-斯科尔斯模型认为，期权的价格是由以下几个**输入变量**共同决定的：
+
+1.  **标的资产当前价格 (S)：** 股票当前的市场价格。股票越贵，买入的权利可能越值钱。
+2.  **行权价格 (K)：** 期权允许你买入股票的固定价格。行权价越低，期权越值钱。
+3.  **到期时间 (T)：** 距离期权到期的剩余时间。时间越长，股票价格有更多机会上涨，期权价值可能越高。
+4.  **无风险利率 (r)：** 投资者可以将资金投入无风险资产（如短期国债）所能获得的利率。这是持有期权（而不是无风险资产）的机会成本。
+5.  **标的资产波动率 ($\sigma$)：** 衡量股票价格在未来一段时间内波动的大小。波动率越大，股票价格大幅上涨的可能性越大，期权的价值也越高（因为下跌的风险有限，而上涨的收益无限）。
+
+**模型假设（简化）：**
+
+布莱克-斯科尔斯模型有一些关键假设，使其能够推导出定价公式：
+* 股票价格遵循几何布朗运动。
+* 市场没有摩擦（无交易成本、无税收）。
+* 可以无限制地借入或贷出资金，利率是无风险利率。
+* 不存在套利机会。
+
+**定价公式（不用细究具体数学）：**
+
+布莱克-斯科尔斯模型通过复杂的数学推导，得出一个包含累积标准正态分布函数 $N(d_1)$ 和 $N(d_2)$ 的公式来计算看涨期权的价格 $C$：
+
+$C = S N(d_1) - K e^{-rT} N(d_2)$
+
+这里的 $d_1$ 和 $d_2$ 是根据上述五个输入变量计算出来的中间量。
+
+**直观理解：**
+
+* $S N(d_1)$ 可以看作是“持有股票的预期收益”部分。
+* $K e^{-rT} N(d_2)$ 可以看作是“支付行权价的折现成本”部分。
+
+**重要性：**
+
+布莱克-斯科尔斯模型是金融工程领域的一个里程碑，它提供了一个理论框架来量化期权价格，使得期权交易变得更加科学和标准化。尽管有其局限性（例如，假设波动率恒定，但实际波动率是变化的），它仍然是期权定价和风险管理的基础工具。
+`)
 
 // 标准正态分布的累积分布函数（CDF）近似计算
 function normCDF(x) {
