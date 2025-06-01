@@ -146,35 +146,47 @@ const router = createRouter({
         },
         {
           path: '/dashboard/experiment/coin-tossing',
-          component: () => import('@/components/experiment/chapter7/CoinTossing.vue')
+          component: () => import('@/components/experiment/chapter7/CoinTossing.vue'),
         },
         {
           path: '/dashboard/experiment/black-scholes',
-          component: () => import('@/components/experiment/chapter7/BlackScholesModel.vue')
+          component: () => import('@/components/experiment/chapter7/BlackScholesModel.vue'),
         },
         {
           path: '/dashboard/experiment/american-option',
-          component: () => import('@/components/experiment/chapter7/PricingofAmericanPutOptions.vue')
+          component: () => import('@/components/experiment/chapter7/PricingofAmericanPutOptions.vue'),
         },
         {
           path: '/dashboard/experiment/asset-captial',
-          component: () => import('@/components/experiment/chapter7/AssetCapitalPricing.vue')
+          component: () => import('@/components/experiment/chapter7/AssetCapitalPricing.vue'),
+        },
+        {
+          path: '/dashboard/experiment/monte-carlo',
+          component: () => import('@/components/experiment/chapter7/MonteCarlo.vue'),
+        },
+        {
+          path: '/dashboard/experiment/arithmetic-mean',
+          component: () => import('@/components/experiment/chapter7/ArithmeticMeanAsianOption.vue'),
+        },
+        {
+          path: '/dashboard/experiment/obstacle-options',
+          component: () => import('@/components/experiment/chapter7/ObstacleOptions.vue'),
         },
         {
           path: '/dashboard/experiment/brownian-motion',
-          component: () => import('@/components/experiment/chapter6/Brownian.vue')
+          component: () => import('@/components/experiment/chapter6/Brownian.vue'),
         },
         {
           path: '/dashboard/experiment/geometric-brownian-motion',
-          component: () => import('@/components/experiment/chapter6/GeometricBrownian.vue')
+          component: () => import('@/components/experiment/chapter6/GeometricBrownian.vue'),
         },
         {
           path: '/dashboard/experiment/poisson-process',
-          component: () => import('@/components/experiment/chapter6/PoissonProcess.vue')
+          component: () => import('@/components/experiment/chapter6/PoissonProcess.vue'),
         },
         {
           path: '/dashboard/experiment/vector',
-          component: () => import('@/components/experiment/chapter6/Vector.vue')
+          component: () => import('@/components/experiment/chapter6/Vector.vue'),
         },
         {
           path: '/dashboard/info0',
