@@ -644,12 +644,12 @@ const chapter7Items = [
     },
   },
   {
-    label: '回望期权--蒙特卡洛模拟',
+    label: '回望期权',
     icon: 'pi pi-chart-bar',
     route: '/dashboard/experiment/monte-carlo',
     command: async () => {
       try {
-        await clickApi('CLICK', 'catalogue', '回望期权--蒙特卡洛模拟', window.location.href);
+        await clickApi('CLICK', 'catalogue', '回望期权', window.location.href);
         await router.push('/dashboard/experiment/monte-carlo');
       }
       catch (error) {
@@ -658,12 +658,12 @@ const chapter7Items = [
     },
   },
   {
-    label: '算数平均亚式期权--蒙特卡洛模拟',
+    label: '算数平均亚式期权',
     icon: 'pi pi-chart-bar',
     route: '/dashboard/experiment/arithmetic-mean',
     command: async () => {
       try {
-        await clickApi('CLICK', 'catalogue', '算数平均亚式期权--蒙特卡洛模拟', window.location.href);
+        await clickApi('CLICK', 'catalogue', '算数平均亚式期权', window.location.href);
         await router.push('/dashboard/experiment/arithmetic-mean');
       }
       catch (error) {
@@ -672,12 +672,12 @@ const chapter7Items = [
     },
   },
   {
-    label: '障碍期权--蒙特卡洛模拟',
+    label: '障碍期权',
     icon: 'pi pi-chart-bar',
     route: '/dashboard/experiment/obstacle-options',
     command: async () => {
       try {
-        await clickApi('CLICK', 'catalogue', '障碍期权--蒙特卡洛模拟', window.location.href);
+        await clickApi('CLICK', 'catalogue', '障碍期权', window.location.href);
         await router.push('/dashboard/experiment/obstacle-options');
       }
       catch (error) {

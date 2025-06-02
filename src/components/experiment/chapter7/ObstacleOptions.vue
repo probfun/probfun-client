@@ -1,86 +1,90 @@
 <template>
-  <ExperimentBoard>
+  <ExperimentBoard :panel-size="70">
     <template #experiment>
       <div class="results">
         <h3>计算结果</h3>
         <table>
-          <tr>
-            <th>指标</th>
-            <th>值</th>
-          </tr>
-          <tr>
-            <td>期权价格</td>
-            <td id="price">-</td>
-          </tr>
-          <tr>
-            <td>标准误差</td>
-            <td id="stderr">-</td>
-          </tr>
-          <tr>
-            <td>触及障碍概率</td>
-            <td id="hit-prob">-</td>
-          </tr>
-          <tr>
-            <td>计算时间</td>
-            <td id="calc-time">-</td>
-          </tr>
+          <thead>
+            <tr>
+              <th>指标</th>
+              <th>值</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>期权价格</td>
+              <td>{{ results.price }}</td>
+            </tr>
+            <tr>
+              <td>标准误差</td>
+              <td>{{ results.stderr }}</td>
+            </tr>
+            <tr>
+              <td>触及障碍概率</td>
+              <td>{{ results.hitProb }}</td>
+            </tr>
+            <tr>
+              <td>计算时间</td>
+              <td>{{ results.calcTime }}</td>
+            </tr>
+          </tbody>
         </table>
       </div>
+
       <div class="chart-container">
         <div id="price-chart" style="height: 400px;"></div>
         <div id="paths-chart" style="height: 400px;"></div>
       </div>
-    </template>
-    <template #parameter>
-      <h1>障碍期权定价 - 蒙特卡洛模拟</h1>
 
+    </template>
+
+    <template #parameter>
       <div class="container">
         <div class="control-panel">
           <h2>参数设置</h2>
-
           <div class="slider-container">
-            <label for="S0">初始价格 (S₀): <span id="S0-value">100</span></label>
-            <input type="range" id="S0" min="50" max="150" value="100" step="1">
+            <label for="S0">初始价格 (S₀): <span>{{ params.S0 }}</span></label>
+            <input type="range" v-model.number="params.S0" min="50" max="150" step="1">
           </div>
 
           <div class="slider-container">
-            <label for="K">执行价格 (K): <span id="K-value">100</span></label>
-            <input type="range" id="K" min="50" max="150" value="100" step="1">
+            <label for="K">执行价格 (K): <span>{{ params.K }}</span></label>
+            <input type="range" v-model.number="params.K" min="50" max="150" step="1">
           </div>
 
           <div class="slider-container">
-            <label for="H">障碍水平 (H): <span id="H-value">85</span></label>
-            <input type="range" id="H" min="50" max="150" value="85" step="1">
+            <label for="H">障碍水平 (H): <span>{{ params.H }}</span></label>
+            <input type="range" v-model.number="params.H" min="50" max="150" step="1">
           </div>
 
           <div class="slider-container">
-            <label for="T">到期时间 (T, 年): <span id="T-value">1.0</span></label>
-            <input type="range" id="T" min="0.1" max="3" value="1.0" step="0.1">
+            <label for="T">到期时间 (T, 年): <span>{{ params.T.toFixed(1) }}</span></label>
+            <input type="range" v-model.number="params.T" min="0.1" max="3" step="0.1">
           </div>
 
           <div class="slider-container">
-            <label for="r">无风险利率 (r): <span id="r-value">0.05</span></label>
-            <input type="range" id="r" min="0" max="0.2" value="0.05" step="0.01">
+            <label for="r">无风险利率 (r): <span>{{ params.r.toFixed(2) }}</span></label>
+            <input type="range" v-model.number="params.r" min="0" max="0.2" step="0.01">
           </div>
 
           <div class="slider-container">
-            <label for="sigma">波动率 (σ): <span id="sigma-value">0.2</span></label>
-            <input type="range" id="sigma" min="0.1" max="0.5" value="0.2" step="0.01">
+            <label for="sigma">波动率 (σ): <span>{{ params.sigma.toFixed(2) }}</span></label>
+            <input type="range" v-model.number="params.sigma" min="0.1" max="0.5" step="0.01">
           </div>
 
           <div class="slider-container">
-            <label for="simulations">模拟路径数: <span id="simulations-value">10000</span></label>
-            <input type="range" id="simulations" min="1000" max="50000" value="10000" step="1000">
+            <label for="simulations">模拟路径数: <span>{{ params.simulations }}</span></label>
+            <input type="range" v-model.number="params.simulations" min="1000" max="50000" step="1000">
           </div>
 
           <div class="slider-container">
-            <label for="time-steps">时间步数: <span id="time-steps-value">252</span></label>
-            <input type="range" id="time-steps" min="50" max="500" value="252" step="1">
+            <label for="timeSteps">时间步数: <span>{{ params.timeSteps }}</span></label>
+            <input type="range" v-model.number="params.timeSteps" min="50" max="500" step="1">
           </div>
 
           <div>
             <label>障碍类型:</label>
-            <select id="barrier-type">
+            <select v-model="params.barrierType">
               <option value="down">向下 (Down)</option>
               <option value="up">向上 (Up)</option>
             </select>
@@ -88,7 +92,7 @@
 
           <div>
             <label>敲入/敲出:</label>
-            <select id="knock-type">
+            <select v-model="params.knockType">
               <option value="out">敲出 (Knock-out)</option>
               <option value="in">敲入 (Knock-in)</option>
             </select>
@@ -96,34 +100,41 @@
 
           <div>
             <label>期权类型:</label>
-            <select id="option-type">
+            <select v-model="params.optionType">
               <option value="call">看涨 (Call)</option>
               <option value="put">看跌 (Put)</option>
             </select>
-          </div>
-
-          <button id="calculate-btn">计算期权价格</button>
-          <div id="loading" class="loading">计算中，请稍候...</div>
+          </div>          <button 
+            @click="calculateOptionPrice" 
+            :disabled="isLoading"
+            class="w-full mt-2.5 px-4 py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-base rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            计算期权价格
+          </button>
+          <div v-if="isLoading" class="loading">计算中，请稍候...</div>
         </div>
       </div>
+
     </template>
+
     <template #conclusion>
-      <div  class="w-full h-full p-5">
-        <div class="prose-sm max-w-full " v-html="toMarkdown(content)" />
+      <div class="w-full h-full p-5">
+        <div class="prose-sm max-w-full" v-html="toMarkdown(content)" />
       </div>
     </template>
+
     <template #comment>
-      <CommentPanel exp-id="central-limit-theorem" />
+      <CommentPanel exp-id="" />
     </template>
   </ExperimentBoard>
-
 </template>
 
 <script setup>
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { toMarkdown } from '@/utils/markdown';
-import { ref } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
+import Plotly from 'plotly.js-dist';
 
 const content = ref(`
 ## **障碍期权定价：蒙特卡洛模拟**
@@ -178,11 +189,11 @@ $C = e^{-rT} \\times \\frac{1}{N} \\sum_{i=1}^{N} \\text{Payoff}_i$
 **重要性：**
 
 障碍期权的定价通常非常复杂，传统的解析方法（如布莱克-斯科尔斯模型）无法有效应对。蒙特卡洛模拟为这一类期权的定价提供了灵活且强大的工具。尽管蒙特卡洛模拟需要大量的计算资源，但其可以处理各种不同类型的障碍期权，并适应不同的市场条件和假设，因此在金融工程中得到了广泛应用。
-
 `)
 
 // 初始化参数
-let params = {
+// 初始化参数
+const params = reactive({
   S0: 100,
   K: 100,
   H: 85,
@@ -194,35 +205,56 @@ let params = {
   barrierType: 'down',
   knockType: 'out',
   optionType: 'call'
+});
+
+// 计算结果
+const results = reactive({
+  price: '-',
+  stderr: '-',
+  hitProb: '-',
+  calcTime: '-'
+});
+
+// 加载状态
+const isLoading = ref(false);
+
+// 工具函数
+const utils = {
+  // 生成正态分布随机数 (Box-Muller变换)
+  generateRandomNormals(n) {
+    const randoms = new Array(n);
+    for (let i = 0; i < n; i += 2) {
+      const u1 = Math.random();
+      const u2 = Math.random();
+      const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+      const z1 = Math.sqrt(-2 * Math.log(u1)) * Math.sin(2 * Math.PI * u2);
+      randoms[i] = z0;
+      if (i + 1 < n) randoms[i + 1] = z1;
+    }
+    return randoms;
+  },
+
+  // 计算平均值
+  mean(arr) {
+    return arr.reduce((a, b) => a + b, 0) / arr.length;
+  },
+
+  // 计算标准差
+  std(arr) {
+    const m = this.mean(arr);
+    return Math.sqrt(arr.reduce((a, b) => a + (b - m) ** 2, 0) / arr.length);
+  }
 };
 
-// 绑定滑块事件
-document.querySelectorAll('input[type="range"], select').forEach(element => {
-  element.addEventListener('input', function() {
-    const id = this.id;
-    const value = this.type === 'range' ? Number.parseFloat(this.value) : this.value;
-    params[id] = value;
-    if (this.type === 'range') {
-      document.getElementById(`${id}-value`).textContent =
-          ['r', 'sigma'].includes(id) ? value.toFixed(2) : value;
-    }
-  });
-});
-
-// 计算按钮事件
-document.getElementById('calculate-btn').addEventListener('click', function() {
-  calculateOptionPrice();
-});
-
 // 蒙特卡洛模拟计算
-function calculateOptionPrice() {
+const calculateOptionPrice = async () => {
+  isLoading.value = true;
   const startTime = performance.now();
-  const loadingElement = document.getElementById('loading');
-  loadingElement.style.display = 'block';
 
   // 使用setTimeout让UI有机会更新加载状态
   setTimeout(() => {
-    const { S0, K, H, T, r, sigma, simulations, timeSteps,      barrierType, knockType, optionType } = params;
+    const { S0, K, H, T, r, sigma, simulations, timeSteps,
+      barrierType, knockType, optionType } = params;
 
     const dt = T / timeSteps;
     const discount = Math.exp(-r * T);
@@ -231,18 +263,18 @@ function calculateOptionPrice() {
     const z = generateRandomNormals(simulations * timeSteps);
 
     // 计算价格路径
-    const paths = Array.from({length: simulations});
-    const hitBarrier = Array.from({length: simulations}).fill(false);
+    const paths = new Array(simulations);
+    const hitBarrier = new Array(simulations).fill(false);
 
     for (let i = 0; i < simulations; i++) {
-      paths[i] = Array.from({length: timeSteps + 1});
+      paths[i] = new Array(timeSteps + 1);
       paths[i][0] = S0;
 
       for (let j = 1; j <= timeSteps; j++) {
         const idx = i * timeSteps + (j - 1);
         paths[i][j] = paths[i][j - 1] * Math.exp(
-            (r - 0.5 * sigma * sigma) * dt +
-            sigma * Math.sqrt(dt) * z[idx]
+          (r - 0.5 * sigma * sigma) * dt +
+          sigma * Math.sqrt(dt) * z[idx]
         );
 
         // 检查障碍条件
@@ -255,7 +287,7 @@ function calculateOptionPrice() {
     }
 
     // 计算收益
-    const payoffs = Array.from({length: simulations});
+    const payoffs = new Array(simulations);
     for (let i = 0; i < simulations; i++) {
       const ST = paths[i][timeSteps];
       let payoff = 0;
@@ -276,27 +308,22 @@ function calculateOptionPrice() {
     // 计算统计量
     const price = discount * mean(payoffs);
     const stderr = discount * std(payoffs) / Math.sqrt(simulations);
-    const hitProb = mean(hitBarrier.map(h => h ? 1 : 0));
-
-    // 更新结果显示
-    document.getElementById('price').textContent = price.toFixed(4);
-    document.getElementById('stderr').textContent = stderr.toFixed(6);
-    document.getElementById('hit-prob').textContent = `${(hitProb * 100).toFixed(2)  }%`;
-
-    const endTime = performance.now();
-    document.getElementById('calc-time').textContent =
-        `${((endTime - startTime) / 1000).toFixed(2)  }秒`;
+    const hitProb = mean(hitBarrier.map(h => h ? 1 : 0));    // 更新结果
+    results.price = price.toFixed(4);
+    results.stderr = stderr.toFixed(6);
+    results.hitProb = `${(hitProb * 100).toFixed(2)}%`;
+    results.calcTime = `${((performance.now() - startTime) / 1000).toFixed(2)}秒`;
 
     // 更新图表
     updateCharts(paths, hitBarrier);
 
-    loadingElement.style.display = 'none';
+    isLoading.value = false;
   }, 10);
 }
 
 // 生成正态分布随机数 (Box-Muller变换)
 function generateRandomNormals(n) {
-  const randoms = Array.from({length: n});
+  const randoms = new Array(n);
   for (let i = 0; i < n; i += 2) {
     const u1 = Math.random();
     const u2 = Math.random();
@@ -322,7 +349,7 @@ function std(arr) {
 // 更新图表
 function updateCharts(paths, hitBarrier) {
   const { H, barrierType, timeSteps, T } = params;
-  const timePoints = Array.from({length: timeSteps + 1}, (_, i) => i * T / timeSteps);
+  const timePoints = Array.from({ length: timeSteps + 1 }, (_, i) => i * T / timeSteps);
 
   // 选择部分路径显示 (最多20条)
   const displayPaths = Math.min(20, paths.length);
@@ -346,9 +373,9 @@ function updateCharts(paths, hitBarrier) {
       x: timePoints,
       y: paths[idx],
       type: 'line',
-      line: { color: color, width: 1},
+      line: { color: color, width: 1 },
       showlegend: false,
-      hoverinfo: 'none',
+      hoverinfo: 'none'
     });
   }
 
@@ -357,16 +384,16 @@ function updateCharts(paths, hitBarrier) {
     x: [timePoints[0], timePoints[timePoints.length - 1]],
     y: [H, H],
     mode: 'lines',
-    line: {color: 'red', dash: 'dash', width: 2},
+    line: { color: 'red', dash: 'dash', width: 2 },
     name: '障碍水平'
   });
 
   // 绘制价格路径图
   Plotly.newPlot('paths-chart', pathTraces, {
     title: '蒙特卡洛模拟路径示例',
-    xaxis: {title: '时间 (年)'},
-    yaxis: {title: '标的资产价格'},
-    margin: {t: 40, l: 50, r: 30, b: 50},
+    xaxis: { title: '时间 (年)' },
+    yaxis: { title: '标的资产价格' },
+    margin: { t: 40, l: 50, r: 30, b: 50 },
     showlegend: true
   });
 
@@ -380,126 +407,122 @@ function updateCharts(paths, hitBarrier) {
     type: 'histogram',
     name: '全部路径',
     opacity: 0.5,
-    marker: {color: 'blue'}
+    marker: { color: 'blue' }
   }, {
     x: hitST,
     type: 'histogram',
     name: '触及障碍',
     opacity: 0.5,
-    marker: {color: 'red'}
+    marker: { color: 'red' }
   }, {
     x: missST,
     type: 'histogram',
     name: '未触障碍',
     opacity: 0.5,
-    marker: {color: 'green'}
+    marker: { color: 'green' }
   }];
 
   // 绘制价格分布图
   Plotly.newPlot('price-chart', priceHistogram, {
     title: '到期价格分布',
-    xaxis: {title: '到期价格'},
-    yaxis: {title: '频数'},
+    xaxis: { title: '到期价格' },
+    yaxis: { title: '频数' },
     barmode: 'overlay',
-    margin: {t: 40, l: 50, r: 30, b: 50}
+    margin: { t: 40, l: 50, r: 30, b: 50 }
   });
 }
 
 // 初始化计算
 calculateOptionPrice();
+
+
 </script>
 
-<head>
-<title>障碍期权定价 - 蒙特卡洛模拟</title>
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    color: #333;
-    line-height: 1.6;
-  }
-  .container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-  .control-panel {
-    flex: 1;
-    min-width: 300px;
-    background: #f8f9fa;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  }
-  .chart-container {
-    flex: 2;
-    min-width: 600px;
-  }
-  h1 {
-    color: #2c3e50;
-    border-bottom: 2px solid #3498db;
-    padding-bottom: 10px;
-    text-align: center;
-  }
-  .slider-container {
-    margin-bottom: 15px;
-  }
-  label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  input[type="range"] {
-    width: 100%;
-    margin-bottom: 5px;
-  }
-  .value-display {
-    font-size: 0.9em;
-    color: #6c757d;
-    text-align: right;
-  }
-  .results {
-    background: #e8f4f8;
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 20px;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-  }
-  th, td {
-    padding: 8px 12px;
-    text-align: left;
-    border-bottom: 1px solid #dee2e6;
-  }
-  th {
-    background-color: #3498db;
-    color: white;
-  }
-  button {
-    background-color: #3498db;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 10px;
-    width: 100%;
-  }
-  button:hover {
-    background-color: #2980b9;
-  }
-  .loading {
-    text-align: center;
-    padding: 10px;
-    color: #3498db;
-    display: none;
-  }
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.control-panel {
+  flex: 1;
+  min-width: 300px;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.chart-container {
+  flex: 2;
+  min-width: 600px;
+}
+
+h1 {
+  color: #2c3e50;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+  text-align: center;
+}
+
+.slider-container {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input[type="range"] {
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.value-display {
+  font-size: 0.9em;
+  color: #6c757d;
+  text-align: right;
+}
+
+.results {
+  background: #e8f4f8;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th,
+td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid #dee2e6;
+}
+
+th {
+  background-color: #3498db;
+  color: white;
+}
+
+.loading {
+  text-align: center;
+  padding: 10px;
+  color: #3498db;
+  display: none;
+}
+
+.loading {
+  text-align: center;
+  padding: 10px;
+  color: #3498db;
+  display: none;
+}
 </style>
-</head>

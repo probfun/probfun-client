@@ -111,7 +111,7 @@
 
 </template>
 
-<script setup>
+<script setup lang="ts">
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { toMarkdown } from '@/utils/markdown';
