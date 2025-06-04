@@ -21,20 +21,25 @@ onMounted(() => {
     language: 'zh-CN',
   };
 
-  // 创建 Desmos 3D 图形计算器实例
   calculator = Desmos.Calculator3D(elt.value, options);
-  draw3DUniformDistribution();
+  updateGraphAndBounds();
+});
+
+function updateGraphAndBounds() {
+  const area = (props.x2 - props.x1) * (props.y2 - props.y1);
+  const f = 1 / area;
+  
+  // 设置坐标轴范围（自动调整）
   calculator.setMathBounds({
     left: props.x1 - 1,
     right: props.x2 + 1,
     bottom: props.y1 - 1,
     top: props.y2 + 1,
+    zMin: 0,
+    zMax: f + 0.1  // 给z轴留一些空间
   });
-});
 
-function draw3DUniformDistribution() {
-  const area = (props.x2 - props.x1) * (props.y2 - props.y1);
-  const f = 1 / area;
+  // 更新图形
   const uniform1 = {
     id: 'main',
     latex: `f_1(x, y) = \\frac{1}{${area}} \\{${props.x1} <= x <= ${props.x2}\\} \\{${props.y1} <= y <= ${props.y2}\\}`,
@@ -65,6 +70,7 @@ function draw3DUniformDistribution() {
     latex: `y = ${props.y2} \\{0 <= z <= ${f}\\} \\{${props.x1} <= x <= ${props.x2}\\}`,
     color: Desmos.Colors.BLUE,
   }
+  
   calculator.setExpression(uniform1);
   calculator.setExpression(uniform2);
   calculator.setExpression(uniform3);
@@ -74,7 +80,7 @@ function draw3DUniformDistribution() {
 }
 
 watch(() => [props.x1, props.x2, props.y1, props.y2], () => {
-  draw3DUniformDistribution();
+  updateGraphAndBounds();
 });
 </script>
 

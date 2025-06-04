@@ -471,7 +471,7 @@ function handleCompositionEnd() {
     <Label>
       游客用户无法使用 AI 助手，请先
 
-      <router-link to="/login" class="underline text-primary underline-offset-4 hover:text-primary transition-all font-medium px-1"> 登录 </router-link>
+      <router-link to="/login" class="size-48 underline text-primary underline-offset-4 hover:text-primary transition-all font-medium px-1"> 登录 </router-link>
     </Label>
   </div>
 </template>

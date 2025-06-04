@@ -64,6 +64,7 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       label: 'Rectangular(n)\nV',
       position: { x: 600, y: 0 },
       chineseTranslation: '矩形分布(n)\nV',
+      pdf: null,
     },
     {
       label: 'Beta-binomial\n(a,b,n)',
@@ -87,13 +88,13 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       label: 'Logarithm(c)',
       position: { x: 150, y: 200 },
       chineseTranslation: '对数(c)',
-
+      pdf: null,
     },
     {
       label: 'Power series(c,A(c))',
       position: { x: 300, y: 100 },
       chineseTranslation: '幂级数(c, A(c))',
-
+      pdf: null,
     },
     {
       label: 'Poisson(μ)\nC',
@@ -114,13 +115,13 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       label: 'Beta-Pascal\n(n,a,b)',
       position: { x: 250, y: 500 },
       chineseTranslation: '贝塔-帕斯卡尔分布\n(n, a, b)',
-
+      pdf: null,
     },
     {
       label: 'Gamma-Poisson(α,β)',
       position: { x: 580, y: 300 },
       chineseTranslation: '伽马-泊松分布(α, β)',
-
+      pdf: null,
     },
     {
       label: 'Binomial(n,p)',
@@ -346,7 +347,7 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       label: 'Noncentral t(n,δ)',
       position: { x: -350, y: 100 },
       chineseTranslation: '非中心 t 分布(n, δ)',
-
+        pdf: null,
       imgPath: '/distribution/noncentral_t.png',
     },
     {
@@ -369,42 +370,43 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       label: 'Logistic-exponential(α,β)\nS,V',
       position: { x: -350, y: 100 },
       chineseTranslation: '逻辑-指数分布(α, β)\nS, V',
+      pdf: null,
     },
     {
       label: 'Compertz(δ,κ)\nV',
       position: { x: -350, y: 100 },
       chineseTranslation: 'Compertz分布(δ, κ)\nV',
-
+      pdf: null,
     },
     {
       label: 'Exponential Power(λ,κ)',
       position: { x: -350, y: 100 },
       chineseTranslation: '指数幂分布(λ, κ)',
-
+      pdf: null,
     },
     {
       label: 'Doubly noncentral t(n,δ,γ)',
       position: { x: -350, y: 100 },
       chineseTranslation: '双重非中心 t 分布(n, δ, γ)',
-
+      pdf: null,
     },
     {
       label: 'Hyperexponential',
       position: { x: -350, y: 100 },
       chineseTranslation: '超指数分布',
-
+      pdf: null,
     },
     {
       label: 'Muth(κ)',
       position: { x: -350, y: 100 },
       chineseTranslation: 'Muth 分布(κ)',
-
+      pdf: null,
     },
     {
       label: 'Error(a,b,c)\nS',
       position: { x: -350, y: 100 },
       chineseTranslation: '误差分布(a, b, c)\nS',
-
+      pdf: null,
     },
     {
       label: 'Standard uniform\nV',
@@ -417,19 +419,19 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       label: 'Minimax(β,γ)\nMβ,V',
       position: { x: -350, y: 100 },
       chineseTranslation: 'Minimax 分布(β, γ)\nMβ, V',
-
+      pdf: null,
     },
     {
       label: 'Noncentral F(n1,n2,δ)',
       position: { x: -350, y: 100 },
       chineseTranslation: '非中心 F 分布(n1, n2, δ)',
-
+      pdf: null,
     },
     {
       label: 'IDB(δ,κ,γ)',
       position: { x: -350, y: 100 },
       chineseTranslation: 'IDB 分布(δ, κ, γ)',
-
+      pdf: null,
     },
     {
       label: 'Laplace(α1,α2)\nV',
@@ -441,13 +443,13 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       label: 'Standard power(β)\nV,X',
       position: { x: -350, y: 100 },
       chineseTranslation: '标准幂分布(β)\nV, X',
-
+      pdf: null,
     },
     {
       label: 'Doubly noncentral F(n1,n2,δ,γ)',
       position: { x: -350, y: 100 },
       chineseTranslation: '双重非中心 F 分布(n1, n2, δ, γ)',
-
+      pdf: null,
     },
     {
       label: 'Rayleigh(α)\nM,S,V',
@@ -484,19 +486,19 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       label: 'Log logistc(λ,κ)\nI,S,V',
       position: { x: -350, y: 100 },
       chineseTranslation: '对数逻辑分布(λ, κ)\nI, S, V',
-
+      pdf: null,
     },
     {
       label: 'Benford\nV',
       position: { x: -350, y: 100 },
       chineseTranslation: '本福特定律\nV',
-
+      pdf: null,
     },
     {
       label: 'TSP(a,b,m,n)\nV',
       position: { x: -350, y: 100 },
       chineseTranslation: 'TSP(a, b, m, n)\nV',
-
+      pdf: null,
     },
     {
       label: 'Uniform(a,b)\nR,V',
@@ -518,8 +520,38 @@ export const useDistributionStore = defineStore('distributionStore', () => {
       chineseTranslation: 'Lomax 分布(λ, κ)\nV',
       pdf: '$$f(x) = \\frac{\\lambda}{\\kappa} \\left(1 + \\frac{x}{\\kappa}\\right)^{-(\\lambda + 1)}, \\quad x \\ge 0$$',
     },
+    {
+      label: 'von Mises(κ,μ)\nS',
+      position: { x: -350, y: 100 },
+      chineseTranslation: '冯·米塞斯分布(κ, μ)\nS',
+      pdf: '$$f(x) = \\frac{1}{2\\pi I_0(\\kappa)} e^{\\kappa \\cos(x - \\mu)}$$',
+    },
+    {
+      label: 'Generalized Pareto(δ,κ,γ)',
+      position: { x: -350, y: 100 },
+      chineseTranslation: '广义帕累托分布(δ, κ, γ)',
+      pdf: '$$f(x) = \\frac{1}{\\gamma} \\left(1 + \\frac{x}{\\delta}\\right)^{-\\kappa - 1}, \\quad x \\ge -\\delta$$',
+    },
+    {
+      label: 'Logistic(κ,γ)\nS,V',
+      position: { x: -350, y: 100 },
+      chineseTranslation: '逻辑斯蒂分布(κ, γ)\nS, V',
+      pdf: '$$f(x) = \\frac{e^{-(x - \\mu)/\\gamma}}{\\gamma (1 + e^{-(x - \\mu)/\\gamma})^2}$$',
+    },
+    {
+      label: 'Triangular(a,b,m)\nV',
+      position: { x: -350, y: 100 },
+      chineseTranslation: '三角分布(a, b, m)\nV',
+      pdf: '$$f(x) = \\begin{cases} \\frac{2(x - a)}{(b - a)(m - a)}, & a \\le x < m \\\\ \\frac{2(b - x)}{(b - a)(b - m)}, & m \\le x < b \\\\ 0, & \\text{otherwise} \\end{cases}$$',
+    },
+    {
+      label: 'Kolmogorov-Smirnov(n)\nV(1-4)',
+      position: { x: -350, y: 100 },
+      chineseTranslation: 'Kolmogorov-Smirnov(n)\nV(1-4)',
+      pdf: null,
+    },
   ]);
-  const version = ref(2);
+  const version = ref(4);
   return {
     nodeData,
     version,
