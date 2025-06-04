@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { Toaster } from '@/components/ui/toast'
-import { vAutoAnimate } from '@formkit/auto-animate'; // 导入 API 调用
+import { vAutoAnimate } from '@formkit/auto-animate';
 import Toast from 'primevue/toast';
 import { onBeforeUnmount, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { browseApi } from './api/track/trackApi';
+import 'primeicons/primeicons.css'
 
 const router = useRouter();
 
