@@ -42,7 +42,6 @@ declare module 'vue' {
     BNDiagram: typeof import('./src/components/experiment/distribution/comparison/BNDiagram.vue')['default']
     BP: typeof import('./src/components/experiment/distribution/comparison/BP.vue')['default']
     BPDiagram: typeof import('./src/components/experiment/distribution/comparison/BPDiagram.vue')['default']
-    Brown: typeof import('./src/components/experiment/chapter6/Brown.vue')['default']
     Brownian: typeof import('./src/components/experiment/chapter6/Brownian.vue')['default']
     BuffonNeedle: typeof import('./src/components/experiment/chapter1/buffon-needle/BuffonNeedle.vue')['default']
     BuffonNeedleDisplay: typeof import('./src/components/experiment/chapter1/buffon-needle/BuffonNeedleDisplay.vue')['default']

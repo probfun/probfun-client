@@ -33,15 +33,16 @@ export function initialNodes() {
     return createDistributionNode(data);
   });
 
-  console.log(nodeOptions);
+  // console.log(nodeOptions);
 
-  return nodeOptions.sort((a, b) => {
-    if (a.data.description && !b.data.description)
-      return -1;
-    if (!a.data.description && b.data.description)
-      return 1;
-    return 0;
-  });
+  return nodeOptions;
+  // return nodeOptions.sort((a, b) => {
+  //   if (a.data.description && !b.data.description)
+  //     return -1;
+  //   if (!a.data.description && b.data.description)
+  //     return 1;
+  //   return 0;
+  // });
 }
 
 const defaultEdgeOptions = {
