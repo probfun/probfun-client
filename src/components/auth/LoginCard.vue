@@ -3,7 +3,7 @@ import { visitorApi } from '@/api/track/trackApi.ts';
 import { loginApi } from '@/api/user/userApi';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { useUserStore } from '@/store';
+import { useUserStore, useThemeStore } from '@/store';
 import { setLocalToken } from '@/utils/auth';
 import { error, success, warning } from '@/utils/toast';
 import { vAutoAnimate } from '@formkit/auto-animate';
@@ -11,6 +11,7 @@ import Cookies from 'js-cookie';
 import { v4 as uuidv4 } from 'uuid';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { Input } from '@/components/ui/input';
 
 const isLoading = ref(false);
 const studentId = ref('');
@@ -18,7 +19,7 @@ const password = ref('');
 
 const router = useRouter();
 const userStore = useUserStore();
-
+const themeStore = useThemeStore();
 // 登录函数
 async function login() {
   if (!studentId.value || !password.value) {
@@ -32,7 +33,13 @@ async function login() {
 
     setLocalToken(token);
     userStore.user = user;
-    await router.push('/dashboard');
+    let target = 'dashboard-prob';
+    if (themeStore.currentColor === 'rgb(34, 168, 109)') {
+      target = 'dashboard-advanced';
+    } else if (themeStore.currentColor === 'rgb(142, 68, 173)') {
+      target = 'dashboard-linear';
+    }
+    await router.push(target);
   }
   catch (e: any) {
     console.error('Error:', e);
@@ -100,7 +107,9 @@ async function visitorLogin() {
     <div class="text-center flex flex-col mb-6">
       <Button
         type="submit"
-        :disabled="isLoading" class="w-full mb-4"
+        :disabled="isLoading" 
+        class="w-full mb-4 transition-colors duration-800"
+        :style="{ backgroundColor: themeStore.currentColor }"
       >
         登录
       </Button>
@@ -146,5 +155,7 @@ async function visitorLogin() {
 </template>
 
 <style scoped>
-
+:deep(.button) {
+  transition: background-color 0.8s ease;
+}
 </style>

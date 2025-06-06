@@ -41,6 +41,7 @@ declare module 'vue' {
     BlackScholesModel: typeof import('./src/components/experiment/chapter7/BlackScholesModel.vue')['default']
     BN: typeof import('./src/components/experiment/distribution/comparison/BN.vue')['default']
     BNDiagram: typeof import('./src/components/experiment/distribution/comparison/BNDiagram.vue')['default']
+    BoxSelector: typeof import('./src/components/mode/BoxSelector.vue')['default']
     BP: typeof import('./src/components/experiment/distribution/comparison/BP.vue')['default']
     BPDiagram: typeof import('./src/components/experiment/distribution/comparison/BPDiagram.vue')['default']
     Brownian: typeof import('./src/components/experiment/chapter6/Brownian.vue')['default']

@@ -23,7 +23,9 @@ import StudentPanel from '@/components/user/StudentPanel.vue';
 
 import TeacherPanel from '@/components/user/TeacherPanel.vue';
 import AuthPage from '@/pages/AuthPage.vue';
-import DashBoard from '@/pages/DashBoard.vue';
+import DashboardProb from '@/pages/DashboardProb.vue';
+import DashboardAdvanced from '@/pages/DashboardAdvanced.vue';
+import DashboardLinear from '@/pages/DashboardLinear.vue';
 import { isVisitor } from '@/utils/auth.ts';
 import { createRouter, createWebHistory } from 'vue-router';
 
@@ -53,174 +55,182 @@ const router = createRouter({
       ],
     },
     {
-      path: '/dashboard',
-      component: DashBoard,
+      path: '/dashboard-prob',
+      component: DashboardProb,
       children: [
         {
-          path: '/dashboard',
+          path: '/dashboard-prob',
           component: HomePage,
         },
         {
-          path: '/dashboard/experiment/buffon',
+          path: '/dashboard-prob/experiment/buffon',
           component: BuffonNeedle,
         },
         {
-          path: '/dashboard/experiment/three-doors',
+          path: '/dashboard-prob/experiment/three-doors',
           component: ThreeDoors,
         },
         {
-          path: '/dashboard/experiment/positive-test',
+          path: '/dashboard-prob/experiment/positive-test',
           component: PositiveTest,
         },
         {
-          path: '/dashboard/experiment/birthday-attack',
+          path: '/dashboard-prob/experiment/birthday-attack',
           component: BirthdayAttack,
         },
         {
-          path: '/dashboard/experiment/birthday-problem',
+          path: '/dashboard-prob/experiment/birthday-problem',
           component: BirthdayProblem,
         },
         {
-          path: '/dashboard/experiment/normal-distribution',
+          path: '/dashboard-prob/experiment/normal-distribution',
           component: NormalDistribution,
         },
         {
-          path: '/dashboard/experiment/binomial-distribution',
+          path: '/dashboard-prob/experiment/binomial-distribution',
           component: () => import('@/components/experiment/distribution/BinomialDistribution.vue'),
         },
         {
-          path: '/dashboard/experiment/poisson-distribution',
+          path: '/dashboard-prob/experiment/poisson-distribution',
           component: PoissonDistribution,
         },
         {
-          path: '/dashboard/experiment/geometric-distribution',
+          path: '/dashboard-prob/experiment/geometric-distribution',
           component: GeometricDistribution,
         },
         {
-          path: '/dashboard/experiment/uniform-distribution',
+          path: '/dashboard-prob/experiment/uniform-distribution',
           component: UniformDistribution,
         },
         {
-          path: '/dashboard/experiment/exponential-distribution',
+          path: '/dashboard-prob/experiment/exponential-distribution',
           component: () => import('@/components/experiment/distribution/ExponentialDistribution.vue'),
         },
         {
-          path: '/dashboard/experiment/binomial-poisson',
+          path: '/dashboard-prob/experiment/binomial-poisson',
           component: () => import('@/components/experiment/distribution/comparison/BP.vue'),
         },
         {
-          path: '/dashboard/experiment/binomial-normal',
+          path: '/dashboard-prob/experiment/binomial-normal',
           component: () => import('@/components/experiment/distribution/comparison/BN.vue'),
         },
         {
-          path: '/dashboard/experiment/poisson-exponential',
+          path: '/dashboard-prob/experiment/poisson-exponential',
           component: () => import('@/components/experiment/distribution/comparison/PE.vue'),
         },
         {
-          path: '/dashboard/experiment/poisson-normal',
+          path: '/dashboard-prob/experiment/poisson-normal',
           component: () => import('@/components/experiment/distribution/comparison/PN.vue'),
         },
         {
-          path: '/dashboard/experiment/2d-uniform-distribution',
+          path: '/dashboard-prob/experiment/2d-uniform-distribution',
           component: () => import('@/components/experiment/chapter3/uniform-distribution/threeUniformDistribution.vue'),
         },
         {
-          path: '/dashboard/experiment/2d-normal-distribution',
+          path: '/dashboard-prob/experiment/2d-normal-distribution',
           component: threeNormalDistribution,
         },
         {
-          path: '/dashboard/experiment/central-limit-theorem',
+          path: '/dashboard-prob/experiment/central-limit-theorem',
           component: () => import('@/components/experiment/chapter5/central-limit-theorem/clt.vue'),
         },
         {
-          path: '/dashboard/experiment/expectation-test',
+          path: '/dashboard-prob/experiment/expectation-test',
           component: () => import('@/components/experiment/chapter4/ExpectationTest.vue'),
         },
         {
-          path: '/dashboard/experiment/bertrand',
+          path: '/dashboard-prob/experiment/bertrand',
           component: () => import('@/components/experiment/chapter1/bertrand/bertrand.vue'),
         },
         {
-          path: '/dashboard/experiment/distribution-clt',
+          path: '/dashboard-prob/experiment/distribution-clt',
           component: () => import('@/components/experiment/chapter5/distribution-clt/DistributionClt.vue'),
         },
         {
-          path: '/dashboard/experiment/coin-tossing',
+          path: '/dashboard-prob/experiment/coin-tossing',
           component: () => import('@/components/experiment/chapter7/CoinTossing.vue'),
         },
         {
-          path: '/dashboard/experiment/black-scholes',
+          path: '/dashboard-prob/experiment/black-scholes',
           component: () => import('@/components/experiment/chapter7/BlackScholesModel.vue'),
         },
         {
-          path: '/dashboard/experiment/american-option',
+          path: '/dashboard-prob/experiment/american-option',
           component: () => import('@/components/experiment/chapter7/PricingofAmericanPutOptions.vue'),
         },
         {
-          path: '/dashboard/experiment/asset-captial',
+          path: '/dashboard-prob/experiment/asset-captial',
           component: () => import('@/components/experiment/chapter7/AssetCapitalPricing.vue'),
         },
         {
-          path: '/dashboard/experiment/monte-carlo',
+          path: '/dashboard-prob/experiment/monte-carlo',
           component: () => import('@/components/experiment/chapter7/MonteCarlo.vue'),
         },
         {
-          path: '/dashboard/experiment/arithmetic-mean',
+          path: '/dashboard-prob/experiment/arithmetic-mean',
           component: () => import('@/components/experiment/chapter7/ArithmeticMeanAsianOption.vue'),
         },
         {
-          path: '/dashboard/experiment/obstacle-options',
+          path: '/dashboard-prob/experiment/obstacle-options',
           component: () => import('@/components/experiment/chapter7/ObstacleOptions.vue'),
         },
         {
-          path: '/dashboard/experiment/brownian-motion',
+          path: '/dashboard-prob/experiment/brownian-motion',
           component: () => import('@/components/experiment/chapter6/Brownian.vue'),
         },
         {
-          path: '/dashboard/experiment/geometric-brownian-motion',
+          path: '/dashboard-prob/experiment/geometric-brownian-motion',
           component: () => import('@/components/experiment/chapter6/GeometricBrownian.vue'),
         },
         {
-          path: '/dashboard/experiment/poisson-process',
+          path: '/dashboard-prob/experiment/poisson-process',
           component: () => import('@/components/experiment/chapter6/PoissonProcess.vue'),
         },
         {
-          path: '/dashboard/experiment/vector',
+          path: '/dashboard-prob/experiment/vector',
           component: () => import('@/components/experiment/chapter6/Vector.vue'),
         },
         {
-          path: '/dashboard/info0',
+          path: '/dashboard-prob/info0',
           component: StudentPanel,
         },
         {
-          path: '/dashboard/info1',
+          path: '/dashboard-prob/info1',
           component: TeacherPanel,
         },
         {
-          path: '/dashboard/ai',
+          path: '/dashboard-prob/ai',
           component: AiPanel,
         },
         {
-          path: '/dashboard/favorite',
+          path: '/dashboard-prob/favorite',
           component: FavoritePanel,
         },
         {
-          path: '/dashboard/mindmap/distribution',
+          path: '/dashboard-prob/mindmap/distribution',
           component: DistributionDiagram,
         },
         {
-          path: '/dashboard/mindmap/chapter-1',
+          path: '/dashboard-prob/mindmap/chapter-1',
           component: Chatper1Diagram,
         },
         {
-          path: '/dashboard/mindmap/chapter-4',
+          path: '/dashboard-prob/mindmap/chapter-4',
           component: Chatper4Diagram,
         },
         {
           path: '/:pathMatch(.*)*',
-          redirect: '/dashboard',
+          redirect: '/dashboard-prob',
         },
       ],
+    },
+    {
+      path: '/dashboard-advanced',
+      component: DashboardAdvanced,
+    },
+    {
+      path: '/dashboard-linear',
+      component: DashboardLinear,
     },
 
   ],
@@ -230,14 +240,14 @@ router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token');
   if (to.path === '/') {
     if (token || isVisitor()) {
-      next('/dashboard');
+      next('/dashboard-prob');
     }
     else {
       next('/login');
     }
     return;
   }
-  if (to.path === '/dashboard') {
+  if (to.path === '/dashboard-prob') {
     if (token || isVisitor()) {
       next();
     }
