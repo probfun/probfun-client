@@ -88,7 +88,7 @@ onMounted(() => {
             </CardDescription>
           </CardHeader>
           <CardFooter class="flex items-center justify-between gap-2 p-3 pt-0">
-            <router-link class="w-full" to="/dashboard/experiment/normalDistribution">
+            <router-link class="w-full" to="/dashboard-prob/experiment/normalDistribution">
               <Button class="w-full">
                 进入实验
               </Button>
@@ -105,7 +105,7 @@ onMounted(() => {
             </CardDescription>
           </CardHeader>
           <CardFooter class="flex items-center justify-between gap-2 p-3 pt-0">
-            <router-link class="w-full" to="/dashboard/experiment/normalDistribution">
+            <router-link class="w-full" to="/dashboard-prob/experiment/normalDistribution">
               <Button class="w-full">
                 进入实验
               </Button>
@@ -124,7 +124,7 @@ onMounted(() => {
             </CardDescription>
           </CardHeader>
           <CardFooter class="flex items-center justify-between gap-2 p-3 pt-0">
-            <router-link class="w-full" to="/dashboard/experiment/normalDistribution">
+            <router-link class="w-full" to="/dashboard-prob/experiment/normalDistribution">
               <Button class="w-full">
                 进入实验
               </Button>
@@ -141,7 +141,7 @@ onMounted(() => {
             </CardDescription>
           </CardHeader>
           <CardFooter class="flex items-center justify-between gap-2 p-3 pt-0">
-            <router-link class="w-full" to="/dashboard/experiment/normalDistribution">
+            <router-link class="w-full" to="/dashboard-prob/experiment/normalDistribution">
               <Button class="w-full">
                 进入实验
               </Button>
@@ -257,7 +257,7 @@ onMounted(() => {
             正态分布是一种常见的分布。在正态分布中，大多数据都集中在平均值附近，这种分布经常出现在自然现象和日常生活中。
           </CardContent>
           <CardFooter class="flex items-center justify-between gap-2 p-3 pt-0">
-            <router-link class="w-full" to="/dashboard/experiment/normal-distribution">
+            <router-link class="w-full" to="/dashboard-prob/experiment/normal-distribution">
               <Button class="w-full">
                 进入实验
               </Button>
@@ -277,7 +277,7 @@ onMounted(() => {
             三门问题是一个概率游戏，选手在三扇门中选一扇，选对得奖。主持人会揭示另一扇无奖的门，选手可以选择换或不换门。
           </CardContent>
           <CardFooter class="flex items-center justify-between gap-2 p-3 pt-0">
-            <router-link class="w-full" to="/dashboard/experiment/three-doors">
+            <router-link class="w-full" to="/dashboard-prob/experiment/three-doors">
               <Button class="w-full">
                 进入实验
               </Button>

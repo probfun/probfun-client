@@ -69,9 +69,9 @@ async function register() {
     const { token, ...user } = data.user;
     setLocalToken(token);
     userStore.user = user;
-    await router.push('/dashboard');
+    await router.push('/dashboard-prob');
     success('注册成功');
-    await router.push('/dashboard');
+    await router.push('/dashboard-prob');
   }
   catch (e: any) {
     console.error('Error during registration:', e);

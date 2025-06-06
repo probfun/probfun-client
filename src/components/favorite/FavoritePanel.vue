@@ -62,7 +62,7 @@ async function refreshFavorite() {
         <div v-for="(experiment, index) in userStore.favoriteExperiments" :key="experiment.expId" class="flex items-center">
           <Button
             :variant="index % 2 ? 'secondary' : 'ghost'" :class="cn('justify-start h-12 text-base font-normal flex-1', index % 2 && 'bg-secondary/70')" @click="() => {
-              router.push(`/dashboard/experiment/${experiment.expId}`);
+              router.push(`/dashboard-prob/experiment/${experiment.expId}`);
             }"
           >
             {{ index + 1 }}. {{ experiment.expName }}
@@ -90,7 +90,7 @@ async function refreshFavorite() {
                 <Button
                   size="icon" variant="ghost" class="p-1 size-8 ml-1 rounded-full" @click="() => {
                     router.push({
-                      path: '/dashboard/ai',
+                      path: '/dashboard-prob/ai',
                       query: {
                         query: `请介绍一下${experiment.expName}`,
                       },

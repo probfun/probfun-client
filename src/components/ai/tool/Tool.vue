@@ -28,7 +28,7 @@ function jumpToExperiment(name: string) {
 
   const experimentPath = experimentMap[name];
   if (experimentPath) {
-    router.push(`/dashboard/experiment/${experimentPath}`);
+    router.push(`/dashboard-prob/experiment/${experimentPath}`);
   }
   else {
     console.error(`No mapping found for experiment name: ${name}`);

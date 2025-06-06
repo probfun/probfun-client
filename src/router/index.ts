@@ -23,9 +23,9 @@ import StudentPanel from '@/components/user/StudentPanel.vue';
 
 import TeacherPanel from '@/components/user/TeacherPanel.vue';
 import AuthPage from '@/pages/AuthPage.vue';
-import DashboardProb from '@/pages/DashboardProb.vue';
-import DashboardAdvanced from '@/pages/DashboardAdvanced.vue';
-import DashboardLinear from '@/pages/DashboardLinear.vue';
+import DashboardProb from '@/pages/DashBoard-Prob.vue';
+import DashboardAdvmath from '@/pages/Dashboard-Advmath.vue';
+import DashboardLinalg from '@/pages/Dashboard-Linalg.vue';
 import { isVisitor } from '@/utils/auth.ts';
 import { createRouter, createWebHistory } from 'vue-router';
 
@@ -225,12 +225,12 @@ const router = createRouter({
       ],
     },
     {
-      path: '/dashboard-advanced',
-      component: DashboardAdvanced,
+      path: '/dashboard-advmath',
+      component: DashboardAdvmath,
     },
     {
-      path: '/dashboard-linear',
-      component: DashboardLinear,
+      path: '/dashboard-linalg',
+      component: DashboardLinalg,
     },
 
   ],

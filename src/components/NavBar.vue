@@ -407,17 +407,17 @@ function openFeishuDoc() {
                   <span v-if="item.type === 'post'">{{ item.postData?.post.user.nickname }}</span>
                   <span
                     v-if="item.type === 'pin'"
-                    @click="router.push(`/dashboard/experiment/${item.pinData?.comment.expId}`)"
+                    @click="router.push(`/dashboard-prob/experiment/${item.pinData?.comment.expId}`)"
                   >{{
                     item.pinData?.user.nickname }}</span>
                   <span
                     v-if="item.type === 'reply'"
-                    @click="router.push(`/dashboard/experiment/${item.replyData?.comment.expId}`)"
+                    @click="router.push(`/dashboard-prob/experiment/${item.replyData?.comment.expId}`)"
                   >{{
                     item.replyData?.reply.user.nickname }}</span>
                   <span
                     v-if="item.type === 'like'"
-                    @click="router.push(`/dashboard/experiment/${item.likeData?.comment.expId}`)"
+                    @click="router.push(`/dashboard-prob/experiment/${item.likeData?.comment.expId}`)"
                   >{{
                     item.likeData?.user.nickname }}</span>
                   <span v-if="item.type === 'delete'">管理员</span>
@@ -425,15 +425,15 @@ function openFeishuDoc() {
                   <span v-if="item.type === 'post'" class="content text-sm text-gray-600">老师发布了新的班级公告</span>
                   <span
                     v-if="item.type === 'pin'" class="content text-sm text-gray-600"
-                    @click="router.push(`/dashboard/experiment/${item.pinData?.comment.expId}`)"
+                    @click="router.push(`/dashboard-prob/experiment/${item.pinData?.comment.expId}`)"
                   >老师置顶了你的评论</span>
                   <span
                     v-if="item.type === 'reply'" class="content text-sm text-gray-600"
-                    @click="router.push(`/dashboard/experiment/${item.replyData?.comment.expId}`)"
+                    @click="router.push(`/dashboard-prob/experiment/${item.replyData?.comment.expId}`)"
                   >回复了你的评论</span>
                   <span
                     v-if="item.type === 'like'" class="content text-sm text-gray-600"
-                    @click="router.push(`/dashboard/experiment/${item.likeData?.comment.expId}`)"
+                    @click="router.push(`/dashboard-prob/experiment/${item.likeData?.comment.expId}`)"
                   >赞了你的评论</span>
                   <span v-if="item.type === 'delete'" class="content text-sm text-gray-600">管理员删除了你的评论</span>
                 </div>

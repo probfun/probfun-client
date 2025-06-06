@@ -225,7 +225,7 @@ function getDescriptionBody(description: string) {
       <div v-if="data.expId">
         <div class="w-full flex items-center justify-center pt-3">
           <Button>
-            <router-link :to="`/dashboard/experiment/${data.expId}`">
+            <router-link :to="`/dashboard-prob/experiment/${data.expId}`">
               进入实验
             </router-link>
           </Button>

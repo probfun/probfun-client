@@ -77,7 +77,7 @@ const processLabel = computed(() => {
 </script>
 
 <template>
-  <div class="hover:ring-4 transition-all nodrag rounded-lg p-2 flex items-center justify-center" :style="{ backgroundColor: bgColor, boxShadow: data.isRunning ? '0 0 10px rgba(0, 0, 0, 0.5)' : '' }" @click="router.push('/dashboard/experiment/three-doors')">
+  <div class="hover:ring-4 transition-all nodrag rounded-lg p-2 flex items-center justify-center" :style="{ backgroundColor: bgColor, boxShadow: data.isRunning ? '0 0 10px rgba(0, 0, 0, 0.5)' : '' }" @click="router.push('/dashboard-prob/experiment/three-doors')">
     <!--    <Handle v-if="!isSender" type="target" :position="targetPosition"> -->
     <!--      <span v-if="!data.isRunning && !data.isFinished && !data.isCancelled && !data.isSkipped && !data.hasError">📥 </span> -->
     <!--    </Handle> -->

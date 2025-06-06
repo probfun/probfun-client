@@ -59,28 +59,28 @@ const sideBarItem = ref<SideBarItem[]>([
   {
     label: '主页',
     icon: Home,
-    route: '/dashboard',
+    route: '/dashboard-prob',
   },
   {
     label: '目录',
     icon: Book,
-    route: '/dashboard/experiment',
+    route: '/dashboard-prob/experiment',
     command: toggleDrawer,
   },
   {
     label: '收藏',
     icon: Star,
-    route: '/dashboard/favorite',
+    route: '/dashboard-prob/favorite',
   },
   {
     label: '大模型回答',
     icon: Bot,
-    route: '/dashboard/ai',
+    route: '/dashboard-prob/ai',
   },
   {
     label: '个人资料',
     icon: User,
-    route: userStore.user?.role === 0 ? '/dashboard/info0' : '/dashboard/info1',
+    route: userStore.user?.role === 0 ? '/dashboard-prob/info0' : '/dashboard-prob/info1',
   },
 ]);
 
@@ -132,12 +132,12 @@ const chapter1Items = [
   {
     label: 'Buffon投针',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/buffon',
+    route: '/dashboard-prob/experiment/buffon',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', 'Buffon投针', window.location.href);
         console.log('Buffon投针');
-        await router.push('/dashboard/experiment/buffon');
+        await router.push('/dashboard-prob/experiment/buffon');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -151,13 +151,13 @@ const chapter1Items = [
       try {
         await clickApi('CLICK', 'catalogue', '三门问题', window.location.href);
         console.log('三门问题');
-        await router.push('/dashboard/experiment/three-doors');
+        await router.push('/dashboard-prob/experiment/three-doors');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
       }
     },
-    route: '/dashboard/experiment/three-doors',
+    route: '/dashboard-prob/experiment/three-doors',
   },
   {
     label: '贝特朗悖论',
@@ -166,23 +166,23 @@ const chapter1Items = [
       try {
         await clickApi('CLICK', 'catalogue', '贝特朗悖论', window.location.href);
         console.log('贝特朗悖论');
-        await router.push('/dashboard/experiment/bertrand');
+        await router.push('/dashboard-prob/experiment/bertrand');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
       }
     },
-    route: '/dashboard/experiment/bertrand',
+    route: '/dashboard-prob/experiment/bertrand',
   },
   {
     label: '生日问题',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/birthday-problem',
+    route: '/dashboard-prob/experiment/birthday-problem',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '生日问题', window.location.href);
         console.log('生日问题');
-        await router.push('/dashboard/experiment/birthday-problem');
+        await router.push('/dashboard-prob/experiment/birthday-problem');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -192,12 +192,12 @@ const chapter1Items = [
   // {
   //   label: '生日攻击问题',
   //   icon: 'pi pi-chart-bar',
-  //   route: '/dashboard/experiment/birthday-attack',
+  //   route: '/dashboard-prob/experiment/birthday-attack',
   //   command: async () => {
   //     try {
   //       await clickApi('CLICK', 'catalogue', '生日攻击问题', window.location.href);
   //       console.log('生日攻击问题');
-  //       await router.push('/dashboard/experiment/birthday-attack');
+  //       await router.push('/dashboard-prob/experiment/birthday-attack');
   //     }
   //     catch (error) {
   //       console.error('Error tracking button click:', error);
@@ -207,12 +207,12 @@ const chapter1Items = [
   {
     label: '阳性检测',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/positive-test',
+    route: '/dashboard-prob/experiment/positive-test',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '阳性检测', window.location.href);
         console.log('阳性检测');
-        await router.push('/dashboard/experiment/positive-test');
+        await router.push('/dashboard-prob/experiment/positive-test');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -225,12 +225,12 @@ const chapter2Items = [
   {
     label: '二项分布',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/binomial-distribution',
+    route: '/dashboard-prob/experiment/binomial-distribution',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '二项分布', window.location.href);
         console.log('二项分布');
-        await router.push('/dashboard/experiment/binomial-distribution');
+        await router.push('/dashboard-prob/experiment/binomial-distribution');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -240,12 +240,12 @@ const chapter2Items = [
   {
     label: '泊松分布',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/poisson-distribution',
+    route: '/dashboard-prob/experiment/poisson-distribution',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '泊松分布', window.location.href);
         console.log('泊松分布');
-        await router.push('/dashboard/experiment/poisson-distribution');
+        await router.push('/dashboard-prob/experiment/poisson-distribution');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -255,12 +255,12 @@ const chapter2Items = [
   {
     label: '几何分布',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/geometric-distribution',
+    route: '/dashboard-prob/experiment/geometric-distribution',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '几何分布', window.location.href);
         console.log('几何分布');
-        await router.push('/dashboard/experiment/geometric-distribution');
+        await router.push('/dashboard-prob/experiment/geometric-distribution');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -270,12 +270,12 @@ const chapter2Items = [
   {
     label: '均匀分布',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/uniform-distribution',
+    route: '/dashboard-prob/experiment/uniform-distribution',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '均匀分布', window.location.href);
         console.log('均匀分布');
-        await router.push('/dashboard/experiment/uniform-distribution');
+        await router.push('/dashboard-prob/experiment/uniform-distribution');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -285,12 +285,12 @@ const chapter2Items = [
   {
     label: '指数分布',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/exponential-distribution',
+    route: '/dashboard-prob/experiment/exponential-distribution',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '指数分布', window.location.href);
         console.log('指数分布');
-        await router.push('/dashboard/experiment/exponential-distribution');
+        await router.push('/dashboard-prob/experiment/exponential-distribution');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -300,12 +300,12 @@ const chapter2Items = [
   {
     label: '正态分布',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/normal-distribution',
+    route: '/dashboard-prob/experiment/normal-distribution',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '正态分布', window.location.href);
         console.log('正态分布');
-        await router.push('/dashboard/experiment/normal-distribution');
+        await router.push('/dashboard-prob/experiment/normal-distribution');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -318,12 +318,12 @@ const comparisonOfDistributions = [
   {
     label: '二项分布与泊松分布',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/binomial-poisson',
+    route: '/dashboard-prob/experiment/binomial-poisson',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '二项分布与泊松分布', window.location.href);
         console.log('二项分布与泊松分布');
-        await router.push('/dashboard/experiment/binomial-poisson');
+        await router.push('/dashboard-prob/experiment/binomial-poisson');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -333,12 +333,12 @@ const comparisonOfDistributions = [
   {
     label: '二项分布与正态分布',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/binomial-normal',
+    route: '/dashboard-prob/experiment/binomial-normal',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '二项分布与正态分布', window.location.href);
         console.log('二项分布与正态分布');
-        await router.push('/dashboard/experiment/binomial-normal');
+        await router.push('/dashboard-prob/experiment/binomial-normal');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -348,12 +348,12 @@ const comparisonOfDistributions = [
   {
     label: '泊松分布与指数分布',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/poisson-exponential',
+    route: '/dashboard-prob/experiment/poisson-exponential',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '泊松分布与指数分布', window.location.href);
         console.log('泊松分布与指数分布');
-        router.push('/dashboard/experiment/poisson-exponential');
+        router.push('/dashboard-prob/experiment/poisson-exponential');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -363,12 +363,12 @@ const comparisonOfDistributions = [
   {
     label: '泊松分布与正态分布',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/poisson-normal',
+    route: '/dashboard-prob/experiment/poisson-normal',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '泊松分布与正态分布', window.location.href);
         console.log('泊松分布与正态分布');
-        router.push('/dashboard/experiment/poisson-normal');
+        router.push('/dashboard-prob/experiment/poisson-normal');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -381,12 +381,12 @@ const chapter3Items = [
   {
     label: '二维均匀分布',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/2d-uniform-distribution',
+    route: '/dashboard-prob/experiment/2d-uniform-distribution',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '二维均匀分布', window.location.href);
         console.log('二维均匀分布');
-        await router.push('/dashboard/experiment/2d-uniform-distribution');
+        await router.push('/dashboard-prob/experiment/2d-uniform-distribution');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -396,12 +396,12 @@ const chapter3Items = [
   {
     label: '二维正态分布',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/2d-normal-distribution',
+    route: '/dashboard-prob/experiment/2d-normal-distribution',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '二维正态分布', window.location.href);
         console.log('二维正态分布');
-        await router.push('/dashboard/experiment/2d-normal-distribution');
+        await router.push('/dashboard-prob/experiment/2d-normal-distribution');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -411,12 +411,12 @@ const chapter3Items = [
   // {
   //   label: '中心极限定理',
   //   icon: 'pi pi-chart-bar',
-  //   route: '/dashboard/experiment/centralLimitTheorem',
+  //   route: '/dashboard-prob/experiment/centralLimitTheorem',
   //   command: async () => {
   //     try {
   //       await clickApi('CLICK', 'catalogue', '中心极限定理', window.location.href);
   //       console.log('中心极限定理');
-  //       await router.push('/dashboard/experiment/centralLimitTheorem');
+  //       await router.push('/dashboard-prob/experiment/centralLimitTheorem');
   //     }
   //     catch (error) {
   //       console.error('Error tracking button click:', error);
@@ -428,11 +428,11 @@ const chapter3Items = [
 //   {
 //     label: '期望检验',
 //     icon: 'pi pi-chart-bar',
-//     route: '/dashboard/experiment/expectation-test',
+//     route: '/dashboard-prob/experiment/expectation-test',
 //     command: async () => {
 //       try {
 //         await clickApi('CLICK', 'catalogue', '期望检验', window.location.href);
-//         await router.push('/dashboard/experiment/expectation-test');
+//         await router.push('/dashboard-prob/experiment/expectation-test');
 //       }
 //       catch (error) {
 //         console.error('Error tracking button click:', error);
@@ -444,11 +444,11 @@ const chapter5Items = [
   {
     label: '高尔顿钉板实验',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/central-limit-theorem',
+    route: '/dashboard-prob/experiment/central-limit-theorem',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '中心极限定理', window.location.href);
-        await router.push('/dashboard/experiment/central-limit-theorem');
+        await router.push('/dashboard-prob/experiment/central-limit-theorem');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -458,11 +458,11 @@ const chapter5Items = [
   // {
   //   label: '各种分布的中心极限定理',
   //   icon: 'pi pi-chart-bar',
-  //   route: '/dashboard/experiment/distribution-clt',
+  //   route: '/dashboard-prob/experiment/distribution-clt',
   //   command: async () => {
   //     try {
   //       await clickApi('CLICK', 'catalogue', '各种分布的中心极限定理', window.location.href);
-  //       await router.push('/dashboard/experiment/distribution-clt');
+  //       await router.push('/dashboard-prob/experiment/distribution-clt');
   //     }
   //     catch (error) {
   //       console.error('Error tracking button click:', error);
@@ -475,11 +475,11 @@ const chapter6Items = [
   // {
   //   label: '硬币投掷实验',
   //   icon: 'pi pi-chart-bar',
-  //   route: '/dashboard/experiment/coin-tossing',
+  //   route: '/dashboard-prob/experiment/coin-tossing',
   //   command: async () => {
   //     try {
   //       await clickApi('CLICK', 'catalogue', '硬币投掷实验', window.location.href);
-  //       await router.push('/dashboard/experiment/coin-tossing');
+  //       await router.push('/dashboard-prob/experiment/coin-tossing');
   //     }
   //     catch (error) {
   //       console.error('Error tracking button click:', error);
@@ -489,11 +489,11 @@ const chapter6Items = [
   // {
   //   label: '欧式看涨期权定价',
   //   icon: 'pi pi-chart-bar',
-  //   route: '/dashboard/experiment/black-scholes',
+  //   route: '/dashboard-prob/experiment/black-scholes',
   //   command: async () => {
   //     try {
   //       await clickApi('CLICK', 'catalogue', '欧式看涨期权定价', window.location.href);
-  //       await router.push('/dashboard/experiment/black-scholes');
+  //       await router.push('/dashboard-prob/experiment/black-scholes');
   //     }
   //     catch (error) {
   //       console.error('Error tracking button click:', error);
@@ -503,11 +503,11 @@ const chapter6Items = [
   // {
   //   label: '美式看跌期权定价',
   //   icon: 'pi pi-chart-bar',
-  //   route: '/dashboard/experiment/american-option',
+  //   route: '/dashboard-prob/experiment/american-option',
   //   command: async () => {
   //     try {
   //       await clickApi('CLICK', 'catalogue', '美式看跌期权定价', window.location.href);
-  //       await router.push('/dashboard/experiment/american-option');
+  //       await router.push('/dashboard-prob/experiment/american-option');
   //     }
   //     catch (error) {
   //       console.error('Error tracking button click:', error);
@@ -517,11 +517,11 @@ const chapter6Items = [
   // {
   //   label: '股票期望回报率',
   //   icon: 'pi pi-chart-bar',
-  //   route: '/dashboard/experiment/asset-captial',
+  //   route: '/dashboard-prob/experiment/asset-captial',
   //   command: async () => {
   //     try {
   //       await clickApi('CLICK', 'catalogue', '股票期望回报率', window.location.href);
-  //       await router.push('/dashboard/experiment/asset-captial');
+  //       await router.push('/dashboard-prob/experiment/asset-captial');
   //     }
   //     catch (error) {
   //       console.error('Error tracking button click:', error);
@@ -531,11 +531,11 @@ const chapter6Items = [
   {
     label: '布朗运动模拟',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/brownian-motion',
+    route: '/dashboard-prob/experiment/brownian-motion',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '布朗运动模拟', window.location.href);
-        await router.push('/dashboard/experiment/brownian-motion');
+        await router.push('/dashboard-prob/experiment/brownian-motion');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -545,11 +545,11 @@ const chapter6Items = [
   {
     label: '几何布朗运动模拟',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/geometric-brownian-motion',
+    route: '/dashboard-prob/experiment/geometric-brownian-motion',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '几何布朗运动模拟', window.location.href);
-        await router.push('/dashboard/experiment/geometric-brownian-motion');
+        await router.push('/dashboard-prob/experiment/geometric-brownian-motion');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -559,11 +559,11 @@ const chapter6Items = [
   {
     label: '泊松过程模拟',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/poisson-process',
+    route: '/dashboard-prob/experiment/poisson-process',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '泊松过程模拟', window.location.href);
-        await router.push('/dashboard/experiment/poisson-process');
+        await router.push('/dashboard-prob/experiment/poisson-process');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -573,11 +573,11 @@ const chapter6Items = [
   {
     label: '二维向量场的线积分',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/vector',
+    route: '/dashboard-prob/experiment/vector',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '二维向量场的线积分', window.location.href);
-        await router.push('/dashboard/experiment/vector');
+        await router.push('/dashboard-prob/experiment/vector');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -590,11 +590,11 @@ const chapter7Items = [
   {
     label: '硬币投掷实验',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/coin-tossing',
+    route: '/dashboard-prob/experiment/coin-tossing',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '硬币投掷实验', window.location.href);
-        await router.push('/dashboard/experiment/coin-tossing');
+        await router.push('/dashboard-prob/experiment/coin-tossing');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -604,11 +604,11 @@ const chapter7Items = [
   {
     label: '欧式看涨期权定价',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/black-scholes',
+    route: '/dashboard-prob/experiment/black-scholes',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '欧式看涨期权定价', window.location.href);
-        await router.push('/dashboard/experiment/black-scholes');
+        await router.push('/dashboard-prob/experiment/black-scholes');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -618,11 +618,11 @@ const chapter7Items = [
   {
     label: '美式看跌期权定价',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/american-option',
+    route: '/dashboard-prob/experiment/american-option',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '美式看跌期权定价', window.location.href);
-        await router.push('/dashboard/experiment/american-option');
+        await router.push('/dashboard-prob/experiment/american-option');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -632,11 +632,11 @@ const chapter7Items = [
   {
     label: '股票期望回报率',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/asset-captial',
+    route: '/dashboard-prob/experiment/asset-captial',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '股票期望回报率', window.location.href);
-        await router.push('/dashboard/experiment/asset-captial');
+        await router.push('/dashboard-prob/experiment/asset-captial');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -646,11 +646,11 @@ const chapter7Items = [
   {
     label: '回望期权--蒙特卡洛模拟',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/monte-carlo',
+    route: '/dashboard-prob/experiment/monte-carlo',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '回望期权--蒙特卡洛模拟', window.location.href);
-        await router.push('/dashboard/experiment/monte-carlo');
+        await router.push('/dashboard-prob/experiment/monte-carlo');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -660,11 +660,11 @@ const chapter7Items = [
   {
     label: '算数平均亚式期权--蒙特卡洛模拟',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/arithmetic-mean',
+    route: '/dashboard-prob/experiment/arithmetic-mean',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '算数平均亚式期权--蒙特卡洛模拟', window.location.href);
-        await router.push('/dashboard/experiment/arithmetic-mean');
+        await router.push('/dashboard-prob/experiment/arithmetic-mean');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -674,11 +674,11 @@ const chapter7Items = [
   {
     label: '障碍期权--蒙特卡洛模拟',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/obstacle-options',
+    route: '/dashboard-prob/experiment/obstacle-options',
     command: async () => {
       try {
         await clickApi('CLICK', 'catalogue', '障碍期权--蒙特卡洛模拟', window.location.href);
-        await router.push('/dashboard/experiment/obstacle-options');
+        await router.push('/dashboard-prob/experiment/obstacle-options');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -729,7 +729,7 @@ async function sendFeedback() {
 }
 
 function goHome() {
-  router.push('/dashboard')
+  router.push('/dashboard-prob')
 }
 </script>
 

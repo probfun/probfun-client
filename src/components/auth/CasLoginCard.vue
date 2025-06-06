@@ -47,7 +47,7 @@ async function visitorLogin() {
   catch (e: any) {
     console.error('Error:', e);
   }
-  router.push('/dashboard');
+  router.push('/dashboard-prob');
 }
 </script>
 

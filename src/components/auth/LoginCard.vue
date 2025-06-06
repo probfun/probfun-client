@@ -33,11 +33,11 @@ async function login() {
 
     setLocalToken(token);
     userStore.user = user;
-    let target = 'dashboard-prob';
+    let target = '/dashboard-prob';
     if (themeStore.currentColor === 'rgb(34, 168, 109)') {
-      target = 'dashboard-advanced';
+      target = '/dashboard-advmath';
     } else if (themeStore.currentColor === 'rgb(142, 68, 173)') {
-      target = 'dashboard-linear';
+      target = '/dashboard-linalg';
     }
     await router.push(target);
   }
@@ -80,7 +80,7 @@ async function visitorLogin() {
   catch (e: any) {
     console.error('Error:', e);
   }
-  router.push('/dashboard');
+  router.push('/dashboard-prob');
 }
 </script>
 
