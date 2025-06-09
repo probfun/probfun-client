@@ -41,9 +41,16 @@ import { error, success, warning } from '@/utils/toast';
 import { Bell, Plus, Star } from 'lucide-vue-next'
 import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useThemeStore } from '@/store'
 
 const userStore = useUserStore();
 const router = useRouter()
+const themeStore = useThemeStore()
+const colorTitleMap: Record<string, string> = {
+  'rgb(36, 96, 226)': "邮趣概率",
+  'rgb(34, 168, 109)': "邮趣高数",
+  'rgb(142, 68, 173)': "邮趣线代",
+};
 
 const isLoading = ref(false);
 const tempUser = ref<User | null>(null);
@@ -244,7 +251,7 @@ function updateExperiment() {
   // tags.value =[''];
   // }
   else {
-    title.value = '邮趣概率';
+    title.value = colorTitleMap[themeStore.currentColor];
     tags.value = [];
   }
   if (!isVisitor()) {
@@ -343,7 +350,7 @@ function openFeishuDoc() {
           {{ item }}
         </Badge>
       </div>
-      <Button v-if="title !== '邮趣概率' && !isVisitor()" size="icon" variant="ghost" class="p-1 size-auto" @click="toggleFavorite">
+      <Button v-if="title !== '邮趣概率' && title !== '邮趣高数' && title !== '邮趣线代' && !isVisitor()" size="icon" variant="ghost" class="p-1 size-auto" @click="toggleFavorite">
         <Star
           class="size-5 transition-all" :style="{
             fill: isFavorite ? '#FFA500' : 'none',
@@ -353,7 +360,7 @@ function openFeishuDoc() {
       </Button>
     </div>
     <div class="flex items-center gap-4 ml-auto">
-      <Button @click="openFeishuDoc">
+      <Button @click="openFeishuDoc" :color="themeStore.currentColor">
         用户手册
       </Button>
       <div v-if="!isVisitor()" class="relative flex items-center justify-center ml-auto hover:scale-110">
@@ -373,7 +380,11 @@ function openFeishuDoc() {
           <PopoverContent>
             <div class="flex">
               <Label class="font-bold text-base"> 我的消息 </Label>
-              <button class="flex text-blue-600 ml-auto" @click="readMessage()">
+              <button
+                class="flex ml-auto"
+                :style="{ color: themeStore.currentColor }"
+                @click="readMessage()"
+              >
                 全部已读
               </button>
             </div>

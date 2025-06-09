@@ -4,6 +4,7 @@ import type { Feedback } from '@/api/feedback/feedbackType';
 import { fetchFeedbackApi, postFeedbackApi } from '@/api/feedback/feedbackApi';
 import { clickApi } from '@/api/track/trackApi';
 import { Button } from '@/components/ui/button';
+import { Dice3, Infinity, MoveUpRight } from 'lucide-vue-next';
 import {
   Dialog,
   DialogClose,
@@ -20,15 +21,21 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils';
-import { useUserStore } from '@/store';
+import { useUserStore, useThemeStore } from '@/store';
 import { isVisitor, logout } from '@/utils/auth';
-import { Book, Bot, CircleHelp, Dices, Home, LogOut, Star, Sun, User } from 'lucide-vue-next';
+import { Book, Bot, CircleHelp, Home, LogOut, Star, Sun, User } from 'lucide-vue-next';
 import { useToast } from 'primevue/usetoast';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const toast = useToast();
 const userStore = useUserStore();
+const themeStore = useThemeStore();
+const colorIconMap: Record<string, any> = {
+  'rgb(36, 96, 226)': Dice3, // 邮趣概率
+  'rgb(34, 168, 109)': Infinity, // 邮趣高数
+  'rgb(142, 68, 173)': MoveUpRight, // 邮趣线代
+};
 
 interface SideBarItem {
   label: string
@@ -736,10 +743,13 @@ function goHome() {
 <template>
   <div class="h-full">
     <aside class="h-full border-r flex flex-col relative bg-background z-40 items-center gap-4 px-2 sm:py-3">
-      <Button size="icon"
-        class="group rounded-full size-9 bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
-        @click="goHome()">
-        <Dices class="size-5 group-hover:scale-110" />
+      <Button
+        size="icon"
+        class="group rounded-full size-9 text-lg font-semibold md:h-8 md:w-8 md:text-base"
+        :style="{ background: themeStore.currentColor, color: '#fff' }"
+        @click="goHome()"
+      >
+        <component :is="colorIconMap[themeStore.currentColor]" class="size-5 group-hover:scale-110" />
       </Button>
       <!--      <a -->
       <!--        href="#" -->

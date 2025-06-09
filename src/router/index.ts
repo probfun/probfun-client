@@ -23,9 +23,9 @@ import StudentPanel from '@/components/user/StudentPanel.vue';
 
 import TeacherPanel from '@/components/user/TeacherPanel.vue';
 import AuthPage from '@/pages/AuthPage.vue';
-import DashboardProb from '@/pages/DashBoard-Prob.vue';
-import DashboardAdvmath from '@/pages/Dashboard-Advmath.vue';
-import DashboardLinalg from '@/pages/Dashboard-Linalg.vue';
+import DashboardProb from '@/pages/DashBoardProb.vue';
+import DashboardAdvmath from '@/pages/DashboardAdvmath.vue';
+import DashboardLinalg from '@/pages/DashboardLinalg.vue';
 import { isVisitor } from '@/utils/auth.ts';
 import { createRouter, createWebHistory } from 'vue-router';
 
