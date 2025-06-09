@@ -119,6 +119,7 @@ declare module 'vue' {
     ExperimentBoard: typeof import('./src/components/experiment/ExperimentBoard.vue')['default']
     ExponentialDiagram: typeof import('./src/components/experiment/distribution/ExponentialDiagram.vue')['default']
     ExponentialDistribution: typeof import('./src/components/experiment/distribution/ExponentialDistribution.vue')['default']
+    FanSelector: typeof import('./src/components/mode/FanSelector.vue')['default']
     FavoritePanel: typeof import('./src/components/favorite/FavoritePanel.vue')['default']
     FloatLabel: typeof import('primevue/floatlabel')['default']
     FormControl: typeof import('./src/components/ui/form/FormControl.vue')['default']

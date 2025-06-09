@@ -5,6 +5,8 @@ import { fetchFeedbackApi, postFeedbackApi } from '@/api/feedback/feedbackApi';
 import { clickApi } from '@/api/track/trackApi';
 import { Button } from '@/components/ui/button';
 import { Dice3, Infinity, MoveUpRight } from 'lucide-vue-next';
+import FanSelector from '@/components/mode/FanSelector.vue';
+
 import {
   Dialog,
   DialogClose,
@@ -36,6 +38,11 @@ const colorIconMap: Record<string, any> = {
   'rgb(34, 168, 109)': Infinity, // 邮趣高数
   'rgb(142, 68, 173)': MoveUpRight, // 邮趣线代
 };
+const colorRouteMap: Record<string, string> = {
+  'rgb(36, 96, 226)': '-prob', // 邮趣概率
+  'rgb(34, 168, 109)': '-advmath', // 邮趣高数
+  'rgb(142, 68, 173)': '-linalg', // 邮趣线代
+};
 
 interface SideBarItem {
   label: string
@@ -66,7 +73,7 @@ const sideBarItem = ref<SideBarItem[]>([
   {
     label: '主页',
     icon: Home,
-    route: '/dashboard-prob',
+    route: '/dashboard' + colorRouteMap[themeStore.currentColor],
   },
   {
     label: '目录',
@@ -736,21 +743,22 @@ async function sendFeedback() {
 }
 
 function goHome() {
-  router.push('/dashboard-prob')
+  router.push('/dashboard' + colorRouteMap[themeStore.currentColor]);
 }
 </script>
 
 <template>
   <div class="h-full">
     <aside class="h-full border-r flex flex-col relative bg-background z-40 items-center gap-4 px-2 sm:py-3">
-      <Button
+      <!-- <Button
         size="icon"
         class="group rounded-full size-9 text-lg font-semibold md:h-8 md:w-8 md:text-base"
         :style="{ background: themeStore.currentColor, color: '#fff' }"
         @click="goHome()"
       >
         <component :is="colorIconMap[themeStore.currentColor]" class="size-5 group-hover:scale-110" />
-      </Button>
+      </Button> -->
+      <FanSelector class="mt-2" />
       <!--      <a -->
       <!--        href="#" -->
       <!--        class="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base" -->
