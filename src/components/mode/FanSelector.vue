@@ -76,16 +76,16 @@ function showShadow() {
             pointerEvents: 'auto',
             cursor: 'pointer'
           }"
-          width="250"
-          height="250"
+          width="300"
+          height="300"
         >
           <path
-            d="M0,0 L250,0 A250,250 0 0,1 0,250 Z"
-            fill="rgba(0,0,0,0.2)"
+            d="M0,0 L300,0 A300,300 0 0,1 0,300 Z"
+            fill="rgba(0,0,0,0.3)"
           />
         </svg>
       </transition>
-      <transition-group name="fan">
+      <!-- <transition-group name="fan">
         <button
           v-for="(mode, i) in modes"
           v-if="showSectorShadow"
@@ -101,6 +101,25 @@ function showShadow() {
           @click="selectMode(mode.color)"
         >
           <component :is="modes[i].icon" class="w-7 h-7" />
+        </button>
+      </transition-group> -->
+      <!-- 模式按钮依次飞出 -->
+      <transition-group name="fan-btn" tag="div">
+        <button
+          v-for="(mode, i) in modes"
+          v-if="showSectorShadow"
+          :key="mode.color"
+          class="fixed w-14 h-14 rounded-full text-white border-2 flex items-center justify-center shadow"
+          :style="{
+            backgroundColor: mode.color,
+            left: `${btnCenter.left + (showSectorShadow ? 150 * Math.cos(i * Math.PI / 4) : 0)}px`,
+            top: `${btnCenter.top + (showSectorShadow ? 150 * Math.sin(i * Math.PI / 4) : 0)}px`,
+            transition: `left 0.4s cubic-bezier(.4,2,.6,1) ${i * 60}ms, top 0.4s cubic-bezier(.4,2,.6,1) ${i * 60}ms`,
+            zIndex: 9999,
+          }"
+          @click="selectMode(mode.color)"
+        >
+          <component :is="mode.icon" class="w-7 h-7" />
         </button>
       </transition-group>
     </teleport>
@@ -122,6 +141,27 @@ function showShadow() {
   opacity: 0;
 }
 .fan-shadow-enter-to, .fan-shadow-leave-from {
+  opacity: 1;
+}
+.fan-sector-enter-active, .fan-sector-leave-active {
+  transition: transform 0.35s cubic-bezier(.4,2,.6,1);
+}
+.fan-sector-enter-from, .fan-sector-leave-to {
+  transform: scale(0.2);
+}
+.fan-sector-enter-to, .fan-sector-leave-from {
+  transform: scale(1);
+}
+
+.fan-btn-enter-active, .fan-btn-leave-active {
+  transition: all 0.3s cubic-bezier(.4,2,.6,1);
+}
+.fan-btn-enter-from, .fan-btn-leave-to {
+  left: var(--center-x, 0px) !important;
+  top: var(--center-y, 0px) !important;
+  opacity: 0;
+}
+.fan-btn-enter-to, .fan-btn-leave-from {
   opacity: 1;
 }
 </style>
