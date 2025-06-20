@@ -114,7 +114,9 @@ function showShadow() {
             backgroundColor: mode.color,
             left: `${btnCenter.left + (showSectorShadow ? 150 * Math.cos(i * Math.PI / 4) : 0)}px`,
             top: `${btnCenter.top + (showSectorShadow ? 150 * Math.sin(i * Math.PI / 4) : 0)}px`,
-            transition: `left 0.4s cubic-bezier(.4,2,.6,1) ${i * 60}ms, top 0.4s cubic-bezier(.4,2,.6,1) ${i * 60}ms`,
+            transition: showSectorShadow
+              ? `left 0.5s cubic-bezier(.22,1.5,.36,1) ${i * 80}ms, top 0.5s cubic-bezier(.22,1.5,.36,1) ${i * 80}ms, opacity 0.5s ${i * 80}ms, transform 0.5s ${i * 80}ms`
+              : `opacity 0.25s, transform 0.25s`,
             zIndex: 9999,
           }"
           @click="selectMode(mode.color)"
@@ -153,15 +155,28 @@ function showShadow() {
   transform: scale(1);
 }
 
-.fan-btn-enter-active, .fan-btn-leave-active {
-  transition: all 0.3s cubic-bezier(.4,2,.6,1);
+.fan-btn-enter-active {
+  transition: left 0.5s cubic-bezier(.22,1.5,.36,1), top 0.5s cubic-bezier(.22,1.5,.36,1), opacity 0.5s, transform 0.5s;
 }
-.fan-btn-enter-from, .fan-btn-leave-to {
+.fan-btn-leave-active {
+  transition: opacity 0.2s, transform 0.2s;
+}
+.fan-btn-enter-from {
   left: var(--center-x, 0px) !important;
   top: var(--center-y, 0px) !important;
   opacity: 0;
+  transform: scale(0.5);
 }
-.fan-btn-enter-to, .fan-btn-leave-from {
+.fan-btn-enter-to {
   opacity: 1;
+  transform: scale(1);
+}
+.fan-btn-leave-from {
+  opacity: 1;
+  transform: scale(1);
+}
+.fan-btn-leave-to {
+  opacity: 0;
+  transform: scale(0.5);
 }
 </style>
