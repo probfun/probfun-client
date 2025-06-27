@@ -1,18 +1,16 @@
 <script setup lang="ts">
 import { Dice3, Infinity, MoveUpRight } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue'
+import { useThemeStore } from '@/store';
 
 type FaceType = 'front' | 'back' | 'right' | 'left' | 'top' | 'bottom'
 
-const emit = defineEmits<{
-  (e: 'colorChange', color: string): void
-}>()
+const themeStore = useThemeStore()
 const rotateX = ref(-25)
 const rotateY = ref(-25)
 const isDragging = ref(false)
 const startX = ref(0)
 const startY = ref(0)
-const showDetail = ref(false)
 const isExpanded = ref(false)
 const expandTransition = ref(false)
 const skipTransition = ref(false)
@@ -27,16 +25,6 @@ const expandedPositions = {
   front: { x: 80, y: -160, z: 0 },
   right: { x: 450, y: -160, z: 0 },
   left: { x: 265, y: 190, z: 0 },
-}
-
-// 添加面到角度的映射
-const faceToAngle = {
-  front: { x: -25, y: -25 },
-  right: { x: -25, y: -115 },
-  left: { x: -25, y: 65 },
-  back: { x: -25, y: 155 },
-  top: { x: 65, y: -25 },
-  bottom: { x: -115, y: -25 },
 }
 
 // 归一化角度到 -180 到 180 度之间
@@ -58,20 +46,19 @@ const expandedTransform = computed(() => {
   return `rotateX(${currentX}deg) rotateY(${currentY}deg)`
 })
 
-// 计算当前朝前的面
+const faceToAngle: Record<FaceType, { x: number, y: number }> = {
+  front: { x: -25, y: -25 },
+  left: { x: -25, y: 65 },
+  back: { x: -25, y: 155 },
+  right: { x: -25, y: -115 },
+  top: { x: -115, y: -25 },
+  bottom: { x: 65, y: -25 },
+}
+
 const currentFace = computed<FaceType>(() => {
-  const y = (rotateY.value % 360)
-  if (y === -25 || y === 335) {
-    return 'front'
-  }
-  if (y === 65 || y === -295) {
-    return 'left'
-  }
-  if (y === 155 || y === -205) {
-    return 'back'
-  }
-  if (y === -115 || y === 245) {
-    return 'right'
+  const y = normalizeAngle(rotateY.value)
+  for (const [face, angle] of Object.entries(faceToAngle)) {
+    if (y === angle.y) return face as FaceType
   }
   return 'top'
 })
@@ -93,7 +80,8 @@ const faceColors = {
 
 // 监听当前面的变化并发出颜色改变事件
 watch(currentFace, (newFace) => {
-  emit('colorChange', faceColors[newFace])
+  themeStore.setColor(faceColors[newFace])
+  console.log(newFace)
 })
 
 // 修改 handleMouseDown、handleMouseUp 只用于拖动切换面
@@ -104,16 +92,15 @@ function handleMouseDown(e: MouseEvent) {
 }
 
 function handleMouseUp(e: MouseEvent) {
-  if (!isDragging.value)
-    return
+  if (!isDragging.value) return
   const deltaX = e.clientX - startX.value
   const deltaY = e.clientY - startY.value
   const threshold = 50
   if (!isExpanded.value && (Math.abs(deltaX) > threshold || Math.abs(deltaY) > threshold)) {
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
       // 判断是否倒置
-      const absX = Math.abs((rotateX.value % 360 + 360) % 360)
-      const isUpsideDown = absX > 90 && absX < 270
+      const x = normalizeAngle(rotateX.value)
+      const isUpsideDown = (x === 155)
       if (isUpsideDown) {
         // 倒置时，左右方向反转
         if (deltaX > 0) {
@@ -140,7 +127,7 @@ function handleMouseUp(e: MouseEvent) {
         rotateX.value += 90
       }
     }
-    emit('colorChange', faceColors[currentFace.value])
+    themeStore.setColor(faceColors[currentFace.value])
   }
   isDragging.value = false
 }
@@ -152,7 +139,6 @@ function handleDoubleClick() {
   if (isExpanded.value) {
     // 收起
     isExpanded.value = false
-    showDetail.value = false
     setTimeout(() => {
       expandTransition.value = false
     }, 300)
@@ -170,7 +156,6 @@ function handleDoubleClick() {
         isAnimating.value = true
         expandTransition.value = true
         isExpanded.value = true
-        showDetail.value = true
         setTimeout(() => {
           isAnimating.value = false
         }, 800)
@@ -185,10 +170,10 @@ function handleMouseLeave() {
 
 function handleClose() {
   isExpanded.value = false
-  showDetail.value = false
-  setTimeout(() => {
-    expandTransition.value = false
-  }, 300)
+  // setTimeout(() => {
+  //   expandTransition.value = false
+  // }, 300)
+  expandTransition.value = false
 }
 
 // 处理展开状态下的点击
@@ -197,17 +182,15 @@ function handleFaceClick(face: FaceType) {
     return
   // 开始收缩动画
   isAnimating.value = true
-  handleClose()
-  // 设置旋转角度
   const targetAngle = faceToAngle[face]
   rotateX.value = targetAngle.x
   rotateY.value = targetAngle.y
-  // 发出颜色改变事件
-  emit('colorChange', faceColors[face])
+  handleClose()
+  themeStore.setColor(faceColors[face])
   // 动画结束后重置状态
   setTimeout(() => {
     isAnimating.value = false
-  }, 800)
+  }, 300)
 }
 
 // 初始化时恢复旋转角度
@@ -247,49 +230,49 @@ watch([rotateX, rotateY], ([x, y]) => {
       <!-- front -->
       <div
         class="cube-face front"
-        :class="{ 'show-detail': showDetail && (currentFace === 'front' || isExpanded) }"
+        :class="{ 'show-detail': isExpanded }"
         @click="handleFaceClick('front')"
       >
         <span class="face-title">
           <Dice3 class="face-icon" />
           <span>邮趣概率</span>
         </span>
-        <div v-if="showDetail && (currentFace === 'front' || isExpanded)" class="detail">
+        <div v-if="isExpanded" class="detail">
           <h3>邮趣概率</h3>
-          <p>探索不确定世界的规律</p>
-          <p>适合喜欢逻辑和建模的你</p>
+          <p>探索不确定世界的规律</p >
+          <p>适合喜欢逻辑和建模的你</p >
         </div>
       </div>
       <!-- right -->
       <div
         class="cube-face right"
-        :class="{ 'show-detail': showDetail && (currentFace === 'right' || isExpanded) }"
+        :class="{ 'show-detail': isExpanded }"
         @click="handleFaceClick('right')"
       >
         <span class="face-title">
           <Infinity class="face-icon" />
           <span>邮趣高数</span>
         </span>
-        <div v-if="showDetail && (currentFace === 'right' || isExpanded)" class="detail">
+        <div v-if="isExpanded" class="detail">
           <h3>高等数学</h3>
-          <p>微积分，函数与极限的艺术</p>
-          <p>适合喜欢挑战和推理的你</p>
+          <p>微积分，函数与极限的艺术</p >
+          <p>适合喜欢挑战和推理的你</p >
         </div>
       </div>
       <!-- left -->
       <div
         class="cube-face left"
-        :class="{ 'show-detail': showDetail && (currentFace === 'left' || isExpanded) }"
+        :class="{ 'show-detail': isExpanded }"
         @click="handleFaceClick('left')"
       >
         <span class="face-title">
           <MoveUpRight class="face-icon" />
           <span>邮趣线代</span>
         </span>
-        <div v-if="showDetail && (currentFace === 'left' || isExpanded)" class="detail">
+        <div v-if="isExpanded" class="detail">
           <h3>线性代数</h3>
-          <p>空间与向量的语言</p>
-          <p>适合喜欢抽象思维和结构分析的你</p>
+          <p>空间与向量的语言</p >
+          <p>适合喜欢抽象思维和结构分析的你</p >
         </div>
       </div>
       <!-- top -->

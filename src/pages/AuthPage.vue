@@ -5,9 +5,9 @@ import { useThemeStore } from '@/store';
 
 const themeStore = useThemeStore();
 
-function handleColorChange(color: string) {
-  themeStore.setColor(color);
-}
+// function handleColorChange(color: string) {
+//   themeStore.setColor(color);
+// }
 </script>
 
 <template>
@@ -17,7 +17,7 @@ function handleColorChange(color: string) {
       :style="{ backgroundColor: themeStore.currentColor }"
     >
       <div class="w-full h-full flex flex-col items-center justify-center text-background">
-        <BoxSelector @color-change="handleColorChange"></BoxSelector>
+        <BoxSelector />
       </div>
     </div>
     <div v-auto-animate class="flex-1 px-8 py-4 bg-background flex h-full items-center justify-center">
