@@ -1,23 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { Dice3, Infinity, MoveUpRight } from 'lucide-vue-next';
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useThemeStore } from '@/store';
 import router from '@/router';
-const modes = [
-  { name: "邮趣高数", icon: Infinity, color: 'rgb(34, 168, 109)' },
-  { name: "邮趣线代", icon: MoveUpRight, color: 'rgb(142, 68, 173)' },
-  { name: "邮趣概率", icon: Dice3, color: 'rgb(36, 96, 226)' },
-]
+import { MODES } from '@/constants/modes';
+
 const showFan = ref(false)
-const showSectorShadow = ref(false)
 const themeStore = useThemeStore()
 const btnRef = ref<HTMLElement | null>(null)
 const btnCenter = ref({ left: 0, top: 0 })
-const colorRouteMap: Record<string, string> = {
-  'rgb(36, 96, 226)': '-prob',
-  'rgb(34, 168, 109)': '-advmath',
-  'rgb(142, 68, 173)': '-linalg',
-};
 
 function updateBtnCenter() {
   if (btnRef.value) {
@@ -29,22 +19,40 @@ function updateBtnCenter() {
   }
 }
 
-function toggleFan() {
+// 只在组件挂载时更新一次
+onMounted(() => {
   updateBtnCenter()
-  showFan.value = !showFan.value
-  showSectorShadow.value = false
+})
+
+// 监听窗口大小变化，重新计算按钮位置
+let resizeTimeout: number
+function handleResize() {
+  clearTimeout(resizeTimeout)
+  resizeTimeout = setTimeout(updateBtnCenter, 100) // 防抖
 }
+
+onMounted(() => {
+  window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+  clearTimeout(resizeTimeout)
+})
+
+function toggleFan() {
+  showFan.value = !showFan.value
+}
+
 function selectMode(color: string) {
   themeStore.currentColor = color
-  router.push('/dashboard' + colorRouteMap[themeStore.currentColor]);
+  const selectedMode = MODES.find(mode => mode.color === color)
+  if (selectedMode) {
+    router.push(selectedMode.route)
+  }
   showFan.value = false
-  showSectorShadow.value = false
 }
-function showShadow() {
-  updateBtnCenter()
-  showSectorShadow.value = !showSectorShadow.value
-  showFan.value = showSectorShadow.value
-}
+
 </script>
 
 <template>
@@ -54,10 +62,10 @@ function showShadow() {
       ref="btnRef"
       class="w-12 h-12 rounded-full text-white flex items-center justify-center shadow-lg"
       :style="{backgroundColor: themeStore.currentColor}"
-      @click="() => { showShadow(); }"
+      @click="() => toggleFan()"
     >
       <component
-        :is="modes.find(m => m.color === themeStore.currentColor)?.icon"
+        :is="MODES.find(m => m.color === themeStore.currentColor)?.icon"
         class="w-6 h-6"
       />
     </button>
@@ -66,8 +74,8 @@ function showShadow() {
       <!-- 扇形阴影 -->
       <transition name="fan-shadow">
         <svg
-          v-if="showSectorShadow"
-          @click="() => { showSectorShadow = false; showFan = false; }"
+          v-if="showFan"
+          @click="() => toggleFan()"
           :style="{
             position: 'fixed',
             left: '0px',
@@ -85,36 +93,17 @@ function showShadow() {
           />
         </svg>
       </transition>
-      <!-- <transition-group name="fan">
-        <button
-          v-for="(mode, i) in modes"
-          v-if="showSectorShadow"
-          :key="mode.color"
-          class="fixed w-14 h-14 rounded-full text-white border-2 flex items-center justify-center shadow"
-          :style="{
-            backgroundColor: mode.color,
-            left: `${btnCenter.left + 120 * Math.cos(i * Math.PI / 4)}px`,
-            top: `${btnCenter.top + 120 * Math.sin(i * Math.PI / 4)}px`,
-            transition: 'all 0.3s',
-            zIndex: 9999,
-          }"
-          @click="selectMode(mode.color)"
-        >
-          <component :is="modes[i].icon" class="w-7 h-7" />
-        </button>
-      </transition-group> -->
-      <!-- 模式按钮依次飞出 -->
       <transition-group name="fan-btn" tag="div">
         <button
-          v-for="(mode, i) in modes"
-          v-if="showSectorShadow"
+          v-for="(mode, i) in MODES"
+          v-if="showFan"
           :key="mode.color"
           class="fixed w-14 h-14 rounded-full text-white border-2 flex items-center justify-center shadow"
           :style="{
             backgroundColor: mode.color,
-            left: `${btnCenter.left + (showSectorShadow ? 150 * Math.cos(i * Math.PI / 4) : 0)}px`,
-            top: `${btnCenter.top + (showSectorShadow ? 150 * Math.sin(i * Math.PI / 4) : 0)}px`,
-            transition: showSectorShadow
+            left: `${btnCenter.left + (showFan ? 150 * Math.cos(i * Math.PI / 4) : 0)}px`,
+            top: `${btnCenter.top + (showFan ? 150 * Math.sin(i * Math.PI / 4) : 0)}px`,
+            transition: showFan
               ? `left 0.5s cubic-bezier(.22,1.5,.36,1) ${i * 80}ms, top 0.5s cubic-bezier(.22,1.5,.36,1) ${i * 80}ms, opacity 0.5s ${i * 80}ms, transform 0.5s ${i * 80}ms`
               : `opacity 0.25s, transform 0.25s`,
             zIndex: 9999,

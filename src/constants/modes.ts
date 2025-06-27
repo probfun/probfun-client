@@ -15,5 +15,3 @@ export const MODES: ModeConfig[] = [
   { key: 'linalg', name: "邮趣线代", icon: MoveUpRight, color: 'rgb(142, 68, 173)', route: '/dashboard-linalg', desc: ['空间与向量的语言', '适合喜欢抽象思维和结构分析的你'] },
   { key: 'prob', name: "邮趣概率", icon: Dice3, color: 'rgb(36, 96, 226)', route: '/dashboard-prob', desc: ['探索不确定世界的规律', '适合喜欢逻辑和建模的你'] },
 ];
-
-//测试git功能

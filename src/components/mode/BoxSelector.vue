@@ -16,10 +16,6 @@ const expandTransition = ref(false)
 const skipTransition = ref(false)
 const isAnimating = ref(false)
 
-// 保存展开前的旋转状态
-const preExpandRotateX = ref(0)
-const preExpandRotateY = ref(0)
-
 // 展开后的位置配置
 const expandedPositions = {
   front: { x: 80, y: -160, z: 0 },
@@ -32,19 +28,6 @@ function normalizeAngle(angle: number): number {
   angle = angle % 360
   return angle > 180 ? angle - 360 : angle < -180 ? angle + 360 : angle
 }
-
-// 计算展开时的过渡transform
-const expandedTransform = computed(() => {
-  if (!expandTransition.value) {
-    return ''
-  }
-  const progress = isExpanded.value ? 1 : 0
-  const startX = preExpandRotateX.value
-  const startY = preExpandRotateY.value
-  const currentX = startX * (1 - progress)
-  const currentY = startY * (1 - progress)
-  return `rotateX(${currentX}deg) rotateY(${currentY}deg)`
-})
 
 const faceToAngle: Record<FaceType, { x: number, y: number }> = {
   front: { x: -25, y: -25 },
@@ -84,55 +67,33 @@ watch(currentFace, (newFace) => {
   console.log(newFace)
 })
 
-// 修改 handleMouseDown、handleMouseUp 只用于拖动切换面
 function handleMouseDown(e: MouseEvent) {
+  if (isDragging.value) return
   isDragging.value = true
   startX.value = e.clientX
   startY.value = e.clientY
 }
 
 function handleMouseUp(e: MouseEvent) {
-  if (!isDragging.value) return
+  if (!isDragging.value || isExpanded.value) return
   const deltaX = e.clientX - startX.value
   const deltaY = e.clientY - startY.value
   const threshold = 50
-  if (!isExpanded.value && (Math.abs(deltaX) > threshold || Math.abs(deltaY) > threshold)) {
+  if (Math.abs(deltaX) > threshold || Math.abs(deltaY) > threshold) {
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
-      // 判断是否倒置
-      const x = normalizeAngle(rotateX.value)
-      const isUpsideDown = (x === 155)
-      if (isUpsideDown) {
-        // 倒置时，左右方向反转
-        if (deltaX > 0) {
-          rotateY.value -= 90
-        }
-        else {
-          rotateY.value += 90
-        }
-      }
-      else {
-        if (deltaX > 0) {
-          rotateY.value += 90
-        }
-        else {
-          rotateY.value -= 90
-        }
-      }
+      rotateY.value += deltaX > 0 ? 90 : -90
+    } else if (deltaY > 0) {
+      rotateX.value = -90
+      setTimeout(() => {
+          rotateX.value = -25
+        }, 700)
     }
-    else {
-      if (deltaY > 0) {
-        rotateX.value -= 90
-      }
-      else {
-        rotateX.value += 90
-      }
-    }
+    isDragging.value = false
     themeStore.setColor(faceColors[currentFace.value])
   }
-  isDragging.value = false
 }
 
-// 2. 双击用于展开/收起立方体（原来长按的逻辑）
+// 双击用于展开、收起立方体
 function handleDoubleClick() {
   if (isAnimating.value)
     return
@@ -150,29 +111,18 @@ function handleDoubleClick() {
     rotateY.value = normalizeAngle(rotateY.value)
     requestAnimationFrame(() => {
       skipTransition.value = false
-      preExpandRotateX.value = rotateX.value
-      preExpandRotateY.value = rotateY.value
-      requestAnimationFrame(() => {
-        isAnimating.value = true
-        expandTransition.value = true
-        isExpanded.value = true
-        setTimeout(() => {
-          isAnimating.value = false
-        }, 800)
-      })
+      isAnimating.value = true
+      expandTransition.value = true
+      isExpanded.value = true
+      setTimeout(() => {
+        isAnimating.value = false
+      }, 300)
     })
   }
 }
 
-function handleMouseLeave() {
-  isDragging.value = false
-}
-
 function handleClose() {
   isExpanded.value = false
-  // setTimeout(() => {
-  //   expandTransition.value = false
-  // }, 300)
   expandTransition.value = false
 }
 
@@ -213,7 +163,6 @@ watch([rotateX, rotateY], ([x, y]) => {
     class="scene"
     @mousedown="handleMouseDown"
     @mouseup="handleMouseUp"
-    @mouseleave="handleMouseLeave"
     @dblclick="handleDoubleClick"
   >
     <div
@@ -224,7 +173,7 @@ watch([rotateX, rotateY], ([x, y]) => {
         'skip-transition': skipTransition,
       }"
       :style="{
-        transform: expandTransition ? expandedTransform : `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
+        transform: isExpanded ? `rotateX(0deg) rotateY(0deg)` : `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
       }"
     >
       <!-- front -->
