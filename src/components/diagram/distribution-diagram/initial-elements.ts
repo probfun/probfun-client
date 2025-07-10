@@ -15,10 +15,10 @@ let nodeIdCounter = 1; // 初始化计数器
 //   backgroundColor: '#f9f9f9',
 // };
 
-export function createDistributionNode({ label, position, chineseTranslation, pdf, expId, description }: NodeOptions) {
+export function createDistributionNode({ label, position, chineseTranslation, pdf, pmf, expId, description, imgPath }: NodeOptions) {
   return {
     id: (nodeIdCounter++).toString(), // 自增 id
-    data: { label, chineseTranslation, pdf, expId, description },
+    data: { label, chineseTranslation, pdf, expId, description, pmf, imgPath },
     position,
     type: 'distribution',
   };
@@ -33,15 +33,16 @@ export function initialNodes() {
     return createDistributionNode(data);
   });
 
-  console.log(nodeOptions);
+  // console.log(nodeOptions);
 
-  return nodeOptions.sort((a, b) => {
-    if (a.data.description && !b.data.description)
-      return -1;
-    if (!a.data.description && b.data.description)
-      return 1;
-    return 0;
-  });
+  return nodeOptions;
+  // return nodeOptions.sort((a, b) => {
+  //   if (a.data.description && !b.data.description)
+  //     return -1;
+  //   if (!a.data.description && b.data.description)
+  //     return 1;
+  //   return 0;
+  // });
 }
 
 const defaultEdgeOptions = {

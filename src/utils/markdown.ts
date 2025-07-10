@@ -7,7 +7,7 @@ import remarkRehype from 'remark-rehype';
 import { unified } from 'unified';
 import 'katex/dist/katex.min.css';
 
-export function toMarkdown(content: string): string {
+function toMarkdown(content: string): string {
   return unified()
     .use(remarkParse)
     .use(remarkMath)
@@ -18,7 +18,7 @@ export function toMarkdown(content: string): string {
     .toString();
 }
 
-export function renderLatex(text: string) {
+function renderLatex(text: string) {
   try {
     // 查找文本中的 LaTeX 代码（用 \( 和 \) 包裹）
     const latexRegex = /\\\((.*?)\\\)/g;
@@ -31,4 +31,9 @@ export function renderLatex(text: string) {
     console.error('LaTeX 渲染出错:', error);
     return text;
   }
+}
+
+export {
+  renderLatex,
+  toMarkdown,
 }

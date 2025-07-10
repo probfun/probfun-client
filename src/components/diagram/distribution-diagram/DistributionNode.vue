@@ -46,7 +46,7 @@ function updateEdgeStyle() {
   for (const edge of edges) {
     edge.style = {
       stroke: edge.defaultStroke,
-      strokeWidth: 4, // 设置默认边宽为 2
+      strokeWidth: 4,
     }
     edge.labelStyle!.fill = 'black';
   }
@@ -146,15 +146,27 @@ function getDescriptionBody(description: string) {
       </div>
     </HoverCardTrigger>
     <HoverCardContent class="w-auto z-20">
-      <Label class="text-base font-bold select-none"> 概率密度函数（PDF） </Label>
-      <div class="w-full flex items-center justify-center pt-3 select-none">
-        <div v-if="data.pdf" class="prose" v-html="toMarkdown(data.pdf)" />
-        <div v-else class="">
-          <Label>
-            这个分布的概率密度函数暂未收录
-          </Label>
+      <div v-if="data.pdf">
+        <Label class="text-base font-bold select-none"> 概率密度函数（PDF） </Label>
+        <div class="w-full flex items-center justify-center pt-3 select-none">
+          <div class="prose" v-html="toMarkdown(data.pdf)" />
         </div>
       </div>
+      <div v-else-if="data.pmf">
+        <Label class="text-base font-bold select-none"> 概率质量函数（PMF） </Label>
+        <div class="w-full flex items-center justify-center pt-3 select-none">
+          <div class="prose" v-html="toMarkdown(data.pmf)" />
+        </div>
+      </div>
+      <Label class="text-base font-bold select-none"> 函数图像展示 </Label>
+      <div class="w-full flex items-center justify-center pt-3 select-none">
+        <img class="h-64" :src="data.imgPath" alt="">
+      </div>
+      <!--      <div v-else class=""> -->
+      <!--        <Label> -->
+      <!--          这个分布的函数图像暂未收录 -->
+      <!--        </Label> -->
+      <!--      </div> -->
       <div v-auto-animate :class="cn('mt-3')">
         <div v-if="nodeDataRef?.description" class="p-0">
           <div class="p-2">
