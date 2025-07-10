@@ -1,68 +1,35 @@
-<template>
-  <div :id="elementId"></div>
-</template>
-
 <script setup>
-import { ref, onMounted } from 'vue';
-
-const props = defineProps({
+defineProps({
   filename: {
     type: String,
-    required: true
+    required: true,
   },
   width: {
     type: Number,
-    default: 800
+    default: 800,
   },
   height: {
     type: Number,
-    default: 600
+    default: 600,
   },
   showToolBar: {
     type: Boolean,
-    default: true
+    default: true,
   },
   showAlgebraInput: {
     type: Boolean,
-    default: false
+    default: false,
   },
   showMenuBar: {
     type: Boolean,
-    default: true
-  }
-  // 可以添加更多 GeoGebraApplet 的配置选项
-});
-
-const elementId = ref(`geogebra-applet-${Math.random().toString(36).substring(2, 15)}`);
-let ggbApp = null;
-
-onMounted(() => {
-  const parameters = {
-    appName: 'geometry', // 或 'graphing', '3d', 'cas', 'probability' 等
-    // width: props.width,
-    // height: props.height,
-    showToolBar: props.showToolBar,
-    showAlgebraInput: props.showAlgebraInput,
-    showMenuBar: props.showMenuBar,
-    filename: props.filename
-  };
-
-  if (typeof GGBApplet !== 'undefined') {
-    ggbApp = new GGBApplet(parameters, true);
-    ggbApp.inject(elementId.value);
-  } else {
-    // 如果 deployggb.js 尚未加载，则动态加载
-    const script = document.createElement('script');
-    script.src = 'https://cdn.geogebra.org/apps/deployggb.js';
-    script.async = true;
-    script.onload = () => {
-      ggbApp = new GGBApplet(parameters, true);
-      ggbApp.inject(elementId.value);
-    };
-    document.head.appendChild(script);
-  }
+    default: true,
+  },
 });
 </script>
+
+<template>
+  <iframe title="二维向量场的线积分" src="https://www.geogebra.org/material/iframe/id/hvzq9ehw/width/870/height/905/border/888888/sfsb/true/smb/true/stb/true/stbh/true/ai/true/asb/true/sri/true/rc/true/ld/true/sdz/true/ctl/true" width="870px" height="905px" />
+</template>
 
 <style scoped>
 /* 可以添加自定义样式 */

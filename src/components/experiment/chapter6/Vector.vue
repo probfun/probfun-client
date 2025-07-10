@@ -1,27 +1,9 @@
-<template>
-  <ExperimentBoard title="二维向量场的线积分" :panel-size="100" :discuss-tab-list="discussTabList">
-    <template #experiment>
-      <div class="flex w-full h-full">
-        <geo-gebra-applet filename="/vector.ggb" :showToolBar="false" class="w-full h-full"></geo-gebra-applet>
-      </div>
-    </template>>
-    <template #conclusion>
-      <div class="w-full h-full p-5">
-        <div class="prose-sm max-w-full " v-html="renderLatex(toMarkdown(content))" />
-      </div>
-    </template>
-    <template #comment>
-      <CommentPanel exp-id="" />
-    </template>
-  </ExperimentBoard>
-</template>
-
 <script setup>
-import GeoGebraApplet from '@/components/experiment/GeoGebraApplet.vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
-import { ref } from 'vue';
+import GeoGebraApplet from '@/components/experiment/GeoGebraApplet.vue';
 import { renderLatex, toMarkdown } from '@/utils/markdown';
+import { ref } from 'vue';
 
 const content = ref(`
 ## **二维向量场的线积分**
@@ -58,6 +40,24 @@ $\\int_a^b \\left( P(x(t),y(t)) \\frac{dx}{dt} + Q(x(t),y(t)) \\frac{dy}{dt} \\r
 线积分的结果就是一个**标量值**，代表了向量场沿着特定路径的总效应。在物理学中，这通常代表了力所做的功、流体的流量等。
 `);
 </script>
+
+<template>
+  <ExperimentBoard title="二维向量场的线积分" :panel-size="100" :discuss-tab-list="discussTabList">
+    <template #experiment>
+      <div class="flex w-full h-full">
+        <GeoGebraApplet filename="/vector.ggb" :show-tool-bar="false" class="w-full h-full" />
+      </div>
+    </template>>
+    <template #conclusion>
+      <div class="w-full h-full p-5">
+        <div class="prose-sm max-w-full " v-html="renderLatex(toMarkdown(content))" />
+      </div>
+    </template>
+    <template #comment>
+      <CommentPanel exp-id="" />
+    </template>
+  </ExperimentBoard>
+</template>
 
 <style scoped>
 /* ... */
