@@ -335,20 +335,20 @@ async function drawChartWithRetry(drawFunction, chartName, maxRetries = 3) {
 // 图表更新函数
 async function updateNativeCharts() {
   await nextTick();
-  setTimeout(() => {
-    console.log('Updating charts for active tab:', activeTab.value);
+  setTimeout(async () => {
     try {
-      if (activeTab.value === 'analysis' && analysisChart.value) {
-        drawAnalysisChart();
-      } else if (activeTab.value === 'efficiency' && efficiencyChart.value) {
-        drawEfficiencyChart();
-      } else if (activeTab.value === 'heatmap' && heatmapChart.value) {
-        drawHeatmapChart();
+      // 只绘制当前活动的图表
+      if (activeTab.value === 'analysis') {
+        await drawChartWithRetry(() => drawAnalysisChart(), 'analysis chart');
+      } else if (activeTab.value === 'efficiency') {
+        await drawChartWithRetry(() => drawEfficiencyChart(), 'efficiency chart');
+      } else if (activeTab.value === 'heatmap') {
+        await drawChartWithRetry(() => drawHeatmapChart(), 'heatmap chart');
       }
     } catch (error) {
       console.error('Failed to draw charts:', error);
     }
-  }, 100);
+  }, 200);
 }
 
 function debounceUpdateCharts() {
@@ -356,14 +356,12 @@ function debounceUpdateCharts() {
     clearTimeout(updateChartsTimer);
   }
   updateChartsTimer = setTimeout(() => {
-    console.log('Debounced chart update triggered');
     updateNativeCharts();
-  }, 200);
+  }, 300);
 }
 
 // 事件处理函数
 function onParameterChange() {
-  console.log('Parameter changed, regenerating groups and updating charts...');
   generateGroups();
   debounceUpdateCharts();
 }
@@ -374,45 +372,20 @@ function runSimulation() {
   updateNativeCharts();
 }
 
-// 测试Canvas是否可用
-function testCanvas(canvasRef, name) {
-  console.log(`Testing ${name} canvas...`);
-  const setup = setupCanvas(canvasRef);
-  if (!setup) {
-    console.error(`${name} canvas setup failed`);
-    return false;
-  }
-
-  const { ctx, width, height } = setup;
-
-  // 绘制一个简单的测试图形
-  ctx.fillStyle = '#4CAF50';
-  ctx.fillRect(10, 10, 100, 50);
-  ctx.fillStyle = '#333';
-  ctx.font = '14px Arial';
-  ctx.fillText(`${name} 测试`, 20, 35);
-
-  console.log(`${name} canvas test successful`);
-  return true;
-}
-
 // 原生图表绘制
 async function initNativeCharts() {
   console.log('Initializing native charts for tab:', activeTab.value);
-
-  // 先测试Canvas是否可用
-  if (activeTab.value === 'analysis' && analysisChart.value) {
-    if (testCanvas(analysisChart, 'Analysis')) {
-      setTimeout(() => drawAnalysisChart(), 100);
+  try {
+    // 只初始化当前活动的图表
+    if (activeTab.value === 'analysis') {
+      await drawChartWithRetry(() => drawAnalysisChart(), 'analysis chart');
+    } else if (activeTab.value === 'efficiency') {
+      await drawChartWithRetry(() => drawEfficiencyChart(), 'efficiency chart');
+    } else if (activeTab.value === 'heatmap') {
+      await drawChartWithRetry(() => drawHeatmapChart(), 'heatmap chart');
     }
-  } else if (activeTab.value === 'efficiency' && efficiencyChart.value) {
-    if (testCanvas(efficiencyChart, 'Efficiency')) {
-      setTimeout(() => drawEfficiencyChart(), 100);
-    }
-  } else if (activeTab.value === 'heatmap' && heatmapChart.value) {
-    if (testCanvas(heatmapChart, 'Heatmap')) {
-      setTimeout(() => drawHeatmapChart(), 100);
-    }
+  } catch (error) {
+    console.error('Failed to initialize charts:', error);
   }
 }
 
@@ -472,18 +445,8 @@ function setupCanvas(canvasRef) {
 }
 
 function drawAnalysisChart() {
-  console.log('drawAnalysisChart called, activeTab:', activeTab.value);
-  if (activeTab.value !== 'analysis') {
-    console.log('Not on analysis tab, skipping draw');
-    return false;
-  }
+  if (activeTab.value !== 'analysis') return false;
 
-  if (!analysisChart.value) {
-    console.error('analysisChart ref is null');
-    return false;
-  }
-
-  console.log('Setting up analysis chart...');
   const setup = setupCanvas(analysisChart);
   if (!setup) {
     console.log('Analysis chart setup failed');
@@ -491,7 +454,6 @@ function drawAnalysisChart() {
   }
 
   const { ctx, width, height } = setup;
-  console.log('Analysis chart setup successful, dimensions:', { width, height });
 
   // 调整边距以适应较小的空间
   const margin = { top: 40, right: 30, bottom: 60, left: 60 };
@@ -601,23 +563,12 @@ function drawAnalysisChart() {
   ctx.font = '10px Arial';
   ctx.fillText('分组大小', width / 2, height - 25);
 
-  console.log('Analysis chart drawn successfully');
   return true;
 }
 
 function drawEfficiencyChart() {
-  console.log('drawEfficiencyChart called, activeTab:', activeTab.value);
-  if (activeTab.value !== 'efficiency') {
-    console.log('Not on efficiency tab, skipping draw');
-    return false;
-  }
+  if (activeTab.value !== 'efficiency') return false;
 
-  if (!efficiencyChart.value) {
-    console.error('efficiencyChart ref is null');
-    return false;
-  }
-
-  console.log('Setting up efficiency chart...');
   const setup = setupCanvas(efficiencyChart);
   if (!setup) {
     console.log('Efficiency chart setup failed');
@@ -625,7 +576,6 @@ function drawEfficiencyChart() {
   }
 
   const { ctx, width, height } = setup;
-  console.log('Efficiency chart setup successful, dimensions:', { width, height });
 
   // 调整边距
   const margin = { top: 40, right: 30, bottom: 60, left: 60 };
@@ -716,23 +666,12 @@ function drawEfficiencyChart() {
   ctx.font = '10px Arial';
   ctx.fillText('分组大小', width / 2, height - 25);
 
-  console.log('Efficiency chart drawn successfully');
   return true;
 }
 
 function drawHeatmapChart() {
-  console.log('drawHeatmapChart called, activeTab:', activeTab.value);
-  if (activeTab.value !== 'heatmap') {
-    console.log('Not on heatmap tab, skipping draw');
-    return false;
-  }
+  if (activeTab.value !== 'heatmap') return false;
 
-  if (!heatmapChart.value) {
-    console.error('heatmapChart ref is null');
-    return false;
-  }
-
-  console.log('Setting up heatmap chart...');
   const setup = setupCanvas(heatmapChart);
   if (!setup) {
     console.log('Heatmap chart setup failed');
@@ -740,7 +679,6 @@ function drawHeatmapChart() {
   }
 
   const { ctx, width, height } = setup;
-  console.log('Heatmap chart setup successful, dimensions:', { width, height });
 
   // 调整边距
   const margin = { top: 40, right: 30, bottom: 60, left: 80 };
@@ -856,7 +794,6 @@ function drawHeatmapChart() {
   ctx.textAlign = 'center';
   ctx.fillText('分组大小', margin.left + chartWidth / 2, height - 25);
 
-  console.log('Heatmap chart drawn successfully');
   return true;
 }
 
@@ -899,21 +836,22 @@ watch(groupSize, (newVal) => {
 });
 
 watch(activeTab, (newTab) => {
+  // 当切换标签页时，重新绘制当前图表
   console.log('Tab changed to:', newTab);
   nextTick(() => {
-    setTimeout(() => {
-      console.log('Drawing chart for new tab:', newTab);
-      if (newTab === 'analysis' && analysisChart.value) {
-        testCanvas(analysisChart, 'Analysis');
-        setTimeout(() => drawAnalysisChart(), 100);
-      } else if (newTab === 'efficiency' && efficiencyChart.value) {
-        testCanvas(efficiencyChart, 'Efficiency');
-        setTimeout(() => drawEfficiencyChart(), 100);
-      } else if (newTab === 'heatmap' && heatmapChart.value) {
-        testCanvas(heatmapChart, 'Heatmap');
-        setTimeout(() => drawHeatmapChart(), 100);
+    setTimeout(async () => {
+      try {
+        if (newTab === 'analysis') {
+          await drawChartWithRetry(() => drawAnalysisChart(), 'analysis chart');
+        } else if (newTab === 'efficiency') {
+          await drawChartWithRetry(() => drawEfficiencyChart(), 'efficiency chart');
+        } else if (newTab === 'heatmap') {
+          await drawChartWithRetry(() => drawHeatmapChart(), 'heatmap chart');
+        }
+      } catch (error) {
+        console.error('Failed to draw chart on tab change:', error);
       }
-    }, 200);
+    }, 300);
   });
 });
 
@@ -926,18 +864,13 @@ onMounted(async () => {
     // 添加窗口大小变化监听器
     window.addEventListener('resize', handleResize);
 
-    // 等待DOM完全渲染
+    // 较短的延迟，确保DOM渲染
     await nextTick();
-    setTimeout(() => {
-      console.log('DOM ready, attempting to initialize charts...');
-      console.log('Canvas refs:', {
-        analysis: !!analysisChart.value,
-        efficiency: !!efficiencyChart.value,
-        heatmap: !!heatmapChart.value
-      });
-      initNativeCharts();
+    setTimeout(async () => {
+      console.log('Attempting to initialize charts...');
+      await initNativeCharts();
       isChartsReady.value = true;
-    }, 500); // 增加延迟确保Canvas元素完全准备好
+    }, 300); // 减少到300ms
   } catch (error) {
     console.error('Failed to mount component:', error);
   }

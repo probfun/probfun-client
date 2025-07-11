@@ -189,6 +189,18 @@ const router = createRouter({
           component: () => import('@/components/experiment/chapter6/Vector.vue'),
         },
         {
+          path: '/dashboard/experiment/group-detection',
+          component: () => import('@/components/experiment/chapter4/GroupDetection.vue'),
+        },
+        {
+          path: '/dashboard/experiment/portfolio',
+          component: () => import('@/components/experiment/chapter4/Portfolio.vue'),
+        },
+        {
+          path: '/dashboard/experiment/NetworkTrafficCharacteristics',
+          component: () => import('@/components/experiment/chapter4/NetworkTrafficCharacteristics.vue'),
+        },
+        {
           path: '/dashboard/info0',
           component: StudentPanel,
         },

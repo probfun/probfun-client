@@ -424,22 +424,50 @@ const chapter3Items = [
   //   },
   // },
 ]
-// const chapter4Items = [
-//   {
-//     label: '期望检验',
-//     icon: 'pi pi-chart-bar',
-//     route: '/dashboard/experiment/expectation-test',
-//     command: async () => {
-//       try {
-//         await clickApi('CLICK', 'catalogue', '期望检验', window.location.href);
-//         await router.push('/dashboard/experiment/expectation-test');
-//       }
-//       catch (error) {
-//         console.error('Error tracking button click:', error);
-//       }
-//     },
-//   },
-// ]
+const chapter4Items = [
+  {
+    label: '分组检测',
+    icon: 'pi pi-chart-bar',
+    route: '/dashboard/experiment/group-detection',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '分组检测', window.location.href);
+        await router.push('/dashboard/experiment/group-detection');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
+  },
+  {
+    label: '投资组合收益',
+    icon: 'pi pi-chart-bar',
+    route: '/dashboard/experiment/portfolio',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '投资组合收益', window.location.href);
+        await router.push('/dashboard/experiment/portfolio');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
+  },
+  {
+    label: '网络流量特征相关系数矩阵',
+    icon: 'pi pi-chart-bar',
+    route: '/dashboard/experiment/NetworkTrafficCharacteristics',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '网络流量特征相关系数矩阵', window.location.href);
+        await router.push('/dashboard/experiment/NetworkTrafficCharacteristics');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
+  },
+]
 const chapter5Items = [
   {
     label: '高尔顿钉板实验',
@@ -903,7 +931,7 @@ function goHome() {
               </details>
             </li>
 
-            <!-- <li>
+             <li>
               <details open>
                 <summary class="font-bold">
                   <i class="pi pi-bookmark" /> 第四章
@@ -927,7 +955,7 @@ function goHome() {
                   </li>
                 </ul>
               </details>
-            </li> -->
+            </li>
 
             <li>
               <details open>
