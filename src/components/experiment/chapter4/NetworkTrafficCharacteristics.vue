@@ -1,5 +1,5 @@
 <template>
-  <ExperimentBoard>
+  <ExperimentBoard :layout="1" :panel-size="50">
     <template #experiment>
       <div class="container mx-auto p-4">
         <!-- 流量特征趋势图 -->
