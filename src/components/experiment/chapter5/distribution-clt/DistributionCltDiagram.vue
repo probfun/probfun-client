@@ -1,296 +1,586 @@
 <script setup lang="ts">
-import type { FunctionLabel } from './functions.ts'
-import {
-  getChartData,
-  getChartDataMulti,
-  getChartOption,
-  getChartOptionMulti,
-} from '@/components/experiment/chapter5/distribution-clt/config';
-import FFT from 'fft.js';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Slider } from '@/components/ui/slider'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { ref, computed, watch, onMounted, nextTick } from 'vue'
+import Chart from 'chart.js/auto'
+import * as Plotly from 'plotly.js-dist'
 
-import { onMounted, ref, watch } from 'vue';
+// 响应式数据
+const sampleCount = ref([100])
+const prevalence = ref([0.05])
+const groupSize = ref([5])
+const testError = ref([0.02])
+const costRatio = ref([0.3])
 
-const props = defineProps<{
-  args: {
-    f: (x: number) => number
-    left: number
-    right: number
-    dx: number
-    n: number
-    multi: boolean
-    type: FunctionLabel
-    args: Record<FunctionLabel, any>
+// 计算属性
+const sampleCountValue = computed(() => sampleCount.value[0])
+const prevalenceValue = computed(() => prevalence.value[0])
+const groupSizeValue = computed(() => groupSize.value[0])
+const testErrorValue = computed(() => testError.value[0])
+const costRatioValue = computed(() => costRatio.value[0])
+
+// 分组可视化数据
+const groupVisualizationData = ref<any[]>([])
+
+// 结果数据
+const results = ref({
+  individualTests: 100,
+  groupTests: 34.6,
+  variance: 28.4,
+  savings: 65.4
+})
+
+// 图表引用
+const expectationChartRef = ref<HTMLCanvasElement>()
+const heatmapChartRef = ref<HTMLCanvasElement>()
+const threeDChartRef = ref<HTMLDivElement>()
+
+let expectationChart: Chart | null = null
+let heatmapChart: Chart | null = null
+
+// 限制分组大小的最大值
+const maxGroupSize = computed(() => Math.min(20, Math.floor(sampleCountValue.value / 2)))
+
+watch(sampleCount, () => {
+  if (groupSizeValue.value > maxGroupSize.value) {
+    groupSize.value = [maxGroupSize.value]
   }
-}>();
+})
 
-const xs = ref<number[]>([]);
-const y1s = ref<number[]>([]);
-const y2s = ref<number[]>([]);
-const yns = ref<number[][]>([]);
-const chartData = ref(getChartData(xs.value, y1s.value, y2s.value));
-const chartOption = ref(getChartOption(y1s.value, y2s.value));
-
-function convolvedNormal(mean: number, std: number, n: number) {
-  const newMean = n * mean;
-  const newVariance = n * std * std;
-  const coeff = 1 / Math.sqrt(2 * Math.PI * newVariance);
-  return (x: number): number => {
-    return coeff * Math.exp(-((x - newMean) ** 2) / (2 * newVariance));
-  };
+// 计算期望检测次数
+function calculateExpectedTests(N: number, k: number, p: number): number {
+  const groups = Math.ceil(N / k)
+  const probAllNegative = Math.pow(1 - p, k)
+  const expectedPerGroup = probAllNegative * 1 + (1 - probAllNegative) * (1 + k)
+  return groups * expectedPerGroup
 }
 
-function selfConvolution(
-  f: (x: number) => number,
-  n: number,
-  left: number,
-  right: number,
-): (x: number) => number {
-  const { args, type } = props.args;
-  if (type === 'normal') {
-    return convolvedNormal(args[type].mean, args[type].std, n);
-  }
-  const L = right - left;
-  const N = 2048; // 增加采样点提高精度
-  const h = L / N;
-  const M = 2 * N;
+// 计算方差
+function calculateVariance(N: number, k: number, p: number): number {
+  const groups = Math.ceil(N / k)
+  const probAllNegative = Math.pow(1 - p, k)
 
-  const re = Array.from({ length: M }).fill(0) as number[]; // 实部
-  const im = Array.from({ length: M }).fill(0) as number[]; // 虚部
+  const E_Tg = probAllNegative * 1 + (1 - probAllNegative) * (1 + k)
+  const E_Tg2 = probAllNegative * Math.pow(1, 2) + (1 - probAllNegative) * Math.pow(1 + k, 2)
+  const varPerGroup = E_Tg2 - Math.pow(E_Tg, 2)
 
-  for (let i = 0; i < N; i++) {
-    const t = i * h;
-    re[i] = f(left + t);
-  }
-
-  const fft = new FFT(M);
-  const fftInput = Array.from({ length: 2 * M }) as number[];
-  const fftOutput = Array.from({ length: 2 * M }) as number[];
-
-  for (let i = 0; i < M; i++) {
-    fftInput[2 * i] = re[i];
-    fftInput[2 * i + 1] = im[i];
-  }
-
-  fft.transform(fftOutput, fftInput);
-  for (let k = 0; k < M; k++) {
-    const realPart = fftOutput[2 * k];
-    const imagPart = fftOutput[2 * k + 1];
-
-    if (Math.abs(realPart) < 1e-10 && Math.abs(imagPart) < 1e-10) {
-      fftOutput[2 * k] = 0;
-      fftOutput[2 * k + 1] = 0;
-    }
-    else {
-      const r = Math.sqrt(realPart * realPart + imagPart * imagPart);
-      const phi = Math.atan2(imagPart, realPart);
-
-      // 使用对数计算避免数值溢出
-      const logR = r > 0 ? n * Math.log(r) : -Infinity;
-      const rPow = r > 0 ? Math.exp(logR) : 0;
-      const phiN = phi * n;
-
-      fftOutput[2 * k] = rPow * Math.cos(phiN);
-      fftOutput[2 * k + 1] = rPow * Math.sin(phiN);
-    }
-  }
-
-  const ifftOutput = Array.from({ length: 2 * M }) as number[];
-  fft.inverseTransform(ifftOutput, fftOutput);
-
-  const conv = Array.from({ length: M }) as number[];
-  for (let i = 0; i < M; i++) {
-    // 防止精度问题导致的负值
-    conv[i] = Math.max(0, ifftOutput[2 * i] / M);
-  }
-
-  // 使用梯形积分法提高归一化精度
-  let sum = 0;
-  for (let i = 0; i < M - 1; i++) {
-    sum += (conv[i] + conv[i + 1]) * h / 2;
-  }
-
-  // 避免除以接近零的数
-  if (sum > 1e-10) {
-    for (let i = 0; i < M; i++) {
-      conv[i] /= sum;
-    }
-  }
-
-  return (x: number) => {
-    const t = x - n * left;
-    if (t < 0 || t > n * L) {
-      return 0; // 卷积值为 0
-    }
-
-    const index = t / h;
-    const i0 = Math.floor(index);
-    const frac = index - i0; // 小数部分
-
-    if (i0 < 0)
-      return conv[0];
-    if (i0 >= M - 1)
-      return conv[M - 1];
-
-    const c0 = conv[i0];
-    const c1 = conv[i0 + 1];
-    return c0 + frac * (c1 - c0);
-  };
+  return groups * varPerGroup
 }
 
-function calculateMeanAndVariance() {
-  const { f, left, right, dx, type, args } = props.args;
-  if (type === 'normal') {
-    const { mean, std } = args[type];
-    return { mean, variance: std ** 2 };
-  }
-  const x = [];
-  const fValues = [];
-
-  for (let i = left; i <= right; i += dx) {
-    x.push(i);
-    fValues.push(f(i));
-  }
-  const normalization = fValues.reduce((sum, v) => sum + v, 0) * dx;
-  for (let i = 0; i < fValues.length; i++) {
-    fValues[i] /= normalization;
-  }
-
-  let mean = 0;
-  for (let i = 0; i < x.length; i++) {
-    mean += x[i] * fValues[i] * dx;
-  }
-
-  let meanSq = 0;
-  for (let i = 0; i < x.length; i++) {
-    meanSq += x[i] ** 2 * fValues[i] * dx;
-  }
-
-  const variance = meanSq - mean ** 2;
-  return { mean, variance };
+// 计算节省率
+function calculateSavings(N: number, k: number, p: number, costRatio: number): number {
+  const individualCost = N
+  const groupCost = calculateExpectedTests(N, k, p) * costRatio
+  return (1 - groupCost / individualCost) * 100
 }
 
-function calculatePoints() {
-  const { f, left, right, dx, n } = props.args;
-  const x = [];
-  const y1 = [];
-  const y2 = [];
+// 生成分组可视化数据
+function generateGroupsVisualization(N: number, k: number, p: number) {
+  const groups = Math.ceil(N / k)
+  const groupData = []
 
-  const { mean, variance } = calculateMeanAndVariance();
-  const cur_mean = mean * n;
-  const cur_variance = variance * n;
+  for (let i = 0; i < groups; i++) {
+    const startIndex = i * k
+    const endIndex = Math.min(startIndex + k, N)
+    const samplesInGroup = endIndex - startIndex
 
-  const ff = selfConvolution(f, n, left * n, right * n);
-  const len = (right - left) * n;
-  for (let i = left * n - 0.5 * len; i <= right * n + 0.5 * len; i += dx * n) {
-    i = Math.round(i * 100) / 100;
-    x.push(i);
-    y1.push(ff(i));
-    y2.push(1 / Math.sqrt(2 * Math.PI * cur_variance) * Math.exp(-0.5 * (i - cur_mean) ** 2 / cur_variance));
-  }
+    const samples = []
+    let hasPositive = false
 
-  xs.value = x;
-  y1s.value = y1;
-  y2s.value = y2;
-
-  chartOption.value = getChartOption(y1, y2);
-}
-
-function calculateConvergeFuncPoints() {
-  const { f, left, right, dx } = props.args;
-  const n = 100;
-  const x = [];
-  const y = [];
-
-  const { mean, variance } = calculateMeanAndVariance();
-
-  for (let j = 1; j <= 100; j++) {
-    const cur_mean = mean * j;
-    const cur_variance = variance * j;
-    const len = (right - left) * j;
-
-    const fn = selfConvolution(f, j, left * j, right * j);
-    let maxDiff = 0;
-    for (let i = left * n - 0.5 * len; i <= right * n + 0.5 * len; i += dx * n) {
-      i = Math.round(i * 100) / 100;
-      const y1 = fn(i);
-      const y2 = 1 / Math.sqrt(2 * Math.PI * cur_variance) * Math.exp(-0.5 * (i - cur_mean) ** 2 / cur_variance);
-      maxDiff = Math.max(maxDiff, Math.abs(y1 - y2));
+    for (let j = 0; j < samplesInGroup; j++) {
+      const isPositive = Math.random() < p
+      if (isPositive) hasPositive = true
+      samples.push({ isPositive })
     }
-    x.push(j);
-    y.push(maxDiff);
+
+    groupData.push({
+      id: i + 1,
+      samples,
+      hasPositive,
+      result: hasPositive ? '阳性组 (需进一步检测)' : '阴性组'
+    })
   }
 
-  return { x, y };
+  groupVisualizationData.value = groupData
 }
 
-function calculatePointsMulti() {
-  const { f, left, right, dx } = props.args;
-  const n = 30;
-  const x = [];
-  const yn = Array.from({ length: 30 }).map(() => []) as number[][];
-  const y2 = [];
+// 更新期望图表
+function updateExpectationChart(N: number, p: number) {
+  if (!expectationChart) return
 
-  const { mean, variance } = calculateMeanAndVariance();
-  const cur_mean = mean * n;
-  const cur_variance = variance * n;
+  const labels = []
+  const expectationData = []
+  const individualData = []
 
-  // const ff = selfConvolution(f, n, left * n, right * n);
-  const len = (right - left) * n;
+  for (let k = 1; k <= maxGroupSize.value; k++) {
+    labels.push(k)
+    expectationData.push(calculateExpectedTests(N, k, p))
+    individualData.push(N)
+  }
 
-  for (let j = 1; j <= 30; j++) {
-    const fn = selfConvolution(f, j, left * j, right * j);
-    for (let i = left * n - 0.5 * len; i <= right * n + 0.5 * len; i += dx * n) {
-      i = Math.round(i * 100) / 100;
-      yn[j - 1].push(fn(i));
+  expectationChart.data.labels = labels
+  expectationChart.data.datasets[0].data = expectationData
+  expectationChart.data.datasets[1].data = individualData
+  expectationChart.update()
+}
+
+// 生成3D图表
+function generate3DPlot(N: number, costRatio: number) {
+  if (!threeDChartRef.value) return
+
+  const kValues = []
+  const pValues = []
+  const zData = []
+
+  for (let k = 1; k <= 20; k++) {
+    kValues.push(k)
+  }
+
+  for (let p = 0.01; p <= 0.3; p += 0.01) {
+    pValues.push(p)
+  }
+
+  for (let i = 0; i < pValues.length; i++) {
+    const row = []
+    for (let j = 0; j < kValues.length; j++) {
+      const savings = calculateSavings(N, kValues[j], pValues[i], costRatio)
+      row.push(savings)
     }
-  }
-  for (let i = left * n - 0.5 * len; i <= right * n + 0.5 * len; i += dx * n) {
-    i = Math.round(i * 100) / 100;
-    x.push(i);
-    y2.push(1 / Math.sqrt(2 * Math.PI * cur_variance) * Math.exp(-0.5 * (i - cur_mean) ** 2 / cur_variance));
+    zData.push(row)
   }
 
-  xs.value = x;
-  yns.value = yn;
-  y2s.value = y2;
+  const data = [{
+    type: 'surface',
+    x: kValues,
+    y: pValues,
+    z: zData,
+    colorscale: 'Viridis',
+    contours: {
+      z: {
+        show: true,
+        usecolormap: true,
+        highlightcolor: "#42f462",
+        project: { z: true }
+      }
+    }
+  }]
 
-  chartOption.value = getChartOptionMulti(yn, y2);
+  const layout = {
+    title: `分组检测成本节省率 (N=${N})`,
+    scene: {
+      xaxis: { title: '分组大小 (k)' },
+      yaxis: { title: '阳性率 (p)' },
+      zaxis: { title: '成本节省率 (%)' },
+      camera: {
+        eye: { x: 1.5, y: 1.5, z: 1.5 }
+      }
+    },
+    margin: { l: 0, r: 0, b: 0, t: 50 },
+    autosize: true
+  }
+
+  Plotly.newPlot(threeDChartRef.value, data, layout, { responsive: true })
 }
 
-watch(() => props.args, () => {
-  console.log('calculatePoints');
-  if (props.args.multi) {
-    calculatePointsMulti();
-    chartData.value = getChartDataMulti(xs.value, yns.value, y2s.value);
+// 生成热力图
+function generateHeatmap(N: number, p: number, costRatio: number) {
+  if (!heatmapChart) return
+
+  const kValues = []
+  const pValues = [0.01, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3]
+  const savingsData = []
+
+  for (let k = 1; k <= 15; k++) {
+    kValues.push(k)
   }
-  else {
-    calculatePoints();
-    chartData.value = getChartData(xs.value, y1s.value, y2s.value);
+
+  for (let i = 0; i < pValues.length; i++) {
+    const row = []
+    for (let j = 0; j < kValues.length; j++) {
+      const savings = calculateSavings(N, kValues[j], pValues[i], costRatio)
+      row.push(savings)
+    }
+    savingsData.push(row)
   }
-}, { deep: true });
+
+  const datasets = pValues.map((pVal, idx) => {
+    const colors = [
+      'rgba(34, 197, 94, 0.7)',   // green
+      'rgba(59, 130, 246, 0.7)',  // blue
+      'rgba(168, 85, 247, 0.7)',  // purple
+      'rgba(245, 158, 11, 0.7)',  // yellow
+      'rgba(249, 115, 22, 0.7)',  // orange
+      'rgba(239, 68, 68, 0.7)',   // red
+      'rgba(220, 38, 127, 0.7)'   // pink
+    ]
+
+    return {
+      label: `p = ${pVal}`,
+      data: savingsData[idx],
+      backgroundColor: colors[Math.min(idx, 6)]
+    }
+  })
+
+  heatmapChart.data.labels = kValues
+  heatmapChart.data.datasets = datasets
+  heatmapChart.update()
+}
+
+// 主要模拟函数
+function simulate() {
+  const N = sampleCountValue.value
+  const k = groupSizeValue.value
+  const p = prevalenceValue.value
+  const cost = costRatioValue.value
+
+  // 更新结果
+  results.value.individualTests = N
+  results.value.groupTests = Number(calculateExpectedTests(N, k, p).toFixed(1))
+  results.value.variance = Number(calculateVariance(N, k, p).toFixed(1))
+  results.value.savings = Number(calculateSavings(N, k, p, cost).toFixed(1))
+
+  // 生成可视化
+  generateGroupsVisualization(N, k, p)
+  updateExpectationChart(N, p)
+  generate3DPlot(N, cost)
+  generateHeatmap(N, p, cost)
+}
+
+// 初始化图表
+function initCharts() {
+  nextTick(() => {
+    // 期望图表
+    if (expectationChartRef.value) {
+      const ctx = expectationChartRef.value.getContext('2d')
+      if (ctx) {
+        expectationChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: [],
+            datasets: [{
+              label: '期望检测次数',
+              data: [],
+              borderColor: 'rgb(59, 130, 246)',
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              borderWidth: 3,
+              fill: true,
+              tension: 0.3
+            }, {
+              label: '个体检测次数',
+              data: [],
+              borderColor: 'rgb(239, 68, 68)',
+              borderWidth: 2,
+              borderDash: [5, 5],
+              fill: false
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              title: {
+                display: true,
+                text: '不同分组大小下的期望检测次数'
+              },
+              tooltip: {
+                mode: 'index',
+                intersect: false
+              },
+              legend: {
+                position: 'top',
+              }
+            },
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: '分组大小 (k)'
+                }
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: '期望检测次数'
+                },
+                beginAtZero: true
+              }
+            }
+          }
+        })
+      }
+    }
+
+    // 热力图
+    if (heatmapChartRef.value) {
+      const ctx = heatmapChartRef.value.getContext('2d')
+      if (ctx) {
+        heatmapChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: [],
+            datasets: []
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              title: {
+                display: true,
+                text: '分组检测效率热力图'
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context: any) {
+                    return `节省率: ${context.raw.toFixed(1)}%`
+                  }
+                }
+              },
+              legend: {
+                position: 'top',
+              }
+            },
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: '分组大小 (k)'
+                }
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: '阳性率 (p)'
+                }
+              }
+            }
+          }
+        })
+      }
+    }
+
+    simulate()
+  })
+}
+
+// 监听参数变化
+watch([sampleCount, prevalence, groupSize, testError, costRatio], simulate, { deep: true })
 
 onMounted(() => {
-  if (props.args.multi) {
-    calculatePointsMulti();
-    chartData.value = getChartDataMulti(xs.value, yns.value, y2s.value);
-  }
-  else {
-    calculatePoints();
-    chartData.value = getChartData(xs.value, y1s.value, y2s.value);
-  }
-});
-
-defineExpose({
-  calculateConvergeFuncPoints,
-});
+  initCharts()
+})
 </script>
 
 <template>
-  <div class="w-full h-full">
-    <chart type="line" :data="chartData" class="w-full h-full" :options="chartOption" />
+  <div class="container mx-auto p-6 max-w-7xl">
+    <!-- 标题 -->
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-bold text-primary mb-4">分组检测</h1>
+      <p class="text-lg text-muted-foreground max-w-3xl mx-auto">
+        探索分组检测策略的效率和成本优化
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- 参数设置面板 -->
+      <div class="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>参数设置</CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-6">
+            <div class="space-y-4">
+              <div class="space-y-2">
+                <Label>样本总数 (N): {{ sampleCountValue }}</Label>
+                <Slider
+                    v-model="sampleCount"
+                    :min="10"
+                    :max="200"
+                    :step="1"
+                    class="w-full"
+                />
+              </div>
+
+              <div class="space-y-2">
+                <Label>阳性率 (p): {{ prevalenceValue.toFixed(2) }}</Label>
+                <Slider
+                    v-model="prevalence"
+                    :min="0.01"
+                    :max="0.3"
+                    :step="0.01"
+                    class="w-full"
+                />
+              </div>
+
+              <div class="space-y-2">
+                <Label>分组大小 (k): {{ groupSizeValue }}</Label>
+                <Slider
+                    v-model="groupSize"
+                    :min="1"
+                    :max="maxGroupSize"
+                    :step="1"
+                    class="w-full"
+                />
+              </div>
+
+              <div class="space-y-2">
+                <Label>检测错误率: {{ testErrorValue.toFixed(2) }}</Label>
+                <Slider
+                    v-model="testError"
+                    :min="0"
+                    :max="0.1"
+                    :step="0.01"
+                    class="w-full"
+                />
+              </div>
+
+              <div class="space-y-2">
+                <Label>检测成本比例 (分组:个体): {{ costRatioValue.toFixed(1) }}</Label>
+                <Slider
+                    v-model="costRatio"
+                    :min="0.1"
+                    :max="1"
+                    :step="0.1"
+                    class="w-full"
+                />
+              </div>
+            </div>
+
+            <Button @click="simulate" class="w-full">
+              运行模拟
+            </Button>
+          </CardContent>
+        </Card>
+
+        <!-- 结果统计 -->
+        <Card>
+          <CardHeader>
+            <CardTitle>结果统计</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="text-center p-4 bg-muted rounded-lg">
+                <div class="text-2xl font-bold text-primary">{{ results.individualTests }}</div>
+                <div class="text-sm text-muted-foreground">个体检测总次数</div>
+              </div>
+
+              <div class="text-center p-4 bg-muted rounded-lg">
+                <div class="text-2xl font-bold text-primary">{{ results.groupTests }}</div>
+                <div class="text-sm text-muted-foreground">分组检测期望次数</div>
+              </div>
+
+              <div class="text-center p-4 bg-muted rounded-lg">
+                <div class="text-2xl font-bold text-primary">{{ results.variance }}</div>
+                <div class="text-sm text-muted-foreground">检测次数方差</div>
+              </div>
+
+              <div class="text-center p-4 bg-muted rounded-lg">
+                <div class="text-2xl font-bold text-primary">{{ results.savings }}%</div>
+                <div class="text-sm text-muted-foreground">成本节省率</div>
+              </div>
+            </div>
+
+            <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+              <p class="text-sm text-blue-800">
+                <span class="font-semibold">优化提示：</span>当
+                <span class="font-semibold">阳性率较低</span>且使用
+                <span class="font-semibold">适当的分组大小</span>时，分组检测策略最为有效。
+              </p>
+              <p class="text-sm text-blue-800 mt-1">
+                当前参数下，分组检测比个体检测节省
+                <span class="font-semibold">{{ results.savings }}%</span>的成本。
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <!-- 可视化区域 -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- 分组可视化 -->
+        <Card>
+          <CardHeader>
+            <CardTitle>分组检测过程可视化</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-h-96 overflow-y-auto">
+              <div
+                  v-for="group in groupVisualizationData"
+                  :key="group.id"
+                  class="border-2 border-primary/20 rounded-lg p-3 flex flex-col items-center bg-card"
+              >
+                <div class="font-semibold text-primary text-sm mb-2">
+                  组 {{ group.id }}
+                </div>
+                <div class="flex gap-1 flex-wrap justify-center mb-2">
+                  <div
+                      v-for="(sample, idx) in group.samples"
+                      :key="idx"
+                      :class="[
+                      'w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold',
+                      sample.isPositive
+                        ? 'bg-red-500 text-white'
+                        : 'bg-green-500 text-white'
+                    ]"
+                  >
+                    {{ sample.isPositive ? '+' : '-' }}
+                  </div>
+                </div>
+                <div
+                    :class="[
+                    'text-xs font-semibold text-center',
+                    group.hasPositive ? 'text-red-600' : 'text-green-600'
+                  ]"
+                >
+                  {{ group.result }}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <!-- 图表分析 -->
+        <Card>
+          <CardHeader>
+            <CardTitle>图表分析</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Tabs default-value="2d" class="w-full">
+              <TabsList class="grid w-full grid-cols-3">
+                <TabsTrigger value="2d">二维分析</TabsTrigger>
+                <TabsTrigger value="3d">三维曲面</TabsTrigger>
+                <TabsTrigger value="heatmap">柱状图</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="2d" class="space-y-4">
+                <h3 class="text-lg font-semibold">期望检测次数分析</h3>
+                <div class="h-80">
+                  <canvas ref="expectationChartRef"></canvas>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="3d" class="space-y-4">
+                <h3 class="text-lg font-semibold">三维曲面分析</h3>
+                <div ref="threeDChartRef" class="h-96"></div>
+              </TabsContent>
+
+              <TabsContent value="heatmap" class="space-y-4">
+                <h3 class="text-lg font-semibold">效率柱状图</h3>
+                <div class="h-80">
+                  <canvas ref="heatmapChartRef"></canvas>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
-
+/* 自定义样式可以在这里添加 */
 </style>

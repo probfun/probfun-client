@@ -1,46 +1,46 @@
 <template>
-  <ExperimentBoard>
+  <ExperimentBoard :layout="1" :panel-size="50">
     <template #experiment>
-      <div class="container">
+      <div class="max-w-4xl mx-auto p-5">
         <!-- 结果显示 -->
-        <div class="results-grid">
-          <div class="result-card">
-            <div class="result-label">个体检测总次数</div>
-            <div class="result-value">{{ sampleCount }}</div>
+        <div class="grid grid-cols-2 gap-4 mb-5">
+          <div class="bg-white/90 rounded-xl p-4 text-center transition-all duration-300 shadow-lg hover:transform hover:-translate-y-1 hover:shadow-xl">
+            <div class="text-base text-blue-600">个体检测总次数</div>
+            <div class="text-3xl font-bold text-red-500 my-2">{{ sampleCount }}</div>
           </div>
 
-          <div class="result-card">
-            <div class="result-label">分组检测期望次数</div>
-            <div class="result-value">{{ expectedTests.toFixed(1) }}</div>
+          <div class="bg-white/90 rounded-xl p-4 text-center transition-all duration-300 shadow-lg hover:transform hover:-translate-y-1 hover:shadow-xl">
+            <div class="text-base text-blue-600">分组检测期望次数</div>
+            <div class="text-3xl font-bold text-red-500 my-2">{{ expectedTests.toFixed(1) }}</div>
           </div>
 
-          <div class="result-card">
-            <div class="result-label">检测次数方差</div>
-            <div class="result-value">{{ variance.toFixed(1) }}</div>
+          <div class="bg-white/90 rounded-xl p-4 text-center transition-all duration-300 shadow-lg hover:transform hover:-translate-y-1 hover:shadow-xl">
+            <div class="text-base text-blue-600">检测次数方差</div>
+            <div class="text-3xl font-bold text-red-500 my-2">{{ variance.toFixed(1) }}</div>
           </div>
 
-          <div class="result-card">
-            <div class="result-label">成本节省率</div>
-            <div class="result-value">{{ savings.toFixed(1) }}%</div>
+          <div class="bg-white/90 rounded-xl p-4 text-center transition-all duration-300 shadow-lg hover:transform hover:-translate-y-1 hover:shadow-xl">
+            <div class="text-base text-blue-600">成本节省率</div>
+            <div class="text-3xl font-bold text-red-500 my-2">{{ savings.toFixed(1) }}%</div>
           </div>
         </div>
 
         <!-- 分组检测过程可视化 -->
-        <div class="visualization-section">
-          <h3>分组检测过程可视化</h3>
-          <div class="group-visual">
-            <div v-for="(group, index) in groups" :key="index" class="sample-group">
-              <div class="group-header">组 {{ index + 1 }}</div>
-              <div class="samples">
+        <div class="my-5">
+          <h3 class="mb-4 text-blue-700 text-lg font-semibold pb-2 border-b-2 border-blue-500">分组检测过程可视化</h3>
+          <div class="flex flex-wrap gap-2.5 justify-center max-h-96 overflow-y-auto p-2.5 bg-white/85 rounded-xl shadow-lg">
+            <div v-for="(group, index) in groups" :key="index" class="border-2 border-blue-500 rounded-xl p-2.5 flex flex-col items-center w-30 bg-white/90">
+              <div class="font-bold mb-1 text-blue-700 text-sm">组 {{ index + 1 }}</div>
+              <div class="flex gap-1 flex-wrap justify-center">
                 <div
                     v-for="(sample, sIndex) in group.samples"
                     :key="sIndex"
-                    :class="['sample', sample ? 'positive' : 'negative']"
+                    :class="['w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold', sample ? 'bg-red-500 text-white' : 'bg-green-500 text-white']"
                 >
                   {{ sample ? '+' : '-' }}
                 </div>
               </div>
-              <div :class="['group-result', group.hasPositive ? 'group-positive' : 'group-negative']">
+              <div :class="['mt-1 text-xs font-bold text-center leading-tight', group.hasPositive ? 'text-red-500' : 'text-green-500']">
                 {{ group.hasPositive ? '阳性组 (需进一步检测)' : '阴性组' }}
               </div>
             </div>
@@ -48,40 +48,36 @@
         </div>
 
         <!-- 图表展示 -->
-        <div class="chart-section">
-          <div class="tabs">
+        <div class="my-5">
+          <div class="flex mb-4 border-b border-gray-300">
             <div
                 v-for="tab in tabs"
                 :key="tab.id"
-                :class="['tab', { active: activeTab === tab.id }]"
+                :class="['py-2.5 px-4 cursor-pointer bg-gray-100 border border-gray-300 border-b-0 rounded-t-md mr-1 text-sm transition-all duration-200 hover:bg-gray-200',
+                        activeTab === tab.id ? 'bg-white border-b border-white -mb-px font-bold text-blue-700' : '']"
                 @click="activeTab = tab.id"
             >
               {{ tab.name }}
             </div>
           </div>
 
-          <div class="tab-content">
-            <div v-if="activeTab === 'analysis'">
-              <h3>期望检测次数分析</h3>
-              <div class="chart-container">
-                <canvas ref="analysisChart" class="chart-canvas"></canvas>
-                <div v-if="!analysisChart" class="chart-loading">图表加载中...</div>
+          <div class="bg-white/85 rounded-r-xl rounded-bl-xl shadow-lg">
+            <div v-if="activeTab === 'analysis'" class="p-5 h-112">
+              <h3 class="mb-4 text-blue-700 text-lg font-semibold pb-2 border-b-2 border-blue-500">期望检测次数分析</h3>
+              <div class="w-full h-96 relative bg-gray-50 rounded border border-gray-200 overflow-hidden">
+                <canvas ref="analysisChart" class="w-full h-full block"></canvas>
               </div>
             </div>
 
-            <div v-if="activeTab === 'efficiency'">
-              <h3>成本节省效果分析</h3>
-              <div class="chart-container">
-                <canvas ref="efficiencyChart" class="chart-canvas"></canvas>
-                <div v-if="!efficiencyChart" class="chart-loading">图表加载中...</div>
-              </div>
+            <div v-if="activeTab === 'surface'" class="p-5 h-112">
+              <h3 class="mb-4 text-blue-700 text-lg font-semibold pb-2 border-b-2 border-blue-500">三维曲面分析</h3>
+              <div class="w-full h-96 relative bg-gray-50 rounded border border-gray-200 overflow-hidden" ref="surfaceChart"></div>
             </div>
 
-            <div v-if="activeTab === 'heatmap'">
-              <h3>不同参数组合的效率对比</h3>
-              <div class="chart-container">
-                <canvas ref="heatmapChart" class="chart-canvas"></canvas>
-                <div v-if="!heatmapChart" class="chart-loading">图表加载中...</div>
+            <div v-if="activeTab === 'efficiency'" class="p-5 h-112">
+              <h3 class="mb-4 text-blue-700 text-lg font-semibold pb-2 border-b-2 border-blue-500">效率柱状图</h3>
+              <div class="w-full h-96 relative bg-gray-50 rounded border border-gray-200 overflow-hidden">
+                <canvas ref="efficiencyChart" class="w-full h-full block"></canvas>
               </div>
             </div>
           </div>
@@ -90,9 +86,9 @@
     </template>
 
     <template #parameter>
-      <div class="container">
-        <div class="input-group">
-          <label>样本总数 (N):</label>
+      <div class="max-w-4xl mx-auto p-5">
+        <div class="flex items-center gap-2.5 my-4">
+          <label class="inline-block w-48 font-semibold text-sm">样本总数 (N):</label>
           <input
               type="range"
               v-model.number="sampleCount"
@@ -100,12 +96,13 @@
               max="200"
               step="1"
               @input="onParameterChange"
+              class="flex-1 p-1"
           >
-          <span class="value-display" :key="sampleCount">{{ sampleCount }}</span>
+          <span class="min-w-15 px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm">{{ sampleCount }}</span>
         </div>
 
-        <div class="input-group">
-          <label>阳性率 (p):</label>
+        <div class="flex items-center gap-2.5 my-4">
+          <label class="inline-block w-48 font-semibold text-sm">阳性率 (p):</label>
           <input
               type="range"
               v-model.number="prevalence"
@@ -113,12 +110,13 @@
               max="0.3"
               step="0.01"
               @input="onParameterChange"
+              class="flex-1 p-1"
           >
-          <span class="value-display" :key="prevalence">{{ formattedPrevalence }}</span>
+          <span class="min-w-15 px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm">{{ formattedPrevalence }}</span>
         </div>
 
-        <div class="input-group">
-          <label>分组大小 (k):</label>
+        <div class="flex items-center gap-2.5 my-4">
+          <label class="inline-block w-48 font-semibold text-sm">分组大小 (k):</label>
           <input
               type="range"
               v-model.number="groupSize"
@@ -126,12 +124,13 @@
               :max="maxGroupSize"
               step="1"
               @input="onParameterChange"
+              class="flex-1 p-1"
           >
-          <span class="value-display" :key="groupSize">{{ groupSize }}</span>
+          <span class="min-w-15 px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm">{{ groupSize }}</span>
         </div>
 
-        <div class="input-group">
-          <label>检测错误率:</label>
+        <div class="flex items-center gap-2.5 my-4">
+          <label class="inline-block w-48 font-semibold text-sm">检测错误率:</label>
           <input
               type="range"
               v-model.number="testError"
@@ -139,12 +138,13 @@
               max="0.1"
               step="0.01"
               @input="onParameterChange"
+              class="flex-1 p-1"
           >
-          <span class="value-display" :key="testError">{{ formattedTestError }}</span>
+          <span class="min-w-15 px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm">{{ formattedTestError }}</span>
         </div>
 
-        <div class="input-group">
-          <label>检测成本比例 (分组:个体):</label>
+        <div class="flex items-center gap-2.5 my-4">
+          <label class="inline-block w-48 font-semibold text-sm">检测成本比例 (分组:个体):</label>
           <input
               type="range"
               v-model.number="costRatio"
@@ -152,15 +152,16 @@
               max="1"
               step="0.1"
               @input="onParameterChange"
+              class="flex-1 p-1"
           >
-          <span class="value-display" :key="costRatio">{{ formattedCostRatio }}</span>
+          <span class="min-w-15 px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm">{{ formattedCostRatio }}</span>
         </div>
 
-        <button @click="runSimulation" class="simulate-btn">运行模拟</button>
+        <button @click="runSimulation" class="w-full py-3 px-5 bg-blue-600 hover:bg-blue-700 text-white border-0 rounded cursor-pointer font-bold text-base my-5 transition-all duration-300 hover:transform hover:-translate-y-0.5 hover:shadow-lg">运行模拟</button>
 
-        <div class="stats-summary">
-          <p>优化提示：当<span class="stats-highlight">阳性率较低</span>且使用<span class="stats-highlight">适当的分组大小</span>时，分组检测策略最为有效。</p>
-          <p>当前参数下，分组检测比个体检测节省<span class="stats-highlight">{{ savings.toFixed(1) }}%</span>的成本。</p>
+        <div class="mt-5 p-4 bg-blue-50 rounded-xl text-sm">
+          <p class="mb-2 leading-relaxed">优化提示：当<span class="font-bold text-red-500">阳性率较低</span>且使用<span class="font-bold text-red-500">适当的分组大小</span>时，分组检测策略最为有效。</p>
+          <p class="leading-relaxed">当前参数下，分组检测比个体检测节省<span class="font-bold text-red-500">{{ savings.toFixed(1) }}%</span>的成本。</p>
         </div>
       </div>
     </template>
@@ -183,6 +184,9 @@ import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
 import { toMarkdown } from '@/utils/markdown';
 
+// Chart.js 和 Plotly.js 需要在全局引入或通过CDN加载
+// 这里假设已经全局可用，如果没有，需要先安装并导入
+
 // 响应式变量
 const sampleCount = ref(100);
 const prevalence = ref(0.05);
@@ -190,20 +194,24 @@ const groupSize = ref(5);
 const testError = ref(0.02);
 const costRatio = ref(0.3);
 const activeTab = ref('analysis');
-const isChartsReady = ref(false);
 
 // 图表引用
 const analysisChart = ref(null);
+const surfaceChart = ref(null);
 const efficiencyChart = ref(null);
-const heatmapChart = ref(null);
+
+// 图表实例
+let expectationChartInstance = null;
+let efficiencyChartInstance = null;
+let plotlyChart = null;
 
 // 数据
 const groups = ref([]);
 
 const tabs = [
   { id: 'analysis', name: '二维分析' },
-  { id: 'efficiency', name: '三维曲面' },
-  { id: 'heatmap', name: '柱状图' }
+  { id: 'surface', name: '三维曲面' },
+  { id: 'efficiency', name: '柱状图' }
 ];
 
 const content = ref(`
@@ -309,46 +317,307 @@ function generateGroups() {
   groups.value = newGroups;
 }
 
-// 带重试机制的绘制函数
-async function drawChartWithRetry(drawFunction, chartName, maxRetries = 3) {
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      console.log(`Attempting to draw ${chartName}, attempt ${attempt}/${maxRetries}`);
-      const success = drawFunction();
-      if (success !== false) {
-        console.log(`Successfully drew ${chartName}`);
-        return true;
-      }
-    } catch (error) {
-      console.error(`Error drawing ${chartName}, attempt ${attempt}:`, error);
-    }
-
-    if (attempt < maxRetries) {
-      await new Promise(resolve => setTimeout(resolve, 500)); // 等待500ms再重试
-    }
-  }
-
-  console.error(`Failed to draw ${chartName} after ${maxRetries} attempts`);
-  return false;
+// 计算期望检测次数
+function calculateExpectedTests(N, k, p) {
+  const groups = Math.ceil(N / k);
+  const probAllNegative = Math.pow(1 - p, k);
+  const expectedPerGroup = probAllNegative * 1 + (1 - probAllNegative) * (1 + k);
+  return groups * expectedPerGroup;
 }
 
-// 图表更新函数
-async function updateNativeCharts() {
-  await nextTick();
-  setTimeout(async () => {
-    try {
-      // 只绘制当前活动的图表
-      if (activeTab.value === 'analysis') {
-        await drawChartWithRetry(() => drawAnalysisChart(), 'analysis chart');
-      } else if (activeTab.value === 'efficiency') {
-        await drawChartWithRetry(() => drawEfficiencyChart(), 'efficiency chart');
-      } else if (activeTab.value === 'heatmap') {
-        await drawChartWithRetry(() => drawHeatmapChart(), 'heatmap chart');
-      }
-    } catch (error) {
-      console.error('Failed to draw charts:', error);
+// 计算成本节省率
+function calculateSavings(N, k, p, costRatio) {
+  const individualCost = N;
+  const groupCost = calculateExpectedTests(N, k, p) * costRatio;
+  return Math.max(0, (1 - groupCost / individualCost) * 100);
+}
+
+// 确保Chart.js已加载
+function ensureChartJs() {
+  return new Promise((resolve, reject) => {
+    if (window.Chart) {
+      resolve();
+      return;
     }
-  }, 200);
+
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
+// 确保Plotly已加载
+function ensurePlotly() {
+  return new Promise((resolve, reject) => {
+    if (window.Plotly) {
+      resolve();
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://cdn.plot.ly/plotly-2.24.1.min.js';
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
+// 创建期望检测次数分析图表
+async function createAnalysisChart() {
+  if (!analysisChart.value || !window.Chart) return;
+
+  // 销毁现有图表
+  if (expectationChartInstance) {
+    expectationChartInstance.destroy();
+  }
+
+  const ctx = analysisChart.value.getContext('2d');
+
+  // 计算数据
+  const labels = [];
+  const expectationData = [];
+  const individualData = [];
+
+  const maxSize = Math.min(20, Math.floor(sampleCount.value / 2));
+
+  for (let k = 1; k <= maxSize; k++) {
+    labels.push(k);
+    expectationData.push(calculateExpectedTests(sampleCount.value, k, prevalence.value));
+    individualData.push(sampleCount.value);
+  }
+
+  expectationChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: '期望检测次数',
+        data: expectationData,
+        borderColor: '#4a6fa5',
+        backgroundColor: 'rgba(74, 111, 165, 0.1)',
+        borderWidth: 3,
+        fill: true,
+        tension: 0.3
+      }, {
+        label: '个体检测次数',
+        data: individualData,
+        borderColor: '#e74c3c',
+        borderWidth: 2,
+        borderDash: [5, 5],
+        fill: false
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        title: {
+          display: true,
+          text: '不同分组大小下的期望检测次数'
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false
+        },
+        legend: {
+          position: 'top',
+        }
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: '分组大小 (k)'
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: '期望检测次数'
+          },
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}
+
+// 创建三维曲面图
+async function createSurfaceChart() {
+  if (!surfaceChart.value || !window.Plotly) return;
+
+  // 生成数据
+  const kValues = [];
+  const pValues = [];
+  const zData = [];
+
+  // 生成k值（分组大小）从1到20
+  for (let k = 1; k <= 20; k++) {
+    kValues.push(k);
+  }
+
+  // 生成p值（阳性率）从0.01到0.3
+  for (let p = 0.01; p <= 0.3; p += 0.01) {
+    pValues.push(p);
+  }
+
+  // 计算z值（成本节省率）
+  for (let i = 0; i < pValues.length; i++) {
+    const row = [];
+    for (let j = 0; j < kValues.length; j++) {
+      const savingsValue = calculateSavings(sampleCount.value, kValues[j], pValues[i], costRatio.value);
+      row.push(savingsValue);
+    }
+    zData.push(row);
+  }
+
+  // 创建三维曲面图
+  const data = [{
+    type: 'surface',
+    x: kValues,
+    y: pValues,
+    z: zData,
+    colorscale: 'Viridis',
+    contours: {
+      z: {
+        show: true,
+        usecolormap: true,
+        highlightcolor: "#42f462",
+        project: {z: true}
+      }
+    }
+  }];
+
+  const layout = {
+    title: `分组检测成本节省率 (N=${sampleCount.value})`,
+    scene: {
+      xaxis: {title: '分组大小 (k)'},
+      yaxis: {title: '阳性率 (p)'},
+      zaxis: {title: '成本节省率 (%)'},
+      camera: {
+        eye: {x: 1.5, y: 1.5, z: 1.5}
+      }
+    },
+    margin: {l: 0, r: 0, b: 0, t: 50},
+    autosize: true
+  };
+
+  // 清除现有图表
+  surfaceChart.value.innerHTML = '';
+
+  Plotly.newPlot(surfaceChart.value, data, layout, {responsive: true});
+  plotlyChart = surfaceChart.value;
+}
+
+// 创建效率柱状图
+async function createEfficiencyChart() {
+  if (!efficiencyChart.value || !window.Chart) return;
+
+  // 销毁现有图表
+  if (efficiencyChartInstance) {
+    efficiencyChartInstance.destroy();
+  }
+
+  const ctx = efficiencyChart.value.getContext('2d');
+
+  // 计算数据
+  const kValues = [];
+  const pValues = [0.01, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3];
+
+  // 生成k值（分组大小）从1到15
+  for (let k = 1; k <= 15; k++) {
+    kValues.push(k);
+  }
+
+  // 为每个阳性率创建数据集
+  const datasets = pValues.map((pVal, idx) => {
+    const data = [];
+    for (let k = 1; k <= 15; k++) {
+      const savingsValue = calculateSavings(sampleCount.value, k, pVal, costRatio.value);
+      data.push(savingsValue);
+    }
+
+    const colors = [
+      'rgba(46, 204, 113, 0.7)',   // green
+      'rgba(52, 152, 219, 0.7)',    // blue
+      'rgba(155, 89, 182, 0.7)',    // purple
+      'rgba(241, 196, 15, 0.7)',    // yellow
+      'rgba(230, 126, 34, 0.7)',    // orange
+      'rgba(231, 76, 60, 0.7)',     // red
+      'rgba(192, 57, 43, 0.7)'      // dark red
+    ];
+
+    return {
+      label: `p = ${pVal}`,
+      data: data,
+      backgroundColor: colors[idx] || colors[colors.length - 1],
+      borderColor: colors[idx]?.replace('0.7', '1') || colors[colors.length - 1].replace('0.7', '1'),
+      borderWidth: 1
+    };
+  });
+
+  efficiencyChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: kValues,
+      datasets: datasets
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        title: {
+          display: true,
+          text: '不同阳性率下的成本节省效果'
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return `${context.dataset.label}: ${context.raw.toFixed(1)}%`;
+            }
+          }
+        },
+        legend: {
+          position: 'top',
+        }
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: '分组大小 (k)'
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: '成本节省率 (%)'
+          },
+          beginAtZero: true,
+          max: 100
+        }
+      }
+    }
+  });
+}
+
+// 更新图表
+async function updateCharts() {
+  await nextTick();
+
+  try {
+    if (activeTab.value === 'analysis') {
+      await createAnalysisChart();
+    } else if (activeTab.value === 'surface') {
+      await createSurfaceChart();
+    } else if (activeTab.value === 'efficiency') {
+      await createEfficiencyChart();
+    }
+  } catch (error) {
+    console.error('Error updating charts:', error);
+  }
 }
 
 function debounceUpdateCharts() {
@@ -356,7 +625,7 @@ function debounceUpdateCharts() {
     clearTimeout(updateChartsTimer);
   }
   updateChartsTimer = setTimeout(() => {
-    updateNativeCharts();
+    updateCharts();
   }, 300);
 }
 
@@ -367,446 +636,8 @@ function onParameterChange() {
 }
 
 function runSimulation() {
-  console.log('Running simulation...');
   generateGroups();
-  updateNativeCharts();
-}
-
-// 原生图表绘制
-async function initNativeCharts() {
-  console.log('Initializing native charts for tab:', activeTab.value);
-  try {
-    // 只初始化当前活动的图表
-    if (activeTab.value === 'analysis') {
-      await drawChartWithRetry(() => drawAnalysisChart(), 'analysis chart');
-    } else if (activeTab.value === 'efficiency') {
-      await drawChartWithRetry(() => drawEfficiencyChart(), 'efficiency chart');
-    } else if (activeTab.value === 'heatmap') {
-      await drawChartWithRetry(() => drawHeatmapChart(), 'heatmap chart');
-    }
-  } catch (error) {
-    console.error('Failed to initialize charts:', error);
-  }
-}
-
-function setupCanvas(canvasRef) {
-  try {
-    if (!canvasRef || !canvasRef.value) {
-      console.warn('Canvas reference not found');
-      return null;
-    }
-
-    const canvas = canvasRef.value;
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) {
-      console.warn('Could not get 2D context from canvas');
-      return null;
-    }
-
-    // 直接使用容器的实际尺寸
-    const container = canvas.parentElement;
-    if (!container) {
-      console.warn('Canvas container not found');
-      return null;
-    }
-
-    // 强制获取容器尺寸，如果为0则使用默认值
-    const containerRect = container.getBoundingClientRect();
-    const width = containerRect.width > 0 ? containerRect.width - 20 : 680; // 给边距留点空间
-    const height = containerRect.height > 0 ? containerRect.height - 20 : 300;
-
-    console.log('Container dimensions:', { containerWidth: containerRect.width, containerHeight: containerRect.height });
-    console.log('Canvas dimensions will be:', { width, height });
-
-    // 设置canvas的实际像素尺寸
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = width * dpr;
-    canvas.height = height * dpr;
-
-    // 设置canvas的CSS显示尺寸
-    canvas.style.width = width + 'px';
-    canvas.style.height = height + 'px';
-
-    // 缩放绘图上下文以适应设备像素比
-    ctx.scale(dpr, dpr);
-
-    console.log('Canvas setup successful:', { width, height, dpr });
-
-    return {
-      ctx,
-      width: width,
-      height: height
-    };
-  } catch (error) {
-    console.error('Error in setupCanvas:', error);
-    return null;
-  }
-}
-
-function drawAnalysisChart() {
-  if (activeTab.value !== 'analysis') return false;
-
-  const setup = setupCanvas(analysisChart);
-  if (!setup) {
-    console.log('Analysis chart setup failed');
-    return false;
-  }
-
-  const { ctx, width, height } = setup;
-
-  // 调整边距以适应较小的空间
-  const margin = { top: 40, right: 30, bottom: 60, left: 60 };
-  const chartWidth = width - margin.left - margin.right;
-  const chartHeight = height - margin.top - margin.bottom;
-
-  if (chartWidth <= 0 || chartHeight <= 0) {
-    console.warn('Chart area too small');
-    return false;
-  }
-
-  // 清除画布
-  ctx.clearRect(0, 0, width, height);
-
-  // 计算数据
-  const maxSize = Math.min(15, Math.floor(sampleCount.value / 2));
-  if (maxSize <= 1) {
-    console.warn('maxSize too small for analysis chart');
-    return false;
-  }
-
-  const expectationData = [];
-  let maxValue = sampleCount.value;
-
-  for (let k = 1; k <= maxSize; k++) {
-    const groups = Math.ceil(sampleCount.value / k);
-    const probAllNegative = Math.pow(1 - prevalence.value, k);
-    const expectedPerGroup = probAllNegative * 1 + (1 - probAllNegative) * (1 + k);
-    const value = groups * expectedPerGroup;
-    expectationData.push(value);
-    maxValue = Math.max(maxValue, value);
-  }
-
-  // 绘制背景
-  ctx.fillStyle = '#fafafa';
-  ctx.fillRect(0, 0, width, height);
-
-  // 绘制坐标轴
-  ctx.strokeStyle = '#333';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(margin.left, margin.top);
-  ctx.lineTo(margin.left, margin.top + chartHeight);
-  ctx.lineTo(margin.left + chartWidth, margin.top + chartHeight);
-  ctx.stroke();
-
-  // 绘制期望检测次数线
-  ctx.strokeStyle = '#4CAF50';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-
-  expectationData.forEach((value, index) => {
-    const x = margin.left + (index / (maxSize - 1)) * chartWidth;
-    const y = margin.top + chartHeight - (value / maxValue) * chartHeight;
-
-    if (index === 0) {
-      ctx.moveTo(x, y);
-    } else {
-      ctx.lineTo(x, y);
-    }
-
-    // 绘制数据点
-    ctx.save();
-    ctx.fillStyle = '#4CAF50';
-    ctx.beginPath();
-    ctx.arc(x, y, 3, 0, 2 * Math.PI);
-    ctx.fill();
-    ctx.restore();
-  });
-  ctx.stroke();
-
-  // 绘制个体检测次数线（水平线）
-  ctx.strokeStyle = '#f44336';
-  ctx.lineWidth = 2;
-  ctx.setLineDash([5, 5]);
-  const individualY = margin.top + chartHeight - (sampleCount.value / maxValue) * chartHeight;
-  ctx.beginPath();
-  ctx.moveTo(margin.left, individualY);
-  ctx.lineTo(margin.left + chartWidth, individualY);
-  ctx.stroke();
-  ctx.setLineDash([]);
-
-  // 添加标题
-  ctx.fillStyle = '#333';
-  ctx.font = 'bold 12px Arial';
-  ctx.textAlign = 'center';
-  ctx.fillText('期望检测次数分析', width / 2, 20);
-
-  // 添加图例
-  ctx.font = '10px Arial';
-  ctx.textAlign = 'left';
-  ctx.fillStyle = '#4CAF50';
-  ctx.fillText('━ 期望检测次数', margin.left, height - 10);
-  ctx.fillStyle = '#f44336';
-  ctx.fillText('━ 个体检测次数', margin.left + 100, height - 10);
-
-  // 添加x轴标签
-  ctx.fillStyle = '#666';
-  ctx.font = '9px Arial';
-  ctx.textAlign = 'center';
-  for (let i = 0; i < Math.min(8, maxSize); i++) {
-    const x = margin.left + (i / (maxSize - 1)) * chartWidth;
-    ctx.fillText((i + 1).toString(), x, margin.top + chartHeight + 15);
-  }
-
-  // 添加轴标签
-  ctx.font = '10px Arial';
-  ctx.fillText('分组大小', width / 2, height - 25);
-
-  return true;
-}
-
-function drawEfficiencyChart() {
-  if (activeTab.value !== 'efficiency') return false;
-
-  const setup = setupCanvas(efficiencyChart);
-  if (!setup) {
-    console.log('Efficiency chart setup failed');
-    return false;
-  }
-
-  const { ctx, width, height } = setup;
-
-  // 调整边距
-  const margin = { top: 40, right: 30, bottom: 60, left: 60 };
-  const chartWidth = width - margin.left - margin.right;
-  const chartHeight = height - margin.top - margin.bottom;
-
-  if (chartWidth <= 0 || chartHeight <= 0) {
-    console.warn('Chart area too small');
-    return false;
-  }
-
-  // 清除画布
-  ctx.clearRect(0, 0, width, height);
-
-  // 计算数据
-  const maxSize = Math.min(12, Math.floor(sampleCount.value / 2));
-  if (maxSize <= 1) {
-    console.warn('maxSize too small for efficiency chart');
-    return false;
-  }
-
-  const savingsData = [];
-  for (let k = 1; k <= maxSize; k++) {
-    const groups = Math.ceil(sampleCount.value / k);
-    const probAllNegative = Math.pow(1 - prevalence.value, k);
-    const expectedPerGroup = probAllNegative * 1 + (1 - probAllNegative) * (1 + k);
-    const groupCost = groups * expectedPerGroup * costRatio.value;
-    const savingsPercent = Math.max(0, (1 - groupCost / sampleCount.value) * 100);
-    savingsData.push(savingsPercent);
-  }
-
-  // 绘制背景
-  ctx.fillStyle = '#fafafa';
-  ctx.fillRect(0, 0, width, height);
-
-  // 绘制坐标轴
-  ctx.strokeStyle = '#333';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(margin.left, margin.top);
-  ctx.lineTo(margin.left, margin.top + chartHeight);
-  ctx.lineTo(margin.left + chartWidth, margin.top + chartHeight);
-  ctx.stroke();
-
-  // 绘制柱状图
-  const barWidth = Math.max(chartWidth / maxSize * 0.7, 15);
-  const barSpacing = (chartWidth - barWidth * maxSize) / (maxSize + 1);
-
-  savingsData.forEach((value, index) => {
-    const x = margin.left + barSpacing + index * (barWidth + barSpacing);
-    const barHeight = Math.max(0, (value / 100) * chartHeight);
-    const y = margin.top + chartHeight - barHeight;
-
-    // 绘制柱子
-    ctx.fillStyle = 'rgba(76, 175, 80, 0.7)';
-    ctx.fillRect(x, y, barWidth, barHeight);
-
-    // 绘制边框
-    ctx.strokeStyle = '#4CAF50';
-    ctx.lineWidth = 1;
-    ctx.strokeRect(x, y, barWidth, barHeight);
-
-    // 添加数值标签（如果空间足够）
-    if (barHeight > 15 && barWidth > 20) {
-      ctx.fillStyle = '#333';
-      ctx.font = '9px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText(value.toFixed(1) + '%', x + barWidth / 2, y - 5);
-    }
-  });
-
-  // 添加标题
-  ctx.fillStyle = '#333';
-  ctx.font = 'bold 12px Arial';
-  ctx.textAlign = 'center';
-  ctx.fillText('成本节省效果', width / 2, 20);
-
-  // 添加x轴标签
-  ctx.fillStyle = '#666';
-  ctx.font = '9px Arial';
-  ctx.textAlign = 'center';
-  for (let i = 0; i < maxSize; i++) {
-    const x = margin.left + barSpacing + i * (barWidth + barSpacing) + barWidth / 2;
-    ctx.fillText((i + 1).toString(), x, margin.top + chartHeight + 15);
-  }
-
-  // 添加轴标签
-  ctx.font = '10px Arial';
-  ctx.fillText('分组大小', width / 2, height - 25);
-
-  return true;
-}
-
-function drawHeatmapChart() {
-  if (activeTab.value !== 'heatmap') return false;
-
-  const setup = setupCanvas(heatmapChart);
-  if (!setup) {
-    console.log('Heatmap chart setup failed');
-    return false;
-  }
-
-  const { ctx, width, height } = setup;
-
-  // 调整边距
-  const margin = { top: 40, right: 30, bottom: 60, left: 80 };
-  const chartWidth = width - margin.left - margin.right;
-  const chartHeight = height - margin.top - margin.bottom;
-
-  if (chartWidth <= 0 || chartHeight <= 0) {
-    console.warn('Chart area too small');
-    return false;
-  }
-
-  // 清除画布
-  ctx.clearRect(0, 0, width, height);
-
-  // 计算数据
-  const pValues = [0.01, 0.03, 0.05, 0.08, 0.1, 0.15];
-  const maxSize = Math.min(8, Math.floor(sampleCount.value / 2));
-  if (maxSize <= 1 || pValues.length === 0) {
-    console.warn('Invalid data size for heatmap chart');
-    return false;
-  }
-
-  const cellWidth = chartWidth / maxSize;
-  const cellHeight = chartHeight / pValues.length;
-
-  // 计算所有数据找到最大值，用于颜色映射
-  let maxSavings = 0;
-  const allSavings = [];
-
-  pValues.forEach((p) => {
-    const rowSavings = [];
-    for (let k = 1; k <= maxSize; k++) {
-      const groups = Math.ceil(sampleCount.value / k);
-      const probAllNegative = Math.pow(1 - p, k);
-      const expectedPerGroup = probAllNegative * 1 + (1 - probAllNegative) * (1 + k);
-      const groupCost = groups * expectedPerGroup * costRatio.value;
-      const savingsPercent = Math.max(0, (1 - groupCost / sampleCount.value) * 100);
-      rowSavings.push(savingsPercent);
-      maxSavings = Math.max(maxSavings, savingsPercent);
-    }
-    allSavings.push(rowSavings);
-  });
-
-  // 绘制背景
-  ctx.fillStyle = '#fafafa';
-  ctx.fillRect(0, 0, width, height);
-
-  // 绘制热力图
-  pValues.forEach((p, pIndex) => {
-    for (let k = 1; k <= maxSize; k++) {
-      const savingsPercent = allSavings[pIndex][k - 1];
-      const x = margin.left + (k - 1) * cellWidth;
-      const y = margin.top + pIndex * cellHeight;
-
-      // 计算颜色强度
-      const intensity = maxSavings > 0 ? savingsPercent / maxSavings : 0;
-
-      // 使用绿色渐变
-      const green = Math.round(255 * intensity);
-      const alpha = 0.3 + intensity * 0.7;
-
-      ctx.fillStyle = `rgba(76, 175, 80, ${alpha})`;
-      ctx.fillRect(x, y, cellWidth, cellHeight);
-
-      // 添加边框
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(x, y, cellWidth, cellHeight);
-
-      // 添加数值（如果空间足够）
-      if (cellWidth > 25 && cellHeight > 15) {
-        ctx.fillStyle = intensity > 0.6 ? '#fff' : '#333';
-        ctx.font = '9px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText(savingsPercent.toFixed(0), x + cellWidth / 2, y + cellHeight / 2 + 3);
-      }
-    }
-  });
-
-  // 添加标题
-  ctx.fillStyle = '#333';
-  ctx.font = 'bold 12px Arial';
-  ctx.textAlign = 'center';
-  ctx.fillText('效率对比热力图', width / 2, 20);
-
-  // 添加y轴标签（阳性率）
-  ctx.font = '9px Arial';
-  ctx.textAlign = 'right';
-  pValues.forEach((p, index) => {
-    const y = margin.top + index * cellHeight + cellHeight / 2;
-    ctx.fillStyle = '#666';
-    ctx.fillText(`${(p * 100).toFixed(1)}%`, margin.left - 5, y + 3);
-  });
-
-  // 添加x轴标签（分组大小）
-  ctx.textAlign = 'center';
-  for (let k = 1; k <= maxSize; k++) {
-    const x = margin.left + (k - 1) * cellWidth + cellWidth / 2;
-    ctx.fillStyle = '#666';
-    ctx.fillText(k.toString(), x, margin.top + chartHeight + 15);
-  }
-
-  // 添加轴标题
-  ctx.font = '10px Arial';
-  ctx.fillStyle = '#333';
-  ctx.save();
-  ctx.translate(15, margin.top + chartHeight / 2);
-  ctx.rotate(-Math.PI / 2);
-  ctx.textAlign = 'center';
-  ctx.fillText('阳性率', 0, 0);
-  ctx.restore();
-
-  ctx.textAlign = 'center';
-  ctx.fillText('分组大小', margin.left + chartWidth / 2, height - 25);
-
-  return true;
-}
-
-// 窗口大小变化处理
-let resizeTimer = null;
-function handleResize() {
-  if (resizeTimer) {
-    clearTimeout(resizeTimer);
-  }
-  resizeTimer = setTimeout(() => {
-    console.log('Window resized, redrawing charts...');
-    updateNativeCharts();
-  }, 300);
+  updateCharts();
 }
 
 // 清理函数
@@ -815,12 +646,25 @@ function cleanup() {
     clearTimeout(updateChartsTimer);
     updateChartsTimer = null;
   }
-  if (resizeTimer) {
-    clearTimeout(resizeTimer);
-    resizeTimer = null;
+
+  if (expectationChartInstance) {
+    expectationChartInstance.destroy();
+    expectationChartInstance = null;
   }
-  window.removeEventListener('resize', handleResize);
-  console.log('Component cleanup');
+
+  if (efficiencyChartInstance) {
+    efficiencyChartInstance.destroy();
+    efficiencyChartInstance = null;
+  }
+
+  if (plotlyChart) {
+    try {
+      window.Plotly?.purge(plotlyChart);
+    } catch (e) {
+      console.warn('Error purging Plotly chart:', e);
+    }
+    plotlyChart = null;
+  }
 }
 
 // 监听器
@@ -835,44 +679,28 @@ watch(groupSize, (newVal) => {
   }
 });
 
-watch(activeTab, (newTab) => {
-  // 当切换标签页时，重新绘制当前图表
-  console.log('Tab changed to:', newTab);
+watch(activeTab, () => {
   nextTick(() => {
-    setTimeout(async () => {
-      try {
-        if (newTab === 'analysis') {
-          await drawChartWithRetry(() => drawAnalysisChart(), 'analysis chart');
-        } else if (newTab === 'efficiency') {
-          await drawChartWithRetry(() => drawEfficiencyChart(), 'efficiency chart');
-        } else if (newTab === 'heatmap') {
-          await drawChartWithRetry(() => drawHeatmapChart(), 'heatmap chart');
-        }
-      } catch (error) {
-        console.error('Failed to draw chart on tab change:', error);
-      }
-    }, 300);
+    setTimeout(() => {
+      updateCharts();
+    }, 100);
   });
 });
 
 // 生命周期
 onMounted(async () => {
   try {
-    console.log('Component mounted, generating groups...');
+    // 加载Chart.js和Plotly.js
+    await Promise.all([ensureChartJs(), ensurePlotly()]);
+
     generateGroups();
 
-    // 添加窗口大小变化监听器
-    window.addEventListener('resize', handleResize);
-
-    // 较短的延迟，确保DOM渲染
     await nextTick();
-    setTimeout(async () => {
-      console.log('Attempting to initialize charts...');
-      await initNativeCharts();
-      isChartsReady.value = true;
-    }, 300); // 减少到300ms
+    setTimeout(() => {
+      updateCharts();
+    }, 300);
   } catch (error) {
-    console.error('Failed to mount component:', error);
+    console.error('Failed to load chart libraries:', error);
   }
 });
 
@@ -880,279 +708,3 @@ onUnmounted(() => {
   cleanup();
 });
 </script>
-
-<style scoped>
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.input-group {
-  margin: 15px 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.input-group label {
-  display: inline-block;
-  width: 200px;
-  font-weight: 600;
-}
-
-.input-group input[type="range"] {
-  flex: 1;
-  padding: 5px;
-}
-
-.value-display {
-  min-width: 50px;
-  padding: 5px 10px;
-  background: #f0f0f0;
-  border-radius: 5px;
-  text-align: center;
-  font-weight: bold;
-}
-
-.simulate-btn {
-  width: 100%;
-  padding: 12px 20px;
-  background: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 1rem;
-  margin: 20px 0;
-  transition: all 0.3s;
-}
-
-.simulate-btn:hover {
-  background: #45a049;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
-
-.results-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  margin-bottom: 20px;
-}
-
-.result-card {
-  background: #f0f0f0;
-  border-radius: 10px;
-  padding: 15px;
-  text-align: center;
-  transition: transform 0.3s ease;
-}
-
-.result-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-}
-
-.result-value {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #4CAF50;
-  margin: 8px 0;
-}
-
-.result-label {
-  font-size: 1rem;
-  color: #666;
-}
-
-.visualization-section {
-  margin: 20px 0;
-}
-
-.visualization-section h3 {
-  margin-bottom: 15px;
-  color: #4CAF50;
-}
-
-.group-visual {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  max-height: 400px;
-  overflow-y: auto;
-  padding: 10px;
-  background: #f8f8f8;
-  border-radius: 10px;
-}
-
-.sample-group {
-  border: 2px solid #666;
-  border-radius: 10px;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 120px;
-  background: white;
-}
-
-.group-header {
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: #4CAF50;
-  font-size: 0.9rem;
-}
-
-.samples {
-  display: flex;
-  gap: 5px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.sample {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.6rem;
-  font-weight: bold;
-}
-
-.negative {
-  background-color: #4CAF50;
-  color: white;
-}
-
-.positive {
-  background-color: #f44336;
-  color: white;
-}
-
-.group-result {
-  margin-top: 5px;
-  font-size: 0.75rem;
-  font-weight: bold;
-  text-align: center;
-  line-height: 1.2;
-}
-
-.group-positive {
-  color: #f44336;
-}
-
-.group-negative {
-  color: #4CAF50;
-}
-
-.chart-section {
-  margin: 20px 0;
-}
-
-.tabs {
-  display: flex;
-  margin-bottom: 15px;
-  border-bottom: 1px solid #ddd;
-}
-
-.tab {
-  padding: 10px 15px;
-  cursor: pointer;
-  background: #f1f1f1;
-  border: 1px solid #ddd;
-  border-bottom: none;
-  border-radius: 5px 5px 0 0;
-  margin-right: 5px;
-  font-size: 0.9rem;
-  transition: all 0.2s;
-}
-
-.tab:hover {
-  background: #e0e0e0;
-}
-
-.tab.active {
-  background: white;
-  border-bottom: 1px solid white;
-  margin-bottom: -1px;
-  font-weight: bold;
-  color: #4CAF50;
-}
-
-.tab-content {
-  background: white;
-  padding: 15px;
-  border-radius: 0 10px 10px 10px;
-  height: 400px;
-  overflow: hidden;
-}
-
-.tab-content h3 {
-  margin-bottom: 10px;
-  color: #4CAF50;
-  font-size: 1.1rem;
-}
-
-.chart-container {
-  width: 100%;
-  height: 320px;
-  position: relative;
-  background: #fafafa;
-  border-radius: 5px;
-  border: 1px solid #e0e0e0;
-  overflow: hidden;
-}
-
-.chart-canvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.chart-loading {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: #666;
-  font-size: 14px;
-}
-
-.stats-summary {
-  margin-top: 20px;
-  padding: 15px;
-  background: rgba(76, 175, 80, 0.1);
-  border-radius: 10px;
-  font-size: 0.9rem;
-}
-
-.stats-summary p {
-  margin-bottom: 8px;
-  line-height: 1.4;
-}
-
-.stats-highlight {
-  font-weight: bold;
-  color: #4CAF50;
-}
-
-@media (max-width: 600px) {
-  .results-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .input-group {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .input-group label {
-    width: 100%;
-  }
-}
-</style>

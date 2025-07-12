@@ -1,5 +1,5 @@
 <template>
-  <ExperimentBoard>
+  <ExperimentBoard :layout="1" :panel-size="50">
     <template #experiment>
       <div class="container">
         <div v-if="portfolioResults" id="result">
