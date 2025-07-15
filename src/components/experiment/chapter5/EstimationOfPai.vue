@@ -71,7 +71,7 @@
                 step="1"
                 class="flex-1 mx-1.5"
             >
-            <span class="min-w-[80px] px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm flex-shrink-0">{{ speed }} 点/帧</span>
+            <span class="w-[80px] px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm whitespace-normal break-words">{{ speed }} 点/帧</span>
           </div>
 
           <!-- 点大小 -->
@@ -85,7 +85,7 @@
                 step="1"
                 class="flex-1 mx-1.5"
             >
-            <span class="min-w-[80px] px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm flex-shrink-0">{{ pointSize }} 像素</span>
+            <span class="w-[80px] px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm whitespace-normal break-words">{{ pointSize }} 像素</span>
           </div>
 
           <!-- 批量生成 -->
@@ -99,7 +99,7 @@
                 step="1"
                 class="flex-1 mx-1.5"
             >
-            <span class="min-w-[80px] px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm flex-shrink-0">{{ batchSizes[batchSizeIndex].toLocaleString() }} 点/批</span>
+            <span class="w-[80px] px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm whitespace-normal break-words">{{ batchSizes[batchSizeIndex].toLocaleString() }} 点/批</span>
           </div>
 
           <!-- 操作按钮 -->
