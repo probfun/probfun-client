@@ -71,6 +71,9 @@ importers:
       config:
         specifier: ^3.3.12
         version: 3.3.12
+      d3:
+        specifier: ^7.9.0
+        version: 7.9.0
       dagre:
         specifier: ^0.8.5
         version: 0.8.5
