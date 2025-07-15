@@ -201,6 +201,14 @@ const router = createRouter({
           component: () => import('@/components/experiment/chapter4/NetworkTrafficCharacteristics.vue'),
         },
         {
+          path: '/dashboard/experiment/CoinFliping',
+          component: () => import('@/components/experiment/chapter5/CoinFliping.vue'),
+        },
+        {
+          path: '/dashboard/experiment/EstimationOfPai',
+          component: () => import('@/components/experiment/chapter5/EstimationOfPai.vue'),
+        },
+        {
           path: '/dashboard/info0',
           component: StudentPanel,
         },

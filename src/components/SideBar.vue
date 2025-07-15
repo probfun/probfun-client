@@ -483,6 +483,34 @@ const chapter5Items = [
       }
     },
   },
+  {
+    label: '抛硬币实验',
+    icon: 'pi pi-chart-bar',
+    route: '/dashboard/experiment/CoinFliping',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '抛硬币实验', window.location.href);
+        await router.push('/dashboard/experiment/CoinFliping');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
+  },
+  {
+    label: '蒙特卡洛方法估算π',
+    icon: 'pi pi-chart-bar',
+    route: '/dashboard/experiment/EstimationOfPai',
+    command: async () => {
+      try {
+        await clickApi('CLICK', 'catalogue', '蒙特卡洛方法估算π', window.location.href);
+        await router.push('/dashboard/experiment/EstimationOfPai');
+      }
+      catch (error) {
+        console.error('Error tracking button click:', error);
+      }
+    },
+  },
   // {
   //   label: '各种分布的中心极限定理',
   //   icon: 'pi pi-chart-bar',
@@ -846,7 +874,7 @@ function goHome() {
             <li>
               <details open>
                 <summary class="font-bold">
-                  <i class="pi pi-bookmark" /> 第一章
+                  <i class="pi pi-bookmark" /> 第一章-概率论的基本概念
                 </summary>
                 <ul class="space-y-0">
                   <li v-for="(item, index) in chapter1Items" :key="item.label">
@@ -869,7 +897,7 @@ function goHome() {
             <li>
               <details open>
                 <summary class="font-bold">
-                  <i class="pi pi-bookmark" /> 第二章
+                  <i class="pi pi-bookmark" /> 第二章-一维随机变量
                 </summary>
                 <ul class="space-y-0">
                   <li v-for="(item, index) in chapter2Items" :key="item.label">
@@ -911,7 +939,7 @@ function goHome() {
             <li>
               <details open>
                 <summary class="font-bold">
-                  <i class="pi pi-bookmark" /> 第三章
+                  <i class="pi pi-bookmark" /> 第三章-多维随机变量
                 </summary>
                 <ul class="space-y-0">
                   <li v-for="(item, index) in chapter3Items" :key="item.label">
@@ -934,7 +962,7 @@ function goHome() {
              <li>
               <details open>
                 <summary class="font-bold">
-                  <i class="pi pi-bookmark" /> 第四章
+                  <i class="pi pi-bookmark" /> 第四章-数字特征
                 </summary>
                 <ul class="space-y-0">
                   <li v-for="(item, index) in chapter4Items" :key="item.label">
@@ -960,7 +988,7 @@ function goHome() {
             <li>
               <details open>
                 <summary class="font-bold">
-                  <i class="pi pi-bookmark" /> 第五章
+                  <i class="pi pi-bookmark" /> 第五章-极限定理
                 </summary>
                 <ul class="sapce-y-1">
                   <li>
@@ -1007,7 +1035,7 @@ function goHome() {
             <li>
               <details open>
                 <summary class="font-bold">
-                  <i class="pi pi-bookmark" /> 第六章
+                  <i class="pi pi-bookmark" /> 第六章-随机过程模拟与向量场线积分
                 </summary>
                 <ul class="space-y-0">
                   <li v-for="(item, index) in chapter6Items" :key="item.label">

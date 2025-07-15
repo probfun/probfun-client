@@ -95,7 +95,6 @@
               min="10"
               max="200"
               step="1"
-              @input="onParameterChange"
               class="flex-1 p-1"
           >
           <span class="min-w-15 px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm">{{ sampleCount }}</span>
@@ -109,7 +108,6 @@
               min="0.01"
               max="0.3"
               step="0.01"
-              @input="onParameterChange"
               class="flex-1 p-1"
           >
           <span class="min-w-15 px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm">{{ formattedPrevalence }}</span>
@@ -123,7 +121,6 @@
               min="1"
               :max="maxGroupSize"
               step="1"
-              @input="onParameterChange"
               class="flex-1 p-1"
           >
           <span class="min-w-15 px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm">{{ groupSize }}</span>
@@ -137,7 +134,6 @@
               min="0"
               max="0.1"
               step="0.01"
-              @input="onParameterChange"
               class="flex-1 p-1"
           >
           <span class="min-w-15 px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm">{{ formattedTestError }}</span>
@@ -151,7 +147,6 @@
               min="0.1"
               max="1"
               step="0.1"
-              @input="onParameterChange"
               class="flex-1 p-1"
           >
           <span class="min-w-15 px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm">{{ formattedCostRatio }}</span>
@@ -630,11 +625,6 @@ function debounceUpdateCharts() {
 }
 
 // 事件处理函数
-function onParameterChange() {
-  generateGroups();
-  debounceUpdateCharts();
-}
-
 function runSimulation() {
   generateGroups();
   updateCharts();
@@ -668,11 +658,6 @@ function cleanup() {
 }
 
 // 监听器
-watch([sampleCount, prevalence, groupSize, testError, costRatio], () => {
-  generateGroups();
-  debounceUpdateCharts();
-});
-
 watch(groupSize, (newVal) => {
   if (newVal > maxGroupSize.value) {
     groupSize.value = maxGroupSize.value;
