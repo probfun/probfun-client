@@ -643,14 +643,112 @@ const chapter6Items = [
 ]
 
 const chapter7Items = [
+  // {
+  //   label: '硬币投掷实验',
+  //   icon: 'pi pi-chart-bar',
+  //   route: '/dashboard/experiment/coin-tossing',
+  //   command: async () => {
+  //     try {
+  //       await clickApi('CLICK', 'catalogue', '硬币投掷实验', window.location.href);
+  //       await router.push('/dashboard/experiment/coin-tossing');
+  //     }
+  //     catch (error) {
+  //       console.error('Error tracking button click:', error);
+  //     }
+  //   },
+  // },
+  // {
+  //   label: '欧式看涨期权定价',
+  //   icon: 'pi pi-chart-bar',
+  //   route: '/dashboard/experiment/black-scholes',
+  //   command: async () => {
+  //     try {
+  //       await clickApi('CLICK', 'catalogue', '欧式看涨期权定价', window.location.href);
+  //       await router.push('/dashboard/experiment/black-scholes');
+  //     }
+  //     catch (error) {
+  //       console.error('Error tracking button click:', error);
+  //     }
+  //   },
+  // },
+  // {
+  //   label: '美式看跌期权定价',
+  //   icon: 'pi pi-chart-bar',
+  //   route: '/dashboard/experiment/american-option',
+  //   command: async () => {
+  //     try {
+  //       await clickApi('CLICK', 'catalogue', '美式看跌期权定价', window.location.href);
+  //       await router.push('/dashboard/experiment/american-option');
+  //     }
+  //     catch (error) {
+  //       console.error('Error tracking button click:', error);
+  //     }
+  //   },
+  // },
+  // {
+  //   label: '股票期望回报率',
+  //   icon: 'pi pi-chart-bar',
+  //   route: '/dashboard/experiment/asset-captial',
+  //   command: async () => {
+  //     try {
+  //       await clickApi('CLICK', 'catalogue', '股票期望回报率', window.location.href);
+  //       await router.push('/dashboard/experiment/asset-captial');
+  //     }
+  //     catch (error) {
+  //       console.error('Error tracking button click:', error);
+  //     }
+  //   },
+  // },
+  // {
+  //   label: '回望期权',
+  //   icon: 'pi pi-chart-bar',
+  //   route: '/dashboard/experiment/monte-carlo',
+  //   command: async () => {
+  //     try {
+  //       await clickApi('CLICK', 'catalogue', '回望期权', window.location.href);
+  //       await router.push('/dashboard/experiment/monte-carlo');
+  //     }
+  //     catch (error) {
+  //       console.error('Error tracking button click:', error);
+  //     }
+  //   },
+  // },
+  // {
+  //   label: '算数平均亚式期权',
+  //   icon: 'pi pi-chart-bar',
+  //   route: '/dashboard/experiment/arithmetic-mean',
+  //   command: async () => {
+  //     try {
+  //       await clickApi('CLICK', 'catalogue', '算数平均亚式期权', window.location.href);
+  //       await router.push('/dashboard/experiment/arithmetic-mean');
+  //     }
+  //     catch (error) {
+  //       console.error('Error tracking button click:', error);
+  //     }
+  //   },
+  // },
+  // {
+  //   label: '障碍期权',
+  //   icon: 'pi pi-chart-bar',
+  //   route: '/dashboard/experiment/obstacle-options',
+  //   command: async () => {
+  //     try {
+  //       await clickApi('CLICK', 'catalogue', '障碍期权', window.location.href);
+  //       await router.push('/dashboard/experiment/obstacle-options');
+  //     }
+  //     catch (error) {
+  //       console.error('Error tracking button click:', error);
+  //     }
+  //   },
+  // },
   {
-    label: '硬币投掷实验',
+    label: 't分布',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/coin-tossing',
+    route: '/dashboard/experiment/t-distribution',
     command: async () => {
       try {
-        await clickApi('CLICK', 'catalogue', '硬币投掷实验', window.location.href);
-        await router.push('/dashboard/experiment/coin-tossing');
+        await clickApi('CLICK', 'catalogue', 't分布', window.location.href);
+        await router.push('/dashboard/experiment/t-distribution');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -658,13 +756,13 @@ const chapter7Items = [
     },
   },
   {
-    label: '欧式看涨期权定价',
+    label: '卡方分布',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/black-scholes',
+    route: '/dashboard/experiment/chi-square-distribution',
     command: async () => {
       try {
-        await clickApi('CLICK', 'catalogue', '欧式看涨期权定价', window.location.href);
-        await router.push('/dashboard/experiment/black-scholes');
+        await clickApi('CLICK', 'catalogue', '卡方分布', window.location.href);
+        await router.push('/dashboard/experiment/chi-square-distribution');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -672,13 +770,13 @@ const chapter7Items = [
     },
   },
   {
-    label: '美式看跌期权定价',
+    label: 't分布上分位点',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/american-option',
+    route: '/dashboard/experiment/t-distribution-quantile',
     command: async () => {
       try {
-        await clickApi('CLICK', 'catalogue', '美式看跌期权定价', window.location.href);
-        await router.push('/dashboard/experiment/american-option');
+        await clickApi('CLICK', 'catalogue', 't分布上分位点', window.location.href);
+        await router.push('/dashboard/experiment/t-distribution-quantile');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
@@ -686,55 +784,13 @@ const chapter7Items = [
     },
   },
   {
-    label: '股票期望回报率',
+    label: '卡方分布上分位点',
     icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/asset-captial',
+    route: '/dashboard/experiment/chi-square-distribution-quantile',
     command: async () => {
       try {
-        await clickApi('CLICK', 'catalogue', '股票期望回报率', window.location.href);
-        await router.push('/dashboard/experiment/asset-captial');
-      }
-      catch (error) {
-        console.error('Error tracking button click:', error);
-      }
-    },
-  },
-  {
-    label: '回望期权',
-    icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/monte-carlo',
-    command: async () => {
-      try {
-        await clickApi('CLICK', 'catalogue', '回望期权', window.location.href);
-        await router.push('/dashboard/experiment/monte-carlo');
-      }
-      catch (error) {
-        console.error('Error tracking button click:', error);
-      }
-    },
-  },
-  {
-    label: '算数平均亚式期权',
-    icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/arithmetic-mean',
-    command: async () => {
-      try {
-        await clickApi('CLICK', 'catalogue', '算数平均亚式期权', window.location.href);
-        await router.push('/dashboard/experiment/arithmetic-mean');
-      }
-      catch (error) {
-        console.error('Error tracking button click:', error);
-      }
-    },
-  },
-  {
-    label: '障碍期权',
-    icon: 'pi pi-chart-bar',
-    route: '/dashboard/experiment/obstacle-options',
-    command: async () => {
-      try {
-        await clickApi('CLICK', 'catalogue', '障碍期权', window.location.href);
-        await router.push('/dashboard/experiment/obstacle-options');
+        await clickApi('CLICK', 'catalogue', '卡方分布上分位点', window.location.href);
+        await router.push('/dashboard/experiment/chi-square-distribution-quantile');
       }
       catch (error) {
         console.error('Error tracking button click:', error);
