@@ -31,7 +31,7 @@ export const initialNodes = [
     },
     style: {
       // 设置背景颜色
-     
+
       padding: '10px', // 内边距
       width: '250px', // 固定宽度
       whiteSpace: 'pre-wrap', // 允许换行
@@ -45,9 +45,10 @@ export const initialNodes = [
     position: { x: 975, y: 375 },
     data: {
       label: '确定分组人数（eg：20/40/60/80人为一组）',
-    },    style: {
+    },
+    style: {
       // 设置背景颜色
-     
+
       padding: '10px', // 内边距
       width: '200px', // 固定宽度
       whiteSpace: 'pre-wrap', // 允许换行
@@ -80,7 +81,7 @@ export const initialNodes = [
       overflow: 'hidden', // 隐藏超出部分
       textAlign: 'center', // 居中对齐
     },
-    },
+  },
   {
     id: '4b',
     position: { x: 1200, y: 600 },
@@ -119,7 +120,7 @@ export const initialNodes = [
     data: {
       label: '所有组检测完毕',
     },
-   
+
     // parentNode:'14',
   },
   {
@@ -132,49 +133,48 @@ export const initialNodes = [
     parentNode: '14',
   },
 
-]
+];
 
 export const initialEdges = [
-  { id: 'e1-2', source: '2', target: '3' ,type: 'smoothstep',},
-  { id: 'e1-3', source: '3', target: '4' ,type: 'smoothstep'},
-  { 
-    id: 'e1-4', 
-    source: '4', 
-    target: '4a', 
+  { id: 'e1-2', source: '2', target: '3', type: 'smoothstep' },
+  { id: 'e1-3', source: '3', target: '4', type: 'smoothstep' },
+  {
+    id: 'e1-4',
+    source: '4',
+    target: '4a',
     type: 'smoothstep',
     label: '结果为阳性',
     style: {
-      stroke: ' rgb(175, 76, 76)',  // 设置边的颜色为绿色
-      strokeWidth: 2,      // 设置边的宽度
+      stroke: ' rgb(175, 76, 76)', // 设置边的颜色为绿色
+      strokeWidth: 2, // 设置边的宽度
     },
     labelStyle: {
-      fontSize: '18px',    // 设置标签字体更大
-      fill: ' rgb(175, 76, 76)',     // 标签字体颜色与边相同
-      fontWeight: 'bold',  // 设置标签字体加粗
-    }
+      fontSize: '18px', // 设置标签字体更大
+      fill: ' rgb(175, 76, 76)', // 标签字体颜色与边相同
+      fontWeight: 'bold', // 设置标签字体加粗
+    },
   },
-  { 
-    id: 'e1-5', 
-    source: '4', 
-    target: '4b', 
+  {
+    id: 'e1-5',
+    source: '4',
+    target: '4b',
     type: 'smoothstep',
     label: '结果为阴性',
     style: {
-      stroke: ' rgb(105, 137, 200)',  // 设置边的颜色为橙色
-      strokeWidth: 2,     // 设置边的宽度
+      stroke: ' rgb(105, 137, 200)', // 设置边的颜色为橙色
+      strokeWidth: 2, // 设置边的宽度
     },
     labelStyle: {
-      fontSize: '18px',    // 设置标签字体更大
-      fill: ' rgb(105, 137, 200)',     // 标签字体颜色与边相同
-      fontWeight: 'bold',  // 设置标签字体加粗
-    }
+      fontSize: '18px', // 设置标签字体更大
+      fill: ' rgb(105, 137, 200)', // 标签字体颜色与边相同
+      fontWeight: 'bold', // 设置标签字体加粗
+    },
   },
 
-  { id: 'e1-9', source: '4a', target: '5' ,type: 'smoothstep'},
+  { id: 'e1-9', source: '4a', target: '5', type: 'smoothstep' },
 
-  { id: 'eB1', source: '4b', target: '5' ,type: 'smoothstep'},
-  { id: 'eB2', source: '5', target: '6' ,type: 'smoothstep'},
-  { id: 'eB3', source: '6', target: '7' ,type: 'smoothstep'},
+  { id: 'eB1', source: '4b', target: '5', type: 'smoothstep' },
+  { id: 'eB2', source: '5', target: '6', type: 'smoothstep' },
+  { id: 'eB3', source: '6', target: '7', type: 'smoothstep' },
 
-
-]
+];

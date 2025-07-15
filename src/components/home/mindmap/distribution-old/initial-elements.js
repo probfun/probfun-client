@@ -99,7 +99,7 @@ export const initialNodes = [
   createNode({ label: 'Logistic(κ,γ)\nS,V' }, { x: -350, y: 100 }),
   createNode({ label: 'Triangular(a,b,m)\nV' }, { x: -350, y: 100 }),
   createNode({ label: 'Kolmogorov-Smirnov(n)\nV(1-4)' }, { x: -350, y: 100 }),
-]
+];
 
 // 默认的边样式
 const defaultEdgeOptions = {
@@ -112,7 +112,7 @@ const defaultEdgeOptions = {
 };
 
 // 封装创建边的函数
-function createEdge({ id, source, target, label = '', type, options = {} }) {
+function createEdge({ id, source, target, label = '', _type, options = {} }) {
   return {
     id,
     source,
@@ -545,4 +545,4 @@ export const initialEdges = [
   } }),
   createEdge({ id: 'e66-74', source: '66', target: '74', label: 'logX' }),
 
-]
+];

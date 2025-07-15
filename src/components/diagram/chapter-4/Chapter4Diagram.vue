@@ -1,20 +1,20 @@
 <script setup>
-import { Background } from '@vue-flow/background'
+import { Background } from '@vue-flow/background';
 import { useVueFlow, VueFlow } from '@vue-flow/core';
-import { nextTick, ref } from 'vue'
+import { nextTick, ref } from 'vue';
 import Icon from '../Icon.vue';
 
-import { initialEdges, initialNodes } from './initial-elements.js'
-import { useLayout } from './useLayout.js'
+import { initialEdges, initialNodes } from './initial-elements.js';
+import { useLayout } from './useLayout.js';
 
 import './nodeStyles.css';
 
-const nodes = ref(initialNodes)
-const edges = ref(initialEdges)
+const nodes = ref(initialNodes);
+const edges = ref(initialEdges);
 
-const { layout } = useLayout()
+const { layout } = useLayout();
 
-const { fitView } = useVueFlow()
+const { fitView } = useVueFlow();
 
 // 控制图片显示的状态
 const showImage = ref(false);
@@ -29,12 +29,12 @@ nextTick(() => {
   fitView({ padding: 0.1 }); // 适当增加padding以确保视图完全可见且居中
 });
 
-async function layoutGraph(direction) {
-  nodes.value = layout(nodes.value, edges.value, direction)
+async function _layoutGraph(direction) {
+  nodes.value = layout(nodes.value, edges.value, direction);
   await nextTick();
   nextTick(() => {
-    fitView({ padding: 0.1 }) // 在布局更新后再次确保居中
-  })
+    fitView({ padding: 0.1 }); // 在布局更新后再次确保居中
+  });
 }
 </script>
 
@@ -42,17 +42,17 @@ async function layoutGraph(direction) {
   <div class="layout-flow">
     <!-- 控制按钮，参考您提供的按钮样式 -->
     <Controls position="top-left" class="border-none flex items-center">
-  <Button size="xl" class="ml-2 multi-line-button" @click="toggleImage">
-    <span class="multi-line-text">
-      检测总次数随<br/>分组人数的变化
-    </span>
-    <Icon name="info" />
-  </Button>
-</Controls>
+      <Button size="xl" class="ml-2 multi-line-button" @click="toggleImage">
+        <span class="multi-line-text">
+          检测总次数随<br>分组人数的变化
+        </span>
+        <Icon name="info" />
+      </Button>
+    </Controls>
 
     <!-- 控制图片显示 -->
     <div v-if="showImage" class="image-container">
-      <img src="/homePage/image.png" alt="imag" class="image" />
+      <img src="/homePage/image.png" alt="imag" class="image">
     </div>
 
     <VueFlow
@@ -110,7 +110,7 @@ async function layoutGraph(direction) {
   white-space: normal; /* 允许换行 */
   word-wrap: break-word; /* 在单词长时换行 */
   text-align: center; /* 中央对齐文字 */
-  
+
   /* 设置按钮更大 */
 
   padding: 12px 24px; /* 增加按钮内边距 */
@@ -130,7 +130,4 @@ async function layoutGraph(direction) {
   text-align: center; /* 可选：如果你需要让文字在按钮内居中 */
   line-height: 1.5; /* 设置行高，调整这个值来增加或减少行高 */
 }
-
-
-
 </style>

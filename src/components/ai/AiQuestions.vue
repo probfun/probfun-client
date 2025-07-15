@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ref } from 'vue';
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 defineProps<{ disabled: boolean }>();
 
 const emit = defineEmits<{
-  send: [question: string]
+  send: [question: string];
 }>();
 
 const questions = ref<string[]>([

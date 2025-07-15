@@ -3,15 +3,15 @@ import { del, get, post } from '../request';
 
 export async function fetchCommentApi(expId: string) {
   const result = await get<{
-    comments: CommentWithParent[]
-  }>(`/api/comment/${expId}`);
+    comments: CommentWithParent[];
+  }>(`/experiment/comment/${expId}/`);
   return result.data;
 }
 
 export async function postCommentApi(expId: string, content: string, parentId: string | null) {
   const result = await post<{
-    comment: CommentWithParent
-  }>(`/api/comment/${expId}`, {
+    comment: CommentWithParent;
+  }>(`/experiment/comment/${expId}/`, {
     content,
     parentId,
   });
@@ -20,20 +20,27 @@ export async function postCommentApi(expId: string, content: string, parentId: s
 
 export async function likeCommentApi(commentId: string) {
   const result = await post<{
-    liked: boolean
-    likes: number
-  }>(`/api/comment/${commentId}/like`);
+    liked: boolean;
+    likes: number;
+  }>(`/experiment/comment/${commentId}/like/`);
   return result.data;
 }
 
 export async function deleteCommentApi(commentId: string) {
-  const result = await del<object>(`/api/comment/${commentId}`);
+  const result = await del<object>(`/experiment/comment/${commentId}/`);
   return result.data;
 }
 
 export async function pinCommentApi(commentId: string) {
   const result = await post<{
-    pinned: boolean
-  }>(`/api/comment/${commentId}/pin`);
+    pinned: boolean;
+  }>(`/experiment/comment/${commentId}/pin/`);
+  return result.data;
+}
+
+export async function featureCommentApi(commentId: string) {
+  const result = await post<{
+    featured: boolean;
+  }>(`/experiment/comment/${commentId}/choose/`);
   return result.data;
 }

@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import katex from 'katex';
+import { computed, onMounted, ref, watch } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Slider } from '@/components/ui/slider';
 import { renderLatex, toMarkdown } from '@/utils/markdown';
-import katex from 'katex';
-import { computed, onMounted, ref, watch } from 'vue'
 import PoissonDiagram from './PoissonDiagram.vue';
 import 'katex/dist/katex.min.css';
 
@@ -96,7 +96,7 @@ $$
 - **1. 稀疏性**：泊松分布通常用于建模稀疏事件，即事件发生的次数相对较少。
 - **2. 独立性**：事件发生的次数之间是独立的。
 - **3. 无上限**：理论上事件的发生次数可以是任意大的非负整数。
-`
+`;
 </script>
 
 <template>

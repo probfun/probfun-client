@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type Display from '@/components/experiment/chapter1/buffon-needle/BuffonNeedleDisplay.vue';
+import { CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, registerables, Tooltip } from 'chart.js';
+import { computed, onMounted, ref } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import BuffonNeedleDisplay from '@/components/experiment/chapter1/buffon-needle/BuffonNeedleDisplay.vue';
 import {
@@ -19,16 +21,14 @@ import {
   Card,
   CardContent,
   CardFooter,
-} from '@/components/ui/card'
+} from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { toMarkdown } from '@/utils/markdown';
-import { CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, registerables, Tooltip } from 'chart.js';
 
-import { computed, onMounted, ref } from 'vue';
+import { toMarkdown } from '@/utils/markdown';
 
 defineProps<{
-  title: string
-  tags: string[]
+  title: string;
+  tags: string[];
 }>();
 
 const needleLength = ref(30);
@@ -131,14 +131,14 @@ onMounted(() => {
                 <Label for="needleLength" class="text-left flex-shrink-0 font-bold">针的长度(l) = </Label>
                 <Input
                   id="needleLength" v-model="needleLength" type="number" :min="20"
-                  :max="40" placeholder="20~40"@input="run"
+                  :max="40" placeholder="20~40" @input="run"
                 />
               </div>
               <div class="flex items-center gap-2">
                 <Label for="floorLineSpacing" class="text-left flex-shrink-0 font-bold">线的间距(d) = </Label>
                 <Input
                   id="floorLineSpacing" v-model="floorLineSpacing" type="number"
-                  :min="20" :max="80" placeholder="20~80"@input="run"
+                  :min="20" :max="80" placeholder="20~80" @input="run"
                 />
               </div>
               <div class="flex items-center gap-2">
@@ -147,7 +147,6 @@ onMounted(() => {
                   id="needleAmount" v-model="needleAmount" type="number"
                   :max="5000" placeholder="1~5000" @input="run"
                 />
-                
               </div>
             </CardContent>
             <CardFooter class="flex justify-between gap-2 p-3 pt-0">
@@ -272,4 +271,3 @@ div, label {
   -ms-user-select: none;     /* IE/Edge */
 }
 </style>
-

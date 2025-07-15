@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { casValidateApi } from '@/api/user/userApi.ts';
 import { useUserStore } from '@/store';
 import { setLocalToken } from '@/utils/auth.ts';
 import { error } from '@/utils/toast.ts';
-import { onMounted } from 'vue';
-import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const userStore = useUserStore();

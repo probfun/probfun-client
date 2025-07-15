@@ -1,6 +1,6 @@
 import type { NodeOptions } from '@/api/distribution/distributionType';
-import { useDistributionStore } from '@/store';
 import { MarkerType } from '@vue-flow/core';
+import { useDistributionStore } from '@/store';
 import 'katex/dist/katex.min.css';
 
 let nodeIdCounter = 1; // 初始化计数器
@@ -55,13 +55,13 @@ const defaultEdgeOptions = {
 };
 
 interface EdgeOptions {
-  id: string
-  source: string
-  target: string
-  label?: string
-  options?: any
-  style?: any
-  markerEnd?: MarkerType
+  id: string;
+  source: string;
+  target: string;
+  label?: string;
+  options?: any;
+  style?: any;
+  markerEnd?: MarkerType;
 }
 
 function createEdge({ id, source, target, label = '', options = {} }: EdgeOptions) {
@@ -518,5 +518,5 @@ export function initialEdges() {
     } }),
     createEdge({ id: 'e66-74', source: '66', target: '74', label: 'logX' }),
 
-  ]
+  ];
 }

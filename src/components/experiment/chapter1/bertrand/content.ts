@@ -1,4 +1,4 @@
-export const conclusionContent  = `
+export const conclusionContent = `
 ### **实验推广**
 推广到三维球体：
 球体半径为$R$，随机选择一个大圆（通过球心的平面与球相交的圆），圆上任意两点之间弦长 $L>√3 R$ 的概率。

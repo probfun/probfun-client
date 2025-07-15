@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import katex from 'katex';
+import { computed, onMounted, ref, watch } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import DistributionDiagram from '@/components/experiment/distribution/normal-distribution/NormalDiagram.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { renderLatex, toMarkdown } from '@/utils/markdown';
-import katex from 'katex';
-import { computed, onMounted, ref, watch } from 'vue'
 import 'katex/dist/katex.min.css';
 
 const mean = ref([0]);
@@ -151,7 +151,7 @@ $$
 - 新的方差 $$a^2\\sigma^2$$ 是原方差乘以系数 $$a^2$$ 后的结果，表示分布的扩展或收缩。
 
 **线性变换保留了正态分布的钟形曲线形状，只是改变了其位置和尺度。**
-`
+`;
 </script>
 
 <template>

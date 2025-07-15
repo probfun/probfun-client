@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import { onMounted, ref, watch } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { toMarkdown } from '@/utils/markdown';
-import { onMounted, ref, watch } from 'vue';
 import { conclusionContent } from './content';
 
 import diameterMidpointGif from '/public/Bertrand/diameter_midpoint.gif';
@@ -18,10 +18,10 @@ const autoGaming = ref(false);
 
 // 定义弦端点对象的类型
 interface ChordEndPoints {
-  x1: number
-  y1: number
-  x2: number
-  y2: number
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
 }
 
 // 创建响应式的弦端点对象和颜色对象
@@ -246,10 +246,10 @@ function generateRandomMidpoint() {
 }
 
 const bertrandDisplay = ref<{
-  autoGameRound: number[]
-  simulationInterval: number | null
-  simulateGame: () => void
-  stopSimulation: () => void
+  autoGameRound: number[];
+  simulationInterval: number | null;
+  simulateGame: () => void;
+  stopSimulation: () => void;
 }>({
       autoGameRound: [], // 默认模拟轮数为100
       simulationInterval: null, // 用于存储定时器 ID

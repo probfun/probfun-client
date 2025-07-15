@@ -1,55 +1,7 @@
-<template>
-    <ExperimentBoard :panel-size="20">
-        <template #experiment>
-            <div v-if="calculatedExpectedReturn !== null">
-                <strong>计算结果分析：</strong>
-                <p>根据输入的参数，该股票的期望回报率为 {{ calculatedExpectedReturn.toFixed(2) }}%。</p>
-                <p>这个期望回报率是投资者在承担了该股票的系统性风险（市场风险）后，预期能够获得的补偿。</p>
-            </div>
-            <div v-else>
-                请先输入参数并计算。
-            </div>
-        </template>
-        <template #parameter>
-            <label for="riskFreeRate">无风险利率（%）：</label>
-            <input type="number" id="riskFreeRate" v-model.number="riskFreeRatePercentage" placeholder="例如：2">
-
-            <label for="marketReturn">市场回报率（%）：</label>
-            <input type="number" id="marketReturn" v-model.number="marketReturnPercentage" placeholder="例如：8">
-
-            <label for="beta">股票贝塔值：</label>
-            <input type="number" id="beta" v-model.number="betaValue" placeholder="例如：1.2">
-
-            <button @click="calculateExpectedReturn">计算期望回报率</button>
-
-            <div class="result" v-if="result !== ''">{{ result }}</div>
-            <div class="result" v-else>&nbsp;</div>
-            <div>
-                <strong>参数说明：</strong>
-                <ul>
-                    <li><strong>无风险利率：</strong> 指的是理论上没有任何风险的投资所能获得的回报率，通常以短期国债利率作为参考。</li>
-                    <li><strong>市场回报率：</strong> 指的是整个市场投资组合的预期回报率，例如股票市场指数的长期平均回报率。</li>
-                    <li
-                        v-html="'<strong>贝塔值（β）：</strong> 衡量个别股票相对于整个市场波动性的指标。β > 1 表示股票波动性高于市场，β < 1 表示波动性低于市场，β = 1 表示与市场波动性相同。'">
-                    </li>
-                </ul>
-            </div>
-        </template>
-        <template #conclusion>
-            <div class="w-full h-full p-5">
-                <div class="prose-sm max-w-full" v-html="toMarkdown(content)" />
-            </div>
-        </template>
-        <template #comment>
-            <CommentPanel exp-id="capm-calculator" />
-        </template>
-    </ExperimentBoard>
-</template>
-
 <script setup>
+import { ref } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
-import { ref, computed } from 'vue';
 import { toMarkdown } from '@/utils/markdown';
 
 const content = ref(`
@@ -106,7 +58,7 @@ $E(R) = 0.065 \\text{ 或 } 6.5\\%$
 * **风险管理：** 结合期望回报率和风险（如标准差），可以评估投资的风险收益比。
 
 **总结来说，股票期望回报率就是你对一只股票未来平均能赚多少钱的“最可能”的估计，它是一个在不确定性下进行决策的重要参考指标。**
-`)
+`);
 
 // 使用 ref 定义响应式数据
 const riskFreeRatePercentage = ref(null);
@@ -116,25 +68,79 @@ const result = ref('');
 const calculatedExpectedReturn = ref(null);
 
 // 计算期望回报率的方法
-const calculateExpectedReturn = () => {
-    // 将百分比转换为小数
-    const riskFreeRate = riskFreeRatePercentage.value / 100;
-    const marketReturn = marketReturnPercentage.value / 100;
-    const beta = betaValue.value;
+function calculateExpectedReturn() {
+  // 将百分比转换为小数
+  const riskFreeRate = riskFreeRatePercentage.value / 100;
+  const marketReturn = marketReturnPercentage.value / 100;
+  const beta = betaValue.value;
 
-    // 检查输入是否有效
-    if (isNaN(riskFreeRate) || isNaN(marketReturn) || isNaN(beta)) {
-        result.value = "请输入有效的无风险利率、市场回报率和贝塔值。";
-        calculatedExpectedReturn.value = null;
-        return;
-    }
+  // 检查输入是否有效
+  if (Number.isNaN(riskFreeRate) || Number.isNaN(marketReturn) || Number.isNaN(beta)) {
+    result.value = '请输入有效的无风险利率、市场回报率和贝塔值。';
+    calculatedExpectedReturn.value = null;
+    return;
+  }
 
-    // 使用 CAPM 公式计算期望回报率
-    const expectedReturn = riskFreeRate + beta * (marketReturn - riskFreeRate);
-    calculatedExpectedReturn.value = expectedReturn * 100;
-    result.value = `期望回报率：${calculatedExpectedReturn.value.toFixed(2)}%`;
-};
+  // 使用 CAPM 公式计算期望回报率
+  const expectedReturn = riskFreeRate + beta * (marketReturn - riskFreeRate);
+  calculatedExpectedReturn.value = expectedReturn * 100;
+  result.value = `期望回报率：${calculatedExpectedReturn.value.toFixed(2)}%`;
+}
 </script>
+
+<template>
+  <ExperimentBoard :panel-size="20">
+    <template #experiment>
+      <div v-if="calculatedExpectedReturn !== null">
+        <strong>计算结果分析：</strong>
+        <p>根据输入的参数，该股票的期望回报率为 {{ calculatedExpectedReturn.toFixed(2) }}%。</p>
+        <p>这个期望回报率是投资者在承担了该股票的系统性风险（市场风险）后，预期能够获得的补偿。</p>
+      </div>
+      <div v-else>
+        请先输入参数并计算。
+      </div>
+    </template>
+    <template #parameter>
+      <label for="riskFreeRate">无风险利率（%）：</label>
+      <input id="riskFreeRate" v-model.number="riskFreeRatePercentage" type="number" placeholder="例如：2">
+
+      <label for="marketReturn">市场回报率（%）：</label>
+      <input id="marketReturn" v-model.number="marketReturnPercentage" type="number" placeholder="例如：8">
+
+      <label for="beta">股票贝塔值：</label>
+      <input id="beta" v-model.number="betaValue" type="number" placeholder="例如：1.2">
+
+      <button @click="calculateExpectedReturn">
+        计算期望回报率
+      </button>
+
+      <div v-if="result !== ''" class="result">
+        {{ result }}
+      </div>
+      <div v-else class="result">
+&nbsp;
+      </div>
+      <div>
+        <strong>参数说明：</strong>
+        <ul>
+          <li><strong>无风险利率：</strong> 指的是理论上没有任何风险的投资所能获得的回报率，通常以短期国债利率作为参考。</li>
+          <li><strong>市场回报率：</strong> 指的是整个市场投资组合的预期回报率，例如股票市场指数的长期平均回报率。</li>
+          <li
+            v-html="'<strong>贝塔值（β）：</strong> 衡量个别股票相对于整个市场波动性的指标。β > 1 表示股票波动性高于市场，β < 1 表示波动性低于市场，β = 1 表示与市场波动性相同。'"
+          />
+        </ul>
+      </div>
+    </template>
+    <template #conclusion>
+      <div class="w-full h-full p-5">
+        <div class="prose-sm max-w-full" v-html="toMarkdown(content)" />
+      </div>
+    </template>
+    <template #comment>
+      <CommentPanel exp-id="capm-calculator" />
+    </template>
+  </ExperimentBoard>
+</template>
 
 <style scoped>
 h1 {

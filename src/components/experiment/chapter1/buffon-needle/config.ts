@@ -1,8 +1,8 @@
-import { hslToHex } from '@/utils/color';
 import { GraduationCap, Lightbulb, MessagesSquare, NotebookPen } from 'lucide-vue-next';
 import { computed } from 'vue';
+import { hslToHex } from '@/utils/color';
 
-const documentStyle = getComputedStyle(document.documentElement)
+const documentStyle = getComputedStyle(document.documentElement);
 
 const discussTabList = [
   {
@@ -89,7 +89,7 @@ const chartOptions = computed(() => {
         },
       },
     },
-  }
+  };
 });
 
 function getChartData(data: number[]) {

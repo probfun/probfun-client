@@ -1,9 +1,9 @@
 <script setup>
+import { ref } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import GeoGebraApplet from '@/components/experiment/GeoGebraApplet.vue';
 import { renderLatex, toMarkdown } from '@/utils/markdown';
-import { ref } from 'vue';
 
 const content = ref(`
 ## **二维向量场的线积分**

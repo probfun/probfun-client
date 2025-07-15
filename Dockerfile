@@ -1,9 +1,12 @@
-FROM node:18-alpine as builder
+FROM node:22-slim as builder
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
 WORKDIR /app
-RUN npm install -g pnpm
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install
 COPY . .
+RUN pnpm install --frozen-lockfile
 RUN pnpm run build
 
 FROM joseluisq/static-web-server:2

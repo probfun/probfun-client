@@ -1,46 +1,9 @@
-<template>
-  <ExperimentBoard :panel-size="100" :discuss-tab-list="discussTabList">
-    <template #experiment>
-      <h1>Poisson Process Simulation</h1>
-
-      <div class="slider-container">
-        <label for="numPaths" class="slider-label">Number of Paths:</label>
-        <input type="range" id="numPaths" v-model.number="numPaths" min="1" max="20" step="1">
-        <span>{{ numPaths }}</span>
-      </div>
-
-      <div class="slider-container">
-        <label for="totalTime" class="slider-label">Total Time (T):</label>
-        <input type="range" id="totalTime" v-model.number="totalTime" min="1" max="10" step="0.1">
-        <span>{{ totalTime }}</span>
-      </div>
-
-      <div class="slider-container">
-        <label for="lambda" class="slider-label">Event Rate (λ):</label>
-        <input type="range" id="lambda" v-model.number="lambda" min="0.1" max="5" step="0.1">
-        <span>{{ lambda }}</span>
-      </div>
-
-      <div id="plot" style="width: 100%; height: 600px;"></div>
-    </template>
-    <template #conclusion>
-      <div class="w-full h-full p-5">
-        <div class="prose-sm max-w-full " v-html="toMarkdown(content)" />
-      </div>
-    </template>
-    <template #comment>
-      <CommentPanel exp-id="" />
-    </template>
-  </ExperimentBoard>
-
-</template>
-
 <script setup>
+import Plotly from 'plotly.js-dist';
+import { onMounted, ref, watch } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
-import { ref, onMounted, watch } from 'vue';
-import Plotly from 'plotly.js-dist';
-import { renderLatex, toMarkdown } from '@/utils/markdown';
+import { toMarkdown } from '@/utils/markdown';
 
 const numPaths = ref(5);
 const totalTime = ref(5);
@@ -87,7 +50,7 @@ const content = ref(`
     * 这种方法侧重于计算在特定时间段内事件的总次数，而不是具体时间点。
 
 **简单来说，泊松过程模拟就是模拟“滴答滴答”的事件发生，每次“滴答”的间隔是随机的，但总体平均速度是固定的。**
-`)
+`);
 
 function generatePoissonProcess(numPaths, totalTime, lambda) {
   const paths = [];
@@ -121,11 +84,11 @@ function updatePlot() {
     x.push(totalTime.value);
     y.push(events.length);
     return {
-      x: x,
-      y: y,
+      x,
+      y,
       type: 'scatter',
       mode: 'lines',
-      name: `Path ${i + 1}`
+      name: `Path ${i + 1}`,
     };
   });
 
@@ -134,7 +97,7 @@ function updatePlot() {
     xaxis: { title: 'Time' },
     yaxis: { title: 'Number of Events' },
     showlegend: true,
-    margin: { l: 50, r: 50, b: 50, t: 50 }
+    margin: { l: 50, r: 50, b: 50, t: 50 },
   };
 
   Plotly.newPlot('plot', data, layout);
@@ -148,6 +111,42 @@ onMounted(() => {
   updatePlot();
 });
 </script>
+
+<template>
+  <ExperimentBoard :panel-size="100" :discuss-tab-list="discussTabList">
+    <template #experiment>
+      <h1>Poisson Process Simulation</h1>
+
+      <div class="slider-container">
+        <label for="numPaths" class="slider-label">Number of Paths:</label>
+        <input id="numPaths" v-model.number="numPaths" type="range" min="1" max="20" step="1">
+        <span>{{ numPaths }}</span>
+      </div>
+
+      <div class="slider-container">
+        <label for="totalTime" class="slider-label">Total Time (T):</label>
+        <input id="totalTime" v-model.number="totalTime" type="range" min="1" max="10" step="0.1">
+        <span>{{ totalTime }}</span>
+      </div>
+
+      <div class="slider-container">
+        <label for="lambda" class="slider-label">Event Rate (λ):</label>
+        <input id="lambda" v-model.number="lambda" type="range" min="0.1" max="5" step="0.1">
+        <span>{{ lambda }}</span>
+      </div>
+
+      <div id="plot" style="width: 100%; height: 600px;" />
+    </template>
+    <template #conclusion>
+      <div class="w-full h-full p-5">
+        <div class="prose-sm max-w-full " v-html="toMarkdown(content)" />
+      </div>
+    </template>
+    <template #comment>
+      <CommentPanel exp-id="" />
+    </template>
+  </ExperimentBoard>
+</template>
 
 <style scoped>
 body {

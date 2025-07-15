@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import katex from 'katex';
+import { computed, onMounted, ref, watch } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { renderLatex, toMarkdown } from '@/utils/markdown';
-import katex from 'katex';
-import { computed, onMounted, ref, watch } from 'vue';
 import PNDiagram from './PNDiagram.vue';
 import 'katex/dist/katex.min.css';
 
@@ -149,7 +149,7 @@ $$
 
 总结来说，随着$λ$的增大，泊松分布逐渐接近一个均值为$λ$、方差为$λ$的正态分布，这种近似在统计学和工程应用中非常有用。
 
-`
+`;
 </script>
 
 <template>

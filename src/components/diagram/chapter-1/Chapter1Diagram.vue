@@ -1,32 +1,32 @@
 <script setup>
-import { Background } from '@vue-flow/background'
-import { useVueFlow, VueFlow } from '@vue-flow/core'
-import { nextTick, ref } from 'vue'
+import { Background } from '@vue-flow/background';
+import { useVueFlow, VueFlow } from '@vue-flow/core';
+import { nextTick, ref } from 'vue';
 
-import { initialEdges, initialNodes } from './initial-elements.js'
-import { useLayout } from './useLayout.js'
+import { initialEdges, initialNodes } from './initial-elements.js';
+// import { useLayout } from './useLayout.js';
 
 import './nodeStyles.css';
 
-const nodes = ref(initialNodes)
+const nodes = ref(initialNodes);
 
-const edges = ref(initialEdges)
+const edges = ref(initialEdges);
 
-const { layout } = useLayout()
+// const { layout } = useLayout();
 
-const { fitView } = useVueFlow()
+const { fitView } = useVueFlow();
 
 nextTick(() => {
   fitView(); // 调整视图以适应节点布局
 });
 
-async function layoutGraph(direction) {
-  nodes.value = layout(nodes.value, edges.value, direction)
-  await nextTick();
-  nextTick(() => {
-    fitView()
-  })
-}
+// async function layoutGraph(direction) {
+//   nodes.value = layout(nodes.value, edges.value, direction);
+//   await nextTick();
+//   nextTick(() => {
+//     fitView();
+//   });
+// }
 </script>
 
 <template>

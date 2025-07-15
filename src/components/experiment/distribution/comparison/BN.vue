@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import CommentPanel from '@/components/comment/CommentPanel.vue';
-import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
-import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { renderLatex, toMarkdown } from '@/utils/markdown';
-
 import katex from 'katex';
 import { computed, onMounted, ref, watch } from 'vue';
+import CommentPanel from '@/components/comment/CommentPanel.vue';
+import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
+
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { renderLatex, toMarkdown } from '@/utils/markdown';
 import BNDiagram from './BNDiagram.vue';
 import 'katex/dist/katex.min.css';
 
@@ -89,7 +89,7 @@ $$
 - **联系**: 正态分布可以看作是二项分布在 $$ n \\to \\infty $$ 的极限情况。当试验次数很多且成功概率接近于中间值时，二项分布趋近于正态分布。
 - **近似条件**: $$ np \\text{ 和 } np(1-p) $$ 足够大。
 - **实际应用**: 正态分布常用于在样本量大时近似二项分布，尤其在二项分布的参数不极端的情况下。
-`
+`;
 </script>
 
 <template>

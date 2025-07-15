@@ -1,163 +1,7 @@
-<template>
-  <ExperimentBoard :layout="1" :panel-size="70">
-    <template #experiment>
-      <div class="w-full h-full p-5 overflow-hidden">
-        <!-- 可视化展示 - 强制两列布局 -->
-        <div class="grid grid-cols-2 gap-4 h-full">
-          <!-- 左侧：随机点分布图 -->
-          <div class="bg-white/90 rounded-xl p-4 shadow-lg flex flex-col h-full">
-            <h2 class="text-lg font-semibold text-blue-700 pb-2 mb-3 border-b-2 border-blue-500 text-center flex-shrink-0">
-              随机点分布
-            </h2>
-            <div class="relative bg-gray-50 rounded border border-gray-200 overflow-hidden flex-grow flex items-center justify-center">
-              <canvas ref="scatterCanvas" width="500" height="500" class="max-w-full max-h-full w-auto h-auto block"></canvas>
-            </div>
-
-            <!-- 统计数据 -->
-            <div class="grid grid-cols-2 gap-3 mt-3 flex-shrink-0">
-              <div class="bg-white/90 rounded-lg p-3 text-center transition-all duration-300 shadow hover:transform hover:-translate-y-0.5 hover:shadow-lg">
-                <div class="text-sm text-blue-600">总点数</div>
-                <div class="text-2xl font-bold text-red-500 mt-1">{{ totalPoints.toLocaleString() }}</div>
-              </div>
-              <div class="bg-white/90 rounded-lg p-3 text-center transition-all duration-300 shadow hover:transform hover:-translate-y-0.5 hover:shadow-lg">
-                <div class="text-sm text-blue-600">圆内点数</div>
-                <div class="text-2xl font-bold text-red-500 mt-1">{{ pointsInsideCircle.toLocaleString() }}</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 右侧：π值收敛曲线 -->
-          <div class="bg-white/90 rounded-xl p-4 shadow-lg flex flex-col h-full">
-            <h2 class="text-lg font-semibold text-blue-700 pb-2 mb-3 border-b-2 border-blue-500 text-center flex-shrink-0">
-              π值收敛曲线
-            </h2>
-            <div class="relative bg-gray-50 rounded border border-gray-200 overflow-hidden flex-grow flex items-center justify-center">
-              <canvas ref="curveCanvas" width="500" height="500" class="max-w-full max-h-full w-auto h-auto block"></canvas>
-            </div>
-
-            <!-- π值显示 -->
-            <div class="grid grid-cols-2 gap-3 mt-3 flex-shrink-0">
-              <div class="bg-white/90 rounded-lg p-3 text-center transition-all duration-300 shadow hover:transform hover:-translate-y-0.5 hover:shadow-lg">
-                <div class="text-sm text-blue-600">当前估算π值</div>
-                <div class="text-2xl font-bold text-yellow-500 mt-1" style="text-shadow: 0 0 10px rgba(255, 234, 0, 0.5);">
-                  {{ currentPi.toFixed(6) }}
-                </div>
-              </div>
-              <div class="bg-white/90 rounded-lg p-3 text-center transition-all duration-300 shadow hover:transform hover:-translate-y-0.5 hover:shadow-lg">
-                <div class="text-sm text-blue-600">真实π值</div>
-                <div class="text-2xl font-bold text-red-500 mt-1">3.1415927</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </template>
-
-    <template #parameter>
-      <div class="w-full h-full p-5 overflow-hidden flex items-center">
-        <div class="w-full">
-          <h3 class="text-lg font-semibold text-blue-700 pb-2 mb-4 border-b-2 border-blue-500">
-            模拟参数控制
-          </h3>
-
-          <!-- 点生成速度 -->
-          <div class="flex items-center my-4">
-            <label class="w-32 font-semibold text-sm flex-shrink-0">点生成速度:</label>
-            <input
-                type="range"
-                v-model.number="speed"
-                min="1"
-                max="100"
-                step="1"
-                class="flex-1 mx-1.5"
-            >
-            <span class="w-[80px] px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm whitespace-normal break-words">{{ speed }} 点/帧</span>
-          </div>
-
-          <!-- 点大小 -->
-          <div class="flex items-center my-4">
-            <label class="w-32 font-semibold text-sm flex-shrink-0">点大小:</label>
-            <input
-                type="range"
-                v-model.number="pointSize"
-                min="1"
-                max="5"
-                step="1"
-                class="flex-1 mx-1.5"
-            >
-            <span class="w-[80px] px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm whitespace-normal break-words">{{ pointSize }} 像素</span>
-          </div>
-
-          <!-- 批量生成 -->
-          <div class="flex items-center my-4">
-            <label class="w-32 font-semibold text-sm flex-shrink-0">批量生成:</label>
-            <input
-                type="range"
-                v-model.number="batchSizeIndex"
-                min="0"
-                max="4"
-                step="1"
-                class="flex-1 mx-1.5"
-            >
-            <span class="w-[80px] px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm whitespace-normal break-words">{{ batchSizes[batchSizeIndex].toLocaleString() }} 点/批</span>
-          </div>
-
-          <!-- 操作按钮 -->
-          <div class="grid grid-cols-2 gap-4 my-5">
-            <button
-                @click="startSimulation"
-                class="py-3 px-5 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white border-0 rounded-lg cursor-pointer font-bold text-base transition-all duration-300 hover:transform hover:-translate-y-0.5 hover:shadow-lg"
-            >
-              {{ isRunning ? '运行中...' : '开始模拟' }}
-            </button>
-            <button
-                @click="pauseSimulation"
-                class="py-3 px-5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white border-0 rounded-lg cursor-pointer font-bold text-base transition-all duration-300 hover:transform hover:-translate-y-0.5 hover:shadow-lg"
-            >
-              暂停
-            </button>
-            <button
-                @click="resetSimulation"
-                class="py-3 px-5 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white border-0 rounded-lg cursor-pointer font-bold text-base transition-all duration-300 hover:transform hover:-translate-y-0.5 hover:shadow-lg"
-            >
-              重置
-            </button>
-            <button
-                @click="batchGenerate"
-                class="py-3 px-5 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white border-0 rounded-lg cursor-pointer font-bold text-base transition-all duration-300 hover:transform hover:-translate-y-0.5 hover:shadow-lg"
-            >
-              批量生成
-            </button>
-          </div>
-
-          <div class="mt-5 p-4 bg-blue-50 rounded-xl text-sm">
-            <p class="mb-2 leading-relaxed">
-              <span class="font-bold text-red-500">蒙特卡罗方法</span>：通过在正方形内随机投点，统计落在内切圆中的点数比例来估算π值。
-            </p>
-            <p class="leading-relaxed">
-              理论依据：圆面积/正方形面积 = πr²/(2r)² = π/4，因此 <span class="font-bold text-red-500">π ≈ 4 × (圆内点数/总点数)</span>
-            </p>
-          </div>
-        </div>
-      </div>
-    </template>
-
-    <template #conclusion>
-      <div class="w-full h-full p-5 overflow-auto">
-        <div class="prose-sm max-w-full" v-html="toMarkdown(content)" />
-      </div>
-    </template>
-
-    <template #comment>
-      <CommentPanel exp-id="pi-estimation" />
-    </template>
-  </ExperimentBoard>
-</template>
-
 <script setup>
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
-import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { toMarkdown } from '@/utils/markdown';
 
 // Canvas引用
@@ -245,7 +89,8 @@ $$SE = \\frac{4\\sqrt{p(1-p)}}{\\sqrt{N}}$$
 
 // 初始化Canvas
 function initCanvas() {
-  if (!scatterCanvas.value || !curveCanvas.value) return;
+  if (!scatterCanvas.value || !curveCanvas.value)
+    return;
 
   scatterCtx = scatterCanvas.value.getContext('2d');
   curveCtx = curveCanvas.value.getContext('2d');
@@ -325,7 +170,7 @@ function addCurveLabels() {
 
   // X轴刻度（对数刻度）
   for (let i = 0; i <= 6; i++) {
-    const value = Math.pow(10, i);
+    const value = 10 ** i;
     const x = 50 + (i / 6) * (CANVAS_SIZE - 100);
     curveCtx.beginPath();
     curveCtx.moveTo(x, CANVAS_SIZE - 50);
@@ -352,11 +197,12 @@ function generatePoint() {
   const x = Math.random() * SQUARE_SIZE + SQUARE_START;
   const y = Math.random() * SQUARE_SIZE + SQUARE_START;
 
-  const distance = Math.sqrt(Math.pow(x - CIRCLE_CENTER, 2) + Math.pow(y - CIRCLE_CENTER, 2));
+  const distance = Math.sqrt((x - CIRCLE_CENTER) ** 2 + (y - CIRCLE_CENTER) ** 2);
   const isInside = distance <= CIRCLE_RADIUS;
 
   totalPoints.value++;
-  if (isInside) pointsInsideCircle.value++;
+  if (isInside)
+    pointsInsideCircle.value++;
 
   currentPi.value = totalPoints.value > 0 ? 4 * (pointsInsideCircle.value / totalPoints.value) : 0;
   piHistory.push(currentPi.value);
@@ -398,7 +244,8 @@ function updateConvergenceCurve() {
 
       if (i === 0) {
         curveCtx.moveTo(x, y);
-      } else {
+      }
+      else {
         curveCtx.lineTo(x, y);
       }
     }
@@ -415,7 +262,8 @@ function updateConvergenceCurve() {
 
 // 动画循环
 function animate() {
-  if (!isRunning.value) return;
+  if (!isRunning.value)
+    return;
 
   const pointsPerFrame = Math.max(1, Math.floor(speed.value / 10));
 
@@ -481,6 +329,176 @@ watch(pointSize, () => {
   // 点大小改变时不需要重绘所有点，只影响新点
 });
 </script>
+
+<template>
+  <ExperimentBoard :layout="1" :panel-size="70">
+    <template #experiment>
+      <div class="w-full h-full p-5 overflow-hidden">
+        <!-- 可视化展示 - 强制两列布局 -->
+        <div class="grid grid-cols-2 gap-4 h-full">
+          <!-- 左侧：随机点分布图 -->
+          <div class="bg-white/90 rounded-xl p-4 shadow-lg flex flex-col h-full">
+            <h2 class="text-lg font-semibold text-blue-700 pb-2 mb-3 border-b-2 border-blue-500 text-center flex-shrink-0">
+              随机点分布
+            </h2>
+            <div class="relative bg-gray-50 rounded border border-gray-200 overflow-hidden flex-grow flex items-center justify-center">
+              <canvas ref="scatterCanvas" width="500" height="500" class="max-w-full max-h-full w-auto h-auto block" />
+            </div>
+
+            <!-- 统计数据 -->
+            <div class="grid grid-cols-2 gap-3 mt-3 flex-shrink-0">
+              <div class="bg-white/90 rounded-lg p-3 text-center transition-all duration-300 shadow hover:transform hover:-translate-y-0.5 hover:shadow-lg">
+                <div class="text-sm text-blue-600">
+                  总点数
+                </div>
+                <div class="text-2xl font-bold text-red-500 mt-1">
+                  {{ totalPoints.toLocaleString() }}
+                </div>
+              </div>
+              <div class="bg-white/90 rounded-lg p-3 text-center transition-all duration-300 shadow hover:transform hover:-translate-y-0.5 hover:shadow-lg">
+                <div class="text-sm text-blue-600">
+                  圆内点数
+                </div>
+                <div class="text-2xl font-bold text-red-500 mt-1">
+                  {{ pointsInsideCircle.toLocaleString() }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 右侧：π值收敛曲线 -->
+          <div class="bg-white/90 rounded-xl p-4 shadow-lg flex flex-col h-full">
+            <h2 class="text-lg font-semibold text-blue-700 pb-2 mb-3 border-b-2 border-blue-500 text-center flex-shrink-0">
+              π值收敛曲线
+            </h2>
+            <div class="relative bg-gray-50 rounded border border-gray-200 overflow-hidden flex-grow flex items-center justify-center">
+              <canvas ref="curveCanvas" width="500" height="500" class="max-w-full max-h-full w-auto h-auto block" />
+            </div>
+
+            <!-- π值显示 -->
+            <div class="grid grid-cols-2 gap-3 mt-3 flex-shrink-0">
+              <div class="bg-white/90 rounded-lg p-3 text-center transition-all duration-300 shadow hover:transform hover:-translate-y-0.5 hover:shadow-lg">
+                <div class="text-sm text-blue-600">
+                  当前估算π值
+                </div>
+                <div class="text-2xl font-bold text-yellow-500 mt-1" style="text-shadow: 0 0 10px rgba(255, 234, 0, 0.5);">
+                  {{ currentPi.toFixed(6) }}
+                </div>
+              </div>
+              <div class="bg-white/90 rounded-lg p-3 text-center transition-all duration-300 shadow hover:transform hover:-translate-y-0.5 hover:shadow-lg">
+                <div class="text-sm text-blue-600">
+                  真实π值
+                </div>
+                <div class="text-2xl font-bold text-red-500 mt-1">
+                  3.1415927
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <template #parameter>
+      <div class="w-full h-full p-5 overflow-hidden flex items-center">
+        <div class="w-full">
+          <h3 class="text-lg font-semibold text-blue-700 pb-2 mb-4 border-b-2 border-blue-500">
+            模拟参数控制
+          </h3>
+
+          <!-- 点生成速度 -->
+          <div class="flex items-center my-4">
+            <label class="w-32 font-semibold text-sm flex-shrink-0">点生成速度:</label>
+            <input
+              v-model.number="speed"
+              type="range"
+              min="1"
+              max="100"
+              step="1"
+              class="flex-1 mx-1.5"
+            >
+            <span class="w-[80px] px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm whitespace-normal break-words">{{ speed }} 点/帧</span>
+          </div>
+
+          <!-- 点大小 -->
+          <div class="flex items-center my-4">
+            <label class="w-32 font-semibold text-sm flex-shrink-0">点大小:</label>
+            <input
+              v-model.number="pointSize"
+              type="range"
+              min="1"
+              max="5"
+              step="1"
+              class="flex-1 mx-1.5"
+            >
+            <span class="w-[80px] px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm whitespace-normal break-words">{{ pointSize }} 像素</span>
+          </div>
+
+          <!-- 批量生成 -->
+          <div class="flex items-center my-4">
+            <label class="w-32 font-semibold text-sm flex-shrink-0">批量生成:</label>
+            <input
+              v-model.number="batchSizeIndex"
+              type="range"
+              min="0"
+              max="4"
+              step="1"
+              class="flex-1 mx-1.5"
+            >
+            <span class="w-[80px] px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm whitespace-normal break-words">{{ batchSizes[batchSizeIndex].toLocaleString() }} 点/批</span>
+          </div>
+
+          <!-- 操作按钮 -->
+          <div class="grid grid-cols-2 gap-4 my-5">
+            <button
+              class="py-3 px-5 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white border-0 rounded-lg cursor-pointer font-bold text-base transition-all duration-300 hover:transform hover:-translate-y-0.5 hover:shadow-lg"
+              @click="startSimulation"
+            >
+              {{ isRunning ? '运行中...' : '开始模拟' }}
+            </button>
+            <button
+              class="py-3 px-5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white border-0 rounded-lg cursor-pointer font-bold text-base transition-all duration-300 hover:transform hover:-translate-y-0.5 hover:shadow-lg"
+              @click="pauseSimulation"
+            >
+              暂停
+            </button>
+            <button
+              class="py-3 px-5 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white border-0 rounded-lg cursor-pointer font-bold text-base transition-all duration-300 hover:transform hover:-translate-y-0.5 hover:shadow-lg"
+              @click="resetSimulation"
+            >
+              重置
+            </button>
+            <button
+              class="py-3 px-5 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white border-0 rounded-lg cursor-pointer font-bold text-base transition-all duration-300 hover:transform hover:-translate-y-0.5 hover:shadow-lg"
+              @click="batchGenerate"
+            >
+              批量生成
+            </button>
+          </div>
+
+          <div class="mt-5 p-4 bg-blue-50 rounded-xl text-sm">
+            <p class="mb-2 leading-relaxed">
+              <span class="font-bold text-red-500">蒙特卡罗方法</span>：通过在正方形内随机投点，统计落在内切圆中的点数比例来估算π值。
+            </p>
+            <p class="leading-relaxed">
+              理论依据：圆面积/正方形面积 = πr²/(2r)² = π/4，因此 <span class="font-bold text-red-500">π ≈ 4 × (圆内点数/总点数)</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <template #conclusion>
+      <div class="w-full h-full p-5 overflow-auto">
+        <div class="prose-sm max-w-full" v-html="toMarkdown(content)" />
+      </div>
+    </template>
+
+    <template #comment>
+      <CommentPanel exp-id="pi-estimation" />
+    </template>
+  </ExperimentBoard>
+</template>
 
 <style scoped>
 canvas {

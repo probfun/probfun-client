@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import type { Chat } from '@/api/ai/aiType';
+import { Ellipsis, Plus } from 'lucide-vue-next';
+import { ref, watch } from 'vue';
+
 import AiQuestions from '@/components/ai/AiQuestions.vue';
 import {
   AlertDialog,
@@ -11,7 +14,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-
 import { Button } from '@/components/ui/button';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -22,15 +24,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { useAiStore } from '@/store';
-import { Ellipsis, Plus } from 'lucide-vue-next';
-import { ref, watch } from 'vue';
 
-defineProps < {
-  disabled: boolean
+defineProps <{
+  disabled: boolean;
 }>();
 
 const emit = defineEmits<{
-  send: [question: string]
+  send: [question: string];
 }>();
 
 const isOpen = ref(false);

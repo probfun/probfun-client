@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import type { Ref } from 'vue';
+import { GraduationCap, Lightbulb, MessagesSquare } from 'lucide-vue-next';
+import { onMounted, ref, watch } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input'
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Slider } from '@/components/ui/slider'
+import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
 import { toMarkdown } from '@/utils/markdown';
-import { GraduationCap, Lightbulb, MessagesSquare } from 'lucide-vue-next';
-import { onMounted, ref, watch } from 'vue';
 
 const gameState = ref<'End' | 'Select' | 'Reveal' | 'Win' | 'Lose'>('End');
 class Door {
@@ -32,11 +32,11 @@ class Door {
     if (this.open.value || gameState.value !== 'Select')
       return;
     Door.selectedDoor.value = this.selected.value ? null : this;
-  }
+  };
 
   openDoor = () => {
     this.open.value = true;
-  }
+  };
 }
 
 let correctDoor = 0;
@@ -207,7 +207,7 @@ watch([changeWinNum, changeLoseNum, notChangeWinNum, notChangeLoseNum], () => {
 
 onMounted(() => {
   chartDataC.value = setdataC();
-  chartDataNC.value = setdataNC()
+  chartDataNC.value = setdataNC();
 });
 
 const options = ref({
@@ -325,7 +325,7 @@ $$
 
 ### **结论**
 综上所述,我们可以得到在假设最初选择A门,主持人打开B门的前提下,汽车在C门的概率最高,概率为2/3.故此时参赛者应该选择换成C门.
-`
+`;
 
 const explanationContent = `
 `;

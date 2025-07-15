@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import type { Message } from '@/api/message/messageType';
 import type { User } from '@/api/user/userType';
+import { Bell, Plus, Star } from 'lucide-vue-next';
+import { onMounted, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { fetchFavoriteExperimentsApi, toggleFavoriteApi } from '@/api/experiment/experimentApi.ts';
 import { fetchMessagesApi, readMessagesApi } from '@/api/message/messageApi';
 import { putUserApi, putUserAvatarApi, updatePasswordApi } from '@/api/user/userApi';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button'
+
+import { Button } from '@/components/ui/button';
+
 import {
   Dialog,
   DialogClose,
@@ -16,6 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+
 import {
   FormControl,
   FormField,
@@ -24,26 +30,20 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 
-import { Label } from '@/components/ui/label'
+import { Label } from '@/components/ui/label';
 
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover'
-
+} from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
-
-import { useUserStore } from '@/store'
-
+import { useUserStore } from '@/store';
 import { isVisitor } from '@/utils/auth.ts';
 import { error, success, warning } from '@/utils/toast';
-import { Bell, Plus, Star } from 'lucide-vue-next'
-import { onMounted, ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
 
 const userStore = useUserStore();
-const router = useRouter()
+const router = useRouter();
 
 const isLoading = ref(false);
 const tempUser = ref<User | null>(null);
@@ -258,7 +258,7 @@ onMounted(() => {
   if (!isVisitor()) {
     getMessage();
   }
-})
+});
 
 watch(() => route.path, () => {
   updateExperiment();

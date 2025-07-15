@@ -1,5 +1,17 @@
 <script setup lang="ts">
+import type { Class, ClickCount, CommentCount, FavoriteCount, Post, Time } from '@/api/class/classType';
+import type { Comment } from '@/api/comment/commentType';
+import Chart from 'primevue/chart';
+import Column from 'primevue/column';
+import DataTable from 'primevue/datatable';
+import Dialog from 'primevue/dialog';
+import Panel from 'primevue/panel';
+import Select from 'primevue/select';
+import Textarea from 'primevue/textarea';
+import { useToast } from 'primevue/usetoast';
+import { onMounted, ref, watch } from 'vue';
 import { fetchClassListApi, fetchPostApi, postPostApi } from '@/api/class/classApi';
+import { fetchClickCountApi, fetchCommentCountApi, fetchCommentsApi, fetchFavoriteCountApi, fetchTimeApi } from '@/api/class/teacher/teacherApi';
 import {
   Accordion,
   AccordionContent,
@@ -7,24 +19,12 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { useUserStore } from '@/store'
-import Column from 'primevue/column';
-import DataTable from 'primevue/datatable';
-import Dialog from 'primevue/dialog';
-import Chart from 'primevue/chart';
-import Panel from 'primevue/panel';
-import Select from 'primevue/select';
-import Textarea from 'primevue/textarea';
-import { useToast } from 'primevue/usetoast';
-import { onMounted, ref, watch } from 'vue';
-import { fetchCommentsApi, fetchClickCountApi, fetchCommentCountApi, fetchFavoriteCountApi, fetchTimeApi } from '@/api/class/teacher/teacherApi';
-import { Comment } from '@/api/comment/commentType';
-import type { Post, Class, ClickCount, CommentCount, FavoriteCount, Time } from '@/api/class/classType'
+import { useUserStore } from '@/store';
 
 const userStore = useUserStore();
-const defaultValue = 'item-1'
+const defaultValue = 'item-1';
 const products = ref([
   {
     expName: '正态分布',
@@ -73,7 +73,7 @@ const click = ref([
     expName: '贝特朗悖论',
     times: 7,
   },
-])
+]);
 const browse = ref([
   {
     expName: '正态分布',
@@ -91,7 +91,7 @@ const browse = ref([
     expName: '贝特朗悖论',
     time: 7,
   },
-])
+]);
 const comment = ref([
   {
     expName: '正态分布',
@@ -109,7 +109,7 @@ const comment = ref([
     expName: '贝特朗悖论',
     times: 7,
   },
-])
+]);
 const star = ref([
   {
     expName: '正态分布',
@@ -127,7 +127,7 @@ const star = ref([
     expName: '贝特朗悖论',
     times: 7,
   },
-])
+]);
 
 const visible = ref(false);
 const isTablet = ref(true);
@@ -199,13 +199,13 @@ async function getComments() {
     const result = await fetchCommentsApi(selectedClass.value.id, 'ALL_TIME');
     commentList.value = result.comments;
     console.log('pinglun', commentList.value);
-    commentList.value.forEach(comment => {
+    commentList.value.forEach((comment) => {
       products.value.push({
         expName: comment.expId,
         name: comment.user.nickname,
         studentID: comment.user.studentId,
         time: comment.timestamp,
-        comment: comment.content
+        comment: comment.content,
       });
     });
   }
@@ -219,11 +219,11 @@ async function getClickCount() {
     const result = await fetchClickCountApi(selectedClass.value.id, 'ALL_TIME');
     clickList.value = result.clicks;
     console.log('dianji', clickList.value);
-    clickList.value.forEach(clickCount => {
+    clickList.value.forEach((clickCount) => {
       click.value.push({
         expName: clickCount.experiment.expName,
-        times: clickCount.clickCount
-      })
+        times: clickCount.clickCount,
+      });
     });
   }
   catch (error) {
@@ -235,12 +235,12 @@ async function getFavoriteCount() {
     const result = await fetchFavoriteCountApi(selectedClass.value.id, 'ALL_TIME');
     favoriteList.value = result.favorites;
     console.log('shoucang', favoriteList.value);
-    favoriteList.value.forEach(favoriteCount => {
+    favoriteList.value.forEach((favoriteCount) => {
       star.value.push({
         expName: favoriteCount.experiment.expName,
-        times: favoriteCount.favoriteCount
-      })
-    })
+        times: favoriteCount.favoriteCount,
+      });
+    });
   }
   catch (error) {
     console.error('Error during fetching favorite count:', error);
@@ -251,12 +251,12 @@ async function getTime() {
     const result = await fetchTimeApi(selectedClass.value.id, 'ALL_TIME');
     timeList.value = result.times;
     console.log('liulan', timeList.value);
-    timeList.value.forEach(time => {
+    timeList.value.forEach((time) => {
       browse.value.push({
         expName: time.experiment.expName,
-        time: time.time
-      })
-    })
+        time: time.time,
+      });
+    });
   }
   catch (error) {
     console.error('Error during fetching time:', error);
@@ -267,12 +267,12 @@ async function getCommentCount() {
     const result = await fetchCommentCountApi(selectedClass.value.id, 'ALL_TIME');
     commentCountList.value = result.comments;
     console.log('pinglunshu', commentCountList.value);
-    commentCountList.value.forEach(comments => {
+    commentCountList.value.forEach((comments) => {
       comment.value.push({
         expName: comments.experiment.expName,
-        times: comments.commentCount
-      })
-    })
+        times: comments.commentCount,
+      });
+    });
   }
   catch (error) {
     console.error('Error during fetching comment count:', error);
@@ -287,11 +287,19 @@ onMounted(async () => {
   await getFavoriteCount();
   await getTime();
   await getCommentCount();
-})
+});
 watch([selectedClass], () => {
   getPost();
-})
+});
 
+const chartDataClick = ref();
+const chartDataBrowse = ref();
+const chartDataComment = ref();
+const chartDataStar = ref();
+const chartOptionsClick = ref();
+const chartOptionsBrowse = ref();
+const chartOptionsComment = ref();
+const chartOptionsStar = ref();
 
 onMounted(() => {
   chartDataClick.value = setChartDataClick();
@@ -304,24 +312,14 @@ onMounted(() => {
   chartOptionsStar.value = setChartOptionsStar();
 });
 
-const chartDataClick = ref();
-const chartDataBrowse = ref();
-const chartDataComment = ref();
-const chartDataStar = ref();
-const chartOptionsClick = ref();
-const chartOptionsBrowse = ref();
-const chartOptionsComment = ref();
-const chartOptionsStar = ref();
-
-
-const generateRandomColor = (alpha = 0.7) => {
+function generateRandomColor(alpha = 0.7) {
   const r = Math.floor(Math.random() * 256);
   const g = Math.floor(Math.random() * 256);
   const b = Math.floor(Math.random() * 256);
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-};
+}
 
-const setChartDataClick = () => {
+function setChartDataClick() {
   return {
     labels: click.value.map(item => item.expName),
     datasets: [
@@ -330,12 +328,12 @@ const setChartDataClick = () => {
         data: click.value.map(item => item.times),
         backgroundColor: 'rgba(54, 162, 235, 0.2)',
         borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1
-      }
-    ]
+        borderWidth: 1,
+      },
+    ],
   };
-};
-const setChartOptionsClick = () => {
+}
+function setChartOptionsClick() {
   const documentStyle = getComputedStyle(document.documentElement);
   const textColor = documentStyle.getPropertyValue('--p-text-color');
   const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
@@ -345,34 +343,34 @@ const setChartOptionsClick = () => {
     plugins: {
       legend: {
         labels: {
-          color: textColor
-        }
-      }
+          color: textColor,
+        },
+      },
     },
     scales: {
       x: {
         ticks: {
-          color: textColorSecondary
+          color: textColorSecondary,
         },
         grid: {
-          color: surfaceBorder
-        }
+          color: surfaceBorder,
+        },
       },
       y: {
         beginAtZero: true,
         ticks: {
-          color: textColorSecondary
+          color: textColorSecondary,
         },
         grid: {
-          color: surfaceBorder
-        }
-      }
-    }
+          color: surfaceBorder,
+        },
+      },
+    },
   };
 }
 
-const setChartDataStar = () => {
-  const documentStyle = getComputedStyle(document.body);
+function setChartDataStar() {
+  // const documentStyle = getComputedStyle(document.body);
 
   return {
     labels: browse.value.map(item => item.expName),
@@ -380,11 +378,11 @@ const setChartDataStar = () => {
       {
         data: browse.value.map(item => item.time),
         backgroundColor: browse.value.map(() => generateRandomColor(0.7)), // 随机生成背景颜色
-      }
-    ]
+      },
+    ],
   };
 }
-const setChartOptionsStar = () => {
+function setChartOptionsStar() {
   const documentStyle = getComputedStyle(document.documentElement);
   const textColor = documentStyle.getPropertyValue('--p-text-color');
 
@@ -393,27 +391,27 @@ const setChartOptionsStar = () => {
       legend: {
         labels: {
           usePointStyle: true,
-          color: textColor
-        }
-      }
-    }
+          color: textColor,
+        },
+      },
+    },
   };
 }
 
-const setChartDataComment = () => {
-  const documentStyle = getComputedStyle(document.body);
+function setChartDataComment() {
+  // const documentStyle = getComputedStyle(document.body);
   return {
     labels: comment.value.map(item => item.expName),
     datasets: [
       {
         data: comment.value.map(item => item.times),
         backgroundColor: browse.value.map(() => generateRandomColor(0.7)), // 随机生成背景颜色
-      }
-    ]
+      },
+    ],
   };
 }
 
-const setChartOptionsComment = () => {
+function setChartOptionsComment() {
   const documentStyle = getComputedStyle(document.documentElement);
   const textColor = documentStyle.getPropertyValue('--p-text-color');
 
@@ -422,14 +420,14 @@ const setChartOptionsComment = () => {
       legend: {
         labels: {
           cutout: '60%',
-          color: textColor
-        }
-      }
-    }
+          color: textColor,
+        },
+      },
+    },
   };
 }
 
-const setChartDataBrowse = () => {
+function setChartDataBrowse() {
   const documentStyle = getComputedStyle(document.documentElement);
 
   return {
@@ -440,12 +438,12 @@ const setChartDataBrowse = () => {
         data: star.value.map(item => item.times),
         fill: false,
         borderColor: documentStyle.getPropertyValue('--p-cyan-500'),
-        tension: 0.6
+        tension: 0.6,
       },
-    ]
+    ],
   };
 }
-const setChartOptionsBrowse = () => {
+function setChartOptionsBrowse() {
   const documentStyle = getComputedStyle(document.documentElement);
   const textColor = documentStyle.getPropertyValue('--p-text-color');
   const textColorSecondary = documentStyle.getPropertyValue('--p-text-muted-color');
@@ -455,29 +453,29 @@ const setChartOptionsBrowse = () => {
     plugins: {
       legend: {
         labels: {
-          color: textColor
-        }
-      }
+          color: textColor,
+        },
+      },
     },
     scales: {
       x: {
         ticks: {
-          color: textColorSecondary
+          color: textColorSecondary,
         },
         grid: {
-          color: surfaceBorder
-        }
+          color: surfaceBorder,
+        },
       },
       y: {
         beginAtZero: true,
         ticks: {
-          color: textColorSecondary
+          color: textColorSecondary,
         },
         grid: {
-          color: surfaceBorder
-        }
-      }
-    }
+          color: surfaceBorder,
+        },
+      },
+    },
   };
 }
 </script>
@@ -488,8 +486,10 @@ const setChartOptionsBrowse = () => {
       <div class="flex mb-[-10px]">
         <span class="text-lg font-bold">2024年秋季学期</span>
         <div class="ml-auto">
-          <Select v-model="selectedClass" :options="classes" option-label="name" filter placeholder="请选择班级"
-            class="w-full md:w-56" />
+          <Select
+            v-model="selectedClass" :options="classes" option-label="name" filter placeholder="请选择班级"
+            class="w-full md:w-56"
+          />
         </div>
       </div>
       <div class="flex my-5 items-center">
@@ -533,7 +533,6 @@ const setChartOptionsBrowse = () => {
           <Column field="studentID" header="学工号" />
           <Column field="time" header="评论时间" />
           <Column field="comment" header="评论内容" />
-
         </DataTable>
       </Panel>
       <Dialog v-model:visible="visible" modal header="发布班级公告" :style="{ width: '50rem' }">
@@ -555,9 +554,15 @@ const setChartOptionsBrowse = () => {
     <Separator orientation="vertical" />
     <div class="flex flex-col flex-1 w-1/2 p-3 overflow-auto">
       <div class="flex items-center gap-5 mb-4">
-        <h2 class="text-lg font-semibold">数据展示与分析</h2>
-        <Button label="Show" v-if="isTablet" @click="toggleTable()">点击切换图展示</Button>
-        <Button label="Show" v-else @click="toggleTable()">点击切换表展示</Button>
+        <h2 class="text-lg font-semibold">
+          数据展示与分析
+        </h2>
+        <Button v-if="isTablet" label="Show" @click="toggleTable()">
+          点击切换图展示
+        </Button>
+        <Button v-else label="Show" @click="toggleTable()">
+          点击切换表展示
+        </Button>
       </div>
       <div v-if="isTablet" class="h-full">
         <div class="flex my-2">
@@ -607,9 +612,6 @@ const setChartOptionsBrowse = () => {
           </Panel>
         </div>
       </div>
-
     </div>
-
   </div>
-
 </template>

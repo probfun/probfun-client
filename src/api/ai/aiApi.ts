@@ -98,7 +98,7 @@ export async function aiApi(
         websocket?.close();
       }
       receive(data);
-    }
+    };
   }
   catch (e) {
     error('连接发生错误：');
@@ -109,16 +109,16 @@ export async function aiApi(
 
 export async function generateTitleApi(messages: ChatMessage[]) {
   return await postRaw<{
-    title: string
+    title: string;
   }>('/ai/title', { messages });
 }
 
 export async function generateDistributionFunctionApi(distribution: string) {
   return await postRaw<{
-    function: string
-    latex: string
-    min: number
-    max: number
+    function: string;
+    latex: string;
+    min: number;
+    max: number;
   }>('/ai/distribution_function', { distribution }, {
     timeout: 20000,
   });

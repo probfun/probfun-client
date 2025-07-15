@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import type { ChildComment, Comment } from '@/api/comment/commentType';
-import { likeCommentApi } from '@/api/comment/commentApi';
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
-import { useUserStore } from '@/store';
 import { vAutoAnimate } from '@formkit/auto-animate';
 import { Heart, MessageCircle, Trash2 } from 'lucide-vue-next';
 import { format } from 'timeago.js';
 import { ref } from 'vue';
+import { likeCommentApi } from '@/api/comment/commentApi';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
+import { useUserStore } from '@/store';
 
 const emit = defineEmits<{
-  reply: [Comment]
-  delete: [Comment]
+  reply: [Comment];
+  delete: [Comment];
 }>();
 
 const comment = defineModel<ChildComment>();

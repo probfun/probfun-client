@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { Ref } from 'vue';
 import type { ThreeDoorsArgs } from '@/api/ai/aiType';
+import { onMounted, ref, watch } from 'vue';
 import { Button } from '@/components/ui/button';
-import { onMounted, type Ref, ref, watch } from 'vue';
 
 const props = defineProps<{ args: ThreeDoorsArgs }>();
 
@@ -33,11 +34,11 @@ class Door {
     if (this.open.value || gameState.value !== 'Select')
       return;
     Door.selectedDoor.value = this.selected.value ? null : this;
-  }
+  };
 
   openDoor = () => {
     this.open.value = true;
-  }
+  };
 }
 
 let correctDoor = 0;

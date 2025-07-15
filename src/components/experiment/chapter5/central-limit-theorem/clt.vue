@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import CommentPanel from '@/components/comment/CommentPanel.vue';
-import { Button } from '@/components/ui/button';
-import { CardContent } from '@/components/ui/card';
-import { renderLatex, toMarkdown } from '@/utils/markdown';
 import Chart from 'primevue/chart';
 import InputNumber from 'primevue/inputnumber';
 import Slider from 'primevue/slider';
 import { onMounted, ref, watch } from 'vue';
+import CommentPanel from '@/components/comment/CommentPanel.vue';
+import { Button } from '@/components/ui/button';
+import { CardContent } from '@/components/ui/card';
+import { renderLatex, toMarkdown } from '@/utils/markdown';
 import ExperimentBoard from '../../ExperimentBoard.vue';
 
 const n = ref(3); // 框的数量
@@ -172,7 +172,7 @@ function drawBoard() {
           ctx.lineWidth = 1;
           ctx.stroke();
         }
-        path.value = []
+        path.value = [];
       }
       else if (n.value === 9) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -263,7 +263,7 @@ function drawBoard() {
           ctx.lineWidth = 1;
           ctx.stroke();
         }
-        path.value = []
+        path.value = [];
       }
       else if (n.value >= 3 && n.value <= 7) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -354,14 +354,14 @@ function drawBoard() {
           ctx.lineWidth = 1;
           ctx.stroke();
         }
-        path.value = []
+        path.value = [];
       }
     }
   }
 }
 
 async function startSimulation() {
-  isSimulating = true
+  isSimulating = true;
   binCounts.value = Array.from({ length: n.value }).fill(0) as number[];
   for (let i = 0; i < ball.value; i++) {
     if (!isSimulating) {
@@ -373,7 +373,7 @@ async function startSimulation() {
       const prob = Math.random();
       if (prob < 0.5) {
         position -= 1;
-        path.value.push(-1)
+        path.value.push(-1);
       }
       else {
         position += 1;
@@ -429,7 +429,7 @@ $$
 
 当钉板的排数 n 足够大时，根据中心极限定理，二项分布可以近似为正态分布：$$N(\\mu,\\sigma^2)。$$
 其中均值 $$μ=np$$，方差 $$\\sigma^2=np(1-p)$$。
-`
+`;
 </script>
 
 <template>
@@ -481,7 +481,7 @@ $$
                 <div class="flex flex-1 items-center justify-center">
                   <div class="whitespace-nowrap" v-html="renderLatex('框的数量 = ')" />
                   <div class="flex flex-col items-center justify-center w-2/3 space-y-1 ml-2">
-                    <InputNumber v-model="n" fluid placeholder="3~15"/>
+                    <InputNumber v-model="n" fluid placeholder="3~15" />
                     <Slider v-model="n" :min="3" :max="15" :step="2" class="w-full" />
                   </div>
                 </div>
@@ -491,7 +491,7 @@ $$
                 <div class="flex flex-1 items-center justify-center">
                   <div v-html="renderLatex('球的数量 = ')" />
                   <div class="flex flex-col items-center justify-center w-2/3 space-y-1 ml-2">
-                    <InputNumber v-model="ball" fluid placeholder="5~5000"/>
+                    <InputNumber v-model="ball" fluid placeholder="5~5000" />
                     <Slider v-model="ball" :min="5" :max="5000" :step="5" class="w-full" />
                   </div>
                 </div>
@@ -499,10 +499,9 @@ $$
               <div class="flex flex-1 items-center justify-center font-bold">
                 <div class="flex flex-1 items-center justify-center">
                   <div v-html="renderLatex('注：球的数量大于50时不予展示每个小球下落的路径')" />
-                 
                 </div>
               </div>
-           
+
               <!-- <div class="flex flex-col gap-8 pb-0">
                 <div class="flex flex-col md:w-full w-1/2 flex-1 items-center justify-center space-y-1">
                   <div v-html="renderLatex('球的数量(大于50时不予展示每个小球下落的路径)')" />

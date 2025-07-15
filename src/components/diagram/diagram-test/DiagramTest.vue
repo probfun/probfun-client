@@ -1,52 +1,52 @@
 <script setup>
-import { Background } from '@vue-flow/background'
-import { Panel, useVueFlow, VueFlow } from '@vue-flow/core'
-import { nextTick, ref } from 'vue'
-import AnimationEdge from './AnimationEdge.vue'
-import Icon from './Icon.vue'
-import { initialEdges, initialNodes } from './initial-elements.ts'
+import { Background } from '@vue-flow/background';
+import { Panel, useVueFlow, VueFlow } from '@vue-flow/core';
+import { nextTick, ref } from 'vue';
+import AnimationEdge from './AnimationEdge.vue';
+import Icon from './Icon.vue';
+import { initialEdges, initialNodes } from './initial-elements.ts';
 
-import ProcessNode from './ProcessNode.vue'
-import { useLayout } from './useLayout'
-import { useRunProcess } from './useRunProcess'
+import ProcessNode from './ProcessNode.vue';
+import { useLayout } from './useLayout';
+import { useRunProcess } from './useRunProcess';
 // import { useShuffle } from './useShuffle'
 
-const nodes = ref(initialNodes)
+const nodes = ref(initialNodes);
 
-const edges = ref(initialEdges)
+const edges = ref(initialEdges);
 
-const cancelOnError = ref(true)
+const cancelOnError = ref(true);
 
 // const shuffle = useShuffle()
 
-const { graph, layout, previousDirection } = useLayout()
+const { graph, layout, previousDirection } = useLayout();
 
-const { run, stop, reset, isRunning } = useRunProcess({ graph, cancelOnError })
+const { run, stop, reset, isRunning } = useRunProcess({ graph, cancelOnError });
 
-const { fitView } = useVueFlow()
+const { fitView } = useVueFlow();
 
 async function shuffleGraph() {
-  await stop()
+  await stop();
 
-  reset(nodes.value)
+  reset(nodes.value);
 
   // edges.value = shuffle(nodes.value)
 
   nextTick(() => {
-    layoutGraph(previousDirection.value)
-  })
+    layoutGraph(previousDirection.value);
+  });
 }
 
 async function layoutGraph(direction) {
-  await stop()
+  await stop();
 
-  reset(nodes.value)
+  reset(nodes.value);
 
-  nodes.value = layout(nodes.value, edges.value, direction)
+  nodes.value = layout(nodes.value, edges.value, direction);
 
   nextTick(() => {
-    fitView()
-  })
+    fitView();
+  });
 }
 </script>
 

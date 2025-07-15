@@ -36,4 +36,4 @@ function renderLatex(text: string) {
 export {
   renderLatex,
   toMarkdown,
-}
+};

@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import katex from 'katex';
+import { computed, onMounted, ref, watch } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toMarkdown } from '@/utils/markdown';
-import katex from 'katex';
-import { computed, onMounted, ref, watch } from 'vue'
 import UniformDiagram from './UniformDiagram.vue';
 import 'katex/dist/katex.min.css';
 
@@ -123,7 +123,7 @@ $$
 - **1. 均匀性**：均匀分布中的每个数值或区间的每个子区间都有相同的概率。
 - **2. 独立性**：每个子区间的概率只与子区间的长度成正比。
 - **3. 简单性**：均匀分布是最简单的一种概率分布，特别是在没有任何其他信息时常被用作模型。
-`
+`;
 </script>
 
 <template>

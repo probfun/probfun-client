@@ -2,12 +2,12 @@
 import { onMounted, ref, watch } from 'vue';
 
 const props = defineProps<{
-  p: number
-  n: number
-  isChart1: boolean
-  isChart2: boolean
-  isChart3: boolean
-  save: boolean
+  p: number;
+  n: number;
+  isChart1: boolean;
+  isChart2: boolean;
+  isChart3: boolean;
+  save: boolean;
 }>();
 
 declare const Desmos: any;
@@ -47,15 +47,14 @@ function drawDistributions() {
 
   // 创建离散点
   const createPoints = (fn: (x: number) => number, maxX: number) => {
-    return Array.from({ length: maxX + 1 }, (_, k) => 
-      `(${k}, ${fn(k).toFixed(4)})`
-    ).join(', ');
+    return Array.from({ length: maxX + 1 }, (_, k) =>
+      `(${k}, ${fn(k).toFixed(4)})`).join(', ');
   };
 
   // 几何分布1的点
   const pointsOne = {
     id: 'points_one',
-    latex: `[${createPoints((x) => Math.pow(1 - props.p, x - 1) * props.p, 10)}]`,
+    latex: `[${createPoints(x => (1 - props.p) ** (x - 1) * props.p, 10)}]`,
     color: Desmos.Colors.BLUE,
     pointSize: 12,
     lineWidth: 4.5,
@@ -64,7 +63,7 @@ function drawDistributions() {
   // 几何分布2的点
   const pointsTwo = {
     id: 'points_two',
-    latex: `[${createPoints((x) => Math.pow(1 - props.p, x) * props.p, 10)}]`,
+    latex: `[${createPoints(x => (1 - props.p) ** x * props.p, 10)}]`,
     color: Desmos.Colors.BLUE,
     pointSize: 12,
     lineWidth: 4.5,
@@ -73,7 +72,7 @@ function drawDistributions() {
   // 几何分布3的点
   const pointsThree = {
     id: 'points_three',
-    latex: `[${createPoints((x) => Math.pow(1 - props.p, x), 10)}]`,
+    latex: `[${createPoints(x => (1 - props.p) ** x, 10)}]`,
     color: Desmos.Colors.BLUE,
     pointSize: 12,
     lineWidth: 4.5,
@@ -82,7 +81,7 @@ function drawDistributions() {
   // 几何分布N的点
   const pointsFour = {
     id: 'points_four',
-    latex: `[${createPoints((x) => Math.pow(1 - props.p, x + props.n), 10)}]`,
+    latex: `[${createPoints(x => (1 - props.p) ** (x + props.n), 10)}]`,
     color: Desmos.Colors.RED,
     pointSize: 12,
     lineWidth: 4.5,
@@ -118,7 +117,7 @@ function drawDistributions() {
     color: Desmos.Colors.RED,
     pointSize: 12,
     lineWidth: 4.5,
-  }
+  };
 
   const geometricX = {
     id: 'five',
@@ -127,7 +126,7 @@ function drawDistributions() {
     lineStyle: Desmos.Styles.DASHED,
     pointSize: 12,
     lineWidth: 4.5,
-  }
+  };
 
   if (props.isChart1) {
     if (props.save) {

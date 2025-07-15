@@ -1,51 +1,9 @@
-<template>
-  <ExperimentBoard :panel-size="100" :discuss-tab-list="discussTabList">
-    <template #experiment>
-      <h1>Brownian Motion Simulation</h1>
-
-      <div class="slider-container">
-        <label for="numPaths" class="slider-label">Number of Paths:</label>
-        <input type="range" id="numPaths" v-model.number="numPaths" min="1" max="20" step="1">
-        <span>{{ numPaths }}</span>
-      </div>
-
-      <div class="slider-container">
-        <label for="timeSteps" class="slider-label">Time Steps:</label>
-        <input type="range" id="timeSteps" v-model.number="timeSteps" min="10" max="500" step="10">
-        <span>{{ timeSteps }}</span>
-      </div>
-
-      <div class="slider-container">
-        <label for="totalTime" class="slider-label">Total Time:</label>
-        <input type="range" id="totalTime" v-model.number="totalTime" min="1" max="10" step="0.1">
-        <span>{{ totalTime }}</span>
-      </div>
-
-      <div class="slider-container">
-        <label for="volatility" class="slider-label">Volatility (σ):</label>
-        <input type="range" id="volatility" v-model.number="volatility" min="0.1" max="2" step="0.1">
-        <span>{{ volatility }}</span>
-      </div>
-
-      <div id="plot" style="width: 100%; height: 600px;"></div>
-    </template>
-    <template #conclusion>
-      <div class="w-full h-full p-5">
-        <div class="prose-sm max-w-full " v-html="toMarkdown(content)" />
-      </div>
-    </template>
-    <template #comment>
-      <CommentPanel exp-id="" />
-    </template>
-  </ExperimentBoard>
-</template>
-
 <script setup>
+import Plotly from 'plotly.js-dist';
+import { onMounted, ref, watch } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
-import { ref, onMounted, watch } from 'vue';
-import Plotly from 'plotly.js-dist';
-import { renderLatex, toMarkdown } from '@/utils/markdown';
+import { toMarkdown } from '@/utils/markdown';
 
 const numPaths = ref(5);
 const timeSteps = ref(100);
@@ -78,7 +36,7 @@ const content = ref(`
 * **科学研究：** 在物理、化学、生物学等领域，模拟分子扩散、粒子在细胞中的运动等。
 
 **简单来说，布朗运动模拟就是“粒子走一步，方向随机，再走一步，方向又随机……”然后记录下它走过的整个轨迹。**
-`)
+`);
 
 function generateBrownianMotion(numPaths, timeSteps, totalTime, volatility) {
   const paths = [];
@@ -94,7 +52,8 @@ function generateBrownianMotion(numPaths, timeSteps, totalTime, volatility) {
 }
 
 function randn() {
-  let u = 0, v = 0;
+  let u = 0;
+  let v = 0;
   while (u === 0) u = Math.random();
   while (v === 0) v = Math.random();
   return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
@@ -108,7 +67,7 @@ function updatePlot() {
     y: path,
     type: 'scatter',
     mode: 'lines',
-    name: `Path ${i + 1}`
+    name: `Path ${i + 1}`,
   }));
 
   const layout = {
@@ -116,7 +75,7 @@ function updatePlot() {
     xaxis: { title: 'Time' },
     yaxis: { title: 'Position' },
     showlegend: true,
-    margin: { l: 50, r: 50, b: 50, t: 50 }
+    margin: { l: 50, r: 50, b: 50, t: 50 },
   };
 
   Plotly.newPlot('plot', data, layout);
@@ -129,8 +88,49 @@ watch([numPaths, timeSteps, totalTime, volatility], () => {
 onMounted(() => {
   updatePlot();
 });
-
 </script>
+
+<template>
+  <ExperimentBoard :panel-size="100" :discuss-tab-list="discussTabList">
+    <template #experiment>
+      <h1>Brownian Motion Simulation</h1>
+
+      <div class="slider-container">
+        <label for="numPaths" class="slider-label">Number of Paths:</label>
+        <input id="numPaths" v-model.number="numPaths" type="range" min="1" max="20" step="1">
+        <span>{{ numPaths }}</span>
+      </div>
+
+      <div class="slider-container">
+        <label for="timeSteps" class="slider-label">Time Steps:</label>
+        <input id="timeSteps" v-model.number="timeSteps" type="range" min="10" max="500" step="10">
+        <span>{{ timeSteps }}</span>
+      </div>
+
+      <div class="slider-container">
+        <label for="totalTime" class="slider-label">Total Time:</label>
+        <input id="totalTime" v-model.number="totalTime" type="range" min="1" max="10" step="0.1">
+        <span>{{ totalTime }}</span>
+      </div>
+
+      <div class="slider-container">
+        <label for="volatility" class="slider-label">Volatility (σ):</label>
+        <input id="volatility" v-model.number="volatility" type="range" min="0.1" max="2" step="0.1">
+        <span>{{ volatility }}</span>
+      </div>
+
+      <div id="plot" style="width: 100%; height: 600px;" />
+    </template>
+    <template #conclusion>
+      <div class="w-full h-full p-5">
+        <div class="prose-sm max-w-full " v-html="toMarkdown(content)" />
+      </div>
+    </template>
+    <template #comment>
+      <CommentPanel exp-id="" />
+    </template>
+  </ExperimentBoard>
+</template>
 
 <style scoped>
 body {

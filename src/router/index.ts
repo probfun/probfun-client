@@ -1,5 +1,6 @@
+import { createRouter, createWebHistory } from 'vue-router';
 import AiPanel from '@/components/ai/AiPanel.vue';
-import Callback from '@/components/auth/Callback.vue'
+import Callback from '@/components/auth/Callback.vue';
 import CasLoginCard from '@/components/auth/CasLoginCard.vue';
 import LoginCard from '@/components/auth/LoginCard.vue';
 import RegisterCard from '@/components/auth/RegisterCard.vue';
@@ -15,17 +16,16 @@ import threeNormalDistribution from '@/components/experiment/chapter3/normal-dis
 import GeometricDistribution from '@/components/experiment/distribution/geometric-distribution/GeometricDistribution.vue';
 import NormalDistribution from '@/components/experiment/distribution/normal-distribution/NormalDistribution.vue';
 import PoissonDistribution from '@/components/experiment/distribution/poisson-distribution/PoissonDistribution.vue';
-import UniformDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
 
+import UniformDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
 import FavoritePanel from '@/components/favorite/FavoritePanel.vue';
 import HomePage from '@/components/home/HomePage.vue';
-import StudentPanel from '@/components/user/StudentPanel.vue';
 
+import StudentPanel from '@/components/user/StudentPanel.vue';
 import TeacherPanel from '@/components/user/TeacherPanel.vue';
 import AuthPage from '@/pages/AuthPage.vue';
 import DashBoard from '@/pages/DashBoard.vue';
 import { isVisitor } from '@/utils/auth.ts';
-import { createRouter, createWebHistory } from 'vue-router';
 
 const router = createRouter({
   history: createWebHistory(),

@@ -11,7 +11,7 @@ import { initialEdges, initialNodes } from './initial-elements.js';
 export default defineComponent({
   components: { VueFlow, Background, Controls, MiniMap, Icon },
   setup() {
-    const { onInit, setViewport, fitView, toObject } = useVueFlow();
+    const { _onInit, setViewport, _fitView, toObject } = useVueFlow();
     const nodes = ref(initialNodes);
     const edges = ref(initialEdges);
     const dark = ref(false);

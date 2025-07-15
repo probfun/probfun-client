@@ -1,6 +1,6 @@
-import { useToast } from '@/components/ui/toast/use-toast'
 import { CircleAlert, CircleCheck, CircleX, Info } from 'lucide-vue-next';
 import { h } from 'vue';
+import { useToast } from '@/components/ui/toast/use-toast';
 
 export function success(content: string) {
   const { toast } = useToast();

@@ -1,76 +1,8 @@
-<template>
-  <ExperimentBoard>
-    <template #experiment>
-      <div class="container">
-        <div id="result" v-if="result">
-          <h3>计算结果：</h3>
-          <p>欧式看涨期权价格：${{ result.callPrice }}</p>
-          <p>输入参数：</p>
-          <ul>
-            <li>标的资产价格 (S₀): ${{ result.S0 }}</li>
-            <li>执行价格 (K): ${{ result.K }}</li>
-            <li>无风险利率 (r): {{ result.r }}%</li>
-            <li>到期时间 (T): {{ result.T }} 年</li>
-            <li>波动率 (σ): {{ result.sigma }}%</li>
-            <li>股息率 (q): {{ result.q }}%</li>
-          </ul>
-        </div>
-      </div>
-    </template>
-    <template #parameter>
-      <div class="container">
-        <div class="input-group">
-          <label>标的资产价格 (S₀):</label>
-          <input type="number" v-model.number="S0" step="0.01">
-        </div>
-
-        <div class="input-group">
-          <label>执行价格 (K):</label>
-          <input type="number" v-model.number="K" step="0.01">
-        </div>
-
-        <div class="input-group">
-          <label>无风险利率 (r):</label>
-          <input type="number" v-model.number="r" step="0.01">
-        </div>
-
-        <div class="input-group">
-          <label>到期时间 (T, 年):</label>
-          <input type="number" v-model.number="T" step="0.1">
-        </div>
-
-        <div class="input-group">
-          <label>波动率 (σ):</label>
-          <input type="number" v-model.number="sigma" step="0.01">
-        </div>
-
-        <div class="input-group">
-          <label>股息率 (q):</label>
-          <input type="number" v-model.number="q" step="0.01">
-        </div>
-
-        <button @click="calculateOptionPrice">计算期权价格</button>
-
-
-      </div>
-    </template>
-    <template #conclusion>
-      <div  class="w-full h-full p-5">
-        <div class="prose-sm max-w-full " v-html="toMarkdown(content)" />
-      </div>
-    </template>
-    <template #comment>
-      <CommentPanel exp-id="central-limit-theorem" />
-    </template>
-  </ExperimentBoard>
-
-</template>
-
 <script setup>
+import { ref } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
-import { ref } from 'vue';
-import { renderLatex, toMarkdown } from '@/utils/markdown';
+import { toMarkdown } from '@/utils/markdown';
 
 // 响应式变量
 const S0 = ref(100);
@@ -121,7 +53,7 @@ $C = S N(d_1) - K e^{-rT} N(d_2)$
 **重要性：**
 
 布莱克-斯科尔斯模型是金融工程领域的一个里程碑，它提供了一个理论框架来量化期权价格，使得期权交易变得更加科学和标准化。尽管有其局限性（例如，假设波动率恒定，但实际波动率是变化的），它仍然是期权定价和风险管理的基础工具。
-`)
+`);
 
 // 标准正态分布的累积分布函数（CDF）近似计算
 function normCDF(x) {
@@ -165,6 +97,73 @@ function calculateOptionPrice() {
   };
 }
 </script>
+
+<template>
+  <ExperimentBoard>
+    <template #experiment>
+      <div class="container">
+        <div v-if="result" id="result">
+          <h3>计算结果：</h3>
+          <p>欧式看涨期权价格：${{ result.callPrice }}</p>
+          <p>输入参数：</p>
+          <ul>
+            <li>标的资产价格 (S₀): ${{ result.S0 }}</li>
+            <li>执行价格 (K): ${{ result.K }}</li>
+            <li>无风险利率 (r): {{ result.r }}%</li>
+            <li>到期时间 (T): {{ result.T }} 年</li>
+            <li>波动率 (σ): {{ result.sigma }}%</li>
+            <li>股息率 (q): {{ result.q }}%</li>
+          </ul>
+        </div>
+      </div>
+    </template>
+    <template #parameter>
+      <div class="container">
+        <div class="input-group">
+          <label>标的资产价格 (S₀):</label>
+          <input v-model.number="S0" type="number" step="0.01">
+        </div>
+
+        <div class="input-group">
+          <label>执行价格 (K):</label>
+          <input v-model.number="K" type="number" step="0.01">
+        </div>
+
+        <div class="input-group">
+          <label>无风险利率 (r):</label>
+          <input v-model.number="r" type="number" step="0.01">
+        </div>
+
+        <div class="input-group">
+          <label>到期时间 (T, 年):</label>
+          <input v-model.number="T" type="number" step="0.1">
+        </div>
+
+        <div class="input-group">
+          <label>波动率 (σ):</label>
+          <input v-model.number="sigma" type="number" step="0.01">
+        </div>
+
+        <div class="input-group">
+          <label>股息率 (q):</label>
+          <input v-model.number="q" type="number" step="0.01">
+        </div>
+
+        <button @click="calculateOptionPrice">
+          计算期权价格
+        </button>
+      </div>
+    </template>
+    <template #conclusion>
+      <div class="w-full h-full p-5">
+        <div class="prose-sm max-w-full " v-html="toMarkdown(content)" />
+      </div>
+    </template>
+    <template #comment>
+      <CommentPanel exp-id="central-limit-theorem" />
+    </template>
+  </ExperimentBoard>
+</template>
 
 <style scoped>
 body {

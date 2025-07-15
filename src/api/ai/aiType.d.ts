@@ -1,105 +1,105 @@
 export interface ChatMessage {
-  role: 'user' | 'assistant' | 'system' | 'function'
-  content: string
-  name?: string
+  role: 'user' | 'assistant' | 'system' | 'function';
+  content: string;
+  name?: string;
 }
 
 export interface ChatData {
-  type: 'text' | 'tool'
-  text?: string
-  tool?: Tool
+  type: 'text' | 'tool';
+  text?: string;
+  tool?: Tool;
 }
 
 export interface ChatBlock {
-  role: 'user' | 'ai'
-  data: ChatData[]
-  blockId: string
+  role: 'user' | 'ai';
+  data: ChatData[];
+  blockId: string;
 }
 
 export interface Chat {
-  chatBlocks: ChatBlock[]
-  chatId: string
-  chatTitle: string
-  lastChatTime: string
+  chatBlocks: ChatBlock[];
+  chatId: string;
+  chatTitle: string;
+  lastChatTime: string;
 }
 
 export interface NormalDistributionArgs {
-  mean: number
-  stdDev: number
+  mean: number;
+  stdDev: number;
 }
 
 export interface GeometricDistributionArgs {
-  p: number
-  n: number
+  p: number;
+  n: number;
 }
 
 export interface BinomialDistributionArgs {
-  n: number
-  p: number
+  n: number;
+  p: number;
 }
 
 export interface ExponentialDistributionArgs {
-  rate: number
+  rate: number;
 }
 
 export interface UniformDistributionArgs {
-  a: number
-  b: number
+  a: number;
+  b: number;
 }
 
 export interface TwoDUniformDistributionArgs {
-  x1: number
-  y1: number
-  x2: number
-  y2: number
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
 }
 
 export interface TwoDNormalDistributionArgs {
-  mean1: number
-  stdDev1: number
-  mean2: number
-  stdDev2: number
-  density: number
-  isChart3: boolean
-  fixedX: number
-  fixedY: number
+  mean1: number;
+  stdDev1: number;
+  mean2: number;
+  stdDev2: number;
+  density: number;
+  isChart3: boolean;
+  fixedX: number;
+  fixedY: number;
 }
 
 export interface PoissonDistributionArgs {
-  lambda: number
+  lambda: number;
 }
 
 interface ThreeDoorsArgs {
-  selectedStrategy: 'never' | 'always' | 'random'
+  selectedStrategy: 'never' | 'always' | 'random';
 }
 
 export interface DistributionArgs {
-  type: 'normal' | 'uniform' | 'geometric' | 'poisson' | 'binomial' | 'exponential' | '2d-uniform' | '2d-normal'
-  args: NormalDistributionArgs | GeometricDistributionArgs | BinomialDistributionArgs | ExponentialDistributionArgs | UniformDistributionArgs | PoissonDistributionArgs | TwoDUniformDistributionArgs | TwoDNormalDistributionArgs
+  type: 'normal' | 'uniform' | 'geometric' | 'poisson' | 'binomial' | 'exponential' | '2d-uniform' | '2d-normal';
+  args: NormalDistributionArgs | GeometricDistributionArgs | BinomialDistributionArgs | ExponentialDistributionArgs | UniformDistributionArgs | PoissonDistributionArgs | TwoDUniformDistributionArgs | TwoDNormalDistributionArgs;
 }
 
 export interface BuffonNeedleArgs {
-  needleLength: number
-  floorLineSpacing: number
-  needleAmount: number
+  needleLength: number;
+  floorLineSpacing: number;
+  needleAmount: number;
 }
 
 export interface ToolArgs extends DistributionArgs, BuffonNeedleArgs, ThreeDoorsArgs {}
 
 export interface Tool {
-  name: string
-  args: ToolArgs
+  name: string;
+  args: ToolArgs;
 }
 
 export type ReceiveData = {
-  message?: string
+  message?: string;
   tool?: {
-    name: string
-    args: string
-  }
-} | null
+    name: string;
+    args: string;
+  };
+} | null;
 
 export interface ReceiveChunk {
-  data: ReceiveData
-  done: boolean
+  data: ReceiveData;
+  done: boolean;
 }

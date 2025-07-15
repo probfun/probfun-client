@@ -3,8 +3,8 @@ import { get, post, put } from '../request';
 
 export async function isValidApi(studentId: string) {
   const result = await post<{
-    isValid: number
-  }>('/api/user/valid', {
+    isValid: number;
+  }>('/user/valid/', {
     studentId,
   });
   return result.data;
@@ -12,9 +12,9 @@ export async function isValidApi(studentId: string) {
 
 export async function loginApi(studentId: string, password: string) {
   const result = await post<{
-    token: string
-    user: User & { token: string }
-  }>('/api/user/login', {
+    token: string;
+    user: User & { token: string };
+  }>('/auth/login/', {
     studentId,
     password,
   });
@@ -23,8 +23,8 @@ export async function loginApi(studentId: string, password: string) {
 
 export async function registerApi(studentId: string, password: string, nickname: string, gender: number, email: string, phone: string, major: string, school: string) {
   const result = await post<{
-    user: User
-  }>('/api/user/register', {
+    user: User;
+  }>('/auth/register/', {
     studentId,
     password,
     nickname,
@@ -39,8 +39,8 @@ export async function registerApi(studentId: string, password: string, nickname:
 
 export async function fetchUserApi() {
   const result = await get<{
-    user: User
-  }>('/api/user');
+    user: User;
+  }>('/user/');
   return result.data;
 }
 
@@ -53,8 +53,8 @@ export async function putUserApi(
   school: string,
 ) {
   const result = await put<{
-    user: User
-  }>('/api/user', {
+    user: User;
+  }>('/user/', {
     nickname,
     gender,
     email,
@@ -70,8 +70,8 @@ export async function updatePasswordApi(
   newPassword: string,
 ) {
   const result = await put<{
-    user: User
-  }>('/api/user/password', {
+    user: User;
+  }>('/user/password/', {
     oldPassword,
     newPassword,
   });
@@ -82,8 +82,8 @@ export async function putUserAvatarApi(avatar: File) {
   const formData = new FormData();
   formData.append('avatar', avatar);
   const result = await put<{
-    user: User
-  }>('/api/user/avatar', formData, {
+    user: User;
+  }>('/user/avatar/', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -93,8 +93,8 @@ export async function putUserAvatarApi(avatar: File) {
 
 export async function casValidateApi(ticket: string) {
   const response = await get<{
-    user: User
-    token: string
-  }>(`/api/user/validate?ticket=${ticket}`);
+    user: User;
+    token: string;
+  }>(`/user/validate/?ticket=${ticket}`);
   return response.data;
 }

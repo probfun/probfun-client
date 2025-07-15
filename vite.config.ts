@@ -1,3 +1,4 @@
+import { fileURLToPath, URL } from 'node:url';
 import { PrimeVueResolver } from '@primevue/auto-import-resolver';
 import vue from '@vitejs/plugin-vue';
 import Components from 'unplugin-vue-components/vite';
@@ -18,13 +19,14 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': '/src',
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
   server: {
+    open: true,
     proxy: {
-      '/api': {
-        target: 'http://192.144.199.178',
+      '/backend-api': {
+        target: 'https://fun.prob-mind.online',
         // target: 'http://127.0.0.1:4523/m1/4811506-4465979-default',
         changeOrigin: true,
       },
@@ -43,4 +45,4 @@ export default defineConfig({
       },
     },
   },
-})
+});

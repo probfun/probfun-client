@@ -173,7 +173,7 @@ export const initialNodes = [
     parentNode: '14',
   },
 
-]
+];
 
 export const initialEdges = [
   { id: 'e1-2', source: '1', target: '2a' },
@@ -203,4 +203,4 @@ export const initialEdges = [
   { id: 'P3', source: '2c', target: '10' },
   { id: 'P4', source: '2c', target: '12' },
 
-]
+];

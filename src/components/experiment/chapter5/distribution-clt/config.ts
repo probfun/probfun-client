@@ -1,6 +1,6 @@
 import { hslToHex } from '@/utils/color';
 
-const documentStyle = getComputedStyle(document.documentElement)
+const documentStyle = getComputedStyle(document.documentElement);
 
 function getChartOptionMulti(yn: number[][], y2: number[]) {
   const textColor = hslToHex(documentStyle.getPropertyValue('--foreground')); // Maps to primary foreground color

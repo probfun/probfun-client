@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { BuffonNeedleArgs, DistributionArgs, ThreeDoorsArgs, ToolArgs } from '@/api/ai/aiType';
+import { useRouter } from 'vue-router';
 import BuffonNeedleDisplay from '@/components/experiment/chapter1/buffon-needle/BuffonNeedleDisplay.vue';
 import ThreeDoorsDisplay from '@/components/experiment/chapter1/three-doors/ThreeDoorsDisplay.vue';
 import DistributionDiagram from '@/components/experiment/distribution/distribution-diagram/DistributionDiagram.vue';
 import { Label } from '@/components/ui/label';
-import { useRouter } from 'vue-router'
 
 defineProps<{
-  name: string
-  args: ToolArgs
+  name: string;
+  args: ToolArgs;
 }>();
 
 const router = useRouter();

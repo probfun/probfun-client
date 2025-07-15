@@ -1,13 +1,13 @@
 <script setup lang="ts">
+import { vAutoAnimate } from '@formkit/auto-animate';
+import Cookies from 'js-cookie';
+import { v4 as uuidv4 } from 'uuid';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { visitorApi } from '@/api/track/trackApi.ts';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useUserStore } from '@/store';
-import { vAutoAnimate } from '@formkit/auto-animate';
-import Cookies from 'js-cookie'
-import { v4 as uuidv4 } from 'uuid';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
 
 const isLoading = ref(false);
 
@@ -36,10 +36,10 @@ async function visitorLogin() {
     avatarUrl: 'https://example.com/visitor-avatar.png',
     role: -1,
   };
-  let visitorId = Cookies.get('VISITOR_ID')
+  let visitorId = Cookies.get('VISITOR_ID');
   if (!visitorId) {
-    visitorId = uuidv4()
-    Cookies.set('VISITOR_ID', visitorId, { expires: 365 }) // 有效期 1 年
+    visitorId = uuidv4();
+    Cookies.set('VISITOR_ID', visitorId, { expires: 365 }); // 有效期 1 年
   }
   try {
     await visitorApi();

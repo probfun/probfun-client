@@ -2,9 +2,9 @@
 import { onMounted, ref, watch } from 'vue';
 
 const props = defineProps<{
-  n: number
-  p: number
-  save: boolean
+  n: number;
+  p: number;
+  save: boolean;
 }>();
 
 declare const Desmos: any;
@@ -59,7 +59,7 @@ function drawDistributions() {
     latex: `f(x) = \\frac{${props.n}!}{x!((${props.n} - x)!)} ${props.p}^{x} (1 - ${props.p})^{${props.n} - x} \\{${props.n} >= x >= 0\\}`,
     color: Desmos.Colors.BLUE,
     lineWidth: 4.5, // 设置线条宽度
-  }
+  };
 
   if (props.save) {
     idNumber = idNumber + 2;

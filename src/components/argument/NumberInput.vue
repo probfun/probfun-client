@@ -3,11 +3,11 @@ import type { HTMLAttributes } from 'vue';
 import { useVModel } from '@vueuse/core';
 
 const props = withDefaults(defineProps<{
-  modelValue: number
-  min: number
-  max: number
-  defaultValue: number
-  class?: HTMLAttributes['class']
+  modelValue?: number;
+  min?: number;
+  max?: number;
+  defaultValue?: number;
+  class?: HTMLAttributes['class'];
 }>(), {
   modelValue: 0,
   min: -Infinity,
@@ -16,13 +16,13 @@ const props = withDefaults(defineProps<{
 });
 
 const emits = defineEmits<{
-  (e: 'update:modelValue', payload: string | number): void
-}>()
+  (e: 'update:modelValue', payload: string | number): void;
+}>();
 
 const modelValue = useVModel(props, 'modelValue', emits, {
   passive: true,
   defaultValue: props.defaultValue,
-})
+});
 </script>
 
 <template>

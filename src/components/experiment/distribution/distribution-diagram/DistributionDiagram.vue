@@ -20,7 +20,7 @@ import PoissonDiagram from '@/components/experiment/distribution/poisson-distrib
 import UniformDiagram from '@/components/experiment/distribution/UniformDiagram.vue';
 
 const { args: args_ } = defineProps<{
-  args: DistributionArgs
+  args: DistributionArgs;
 }>();
 const { type, args } = args_;
 </script>
@@ -84,8 +84,8 @@ const { type, args } = args_;
     :sigma1="(args as TwoDNormalDistributionArgs).stdDev1"
     :sigma2="(args as TwoDNormalDistributionArgs).stdDev2"
     :density="(args as TwoDNormalDistributionArgs).density"
-    :isChart3="(args as TwoDNormalDistributionArgs).isChart3"
-    :fixedX="(args as TwoDNormalDistributionArgs).fixedX"
-    :fixedY="(args as TwoDNormalDistributionArgs).fixedY"
+    :is-chart3="(args as TwoDNormalDistributionArgs).isChart3"
+    :fixed-x="(args as TwoDNormalDistributionArgs).fixedX"
+    :fixed-y="(args as TwoDNormalDistributionArgs).fixedY"
   />
 </template>

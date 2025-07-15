@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import { Bot, Star } from 'lucide-vue-next';
+import { useRouter } from 'vue-router';
 import { fetchFavoriteExperimentsApi, toggleFavoriteApi } from '@/api/experiment/experimentApi.ts';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils.ts';
 import { useUserStore } from '@/store';
 import { success } from '@/utils/toast.ts';
-import { Bot, Star } from 'lucide-vue-next';
-import { useRouter } from 'vue-router';
 
 const userStore = useUserStore();
 const router = useRouter();

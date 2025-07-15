@@ -1,23 +1,23 @@
 <script setup lang="ts">
 import type { FunctionLabel } from '@/components/experiment/chapter5/distribution-clt/functions.ts';
-import { generateDistributionFunctionApi } from '@/api/ai/aiApi.ts';
-import CommentPanel from '@/components/comment/CommentPanel.vue';
-import { getConvergeFuncData, getConvergeFuncOption } from '@/components/experiment/chapter5/distribution-clt/config.ts';
-import DistributionCltDiagram from '@/components/experiment/chapter5/distribution-clt/DistributionCltDiagram.vue';
-import { args, functionList } from '@/components/experiment/chapter5/distribution-clt/functions.ts'
-
-import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-
-import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
-
-import { renderLatex, toMarkdown } from '@/utils/markdown'; // 或者使用 MathJax
 import { GraduationCap, Lightbulb, MessagesSquare } from 'lucide-vue-next'; // 引入 KaTeX 样式
 import { all, create } from 'mathjs'; // 用于 Markdown 渲染
 import { nextTick, onMounted, ref, watch } from 'vue';
+import { generateDistributionFunctionApi } from '@/api/ai/aiApi.ts';
+import CommentPanel from '@/components/comment/CommentPanel.vue';
+
+import { getConvergeFuncData, getConvergeFuncOption } from '@/components/experiment/chapter5/distribution-clt/config.ts';
+import DistributionCltDiagram from '@/components/experiment/chapter5/distribution-clt/DistributionCltDiagram.vue';
+import { args, functionList } from '@/components/experiment/chapter5/distribution-clt/functions.ts';
+import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
+import { renderLatex, toMarkdown } from '@/utils/markdown'; // 或者使用 MathJax
 import { content } from './content';
 import 'katex/dist/katex.min.css';
 // import 'nerdamer/Calculus';
@@ -161,7 +161,7 @@ const chapters = [
     title: '中心极限定理的影响与应用',
     items: chapter4Items,
   },
-]
+];
 
 const fAny = ref<((x: number) => number) | null>(null);
 const multi = ref(false);
@@ -176,7 +176,7 @@ const functionLabel: FunctionLabel[] = [
   'pareto',
   'custom',
   'ai',
-]
+];
 
 function latexToMath(latex: string): ((x: number) => number) | null {
   const expression = latex
@@ -205,7 +205,7 @@ function latexToMath(latex: string): ((x: number) => number) | null {
     displayLatexInput.value = latex;
     return (x: number) => {
       return Number.parseFloat(code.evaluate({ x }));
-    }
+    };
   }
   catch (error: any) {
     console.error(error);
@@ -221,7 +221,7 @@ function convert() {
   catch (error) {
     console.error(error);
   }
-  console.log(fAny.value)
+  console.log(fAny.value);
 }
 
 function fAnyWrap(f: ((xx: number) => number) | null) {
@@ -233,7 +233,7 @@ function fAnyWrap(f: ((xx: number) => number) | null) {
       return 0;
     }
     return f(x);
-  }
+  };
 }
 
 const selected = ref<FunctionLabel>(functionLabel[0]);
@@ -348,7 +348,7 @@ watch(selected, () => {
   if (selected.value === 'custom') {
     convert();
   }
-}, { deep: true })
+}, { deep: true });
 
 watch(args, () => {
   console.log(args, 123, functionList[selected.value]);

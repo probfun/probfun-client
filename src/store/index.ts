@@ -17,7 +17,7 @@ export const useUserStore = defineStore('userStore', () => {
     favoriteExperiments,
     isFavorite,
     visitorId,
-  }
+  };
 }, {
   persist: true,
 });
@@ -28,7 +28,7 @@ export const useAiStore = defineStore('aiStore', () => {
   return {
     currentChat,
     chatList,
-  }
+  };
 }, {
   persist: true,
 });
@@ -41,7 +41,7 @@ export const useConfigStore = defineStore('configStore', () => {
     darkMode,
     targetNodeId,
     isMoving,
-  }
+  };
 }, {
   persist: true,
 });
@@ -609,15 +609,15 @@ export const useDistributionStore = defineStore('distributionStore', () => {
   return {
     nodeData,
     version,
-  }
+  };
 }, {
   persist: {
     key: 'distributionStore',
     storage: localStorage,
     beforeHydrate: () => {
-      const stored = JSON.parse(localStorage.getItem('distributionStore') || '{}')
+      const stored = JSON.parse(localStorage.getItem('distributionStore') || '{}');
       if (stored.version !== 3) {
-        localStorage.removeItem('distributionStore') // 版本不一致，移除旧数据
+        localStorage.removeItem('distributionStore'); // 版本不一致，移除旧数据
         console.log('Distribution store version mismatch, resetting data.');
       }
     },

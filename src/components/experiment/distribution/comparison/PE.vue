@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import katex from 'katex';
+import { computed, onMounted, ref, watch } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { renderLatex, toMarkdown } from '@/utils/markdown';
-import katex from 'katex';
-import { computed, onMounted, ref, watch } from 'vue';
 import 'katex/dist/katex.min.css';
 
 const time = ref([10]);
@@ -263,7 +263,7 @@ $$
 
 ### **5. 拓展：公交车悖论**
 公交车悖论与指数分布和泊松分布密切相关。公交车的到达时间可以被建模为泊松过程，其中每两辆车之间的时间间隔服从指数分布。指数分布描述了独立事件（如公交车到达）之间的时间间隔，具有无记忆性，即已经等待的时间不影响下一辆车何时到来。尽管公交车的平均间隔是固定的，由于指数分布的特性，乘客更有可能在长间隔内开始等待，导致平均等待时间比直觉预期的更长。泊松分布则描述了在固定时间段内公交车到达的次数，而公交车悖论正是这两种分布共同作用的结果。
-`
+`;
 </script>
 
 <template>
@@ -326,7 +326,6 @@ $$
               <div ref="exponentialContainer" class="text-base" />
               <div>
                 平均等车时间{{ time[0] }}分钟
-                
               </div>
             </CardContent>
           </Card>

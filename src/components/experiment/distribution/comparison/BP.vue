@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import katex from 'katex';
+import { computed, onMounted, ref, watch } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { renderLatex, toMarkdown } from '@/utils/markdown';
-import katex from 'katex';
-import { computed, onMounted, ref, watch } from 'vue';
 import BPDiagram from './BPDiagram.vue';
 
 import 'katex/dist/katex.min.css';
@@ -198,7 +198,7 @@ $$
 - **联系**: 泊松分布可以看作是二项分布在 $$ n \\to \\infty $$ 和 $$ p \\to 0 $$ 的极限情况。当试验次数很多且成功概率很小，但期望成功次数固定时，二项分布趋近于泊松分布。
 - **近似条件**: $$ np = \\lambda $$，即 $$ n $$ 很大，$$ p $$ 很小且 $$ \\lambda $$ 固定。
 - **实际应用**: 泊松分布常用于建模和计算稀有事件的发生次数，是二项分布在特定条件下的有效简化。
-`
+`;
 </script>
 
 <template>

@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { Tab } from '@/components/Container.vue';
 import type { PropType } from 'vue';
+import type { Tab } from '@/components/Container.vue';
+import { ChartColumnIncreasing, GraduationCap, MessagesSquare, Presentation } from 'lucide-vue-next';
+import { ref } from 'vue';
 import Container from '@/components/Container.vue';
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
-import { ChartColumnIncreasing, GraduationCap, MessagesSquare, Presentation } from 'lucide-vue-next';
-import { ref } from 'vue';
 
 defineProps({
   title: {
@@ -27,11 +27,13 @@ defineProps({
   experimentTags: {
     type: Array as PropType<string[]>,
     required: false,
+    // eslint-disable-next-line vue/require-valid-default-prop
     default: [],
   },
   discussTabList: {
     type: Array as PropType<Tab[]>,
     required: false,
+    // eslint-disable-next-line vue/require-valid-default-prop
     default: [
       {
         id: 0,

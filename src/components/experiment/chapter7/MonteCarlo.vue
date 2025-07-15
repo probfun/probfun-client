@@ -1,9 +1,9 @@
 <script setup>
+import Plotly from 'plotly.js-dist';
+import { onMounted, reactive, ref } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { toMarkdown } from '@/utils/markdown';
-import { ref, reactive, computed, onMounted } from 'vue';
-import Plotly from 'plotly.js-dist';
 
 const content = ref(`
 ## **回望期权定价 - 蒙特卡洛模拟**
@@ -61,7 +61,7 @@ $$
 **重要性：**
 
 回望期权的定价不同于传统期权，要求我们在整个生命周期内考虑标的资产的最大价格，这使得其定价问题比标准期权更为复杂。蒙特卡洛模拟通过其强大的数值计算能力，提供了一种非常有效的方式来估算这些复杂期权的价值。尽管蒙特卡洛模拟需要大量计算资源，但它依然是目前最为通用的回望期权定价工具之一，尤其适用于路径依赖型期权。
-`)
+`);
 
 // 初始化参数
 const params = reactive({
@@ -80,7 +80,7 @@ const params = reactive({
 const results = reactive({
   price: '-',
   stderr: '-',
-  calcTime: '-'
+  calcTime: '-',
 });
 
 // 加载状态
@@ -110,7 +110,7 @@ document.querySelectorAll('input[type="range"], select').forEach((element) => {
 });
 
 // 工具函数
-const generateRandomNormals = (n) => {
+function generateRandomNormals(n) {
   const randoms = Array.from({ length: n });
   for (let i = 0; i < n; i += 2) {
     const u1 = Math.random();
@@ -118,20 +118,21 @@ const generateRandomNormals = (n) => {
     const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
     const z1 = Math.sqrt(-2 * Math.log(u1)) * Math.sin(2 * Math.PI * u2);
     randoms[i] = z0;
-    if (i + 1 < n) randoms[i + 1] = z1;
+    if (i + 1 < n)
+      randoms[i + 1] = z1;
   }
   return randoms;
-};
+}
 
-const mean = (arr) => arr.reduce((a, b) => a + b, 0) / arr.length;
+const mean = arr => arr.reduce((a, b) => a + b, 0) / arr.length;
 
-const std = (arr) => {
+function std(arr) {
   const m = mean(arr);
   return Math.sqrt(arr.reduce((a, b) => a + (b - m) ** 2, 0) / arr.length);
-};
+}
 
 // 蒙特卡洛模拟计算
-const calculateOptionPrice = async () => {
+async function calculateOptionPrice() {
   const startTime = performance.now();
   isLoading.value = true;
 
@@ -193,15 +194,17 @@ const calculateOptionPrice = async () => {
 
     // 更新图表
     updateCharts(paths, maxima, minima);
-  } catch (error) {
+  }
+  catch (error) {
     console.error('计算期权价格时发生错误:', error);
-  } finally {
+  }
+  finally {
     isLoading.value = false;
   }
-};
+}
 
 // 更新图表
-const updateCharts = (paths, maxima, minima) => {
+function updateCharts(paths, maxima, minima) {
   const { timeSteps, T } = params;
   const timePoints = Array.from({ length: timeSteps + 1 }, (_, i) => i * T / timeSteps);
 
@@ -274,12 +277,12 @@ const updateCharts = (paths, maxima, minima) => {
     barmode: 'overlay',
     margin: { t: 40, l: 50, r: 30, b: 50 },
   });
-};
+}
 
 // 选项类型改变处理函数
-const handleOptionTypeChange = () => {
+function handleOptionTypeChange() {
   showFixedStrike.value = params.optionType.startsWith('fixed');
-};
+}
 
 // 初始化计算
 onMounted(() => {
@@ -292,35 +295,61 @@ onMounted(() => {
   <ExperimentBoard :panel-size="70">
     <template #experiment>
       <div class="bg-blue-50 rounded-lg p-5 shadow-md">
-        <h3 class="text-xl font-semibold mb-4">计算结果</h3>
+        <h3 class="text-xl font-semibold mb-4">
+          计算结果
+        </h3>
         <table class="w-full">
           <thead>
             <tr>
-              <th class="bg-blue-500 text-white px-4 py-2 text-left">指标</th>
-              <th class="bg-blue-500 text-white px-4 py-2 text-left">值</th>
+              <th class="bg-blue-500 text-white px-4 py-2 text-left">
+                指标
+              </th>
+              <th class="bg-blue-500 text-white px-4 py-2 text-left">
+                值
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="border-b border-gray-200 px-4 py-2">期权价格</td>
-              <td class="border-b border-gray-200 px-4 py-2">{{ results.price }}</td>
+              <td class="border-b border-gray-200 px-4 py-2">
+                期权价格
+              </td>
+              <td class="border-b border-gray-200 px-4 py-2">
+                {{ results.price }}
+              </td>
             </tr>
             <tr>
-              <td class="border-b border-gray-200 px-4 py-2">标准误差</td>
-              <td class="border-b border-gray-200 px-4 py-2">{{ results.stderr }}</td>
+              <td class="border-b border-gray-200 px-4 py-2">
+                标准误差
+              </td>
+              <td class="border-b border-gray-200 px-4 py-2">
+                {{ results.stderr }}
+              </td>
             </tr>
             <tr>
-              <td class="border-b border-gray-200 px-4 py-2">计算时间</td>
-              <td class="border-b border-gray-200 px-4 py-2">{{ results.calcTime }}</td>
+              <td class="border-b border-gray-200 px-4 py-2">
+                计算时间
+              </td>
+              <td class="border-b border-gray-200 px-4 py-2">
+                {{ results.calcTime }}
+              </td>
             </tr>
           </tbody>
         </table>
 
         <div class="bg-blue-50 p-4 rounded-lg mt-5">
-          <h4 class="font-semibold mb-2">关于回望期权:</h4>
-          <p class="mb-2">回望期权的收益取决于标的资产在期权有效期内的最高或最低价格。</p>
-          <p class="mb-2"><strong>浮动执行</strong>期权: 执行价格等于期内最优价格</p>
-          <p class="mb-2"><strong>固定执行</strong>期权: 执行价格固定，但使用期内最优价格计算收益</p>
+          <h4 class="font-semibold mb-2">
+            关于回望期权:
+          </h4>
+          <p class="mb-2">
+            回望期权的收益取决于标的资产在期权有效期内的最高或最低价格。
+          </p>
+          <p class="mb-2">
+            <strong>浮动执行</strong>期权: 执行价格等于期内最优价格
+          </p>
+          <p class="mb-2">
+            <strong>固定执行</strong>期权: 执行价格固定，但使用期内最优价格计算收益
+          </p>
           <p>连续监测理论上更精确，但离散监测更接近实际交易情况。</p>
         </div>
 
@@ -333,64 +362,82 @@ onMounted(() => {
     <template #parameter>
       <div class="flex flex-wrap gap-5">
         <div class="flex-1 min-w-[300px] bg-gray-50 p-5 rounded-lg shadow-md">
-          <h2 class="text-xl font-semibold mb-4">参数设置</h2>
+          <h2 class="text-xl font-semibold mb-4">
+            参数设置
+          </h2>
 
           <div class="mb-4">
             <label class="block mb-1 font-medium">初始价格 (S₀): <span>{{ params.S0 }}</span></label>
-            <input type="range" v-model.number="params.S0" min="50" max="150" step="1" class="w-full">
+            <input v-model.number="params.S0" type="range" min="50" max="150" step="1" class="w-full">
           </div>
 
           <div class="mb-4">
             <label class="block mb-1 font-medium">到期时间 (T, 年): <span>{{ params.T.toFixed(1) }}</span></label>
-            <input type="range" v-model.number="params.T" min="0.1" max="3" step="0.1" class="w-full">
+            <input v-model.number="params.T" type="range" min="0.1" max="3" step="0.1" class="w-full">
           </div>
 
           <div class="mb-4">
             <label class="block mb-1 font-medium">无风险利率 (r): <span>{{ params.r.toFixed(2) }}</span></label>
-            <input type="range" v-model.number="params.r" min="0" max="0.2" step="0.01" class="w-full">
+            <input v-model.number="params.r" type="range" min="0" max="0.2" step="0.01" class="w-full">
           </div>
 
           <div class="mb-4">
             <label class="block mb-1 font-medium">波动率 (σ): <span>{{ params.sigma.toFixed(2) }}</span></label>
-            <input type="range" v-model.number="params.sigma" min="0.1" max="0.5" step="0.01" class="w-full">
+            <input v-model.number="params.sigma" type="range" min="0.1" max="0.5" step="0.01" class="w-full">
           </div>
 
           <div class="mb-4">
             <label class="block mb-1 font-medium">模拟路径数: <span>{{ params.simulations }}</span></label>
-            <input type="range" v-model.number="params.simulations" min="1000" max="50000" step="1000" class="w-full">
+            <input v-model.number="params.simulations" type="range" min="1000" max="50000" step="1000" class="w-full">
           </div>
 
           <div class="mb-4">
             <label class="block mb-1 font-medium">时间步数: <span>{{ params.timeSteps }}</span></label>
-            <input type="range" v-model.number="params.timeSteps" min="10" max="500" step="1" class="w-full">
+            <input v-model.number="params.timeSteps" type="range" min="10" max="500" step="1" class="w-full">
           </div>
 
           <div class="mb-4">
             <label class="block mb-1 font-medium">期权类型:</label>
-            <select v-model="params.optionType" @change="handleOptionTypeChange"
-              class="w-full p-2 border border-gray-300 rounded">
-              <option value="call">浮动执行看涨 (Floating Strike Call)</option>
-              <option value="put">浮动执行看跌 (Floating Strike Put)</option>
-              <option value="fixed-call">固定执行看涨 (Fixed Strike Call)</option>
-              <option value="fixed-put">固定执行看跌 (Fixed Strike Put)</option>
+            <select
+              v-model="params.optionType" class="w-full p-2 border border-gray-300 rounded"
+              @change="handleOptionTypeChange"
+            >
+              <option value="call">
+                浮动执行看涨 (Floating Strike Call)
+              </option>
+              <option value="put">
+                浮动执行看跌 (Floating Strike Put)
+              </option>
+              <option value="fixed-call">
+                固定执行看涨 (Fixed Strike Call)
+              </option>
+              <option value="fixed-put">
+                固定执行看跌 (Fixed Strike Put)
+              </option>
             </select>
           </div>
 
           <div class="mb-4">
             <label class="block mb-1 font-medium">回望类型:</label>
             <select v-model="params.lookbackType" class="w-full p-2 border border-gray-300 rounded">
-              <option value="continuous">连续监测</option>
-              <option value="discrete">离散监测</option>
+              <option value="continuous">
+                连续监测
+              </option>
+              <option value="discrete">
+                离散监测
+              </option>
             </select>
           </div>
 
           <div v-show="showFixedStrike" class="mb-4">
             <label class="block mb-1 font-medium">执行价格 (K): <span>{{ params.K }}</span></label>
-            <input type="range" v-model.number="params.K" min="50" max="150" step="1" class="w-full">
+            <input v-model.number="params.K" type="range" min="50" max="150" step="1" class="w-full">
           </div>
 
-          <button @click="calculateOptionPrice" :disabled="isLoading"
-            class="w-full mt-4 px-4 py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-base rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+          <button
+            :disabled="isLoading" class="w-full mt-4 px-4 py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-base rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            @click="calculateOptionPrice"
+          >
             计算期权价格
           </button>
 

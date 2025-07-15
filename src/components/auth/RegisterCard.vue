@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { vAutoAnimate } from '@formkit/auto-animate';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { isValidApi, loginApi, registerApi } from '@/api/user/userApi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,9 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useUserStore } from '@/store';
 import { setLocalToken } from '@/utils/auth';
 import { error, success, warning } from '@/utils/toast';
-import { vAutoAnimate } from '@formkit/auto-animate';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const userStore = useUserStore();

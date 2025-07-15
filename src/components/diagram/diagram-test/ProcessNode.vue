@@ -1,8 +1,8 @@
 <script setup>
-import { Label } from '@/components/ui/label';
-import { useHandleConnections } from '@vue-flow/core'
-import { computed, toRef } from 'vue'
+import { useHandleConnections } from '@vue-flow/core';
+import { computed, toRef } from 'vue';
 import { useRouter } from 'vue-router';
+import { Label } from '@/components/ui/label';
 
 const props = defineProps({
   data: {
@@ -15,65 +15,65 @@ const props = defineProps({
   targetPosition: {
     type: String,
   },
-})
+});
 
 const sourceConnections = useHandleConnections({
   type: 'target',
-})
+});
 
-const targetConnections = useHandleConnections({
-  type: 'source',
-})
+// const targetConnections = useHandleConnections({
+//   type: 'source',
+// });
 
 const router = useRouter();
 
-const isSender = toRef(() => sourceConnections.value.length <= 0)
+const isSender = toRef(() => sourceConnections.value.length <= 0);
 
-const isReceiver = toRef(() => targetConnections.value.length <= 0)
+// const isReceiver = toRef(() => targetConnections.value.length <= 0);
 
 const bgColor = computed(() => {
   if (isSender.value) {
-    return '#2563eb'
+    return '#2563eb';
   }
 
   if (props.data.hasError) {
-    return '#f87171'
+    return '#f87171';
   }
 
   if (props.data.isFinished) {
-    return '#42B983'
+    return '#42B983';
   }
 
   if (props.data.isCancelled) {
-    return '#fbbf24'
+    return '#fbbf24';
   }
 
-  return '#4b5563'
-})
+  return '#4b5563';
+});
 
-const processLabel = computed(() => {
-  if (props.data.hasError) {
-    return '❌'
-  }
+// const processLabel = computed(() => {
+//   if (props.data.hasError) {
+//     return '❌';
+//   }
 
-  if (props.data.isSkipped) {
-    return '🚧'
-  }
+//   if (props.data.isSkipped) {
+//     return '🚧';
+//   }
 
-  if (props.data.isCancelled) {
-    return '🚫'
-  }
+//   if (props.data.isCancelled) {
+//     return '🚫';
+//   }
 
-  if (isSender.value) {
-    return '📦'
-  }
+//   if (isSender.value) {
+//     return '📦';
+//   }
 
-  if (props.data.isFinished) {
-    return '😎'
-  }
+//   if (props.data.isFinished) {
+//     return '😎';
+//   }
 
-  return '🏠'
-})
+//   return '🏠';
+// });
 </script>
 
 <template>

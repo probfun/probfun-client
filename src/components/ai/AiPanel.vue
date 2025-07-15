@@ -1,9 +1,15 @@
 <script setup lang="ts">
 import type { ChatBlock, ChatData, ReceiveData, ToolArgs } from '@/api/ai/aiType';
 import type { Textarea } from '@/components/ui/textarea';
+import { vAutoAnimate } from '@formkit/auto-animate';
+import { DotLottieVue } from '@lottiefiles/dotlottie-vue';
+import { ArrowDownToLine, Bot, CircleStop, Clipboard, PencilLine, RotateCcw, Send, Trash2 } from 'lucide-vue-next';
+import { v4 as uuidv4 } from 'uuid';
+import { nextTick, onMounted, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { aiApi, generateTitleApi } from '@/api/ai/aiApi';
 import AiSidebar from '@/components/ai/AiSidebar.vue';
-import Tool from '@/components/ai/tool/Tool.vue'
+import Tool from '@/components/ai/tool/Tool.vue';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,10 +20,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 import { CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ContextMenuTrigger } from '@/components/ui/context-menu';
-import { Label } from '@/components/ui/label'
+import { Label } from '@/components/ui/label';
 import { useAiStore } from '@/store';
 import {
   copyMessage,
@@ -29,13 +35,7 @@ import {
   START_BLOCK,
 } from '@/utils/ai';
 import { isVisitor } from '@/utils/auth.ts';
-import { toMarkdown } from '@/utils/markdown'
-import { vAutoAnimate } from '@formkit/auto-animate';
-import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
-import { ArrowDownToLine, Bot, CircleStop, Clipboard, PencilLine, RotateCcw, Send, Trash2 } from 'lucide-vue-next';
-import { v4 as uuidv4 } from 'uuid';
-import { nextTick, onMounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router';
+import { toMarkdown } from '@/utils/markdown';
 
 const message = ref('');
 const aiStore = useAiStore();
@@ -165,7 +165,7 @@ function receiveMessage(data: ReceiveData) {
     const chatData: ChatData = {
       type: 'text',
       text: message,
-    }
+    };
     chat?.chatBlocks[chat.chatBlocks.length - 1].data.push(chatData);
   }
   if (data?.tool) {
@@ -175,7 +175,7 @@ function receiveMessage(data: ReceiveData) {
         name: data.tool.name,
         args: JSON.parse(data.tool.args) as ToolArgs,
       },
-    }
+    };
     chat?.chatBlocks[chat.chatBlocks.length - 1].data.push(chatData);
   }
   scrollToBottom();
@@ -183,7 +183,7 @@ function receiveMessage(data: ReceiveData) {
 
 watch(status, () => {
   console.log('status:', status.value);
-})
+});
 
 function resetTextareaHeight() {
   if (tx.value) {

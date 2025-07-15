@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import katex from 'katex';
+import { computed, onMounted, ref, watch } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { renderLatex, toMarkdown } from '@/utils/markdown';
-import katex from 'katex';
-import { computed, onMounted, ref, watch } from 'vue'
 import ExponentialDiagram from './ExponentialDiagram.vue';
 import 'katex/dist/katex.min.css';
 
@@ -130,7 +130,7 @@ $$
 **2. 连续分布**：指数分布是一种定义在非负实数上的连续概率分布。
 
 **3. 与泊松分布的关系**：指数分布是泊松过程的时间间隔分布，描述了在固定时间内发生事件的等待时间。
-`
+`;
 </script>
 
 <template>
@@ -228,7 +228,7 @@ $$
                 <div class="flex flex-1 items-center justify-center">
                   <div class="mr-4 whitespace-nowrap" v-html="toMarkdown('事件发生的速率参数 $λ$ =')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model.number="rate[0]" :min-fraction-digits="1"  placeholder="0~10" class="w-full mb-2" />
+                    <Input v-model.number="rate[0]" :min-fraction-digits="1" placeholder="0~10" class="w-full mb-2" />
                     <Slider v-model="rate" :min="0" :max="10" :step="0.1" class="w-full" />
                   </div>
                 </div>
@@ -238,7 +238,7 @@ $$
                 <div class="flex flex-1 items-center justify-center">
                   <div class="mr-4 whitespace-nowrap" v-html="toMarkdown('间隔时间 $x$ =')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model.number="numberx[0]"  placeholder="1~10" class="w-full mb-2" />
+                    <Input v-model.number="numberx[0]" placeholder="1~10" class="w-full mb-2" />
                     <Slider v-model="numberx" :min="1" :max="10" :step="0.2" class="w-full" />
                   </div>
                 </div>
@@ -249,7 +249,7 @@ $$
                 <div class="flex flex-1 items-center justify-center">
                   <div class="mr-4" v-html="renderLatex('固定值 = ')" />
                   <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model.number="shift[0]" :min-fraction-digits="1"  placeholder="0~5" class="w-full mb-2" />
+                    <Input v-model.number="shift[0]" :min-fraction-digits="1" placeholder="0~5" class="w-full mb-2" />
                     <Slider v-model="shift" :min="0" :max="5" :step="0.1" class="w-full" />
                   </div>
                 </div>

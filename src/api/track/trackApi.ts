@@ -7,12 +7,12 @@ export async function clickApi(actionType: string, entityType: string, entityNam
   if (user?.role === -1) {
     return;
   }
-  const result = await post<{ track: Track }>('/api/track/click', {
+  const result = await post<{ track: Track }>('/track/click/', {
     actionType,
     entityType,
     entityName,
     pageName,
-  })
+  });
   return result.data;
 }
 
@@ -21,7 +21,7 @@ export async function browseApi(actionType: string, pageName: string) {
   if (user?.role === -1) {
     return;
   }
-  const result = await post<{ track: Track }>('/api/track/page', {
+  const result = await post<{ track: Track }>('/track/page/', {
     actionType,
     pageName,
   });
@@ -30,7 +30,7 @@ export async function browseApi(actionType: string, pageName: string) {
 
 export async function visitorApi() {
   const result = await post<{
-    ok: boolean
-  }>('/api/track/visitor');
+    ok: boolean;
+  }>('/track/guest/');
   return result.data;
 }

@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import type { NodeOptions } from '@/api/distribution/distributionType';
 import type { GraphEdge } from '@vue-flow/core';
+import type { NodeOptions } from '@/api/distribution/distributionType';
+import { vAutoAnimate } from '@formkit/auto-animate';
+import { Handle, Position, useVueFlow } from '@vue-flow/core';
+import { Bot, Check, ChevronsLeftRightEllipsis, CircuitBoard, RectangleEllipsis } from 'lucide-vue-next';
+import { onMounted, ref, watch } from 'vue';
 import { generateDistributionDescriptionApi } from '@/api/distribution/distributionApi.ts';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu } from '@/components/ui/dropdown-menu';
@@ -9,14 +13,10 @@ import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { useConfigStore, useDistributionStore } from '@/store';
 import { toMarkdown } from '@/utils/markdown.ts';
-import { vAutoAnimate } from '@formkit/auto-animate';
-import { Handle, Position, useVueFlow } from '@vue-flow/core'
-import { Bot, Check, ChevronsLeftRightEllipsis, CircuitBoard, RectangleEllipsis } from 'lucide-vue-next';
-import { onMounted, ref, watch } from 'vue';
 
 const props = defineProps<{
-  id: string
-  data: NodeOptions
+  id: string;
+  data: NodeOptions;
 }>();
 
 const { getConnectedEdges, getEdges } = useVueFlow();
@@ -47,21 +47,21 @@ function updateEdgeStyle() {
     edge.style = {
       stroke: edge.defaultStroke,
       strokeWidth: 4,
-    }
+    };
     edge.labelStyle!.fill = 'black';
   }
   for (const edge of connectedEdges) {
     edge.style = {
       stroke: 'red',
       strokeWidth: 4,
-    }
+    };
     edge.labelStyle!.fill = 'red';
   }
 }
 
 watch(() => configStore.targetNodeId, () => {
   updateEdgeStyle();
-})
+});
 
 function onSelect() {
   if (configStore.targetNodeId === props.id) {

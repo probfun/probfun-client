@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button';
-import { vAutoAnimate } from '@formkit/auto-animate'
+import { vAutoAnimate } from '@formkit/auto-animate';
 import { h, ref } from 'vue';
+import { Button } from '@/components/ui/button';
 
 export interface Tab {
-  id: number
-  label: string
-  icon?: any
-  name?: string
+  id: number;
+  label: string;
+  icon?: any;
+  name?: string;
 }
 
 const props = defineProps<{
-  tabs: Tab[]
+  tabs: Tab[];
 }>();
 
 const activeTab = ref<Tab>(props.tabs[0]);

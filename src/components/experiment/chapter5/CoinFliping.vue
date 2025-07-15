@@ -1,143 +1,9 @@
-<template>
-  <ExperimentBoard :layout="1" :panel-size="70">
-    <template #experiment>
-      <div class="w-full h-full p-4">
-        <!-- 主要内容区域 -->
-        <div class="flex flex-col h-full gap-3">
-          <!-- 图表区域 -->
-          <div class="flex-1 bg-white/90 rounded-xl p-4 shadow-lg hover:transform hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
-            <h2 class="text-lg font-semibold text-blue-700 mb-3 pb-2 border-b-2 border-blue-500">抛硬币频率收敛过程</h2>
-            <div ref="chartContainer" class="w-full h-128 bg-gray-50 rounded border border-gray-200"></div>
-
-            <!-- 硬币动画区域 - 移到图表下方 -->
-            <div class="mt-4 pt-4 border-t border-gray-200">
-              <div class="text-center">
-                <div class="text-sm font-semibold text-blue-700 mb-2">当前抛掷</div>
-                <div
-                    ref="coinElement"
-                    :class="['w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center text-xl font-bold text-white shadow-lg transition-transform duration-300 mx-auto', isFlipping ? 'animate-flip' : '']"
-                >
-                  {{ currentCoinFace }}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 统计数据 -->
-          <div class="grid grid-cols-4 gap-3">
-            <div class="bg-white/90 rounded-xl p-3 text-center transition-all duration-300 shadow-lg hover:transform hover:-translate-y-1 hover:shadow-xl">
-              <div class="text-sm text-blue-600 mb-1">总抛掷次数</div>
-              <div class="text-2xl font-bold text-red-500">{{ totalFlips }}</div>
-            </div>
-
-            <div class="bg-white/90 rounded-xl p-3 text-center transition-all duration-300 shadow-lg hover:transform hover:-translate-y-1 hover:shadow-xl">
-              <div class="text-sm text-blue-600 mb-1">正面次数</div>
-              <div class="text-2xl font-bold text-red-500">{{ headsCount }}</div>
-            </div>
-
-            <div class="bg-white/90 rounded-xl p-3 text-center transition-all duration-300 shadow-lg hover:transform hover:-translate-y-1 hover:shadow-xl">
-              <div class="text-sm text-blue-600 mb-1">反面次数</div>
-              <div class="text-2xl font-bold text-red-500">{{ tailsCount }}</div>
-            </div>
-
-            <div class="bg-white/90 rounded-xl p-3 text-center transition-all duration-300 shadow-lg hover:transform hover:-translate-y-1 hover:shadow-xl">
-              <div class="text-sm text-blue-600 mb-1">当前频率</div>
-              <div class="text-2xl font-bold text-red-500">{{ currentFrequency }}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </template>
-
-    <template #parameter>
-      <div class="w-full h-full p-4 flex flex-col justify-center">
-        <div class="flex items-center gap-2.5 my-3">
-          <label class="inline-block w-40 font-semibold text-sm">抛掷次数:</label>
-          <input
-              type="range"
-              v-model.number="maxTrials"
-              min="100"
-              max="10000"
-              step="100"
-              class="flex-1 p-1"
-          >
-          <span class="min-w-16 px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm">{{ maxTrials }}</span>
-        </div>
-
-        <div class="flex items-center gap-2.5 my-3">
-          <label class="inline-block w-40 font-semibold text-sm">轨迹数量:</label>
-          <input
-              type="range"
-              v-model.number="numSequences"
-              min="1"
-              max="10"
-              step="1"
-              class="flex-1 p-1"
-          >
-          <span class="min-w-16 px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm">{{ numSequences }}</span>
-        </div>
-
-        <div class="flex items-center gap-2.5 my-3">
-          <label class="inline-block w-40 font-semibold text-sm">模拟速度:</label>
-          <input
-              type="range"
-              v-model.number="speed"
-              min="1"
-              max="5"
-              step="1"
-              class="flex-1 p-1"
-          >
-          <span class="min-w-16 px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm">{{ speedLabels[speed - 1] }}</span>
-        </div>
-
-        <div class="flex gap-2 my-4">
-          <button
-              @click="startSimulation"
-              :disabled="isRunning"
-              class="flex-1 py-2.5 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white border-0 rounded cursor-pointer font-bold text-sm transition-all duration-300 hover:transform hover:-translate-y-0.5 hover:shadow-lg"
-          >
-            开始实验
-          </button>
-          <button
-              @click="togglePause"
-              class="flex-1 py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white border-0 rounded cursor-pointer font-bold text-sm transition-all duration-300 hover:transform hover:-translate-y-0.5 hover:shadow-lg"
-          >
-            {{ isPaused ? '继续' : '暂停' }}
-          </button>
-          <button
-              @click="resetSimulation"
-              class="flex-1 py-2.5 px-4 bg-red-600 hover:bg-red-700 text-white border-0 rounded cursor-pointer font-bold text-sm transition-all duration-300 hover:transform hover:-translate-y-0.5 hover:shadow-lg"
-          >
-            重置
-          </button>
-        </div>
-
-        <div class="mt-4 p-3 bg-blue-50 rounded-xl text-sm">
-          <h3 class="font-bold text-blue-700 mb-2">实验说明</h3>
-          <p class="mb-2 leading-relaxed">抛硬币实验中，理论上正面出现的概率为<span class="font-bold text-red-500">0.5</span>。大数定律表明，随着抛掷次数增加，实际频率会逐渐接近理论概率值。</p>
-          <p class="leading-relaxed">观察当抛掷次数较小时，频率波动较大；随着次数增加，频率逐渐稳定在<span class="font-bold text-red-500">0.5</span>附近。</p>
-        </div>
-      </div>
-    </template>
-
-    <template #conclusion>
-      <div class="w-full h-full p-5">
-        <div class="prose-sm max-w-full" v-html="toMarkdown(content)" />
-      </div>
-    </template>
-
-    <template #comment>
-      <CommentPanel exp-id="law-of-large-numbers" />
-    </template>
-  </ExperimentBoard>
-</template>
-
 <script setup>
+import * as d3 from 'd3';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
-import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
 import { toMarkdown } from '@/utils/markdown';
-import * as d3 from 'd3';
 
 // 响应式变量
 const maxTrials = ref(1000);
@@ -213,89 +79,90 @@ $$\\lim_{n \\to \\infty} P\\left(\\left|\\frac{1}{n}\\sum_{i=1}^{n} X_i - \\mu\\
 const chartConfig = {
   width: 600,
   height: 320,
-  margin: { top: 20, right: 20, bottom: 50, left: 60 }
+  margin: { top: 20, right: 20, bottom: 50, left: 60 },
 };
 
 // 初始化图表
 function initChart() {
-  if (!chartContainer.value) return;
+  if (!chartContainer.value)
+    return;
 
   // 清除现有内容
-  d3.select(chartContainer.value).selectAll("*").remove();
+  d3.select(chartContainer.value).selectAll('*').remove();
 
   const { width, height, margin } = chartConfig;
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
   svg = d3.select(chartContainer.value)
-      .append("svg")
-      .attr("width", width)
-      .attr("height", height)
-      .append("g")
-      .attr("transform", `translate(${margin.left},${margin.top})`);
+    .append('svg')
+    .attr('width', width)
+    .attr('height', height)
+    .append('g')
+    .attr('transform', `translate(${margin.left},${margin.top})`);
 
   // 创建比例尺
   const xScale = d3.scaleLinear()
-      .domain([1, maxTrials.value])
-      .range([0, innerWidth]);
+    .domain([1, maxTrials.value])
+    .range([0, innerWidth]);
 
   const yScale = d3.scaleLinear()
-      .domain([0, 1])
-      .range([innerHeight, 0]);
+    .domain([0, 1])
+    .range([innerHeight, 0]);
 
   // 添加坐标轴
-  svg.append("g")
-      .attr("class", "x-axis")
-      .attr("transform", `translate(0, ${innerHeight})`)
-      .call(d3.axisBottom(xScale).ticks(5).tickFormat(d3.format("d")))
-      .selectAll("text")
-      .style("fill", "#374151");
+  svg.append('g')
+    .attr('class', 'x-axis')
+    .attr('transform', `translate(0, ${innerHeight})`)
+    .call(d3.axisBottom(xScale).ticks(5).tickFormat(d3.format('d')))
+    .selectAll('text')
+    .style('fill', '#374151');
 
-  svg.append("g")
-      .attr("class", "y-axis")
-      .call(d3.axisLeft(yScale).ticks(5))
-      .selectAll("text")
-      .style("fill", "#374151");
+  svg.append('g')
+    .attr('class', 'y-axis')
+    .call(d3.axisLeft(yScale).ticks(5))
+    .selectAll('text')
+    .style('fill', '#374151');
 
   // 添加坐标轴标签
-  svg.append("text")
-      .attr("class", "axis-label")
-      .attr("x", innerWidth / 2)
-      .attr("y", innerHeight + 40)
-      .attr("text-anchor", "middle")
-      .style("fill", "#374151")
-      .style("font-size", "12px")
-      .text("抛硬币次数 (n)");
+  svg.append('text')
+    .attr('class', 'axis-label')
+    .attr('x', innerWidth / 2)
+    .attr('y', innerHeight + 40)
+    .attr('text-anchor', 'middle')
+    .style('fill', '#374151')
+    .style('font-size', '12px')
+    .text('抛硬币次数 (n)');
 
-  svg.append("text")
-      .attr("class", "axis-label")
-      .attr("transform", "rotate(-90)")
-      .attr("x", -innerHeight / 2)
-      .attr("y", -40)
-      .attr("text-anchor", "middle")
-      .style("fill", "#374151")
-      .style("font-size", "12px")
-      .text("正面频率");
+  svg.append('text')
+    .attr('class', 'axis-label')
+    .attr('transform', 'rotate(-90)')
+    .attr('x', -innerHeight / 2)
+    .attr('y', -40)
+    .attr('text-anchor', 'middle')
+    .style('fill', '#374151')
+    .style('font-size', '12px')
+    .text('正面频率');
 
   // 添加理论概率线
-  svg.append("line")
-      .attr("class", "theory-line")
-      .attr("x1", 0)
-      .attr("y1", yScale(0.5))
-      .attr("x2", innerWidth)
-      .attr("y2", yScale(0.5))
-      .attr("stroke", "#f59e0b")
-      .attr("stroke-width", 2)
-      .attr("stroke-dasharray", "5,5");
+  svg.append('line')
+    .attr('class', 'theory-line')
+    .attr('x1', 0)
+    .attr('y1', yScale(0.5))
+    .attr('x2', innerWidth)
+    .attr('y2', yScale(0.5))
+    .attr('stroke', '#f59e0b')
+    .attr('stroke-width', 2)
+    .attr('stroke-dasharray', '5,5');
 
-  svg.append("text")
-      .attr("class", "theory-label")
-      .attr("x", innerWidth - 10)
-      .attr("y", yScale(0.5) - 10)
-      .attr("text-anchor", "end")
-      .style("fill", "#f59e0b")
-      .style("font-size", "12px")
-      .text("理论概率 (p=0.5)");
+  svg.append('text')
+    .attr('class', 'theory-label')
+    .attr('x', innerWidth - 10)
+    .attr('y', yScale(0.5) - 10)
+    .attr('text-anchor', 'end')
+    .style('fill', '#f59e0b')
+    .style('font-size', '12px')
+    .text('理论概率 (p=0.5)');
 
   // 存储比例尺以供后续使用
   svg.xScale = xScale;
@@ -310,27 +177,28 @@ function initSequences() {
       id: i,
       data: [],
       heads: 0,
-      line: svg.append("path")
-          .attr("class", "sequence-line")
-          .attr("fill", "none")
-          .attr("stroke", d3.interpolateRainbow(i / numSequences.value))
-          .attr("stroke-width", 2)
-          .attr("opacity", 0.8)
+      line: svg.append('path')
+        .attr('class', 'sequence-line')
+        .attr('fill', 'none')
+        .attr('stroke', d3.interpolateRainbow(i / numSequences.value))
+        .attr('stroke-width', 2)
+        .attr('opacity', 0.8),
     });
   }
 }
 
 // 更新图表
 function updateChart() {
-  if (!svg) return;
+  if (!svg)
+    return;
 
-  sequences.forEach(seq => {
+  sequences.forEach((seq) => {
     if (seq.data.length > 0) {
       const lineGenerator = d3.line()
-          .x(d => svg.xScale(d.n))
-          .y(d => svg.yScale(d.freq));
+        .x(d => svg.xScale(d.n))
+        .y(d => svg.yScale(d.freq));
 
-      seq.line.attr("d", lineGenerator(seq.data));
+      seq.line.attr('d', lineGenerator(seq.data));
     }
   });
 }
@@ -338,7 +206,8 @@ function updateChart() {
 // 执行一次抛硬币
 function flipCoin(sequence) {
   const isHeads = Math.random() < 0.5;
-  if (isHeads) sequence.heads++;
+  if (isHeads)
+    sequence.heads++;
 
   const n = sequence.data.length + 1;
   const freq = sequence.heads / n;
@@ -362,7 +231,8 @@ function animateCoinFlip(isHeads) {
 
 // 更新统计数据
 function updateStats() {
-  if (sequences.length === 0) return;
+  if (sequences.length === 0)
+    return;
 
   const currentSequence = sequences[0];
   totalFlips.value = currentSequence.data.length;
@@ -380,9 +250,9 @@ function runSimulation() {
   }
 
   // 每次执行多步以加快速度
-  const stepsPerFrame = Math.pow(2, speed.value - 1);
+  const stepsPerFrame = 2 ** (speed.value - 1);
   for (let i = 0; i < stepsPerFrame && currentStep.value < maxTrials.value; i++) {
-    sequences.forEach(seq => {
+    sequences.forEach((seq) => {
       if (seq.data.length < maxTrials.value) {
         const isHeads = flipCoin(seq);
         if (seq.id === 0 && i === 0) {
@@ -399,7 +269,8 @@ function runSimulation() {
 
 // 开始模拟
 function startSimulation() {
-  if (isRunning.value) return;
+  if (isRunning.value)
+    return;
 
   isRunning.value = true;
   isPaused.value = false;
@@ -413,7 +284,8 @@ function startSimulation() {
 
 // 暂停/继续
 function togglePause() {
-  if (!isRunning.value) return;
+  if (!isRunning.value)
+    return;
 
   isPaused.value = !isPaused.value;
 
@@ -422,7 +294,8 @@ function togglePause() {
       clearInterval(animationInterval);
       animationInterval = null;
     }
-  } else {
+  }
+  else {
     animationInterval = setInterval(runSimulation, 50);
   }
 }
@@ -443,8 +316,8 @@ function resetSimulation() {
 
   if (svg) {
     // 清除所有序列
-    sequences.forEach(seq => {
-      seq.line.attr("d", null);
+    sequences.forEach((seq) => {
+      seq.line.attr('d', null);
     });
 
     initSequences();
@@ -455,7 +328,7 @@ function resetSimulation() {
 watch(maxTrials, () => {
   if (svg) {
     svg.xScale.domain([1, maxTrials.value]);
-    svg.select(".x-axis").call(d3.axisBottom(svg.xScale).ticks(5).tickFormat(d3.format("d")));
+    svg.select('.x-axis').call(d3.axisBottom(svg.xScale).ticks(5).tickFormat(d3.format('d')));
   }
   resetSimulation();
 });
@@ -479,6 +352,166 @@ onUnmounted(() => {
   }
 });
 </script>
+
+<template>
+  <ExperimentBoard :layout="1" :panel-size="70">
+    <template #experiment>
+      <div class="w-full h-full p-4">
+        <!-- 主要内容区域 -->
+        <div class="flex flex-col h-full gap-3">
+          <!-- 图表区域 -->
+          <div class="flex-1 bg-white/90 rounded-xl p-4 shadow-lg hover:transform hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+            <h2 class="text-lg font-semibold text-blue-700 mb-3 pb-2 border-b-2 border-blue-500">
+              抛硬币频率收敛过程
+            </h2>
+            <div ref="chartContainer" class="w-full h-128 bg-gray-50 rounded border border-gray-200" />
+
+            <!-- 硬币动画区域 - 移到图表下方 -->
+            <div class="mt-4 pt-4 border-t border-gray-200">
+              <div class="text-center">
+                <div class="text-sm font-semibold text-blue-700 mb-2">
+                  当前抛掷
+                </div>
+                <div
+                  ref="coinElement"
+                  class="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center text-xl font-bold text-white shadow-lg transition-transform duration-300 mx-auto" :class="[isFlipping ? 'animate-flip' : '']"
+                >
+                  {{ currentCoinFace }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 统计数据 -->
+          <div class="grid grid-cols-4 gap-3">
+            <div class="bg-white/90 rounded-xl p-3 text-center transition-all duration-300 shadow-lg hover:transform hover:-translate-y-1 hover:shadow-xl">
+              <div class="text-sm text-blue-600 mb-1">
+                总抛掷次数
+              </div>
+              <div class="text-2xl font-bold text-red-500">
+                {{ totalFlips }}
+              </div>
+            </div>
+
+            <div class="bg-white/90 rounded-xl p-3 text-center transition-all duration-300 shadow-lg hover:transform hover:-translate-y-1 hover:shadow-xl">
+              <div class="text-sm text-blue-600 mb-1">
+                正面次数
+              </div>
+              <div class="text-2xl font-bold text-red-500">
+                {{ headsCount }}
+              </div>
+            </div>
+
+            <div class="bg-white/90 rounded-xl p-3 text-center transition-all duration-300 shadow-lg hover:transform hover:-translate-y-1 hover:shadow-xl">
+              <div class="text-sm text-blue-600 mb-1">
+                反面次数
+              </div>
+              <div class="text-2xl font-bold text-red-500">
+                {{ tailsCount }}
+              </div>
+            </div>
+
+            <div class="bg-white/90 rounded-xl p-3 text-center transition-all duration-300 shadow-lg hover:transform hover:-translate-y-1 hover:shadow-xl">
+              <div class="text-sm text-blue-600 mb-1">
+                当前频率
+              </div>
+              <div class="text-2xl font-bold text-red-500">
+                {{ currentFrequency }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <template #parameter>
+      <div class="w-full h-full p-4 flex flex-col justify-center">
+        <div class="flex items-center gap-2.5 my-3">
+          <label class="inline-block w-40 font-semibold text-sm">抛掷次数:</label>
+          <input
+            v-model.number="maxTrials"
+            type="range"
+            min="100"
+            max="10000"
+            step="100"
+            class="flex-1 p-1"
+          >
+          <span class="min-w-16 px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm">{{ maxTrials }}</span>
+        </div>
+
+        <div class="flex items-center gap-2.5 my-3">
+          <label class="inline-block w-40 font-semibold text-sm">轨迹数量:</label>
+          <input
+            v-model.number="numSequences"
+            type="range"
+            min="1"
+            max="10"
+            step="1"
+            class="flex-1 p-1"
+          >
+          <span class="min-w-16 px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm">{{ numSequences }}</span>
+        </div>
+
+        <div class="flex items-center gap-2.5 my-3">
+          <label class="inline-block w-40 font-semibold text-sm">模拟速度:</label>
+          <input
+            v-model.number="speed"
+            type="range"
+            min="1"
+            max="5"
+            step="1"
+            class="flex-1 p-1"
+          >
+          <span class="min-w-16 px-2.5 py-1 bg-gray-100 rounded text-center font-bold text-sm">{{ speedLabels[speed - 1] }}</span>
+        </div>
+
+        <div class="flex gap-2 my-4">
+          <button
+            :disabled="isRunning"
+            class="flex-1 py-2.5 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white border-0 rounded cursor-pointer font-bold text-sm transition-all duration-300 hover:transform hover:-translate-y-0.5 hover:shadow-lg"
+            @click="startSimulation"
+          >
+            开始实验
+          </button>
+          <button
+            class="flex-1 py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white border-0 rounded cursor-pointer font-bold text-sm transition-all duration-300 hover:transform hover:-translate-y-0.5 hover:shadow-lg"
+            @click="togglePause"
+          >
+            {{ isPaused ? '继续' : '暂停' }}
+          </button>
+          <button
+            class="flex-1 py-2.5 px-4 bg-red-600 hover:bg-red-700 text-white border-0 rounded cursor-pointer font-bold text-sm transition-all duration-300 hover:transform hover:-translate-y-0.5 hover:shadow-lg"
+            @click="resetSimulation"
+          >
+            重置
+          </button>
+        </div>
+
+        <div class="mt-4 p-3 bg-blue-50 rounded-xl text-sm">
+          <h3 class="font-bold text-blue-700 mb-2">
+            实验说明
+          </h3>
+          <p class="mb-2 leading-relaxed">
+            抛硬币实验中，理论上正面出现的概率为<span class="font-bold text-red-500">0.5</span>。大数定律表明，随着抛掷次数增加，实际频率会逐渐接近理论概率值。
+          </p>
+          <p class="leading-relaxed">
+            观察当抛掷次数较小时，频率波动较大；随着次数增加，频率逐渐稳定在<span class="font-bold text-red-500">0.5</span>附近。
+          </p>
+        </div>
+      </div>
+    </template>
+
+    <template #conclusion>
+      <div class="w-full h-full p-5">
+        <div class="prose-sm max-w-full" v-html="toMarkdown(content)" />
+      </div>
+    </template>
+
+    <template #comment>
+      <CommentPanel exp-id="law-of-large-numbers" />
+    </template>
+  </ExperimentBoard>
+</template>
 
 <style scoped>
 @keyframes flip {

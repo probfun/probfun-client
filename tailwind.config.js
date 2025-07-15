@@ -6,9 +6,9 @@ function round(num) {
   return num
     .toFixed(7)
     .replace(/(\.\d*[1-9])0+$/, '$1')
-    .replace(/\.0$/, '')
+    .replace(/\.0$/, '');
 }
-const em = (px, base) => `${round(px / base)}em`
+const em = (px, base) => `${round(px / base)}em`;
 /** @type {import('tailwindcss').Config} */
 
 export default {
@@ -177,4 +177,4 @@ export default {
       'dark',
     ],
   },
-}
+};

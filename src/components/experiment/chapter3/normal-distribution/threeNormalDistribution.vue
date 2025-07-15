@@ -1,15 +1,15 @@
 <script setup lang="ts">
+import katex from 'katex';
+import { GraduationCap, Lightbulb, MessagesSquare } from 'lucide-vue-next';
+
+import Slider from 'primevue/slider';
+import { computed, onMounted, ref, watch } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
-
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { toMarkdown } from '@/utils/markdown';
-import katex from 'katex';
-import { GraduationCap, Lightbulb, MessagesSquare } from 'lucide-vue-next';
-import Slider from 'primevue/slider';
-import { computed, onMounted, ref, watch } from 'vue';
 import ThreeNormalDiagram from './threeNormalDiagram.vue';
 import 'katex/dist/katex.min.css';
 
@@ -19,7 +19,7 @@ const sigma1 = ref(1);
 const sigma2 = ref(1);
 const density = ref(0);
 const x = ref(1);
-const y = ref(1)
+const y = ref(1);
 
 // 定义渲染 LaTeX 的函数
 
@@ -193,7 +193,7 @@ $$
 $$
 N(μ_y+ρ\\frac{σ_y}{σ_x}(x-μ_x) , (1-ρ^2)σ_y²
 $$
-`
+`;
 
 const content = `
 ## **概述**
@@ -275,7 +275,7 @@ f(x,y) = \\frac{1}{2\\pi|Σ|^\\frac{1}{2}}e^{-(x-μ)'·Σ^{-1}(x-μ)}。
 - **2. 联合正态性**：如果$X$和$Y$服从二维正态分布，那么它的每个边缘分布也是正态分布。
 - **3. 相关性**：如果$ρ = 0$,则$X$和$Y$是独立的，如果$ρ = ±1$，则$X$和$Y$完全线性相关。
 
-`
+`;
 const discussTabList = [
   {
     id: 0,

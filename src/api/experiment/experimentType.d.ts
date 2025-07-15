@@ -1,4 +1,4 @@
 export interface Experiment {
-  expId: string
-  expName: string
+  expId: string;
+  expName: string;
 }

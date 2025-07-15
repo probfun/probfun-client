@@ -1,6 +1,6 @@
 <script setup>
-import { BaseEdge, EdgeLabelRenderer, getSmoothStepPath, Position, useNodesData, useVueFlow } from '@vue-flow/core'
-import { computed, ref, toRef, watch } from 'vue'
+import { BaseEdge, EdgeLabelRenderer, getSmoothStepPath, Position, useNodesData, useVueFlow } from '@vue-flow/core';
+import { computed, ref, toRef, watch } from 'vue';
 
 const props = defineProps({
   id: {
@@ -39,95 +39,95 @@ const props = defineProps({
     type: String,
     default: Position.Left,
   },
-})
+});
 
-const { updateEdgeData } = useVueFlow()
+const { updateEdgeData } = useVueFlow();
 
-const nodesData = useNodesData([props.target, props.source])
+const nodesData = useNodesData([props.target, props.source]);
 
-const labelRef = ref()
+const labelRef = ref();
 
-const edgeRef = ref()
+const edgeRef = ref();
 
-const targetNodeData = computed(() => nodesData.value[0].data)
+const targetNodeData = computed(() => nodesData.value[0].data);
 
-const sourceNodeData = computed(() => nodesData.value[1].data)
+const sourceNodeData = computed(() => nodesData.value[1].data);
 
-const isFinished = toRef(() => sourceNodeData.value.isFinished)
+const isFinished = toRef(() => sourceNodeData.value.isFinished);
 
-const isCancelled = toRef(() => targetNodeData.value.isCancelled)
+const isCancelled = toRef(() => targetNodeData.value.isCancelled);
 
-const isAnimating = ref(false)
+const isAnimating = ref(false);
 
-let animation = null
+let animation = null;
 
-const path = computed(() => getSmoothStepPath(props))
+const path = computed(() => getSmoothStepPath(props));
 
 const edgeColor = computed(() => {
   if (targetNodeData.value.hasError) {
-    return '#f87171'
+    return '#f87171';
   }
 
   if (targetNodeData.value.isFinished) {
-    return '#42B983'
+    return '#42B983';
   }
 
   if (targetNodeData.value.isCancelled || targetNodeData.value.isSkipped) {
-    return '#fbbf24'
+    return '#fbbf24';
   }
 
   if (targetNodeData.value.isRunning || isAnimating.value) {
-    return '#2563eb'
+    return '#2563eb';
   }
 
-  return '#6b7280'
-})
+  return '#6b7280';
+});
 
 watch(isCancelled, (isCancelled) => {
   if (isCancelled) {
-    animation?.cancel()
+    animation?.cancel();
   }
-})
+});
 
 watch(isAnimating, (isAnimating) => {
-  updateEdgeData(props.id, { isAnimating })
-})
+  updateEdgeData(props.id, { isAnimating });
+});
 
 watch(isFinished, (isFinished) => {
   if (isFinished) {
-    runAnimation()
+    runAnimation();
   }
-})
+});
 
 function runAnimation() {
-  const pathEl = edgeRef.value?.pathEl
+  const pathEl = edgeRef.value?.pathEl;
 
   if (!pathEl) {
-    return
+    return;
   }
 
-  const totalLength = pathEl.getTotalLength()
+  const totalLength = pathEl.getTotalLength();
 
-  isAnimating.value = true
+  isAnimating.value = true;
 
-  const keyframes = [{ offsetDistance: '0%' }, { offsetDistance: '100%' }]
+  const keyframes = [{ offsetDistance: '0%' }, { offsetDistance: '100%' }];
 
   // use path length as a possible measure for the animation duration
-  const pathLengthDuration = totalLength * 10
+  const pathLengthDuration = totalLength * 10;
 
   animation = labelRef.value.animate(keyframes, {
     duration: Math.min(Math.max(pathLengthDuration, 1500), 3000), // clamp duration between 1.5s and 3s
     direction: 'normal',
     easing: 'ease-in-out',
     iterations: 1,
-  })
+  });
 
-  animation.onfinish = handleAnimationEnd
-  animation.oncancel = handleAnimationEnd
+  animation.onfinish = handleAnimationEnd;
+  animation.oncancel = handleAnimationEnd;
 }
 
 function handleAnimationEnd() {
-  isAnimating.value = false
+  isAnimating.value = false;
 }
 </script>
 
@@ -135,7 +135,7 @@ function handleAnimationEnd() {
 export default {
   name: 'AnimationEdge',
   inheritAttrs: false,
-}
+};
 </script>
 
 <template>

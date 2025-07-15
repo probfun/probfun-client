@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useToast } from 'primevue/usetoast';
+import { onMounted, ref, watch } from 'vue';
 import { birthdayProblemApi } from '@/api/experiment/birthdayProblemApi';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { Button } from '@/components/ui/button';
@@ -14,6 +16,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -22,15 +25,12 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-
+} from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { toMarkdown } from '@/utils/markdown';
-import { useToast } from 'primevue/usetoast';
-import { onMounted, ref, watch } from 'vue';
 import { content } from './content';
 
-async function birthdayTwo(peopleCount: number, runs: number, monthProbs: number[], needNProb: false) {
+async function _birthdayTwo(peopleCount: number, runs: number, monthProbs: number[], needNProb: false) {
   try {
     // 调用API获取同一天生日的概率
     const result = await birthdayProblemApi(peopleCount, runs, monthProbs, needNProb);
@@ -43,7 +43,7 @@ async function birthdayTwo(peopleCount: number, runs: number, monthProbs: number
     throw error; // 重新抛出错误，以便外部捕获
   }
 }
-async function birthdayN(peopleCount: number, runs: number, monthProbs: number[], needNProb: true) {
+async function _birthdayN(peopleCount: number, runs: number, monthProbs: number[], needNProb: true) {
   try {
     // 调用API获取同一天生日的概率
     const result = await birthdayProblemApi(peopleCount, runs, monthProbs, needNProb);
@@ -58,8 +58,8 @@ async function birthdayN(peopleCount: number, runs: number, monthProbs: number[]
 }
 
 interface Person {
-  id: number
-  birthday: number
+  id: number;
+  birthday: number;
 }
 
 const toast = useToast();
@@ -444,14 +444,18 @@ watch(bornProb, () => {
   <ExperimentBoard title="生日问题" :tags="['蒙特卡洛方法', '排列组合', '互补事件的概率', '大数定律', '均匀分布']">
     <template #experiment>
       <div v-if="!isSimulating" class="p-5 flex flex-col overflow-hidden h-full w-full">
-        <div class="grid gap-3 overflow-y-auto py-3" :style="{
-          gridTemplateColumns: 'repeat(auto-fill, minmax(65px, 1fr))',
-          gridAutoRows: '1fr',
-        }">
+        <div
+          class="grid gap-3 overflow-y-auto py-3" :style="{
+            gridTemplateColumns: 'repeat(auto-fill, minmax(65px, 1fr))',
+            gridAutoRows: '1fr',
+          }"
+        >
           <div v-for="person in people" :key="person.id" class="flex flex-col items-center justify-center">
-            <Button class="size-10 rounded-full"
+            <Button
+              class="size-10 rounded-full"
               :class="person.birthday === selectedBirthday ? 'bg-green-500 hover:bg-green-500' : 'bg-primary'"
-              @click="selectBirthday(person.birthday)">
+              @click="selectBirthday(person.birthday)"
+            >
               {{ person.id + 1 }}
             </Button>
             <Label class="mt-2">{{ convertDayOfYearToDate(person.birthday) }}</Label>
@@ -485,7 +489,6 @@ watch(bornProb, () => {
       <div class="w-full h-full flex justify-around gap-3 p-3">
         <!--        <div class="flex flex-col justify-around gap-3 items-center w-full h-full max-w-lg"> -->
         <Card class="w-1/3 flex flex-col">
-
           <CardContent class=" flex flex-col gap-8 justify-center items-center flex-1">
             <div class="w-full flex flex-col items-center justify-center gap-4">
               <div class="flex flex-col gap-2 grow w-full">
@@ -512,8 +515,10 @@ watch(bornProb, () => {
 
               <div class="flex flex-1 h-full gap-2 mt-8 justify-center items-center">
                 <Label for="people" class="flex-shrink-0 font-bold text-left">人数(N) = </Label>
-                <Input id="people" v-model.number="peopleCount" type="number" :min="2" :max="300" placeholder="2~300"
-                  :disabled="isSimulating" />
+                <Input
+                  id="people" v-model.number="peopleCount" type="number" :min="2" :max="300" placeholder="2~300"
+                  :disabled="isSimulating"
+                />
                 <Dialog>
                   <DialogTrigger class="w-full">
                     <Button :disabled="isSimulating" class="flex-1 max-w-full" @click="visible = !visible">
@@ -522,7 +527,9 @@ watch(bornProb, () => {
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
-                      <DialogTitle class="w-1/2  w-full items-center justify-center">设置出生概率</DialogTitle>
+                      <DialogTitle class="w-1/2  w-full items-center justify-center">
+                        设置出生概率
+                      </DialogTitle>
                       <DialogDescription>
                         默认每个月的出生概率相等，你可以对其进行修改。
                       </DialogDescription>
@@ -553,8 +560,10 @@ watch(bornProb, () => {
                 </Dialog>
               </div>
               <div class="flex w-full gap-4 mt-8 items-center justify-center">
-                <Button class="w-1/2 items-center justify-center " :disabled="isSimulating"
-                  @click="generatePeople(peopleCount)">
+                <Button
+                  class="w-1/2 items-center justify-center " :disabled="isSimulating"
+                  @click="generatePeople(peopleCount)"
+                >
                   随机生成生日
                 </Button>
                 <Button class="w-1/2" @click="isSimulating ? stopSimulate() : startSimulate()">
@@ -584,7 +593,6 @@ watch(bornProb, () => {
                   </SelectContent>
                 </Select>
               </div> -->
-
             </div>
           </CardContent>
         </Card>
@@ -595,12 +603,18 @@ watch(bornProb, () => {
             </CardTitle>
           </CardHeader>
           <CardContent class="p-2 flex flex-col items-center flex-1">
-            <chart v-if="expType === '0'" class="w-full h-full" type="bar" :data="sameDayChartData"
-              :options="chartOptions" />
-            <chart v-else-if="expType === '1'" class="w-full h-full" type="line" :data="pSameDayChartData"
-              :options="chartOptions" />
-            <chart v-else-if="expType === '2'" class="w-full h-full" type="line" :data="nSameDayChartData"
-              :options="chartOptions" />
+            <chart
+              v-if="expType === '0'" class="w-full h-full" type="bar" :data="sameDayChartData"
+              :options="chartOptions"
+            />
+            <chart
+              v-else-if="expType === '1'" class="w-full h-full" type="line" :data="pSameDayChartData"
+              :options="chartOptions"
+            />
+            <chart
+              v-else-if="expType === '2'" class="w-full h-full" type="line" :data="nSameDayChartData"
+              :options="chartOptions"
+            />
             <Button class="mt-3" :disabled="isSimulating" @click="resetData">
               重置数据
             </Button>

@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import katex from 'katex';
+import { computed, onMounted, ref, watch } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox'
+import { Checkbox } from '@/components/ui/checkbox';
 import { Slider } from '@/components/ui/slider';
 import { toMarkdown } from '@/utils/markdown';
-import katex from 'katex';
-import { computed, onMounted, ref, watch } from 'vue';
 import BinomialDiagram from './BinomialDiagram.vue';
 import 'katex/dist/katex.min.css';
 
@@ -52,14 +52,14 @@ function binomialCoefficient(n: number, k: number) {
 }
 // 维护历史数据的 chartData，包含多个 dataset
 const chartData = ref<{
-  labels: number[]
+  labels: number[];
   datasets: {
-    label: string
-    backgroundColor: string
-    borderColor: string
-    data: number[]
-    fill: boolean
-  }[]
+    label: string;
+    backgroundColor: string;
+    borderColor: string;
+    data: number[];
+    fill: boolean;
+  }[];
 }>({
   labels: [],
   datasets: [],

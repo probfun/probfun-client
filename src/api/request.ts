@@ -3,14 +3,15 @@ import axios from 'axios';
 
 // 定义返回数据的通用结构
 interface ResponseData<T = any> {
-  code: number
-  message: string
-  data: T
+  code: number;
+  message: string;
+  data: T;
 }
 
 // 创建 axios 实例
 const service = axios.create({
-  timeout: 10000, // 请求超时时间
+  baseURL: '/backend-api',
+  timeout: 10000,
   headers: {
     'Content-Type': 'application/json;charset=utf-8',
   },

@@ -1,14 +1,14 @@
 <script setup lang="ts">
+import katex from 'katex';
+import { computed, onMounted, ref, watch } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Slider } from '@/components/ui/slider';
 import { renderLatex, toMarkdown } from '@/utils/markdown';
-import katex from 'katex';
-import { computed, onMounted, ref, watch } from 'vue'
 import GeometricDiagram from './GeometricDiagram.vue';
 import 'katex/dist/katex.min.css';
 
@@ -178,7 +178,7 @@ $$
    其中 $$ X $$ 是第一次成功前的失败次数。
    
 **2. 离散分布**：几何分布是一种定义在非负整数上的离散概率分布。
-`
+`;
 </script>
 
 <template>

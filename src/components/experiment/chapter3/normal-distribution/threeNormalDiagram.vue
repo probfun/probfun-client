@@ -3,14 +3,14 @@ import Plotly from 'plotly.js-dist';
 import { nextTick, onMounted, ref, watch } from 'vue';
 
 const props = defineProps<{
-  mean1: number
-  mean2: number
-  sigma1: number
-  sigma2: number
-  density: number
-  isChart3: boolean
-  fixedX: number
-  fixedY: number
+  mean1: number;
+  mean2: number;
+  sigma1: number;
+  sigma2: number;
+  density: number;
+  isChart3: boolean;
+  fixedX: number;
+  fixedY: number;
 }>();
 
 const plotlyChart1 = ref<HTMLElement | null>(null); // 3D二维正态分布图
@@ -605,7 +605,7 @@ watch(() => props.isChart3, async () => {
   createPlotlyChart4();
   createPlotlyChart5();
   createPlotlyChart6();
-})
+});
 </script>
 
 <template>

@@ -1,7 +1,7 @@
 import type { Chat, ChatBlock, ChatMessage, Tool } from '@/api/ai/aiType';
+import { v4 as uuidv4 } from 'uuid';
 import { useAiStore } from '@/store';
 import { error, success } from '@/utils/toast';
-import { v4 as uuidv4 } from 'uuid';
 
 export const DEFAULT_CHAT_TITLE = '概率论实验';
 

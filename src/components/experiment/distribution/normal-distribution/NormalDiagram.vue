@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { v4 as uuidv4 } from 'uuid';
 import { onMounted, ref, watch } from 'vue';
-// 用来存储历史表达式
 
 const props = withDefaults(defineProps<{
-  mean: number
-  stdDev: number
-  transformedMeanY?: number
-  transformedVarianceY?: number
-  showHistory?: boolean
-  lineShow?: boolean
+  mean?: number;
+  stdDev?: number;
+  transformedMeanY?: number;
+  transformedVarianceY?: number;
+  showHistory?: boolean;
+  lineShow?: boolean;
 
 }>(), {
   mean: 0,

@@ -191,4 +191,4 @@ export {
   fCustom,
   type FunctionLabel,
   functionList,
-}
+};

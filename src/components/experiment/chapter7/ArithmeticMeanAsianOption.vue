@@ -1,9 +1,9 @@
 <script setup>
+import Plotly from 'plotly.js-dist';
+import { onMounted, reactive, ref } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { toMarkdown } from '@/utils/markdown';
-import Plotly from 'plotly.js-dist';
-import { onMounted, reactive, ref } from 'vue';
 
 const content = ref(`
 ## **蒙特卡洛模拟计算算术平均亚式看涨期权价格**
@@ -70,7 +70,7 @@ const content = ref(`
 
 亚式期权广泛应用于商品、能源和外汇市场，尤其适用于那些价格波动剧烈但又需要长期对冲的场景。蒙特卡洛模拟方法灵活性高、适应性强，是处理无法解析求解的复杂金融衍生品的重要数值工具。尽管计算量大，但随着计算能力的提升，它在金融工程中的应用越来越广泛。
 
-`)
+`);
 
 // 初始化参数
 const params = reactive({
@@ -96,7 +96,7 @@ const results = reactive({
 const isLoading = ref(false);
 
 // 控制固定执行价格输入框的显示
-const showFixedStrike = ref(false);
+const _showFixedStrike = ref(false);
 
 // 绑定滑块事件
 document.querySelectorAll('input[type="range"], select').forEach((element) => {
@@ -191,10 +191,11 @@ async function calculateOptionPrice() {
       }
 
       // 计算收益
-      if(optionType === 'call'){
-        payoffs[i] = Math.max(averages[i] - K,0);
-      }else{
-        payoffs[i] = Math.max(K - averages[i],0);
+      if (optionType === 'call') {
+        payoffs[i] = Math.max(averages[i] - K, 0);
+      }
+      else {
+        payoffs[i] = Math.max(K - averages[i], 0);
       }
     }
 
@@ -216,8 +217,8 @@ async function calculateOptionPrice() {
 
 // 更新图表
 function updateCharts(paths, averages) {
-  const {timeSteps, T} = params;
-  const timePoints = Array.from({length: timeSteps + 1}, (_, i) => i * T / timeSteps);
+  const { timeSteps, T } = params;
+  const timePoints = Array.from({ length: timeSteps + 1 }, (_, i) => i * T / timeSteps);
 
   // 选择部分路径显示 (最多20条)
   const displayPaths = Math.min(20, paths.length);
@@ -228,27 +229,27 @@ function updateCharts(paths, averages) {
       x: timePoints,
       y: paths[i],
       type: 'line',
-      line: {color: 'rgba(0, 128, 255, 0.5)', width: 1},
+      line: { color: 'rgba(0, 128, 255, 0.5)', width: 1 },
       name: `路径 ${i + 1}`,
       showlegend: false,
       hoverinfo: 'none',
     });
 
-    //添加平均价格线
+    // 添加平均价格线
     pathTraces.push({
       x: timePoints,
-      y: Array.from({length: timeSteps + 1}).fill(averages[0]),
+      y: Array.from({ length: timeSteps + 1 }).fill(averages[0]),
       mode: 'lines',
-      line: {color: 'red', width: 2},
+      line: { color: 'red', width: 2 },
       name: '平均价格',
     });
 
     // 绘制价格路径图
     Plotly.newPlot('paths-chart', [...pathTraces], {
       title: '蒙特卡洛模拟路径及平均价格',
-      xaxis: {title: '时间 (年)'},
-      yaxis: {title: '标的资产价格'},
-      margin: {t: 40, l: 50, r: 30, b: 50},
+      xaxis: { title: '时间 (年)' },
+      yaxis: { title: '标的资产价格' },
+      margin: { t: 40, l: 50, r: 30, b: 50 },
       showlegend: true,
     });
 
@@ -256,7 +257,7 @@ function updateCharts(paths, averages) {
     const histogramTrace = {
       x: averages,
       type: 'histogram',
-      marker: {color: 'rgba(100,200,100,0.7)'},
+      marker: { color: 'rgba(100,200,100,0.7)' },
       name: '平均价格分布',
     };
 
@@ -267,23 +268,22 @@ function updateCharts(paths, averages) {
       x1: params.K,
       y1: 1,
       yref: 'paper',
-      line: {color: 'red', width: 2, dash: 'dash'},
-    }]
+      line: { color: 'red', width: 2, dash: 'dash' },
+    }];
 
     Plotly.newPlot('histogram-chart', [histogramTrace], {
       title: '平均价格分布',
-      xaxis: {title: '平均价格'},
-      yaxis: {title: '频数'},
-      margin: {t: 40, l: 50, r: 30, b: 50},
+      xaxis: { title: '平均价格' },
+      yaxis: { title: '频数' },
+      margin: { t: 40, l: 50, r: 30, b: 50 },
       shapes,
     });
   }
 
-
-// 选项类型改变处理函数
-  function handleOptionTypeChange() {
-    showFixedStrike.value = params.optionType.startsWith('fixed');
-  }
+  // 选项类型改变处理函数
+  // function handleOptionTypeChange() {
+  //   showFixedStrike.value = params.optionType.startsWith('fixed');
+  // }
 }
 // 初始化计算
 onMounted(() => {
@@ -418,7 +418,7 @@ onMounted(() => {
           <div class="mb-4">
             <label class="block mb-1 font-medium">平均类型:</label>
             <select
-                v-model="params.optionType" class="w-full p-2 border border-gray-300 rounded"
+              v-model="params.optionType" class="w-full p-2 border border-gray-300 rounded"
             >
               <option value="arithmetic">
                 算术平均

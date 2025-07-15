@@ -34,11 +34,10 @@ const content = `
     </template>
 
     <template #comment>
-      <CommentPanel exp-id="birthday-attack"/>
+      <CommentPanel exp-id="birthday-attack" />
     </template>
   </ExperimentBoard>
 </template>
-
 
 <style scoped>
 div, label {

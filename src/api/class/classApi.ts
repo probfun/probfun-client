@@ -1,9 +1,9 @@
-import type { Post, Class } from './classType';
+import type { Class, Post } from './classType';
 import { get, post } from '../request';
 
 export async function postPostApi(title: string, content: string, classes: string[]) {
   const result = await post<{
-    post: Post
+    post: Post;
   }>(`/api/classes/post`, {
     title,
     content,
@@ -14,14 +14,14 @@ export async function postPostApi(title: string, content: string, classes: strin
 
 export async function fetchPostApi(classId: string) {
   const result = await get<{
-    posts: Post[]
+    posts: Post[];
   }>(`/api/classes/${classId}/post`);
-  return result.data
+  return result.data;
 }
 
 export async function fetchClassListApi() {
   const result = await get<{
-    classes: Class[]
-  }>(`/api/classes`);
+    classes: Class[];
+  }>(`/class/list/`);
   return result.data;
 }

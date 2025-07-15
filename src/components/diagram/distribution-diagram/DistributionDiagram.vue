@@ -1,9 +1,5 @@
 <script setup lang="ts">
 import type { GraphEdge, NodeDragEvent } from '@vue-flow/core';
-import DistributionNode from '@/components/diagram/distribution-diagram/DistributionNode.vue';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils.ts';
-import { useConfigStore } from '@/store';
 import { vAutoAnimate } from '@formkit/auto-animate'; // 引入 dagre
 import { Background } from '@vue-flow/background';
 import { Controls } from '@vue-flow/controls';
@@ -12,6 +8,10 @@ import { MiniMap } from '@vue-flow/minimap';
 import dagre from 'dagre';
 import { ChevronRight } from 'lucide-vue-next';
 import { nextTick, onMounted, ref, watch } from 'vue';
+import DistributionNode from '@/components/diagram/distribution-diagram/DistributionNode.vue';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils.ts';
+import { useConfigStore } from '@/store';
 import Icon from '../Icon.vue';
 import { initialEdges, initialNodes } from './initial-elements.ts';
 
@@ -87,7 +87,7 @@ function applyAutoLayout() {
 }
 
 function resetEdges() {
-  const edges = getEdges.value as unknown as (GraphEdge & { defaultStroke: string, style: any })[];
+  const edges = getEdges.value as unknown as (GraphEdge & { defaultStroke: string; style: any })[];
   for (const edge of edges) {
     edge.style.stroke = edge.defaultStroke;
     edge.labelStyle!.fill = 'black';
@@ -123,7 +123,7 @@ watch(() => configStore.targetNodeId, () => {
   if (!configStore.targetNodeId) {
     resetEdges();
   }
-})
+});
 
 onMounted(() => {
   nextTick(() => {

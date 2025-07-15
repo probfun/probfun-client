@@ -2,10 +2,10 @@
 import { onMounted, ref, watch } from 'vue';
 
 const props = defineProps<{
-  rate: number
-  shift: number
-  showGraph: boolean
-  showHistory: boolean
+  rate: number;
+  shift: number;
+  showGraph: boolean;
+  showHistory: boolean;
 }>();
 
 declare const Desmos: any;

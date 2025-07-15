@@ -93,7 +93,7 @@ function generateRandomNeedle() {
   return { x1, x2, y1, y2, yCenter };
 }
 
-function drawNeedle(ctx: CanvasRenderingContext2D, needleData: { x1: number, x2: number, y1: number, y2: number, yCenter: number }) {
+function drawNeedle(ctx: CanvasRenderingContext2D, needleData: { x1: number; x2: number; y1: number; y2: number; yCenter: number }) {
   // 检查是否与地板线相交
   const offset = floorLineSpacing / 2;
   if (Math.floor((needleData.y1 - offset) / floorLineSpacing) !== Math.floor((needleData.y2 - offset) / floorLineSpacing)) {

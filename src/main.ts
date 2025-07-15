@@ -1,13 +1,13 @@
-import App from '@/App.vue'
-import router from '@/router';
 import { definePreset } from '@primevue/themes';
 import Aura from '@primevue/themes/aura';
 import { createPinia } from 'pinia';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
-import { createApp } from 'vue'
-import '@/assets/index.css'
+import { createApp } from 'vue';
+import App from '@/App.vue';
+import router from '@/router';
+import '@/assets/index.css';
 
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);

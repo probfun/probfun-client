@@ -1,0 +1,92 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: ['*']
+  pull_request:
+    branches: ['*']
+
+env:
+  REGISTRY: registry.cn-hangzhou.aliyuncs.com
+  NAMESPACE: probfun
+  IMAGE_NAME: probfun-fe
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run ESLint
+        run: pnpm lint:check
+
+      - name: Run TypeScript check
+        run: pnpm type-check
+
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set TAG based on event type
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            PR_NUM=${{ github.event.pull_request.number }}
+            SHORT_SHA=$(echo "${{ github.event.pull_request.head.sha }}" | cut -c1-7)
+            TAG="pr-${PR_NUM}-${SHORT_SHA}"
+          else
+            BRANCH="${{ github.ref_name }}"
+            if [ "$BRANCH" = "main" ]; then
+              TAG="latest"
+            elif [ "$BRANCH" = "release" ]; then
+              TAG="release"
+            elif [ "$BRANCH" = "develop" ]; then
+              TAG="develop"
+            else
+              TAG="$BRANCH"
+            fi
+          fi
+          echo "TAG=$TAG" >> $GITHUB_ENV
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Login to Aliyun Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.ALIYUN_USERNAME }}
+          password: ${{ secrets.ALIYUN_PASSWORD }}
+
+      - name: Build Docker image
+        run: |
+          docker build . -t ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/${{ env.IMAGE_NAME }}:${TAG}
+
+      - name: Push Docker image
+        run: |
+          docker push ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/${{ env.IMAGE_NAME }}:${TAG}

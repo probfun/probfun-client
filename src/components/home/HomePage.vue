@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -6,9 +7,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
+} from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { ref } from 'vue';
 
 const experiments = ref([
   {

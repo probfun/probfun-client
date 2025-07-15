@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import type { Tab } from '@/components/Container.vue';
+import { ChartColumnIncreasing, GraduationCap, MessagesSquare, Presentation } from 'lucide-vue-next';
+import { onMounted, ref } from 'vue';
 import Container from '@/components/Container.vue';
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
-import { ChartColumnIncreasing, GraduationCap, MessagesSquare, Presentation } from 'lucide-vue-next';
-import { onMounted, ref } from 'vue';
 
 const args = withDefaults(defineProps<{
-  discussTabList?: Tab[]
-  panelSize?: number
-  layout?: number
+  discussTabList?: Tab[];
+  panelSize?: number;
+  layout?: number;
 }>(), {
   discussTabList: () => [
     {
@@ -45,8 +45,8 @@ const parameterTabList = ref([{
 }]);
 
 onMounted(() => {
-  console.log(args.layout)
-})
+  console.log(args.layout);
+});
 
 // const resizeObserver = ref<ResizeObserver | null>(null);
 //

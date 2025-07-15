@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import type { ChildComment, Comment, CommentWithChild, CommentWithParent } from '@/api/comment/commentType'
+import type { ChildComment, Comment, CommentWithChild, CommentWithParent } from '@/api/comment/commentType';
+import { vAutoAnimate } from '@formkit/auto-animate';
+import { X } from 'lucide-vue-next';
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import {
   deleteCommentApi,
   fetchCommentApi,
@@ -16,20 +20,16 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { isVisitor } from '@/utils/auth.ts';
 import { error, success, warning } from '@/utils/toast';
-import { vAutoAnimate } from '@formkit/auto-animate';
-import { X } from 'lucide-vue-next';
-import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
 
 const props = defineProps<{
-  expId: string
+  expId: string;
 }>();
 
 const commentList = ref<CommentWithChild[] | null>(null);
@@ -72,7 +72,7 @@ function convertToCommentWithChild(comments: CommentWithParent[]): CommentWithCh
     }
   }
 
-  const result: CommentWithChild[] = []
+  const result: CommentWithChild[] = [];
   for (const [commentId, children] of Object.entries(resultMap)) {
     result.push({
       ...commentMap[commentId],

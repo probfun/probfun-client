@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { GraduationCap, Lightbulb, MessagesSquare } from 'lucide-vue-next';
+import { onMounted, ref, watch } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ThreeDoorsDisplay from '@/components/experiment/chapter1/three-doors/ThreeDoorsDisplay.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
@@ -7,8 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { toMarkdown } from '@/utils/markdown';
-import { GraduationCap, Lightbulb, MessagesSquare } from 'lucide-vue-next';
-import { onMounted, ref, watch } from 'vue';
 
 import { conclusionContent, discussContent, explanationContent } from './content';
 
@@ -104,7 +104,7 @@ watch(() => [threeDoorsDisplay.value?.changeWinNum, threeDoorsDisplay.value?.cha
 
 onMounted(() => {
   chartDataC.value = setdataC();
-  chartDataNC.value = setdataNC()
+  chartDataNC.value = setdataNC();
 });
 
 const options = ref({
@@ -178,35 +178,42 @@ const discussTabList = [
             </CardHeader>
             <CardContent class="flex-wrap justify-around gap-8 items-center  grid grid-row-2">
               <div class=" grid grid-cols-3 flex gap-8 justify-center items-center">
-                <Button :class="cn('transition-all', selectedStrategy !== 'never' && 'opacity-60')"
-                  @click="selectedStrategy = 'never'">
+                <Button
+                  :class="cn('transition-all', selectedStrategy !== 'never' && 'opacity-60')"
+                  @click="selectedStrategy = 'never'"
+                >
                   每次都不换门
                 </Button>
-                <Button :class="cn('transition-all', selectedStrategy !== 'always' && 'opacity-60')"
-                  @click="selectedStrategy = 'always'">
+                <Button
+                  :class="cn('transition-all', selectedStrategy !== 'always' && 'opacity-60')"
+                  @click="selectedStrategy = 'always'"
+                >
                   每次都换门
                 </Button>
-                <Button :class="cn('transition-all', selectedStrategy !== 'random' && 'opacity-60')"
-                  @click="selectedStrategy = 'random'">
+                <Button
+                  :class="cn('transition-all', selectedStrategy !== 'random' && 'opacity-60')"
+                  @click="selectedStrategy = 'random'"
+                >
                   随机换门
                 </Button>
               </div>
               <div class=" grid grid-cols-2">
-              <div class="flex flex-1 items-center justify-start">
-                <Label class="font-bold mr-2">模拟轮数 = </Label>
-                <Input v-model="threeDoorsDisplay.autoGameRound[0]" class="flex-1" :min="1" :max="500" placeholder="1~500"/>
+                <div class="flex flex-1 items-center justify-start">
+                  <Label class="font-bold mr-2">模拟轮数 = </Label>
+                  <Input v-model="threeDoorsDisplay.autoGameRound[0]" class="flex-1" :min="1" :max="500" placeholder="1~500" />
                 </div>
                 <div class="flex ml-8">
-                  <Button @click="() => {
-                    if (threeDoorsDisplay === null)
-                      return;
-                    threeDoorsDisplay.autoGaming ? threeDoorsDisplay.autoGaming = false : threeDoorsDisplay.simulateGame();
-                  }">
+                  <Button
+                    @click="() => {
+                      if (threeDoorsDisplay === null)
+                        return;
+                      threeDoorsDisplay.autoGaming ? threeDoorsDisplay.autoGaming = false : threeDoorsDisplay.simulateGame();
+                    }"
+                  >
                     {{ threeDoorsDisplay.autoGaming ? '终止模拟' : '开始模拟' }}
                   </Button>
                 </div>
               </div>
-
             </CardContent>
           </card>
           <Card class="flex-1">
@@ -230,12 +237,12 @@ const discussTabList = [
                   不换门失败次数： {{ threeDoorsDisplay.notChangeLoseNum }}
                 </Label>
                 <Label class="flex items-center flex-shrink-0 text-lg">
-                  不换门实际胜率： {{ (threeDoorsDisplay.notChangeWinNum / (threeDoorsDisplay.notChangeWinNum +
-                    threeDoorsDisplay.notChangeLoseNum)).toFixed(2) }}
+                  不换门实际胜率： {{ (threeDoorsDisplay.notChangeWinNum / (threeDoorsDisplay.notChangeWinNum
+                    + threeDoorsDisplay.notChangeLoseNum)).toFixed(2) }}
                 </Label>
                 <Label class="flex items-center flex-shrink-0 text-lg">
-                  换门实际胜率： {{ (threeDoorsDisplay.changeWinNum / (threeDoorsDisplay.changeWinNum +
-                    threeDoorsDisplay.changeLoseNum)).toFixed(2) }}
+                  换门实际胜率： {{ (threeDoorsDisplay.changeWinNum / (threeDoorsDisplay.changeWinNum
+                    + threeDoorsDisplay.changeLoseNum)).toFixed(2) }}
                 </Label>
                 <Label class="flex items-center flex-shrink-0 text-lg">
                   不换门理论胜率：0.33

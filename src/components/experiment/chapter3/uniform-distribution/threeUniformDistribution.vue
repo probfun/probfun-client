@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import CommentPanel from '@/components/comment/CommentPanel.vue';
-import ThreeUniformDiagram from '@/components/experiment/chapter3/uniform-distribution/threeUniformDiagram.vue';
-import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
-import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-
-import { renderLatex, toMarkdown } from '@/utils/markdown';
 import katex from 'katex';
 import Slider from 'primevue/slider';
 import { computed, onMounted, ref, watch } from 'vue';
+import CommentPanel from '@/components/comment/CommentPanel.vue';
+import ThreeUniformDiagram from '@/components/experiment/chapter3/uniform-distribution/threeUniformDiagram.vue';
+import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
+
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { renderLatex, toMarkdown } from '@/utils/markdown';
 import UniformDiagram from '../../distribution/UniformDiagram.vue';
 import 'katex/dist/katex.min.css';
 
@@ -181,7 +181,7 @@ $$
 - **2.矩形区域**：二维均匀分布通常定义在矩形区域内，边界由$[a,b]×[c,d]$给出。
 - **3. 独立性**：若$(X,Y)$独立地从均匀分布中抽样，$X$ 和 $Y$ 的分布是独立的，且每个维度的分布也是均匀的。
 
-`
+`;
 </script>
 
 <template>
