@@ -1,4 +1,4 @@
-FROM node:22-slim as builder
+FROM node:18-slim as builder
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"

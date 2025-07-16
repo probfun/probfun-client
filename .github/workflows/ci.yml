@@ -21,7 +21,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '18'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
@@ -63,7 +63,7 @@ jobs:
             TAG="pr-${PR_NUM}-${SHORT_SHA}"
           else
             BRANCH="${{ github.ref_name }}"
-            if [ "$BRANCH" = "main" ]; then
+            if [ "$BRANCH" = "master" ]; then
               TAG="latest"
             elif [ "$BRANCH" = "release" ]; then
               TAG="release"
