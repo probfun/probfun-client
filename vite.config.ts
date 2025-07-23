@@ -31,8 +31,8 @@ export default defineConfig({
         changeOrigin: true,
       },
       '/ai': {
-        target: 'ws://192.144.199.178:8000', // 本地调试 本地用这个
-        // target: 'wss://127.0.0.1:8000', // 线上部署
+        // target: 'ws://192.144.199.178:8000', // 本地调试 本地用这个
+        target: 'ws://127.0.0.1:8000', // 线上部署
         ws: true,
         changeOrigin: true,
         rewrite: path => path.replace(/^\/ai/, ''),
