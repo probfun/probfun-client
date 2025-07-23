@@ -57,7 +57,7 @@ export async function aiApi(
 ) {
   const head = window.location.protocol === 'https:' ? 'wss' : 'ws';
   console.log('WebSocket URL:', head);
-  const wsUrl = `${head}://${location.host}/ai/chat`;
+  const wsUrl = `${head}://${location.host}/backend-api/ai/chat`;
   let websocket: WebSocket | null = null;
 
   try {
