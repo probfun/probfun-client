@@ -13,7 +13,7 @@ export async function isValidApi(studentId: string) {
 export async function loginApi(studentId: string, password: string) {
   const result = await post<{
     token: string;
-    user: User & { token: string };
+    user: User;
   }>('/auth/login/', {
     studentId,
     password,

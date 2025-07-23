@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { vAutoAnimate } from '@formkit/auto-animate';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
 import { isValidApi, loginApi, registerApi } from '@/api/user/userApi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,6 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useUserStore } from '@/store';
 import { setLocalToken } from '@/utils/auth';
 import { error, success, warning } from '@/utils/toast';
+import { vAutoAnimate } from '@formkit/auto-animate';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -66,7 +66,7 @@ async function register() {
       school.value,
     );
     const data = await loginApi(studentId.value, password.value);
-    const { token, ...user } = data.user;
+    const { token, user } = data;
     setLocalToken(token);
     userStore.user = user;
     await router.push('/dashboard');
