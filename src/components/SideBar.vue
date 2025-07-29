@@ -1112,7 +1112,7 @@ function goHome() {
             <li>
               <details open>
                 <summary class="font-bold">
-                  <i class="pi pi-bookmark" /> 第六章-随机过程模拟与向量场线积分
+                  <i class="pi pi-bookmark" /> 第六章-随机过程
                 </summary>
                 <ul class="space-y-0">
                   <li v-for="(item, index) in chapter6Items" :key="item.label">
@@ -1138,7 +1138,7 @@ function goHome() {
             <li>
               <details open>
                 <summary class="font-bold">
-                  <i class="pi pi-bookmark" /> 第七章-金融数学
+                  <i class="pi pi-bookmark" /> 第七章-数理统计
                 </summary>
                 <ul class="space-y-0">
                   <li v-for="(item, index) in chapter7Items" :key="item.label">
