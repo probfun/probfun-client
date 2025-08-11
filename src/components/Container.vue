@@ -18,7 +18,7 @@ const activeTab = ref<Tab>(props.tabs[0]);
 </script>
 
 <template>
-  <div class="rounded-lg overflow-hidden border hover:border-primary transition-all flex flex-col">
+  <div class="rounded-xl overflow-hidden border shadow-lg transition-all flex flex-col">
     <div
       class="w-full sticky top-0 z-10 bg-secondary p-1 flex gap-1 flex-shrink-0 overflow-x-auto"
       :style="{

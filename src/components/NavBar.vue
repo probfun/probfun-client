@@ -333,7 +333,7 @@ function openFeishuDoc() {
 </script>
 
 <template>
-  <nav class="w-full flex py-2 px-5 z-50 border-b bg-background gap-2">
+  <nav class="w-full flex py-2 px-5 z-50 border rounded-xl shadow-md bg-background gap-2">
     <div class="flex items-center  justify-center gap-2 overflow-x-hidden">
       <Label class="text-lg font-bold shrink-0">
         {{ title }}
@@ -356,11 +356,11 @@ function openFeishuDoc() {
       <Button @click="openFeishuDoc">
         用户手册
       </Button>
-      <div v-if="!isVisitor()" class="relative flex items-center justify-center ml-auto hover:scale-110">
+      <div v-if="!isVisitor()" class="relative flex items-center justify-center ml-auto">
         <Popover>
           <PopoverTrigger>
             <Button size="icon" class="size-8 relative text-muted-foreground" variant="ghost">
-              <Bell :stroke-width="2.5" class="size-5" />
+              <Bell :stroke-width="2" class="size-6" />
               <Badge
                 v-if="messageNumber !== 0"
                 class="absolute right-1.5 top-0 translate-x-1/2 rounded-full min-w-4 h-4 p-0 flex items-center justify-center"
