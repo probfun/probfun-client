@@ -10,7 +10,7 @@ import { useToast } from 'primevue/usetoast';
 import { TreeItem, TreeRoot } from 'radix-vue';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { fetchQuestionListApi } from '@/api/do-question/doQuestion.ts';
+import { fetchChapterListApi, fetchSubjectListApi } from '@/api/do-question/doQuestion.ts';
 import { fetchFeedbackApi, postFeedbackApi } from '@/api/feedback/feedbackApi.ts';
 import { clickApi } from '@/api/track/trackApi.ts';
 import { experimentItems, questionItems } from '@/components/sidebar/DrawerItem.ts';
@@ -195,7 +195,7 @@ function toItemTree(root: Chapter): DrawerItem {
 
 async function refreshQuestionList() {
   try {
-    const response = await fetchQuestionListApi('高等数学上');
+    const response = await fetchChapterListApi(2); // 传subjectId
     const chapterList = response.chapters;
     questionItems.value = chapterList.map(chapter => toItemTree(chapter));
   }
@@ -204,7 +204,19 @@ async function refreshQuestionList() {
   }
 }
 
+async function refreshSubjectList() {
+  try {
+    // TODO: 与页面关联
+    await fetchSubjectListApi();
+  }
+  catch (error) {
+    console.error('Error tracking button click:', error);
+  }
+}
+
 onMounted(() => {
+  // TODO: 先获取所有subject，根据subjectId获取所有chapter，用chapterId获取章节内所有question
+  refreshSubjectList();
   refreshFeedback();
   refreshQuestionList();
 });

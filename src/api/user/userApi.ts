@@ -1,31 +1,31 @@
 import type { User } from './userType';
 import { get, post, put } from '../request';
 
-export async function isValidApi(studentId: string) {
+export async function isValidApi(username: string) {
   const result = await post<{
     isValid: number;
   }>('/user/valid/', {
-    studentId,
+    username,
   });
   return result.data;
 }
 
-export async function loginApi(studentId: string, password: string) {
+export async function loginApi(username: string, password: string) {
   const result = await post<{
     token: string;
     user: User;
   }>('/auth/login/', {
-    studentId,
+    username,
     password,
   });
   return result.data;
 }
 
-export async function registerApi(studentId: string, password: string, nickname: string, gender: number, email: string, phone: string, major: string, school: string) {
+export async function registerApi(username: string, password: string, nickname: string, gender: number, email: string, phone: string, major: string, school: string) {
   const result = await post<{
     user: User;
   }>('/auth/register/', {
-    studentId,
+    username,
     password,
     nickname,
     gender,

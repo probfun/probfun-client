@@ -24,7 +24,7 @@ function casLogin() {
 async function visitorLogin() {
   userStore.user = {
     uid: 'visitor-uid',
-    studentId: 'visitor',
+    username: 'visitor',
     classId: 'visitor-class',
     nickname: 'Visitor',
     gender: '0',

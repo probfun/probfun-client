@@ -469,7 +469,7 @@ function openFeishuDoc() {
             <div class="grid grid-cols-2 gap-4">
               <div class="grid gap-2">
                 <Label>学工号</Label>
-                <Input v-model="tempUser.studentId" disabled />
+                <Input v-model="tempUser.username" disabled />
               </div>
 
               <div class="grid gap-2">

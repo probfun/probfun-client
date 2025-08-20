@@ -1,5 +1,13 @@
 import { get } from '@/api/request.ts';
 
+interface Subject {
+  id: number;
+  name: string;
+  description: string;
+  created_at: string;
+  updated_at: string;
+}
+
 interface Chapter {
   id: number;
   name: string;
@@ -10,24 +18,30 @@ interface Chapter {
     description: string;
     children: Chapter[];
   }[];
+  config: Record<string, any>;
 }
 
-async function fetchQuestionListApi(subject: string | null) {
-  const result = await get<{
-    chapters: Chapter[];
-  }>(`/assessment/chapter/list/`, { subject });
+async function fetchSubjectListApi() {
+  const result = await get(`/assessment/subject/list/`);
   return result.data;
 }
-//
-// export async function fetchChapterList(expId: string) {
-//   const result = await post<{
-//     isFavorite: boolean;
-//   }>(`/experiment/${expId}/favorite/`);
-//   return result.data;
-// }
 
-export type { Chapter };
+async function fetchQuestionListApi(chapterId: number) {
+  const result = await get(`/assessment/question/list/`, { chapterId });
+  return result.data;
+}
+
+async function fetchChapterListApi(subjectId: number) {
+  const result = await get<{
+    chapters: Chapter[];
+  }>(`/assessment/chapter/list/`, { subjectId });
+  return result.data;
+}
+
+export type { Chapter, Subject };
 
 export {
+  fetchChapterListApi,
   fetchQuestionListApi,
+  fetchSubjectListApi,
 };
