@@ -1,4 +1,15 @@
 <script setup lang="ts">
+<<<<<<< Updated upstream
+=======
+import type { Feedback } from '@/api/feedback/feedbackType';
+import { computed } from 'vue'
+import { Book, Bot, CircleHelp, Dices, Home, LogOut, Star, Sun, Moon, User, Network as MindMap} from 'lucide-vue-next';
+import { useToast } from 'primevue/usetoast';
+import { onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { fetchFeedbackApi, postFeedbackApi } from '@/api/feedback/feedbackApi';
+import { clickApi } from '@/api/track/trackApi';
+>>>>>>> Stashed changes
 import { Button } from '@/components/ui/button';
 import {
   Tooltip,
@@ -16,6 +27,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+<<<<<<< Updated upstream
 import { logout } from '@/utils/auth';
 import { Book, Bot, CircleHelp, Dices, LogOut, Star, Sun, User } from 'lucide-vue-next';
 import { onMounted, ref } from 'vue';
@@ -27,6 +39,15 @@ import { Feedback } from '@/api/feedback/feedbackType';
 import { useToast } from 'primevue/usetoast';
 
 const toast = useToast();
+=======
+import { useUserStore } from '@/store';
+import { isVisitor, logout } from '@/utils/auth';
+import { useConfigStore } from '@/store/config.ts'
+
+const toast = useToast();
+const userStore = useUserStore();
+const config = useConfigStore()
+>>>>>>> Stashed changes
 
 interface SideBarItem {
   label: string
@@ -48,12 +69,25 @@ function isActiveRoute(itemRoute: string) {
 }
 
 const router = useRouter();
+<<<<<<< Updated upstream
+=======
+const vistorAllowedItem = [
+  '主页',
+  '目录',
+  '个性化思维导图',
+];
+>>>>>>> Stashed changes
 const sideBarItem = ref<SideBarItem[]>([
   {
     label: '目录',
     icon: Book,
     route: '/dashboard/experiment',
     command: toggleDrawer,
+  },
+  {
+    label: '个性化思维导图',
+    icon: MindMap,
+    route: '/dashboard/mindmap',
   },
   {
     label: '收藏',
@@ -72,10 +106,10 @@ const sideBarItem = ref<SideBarItem[]>([
   },
 ]);
 
-const sideBarBottomItem = ref<SideBarItem[]>([
+const sideBarBottomItem = computed<SideBarItem[]>(() => [
   {
     label: '切换主题',
-    icon: Sun,
+    icon: config.theme === 'dark' ? Moon : Sun,
     command: async () => {
       try {
         await clickApi('CLICK', 'sideBar', '切换主题', window.location.href);
@@ -86,9 +120,11 @@ const sideBarBottomItem = ref<SideBarItem[]>([
       }
       if (document.documentElement.classList.contains('dark')) {
         document.documentElement.classList.remove('dark');
+        config.theme = 'light';
       }
       else {
         document.documentElement.classList.toggle('dark');
+        config.theme = 'dark';
       }
     },
   },
@@ -387,6 +423,7 @@ async function sendFeedback() {
 </script>
 
 <template>
+<<<<<<< Updated upstream
   <div>
     <aside class="h-full border-r flex flex-col relative bg-background z-40">
       <div class="p-2 border-b flex">
@@ -396,14 +433,42 @@ async function sendFeedback() {
       </div>
       <div class="p-2">
         <ul class="space-y-1">
+=======
+  <div class="h-full">
+    <aside class="h-full border-r flex flex-col relative bg-background z-40 items-center gap-4 px-2 sm:py-3">
+      <Button size="icon"
+        class="group rounded-full size-9 bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
+        @click="goHome()">
+        <Dices class="size-5 group-hover:scale-110" />
+      </Button>
+      <!--      <a -->
+      <!--        href="#" -->
+      <!--        class="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base" -->
+      <!--      > -->
+      <!--        <Package2 class="h-4 w-4 transition-all group-hover:scale-110" /> -->
+      <!--        <span class="sr-only">Acme Inc</span> -->
+      <!--      </a> -->
+      <div class="">
+        <ul class="space-y-2 flex flex-col items-center">
+>>>>>>> Stashed changes
           <li v-for="(item, index) in sideBarItem" :key="index">
             <TooltipProvider :delay-duration="0">
               <Tooltip>
                 <TooltipTrigger>
+<<<<<<< Updated upstream
                   <Button size="icon" variant="ghost" :class="cn(isActiveRoute(item.route ?? '') && 'bg-muted')" @click="() => {
                     if (item.command) item.command();
                     else if (item.route) router.push(item.route);
                   }">
+=======
+                  <Button size="icon" variant="ghost"
+                    :class="cn('size-9 rounded-lg text-muted-foreground', isActiveRoute(item.route ?? '') && '!bg-muted text-foreground')"
+                    @click="() => {
+                      if (item.command) item.command();
+                      else if (item.route) router.push(item.route);
+                      if (item.label !== '目录') showIndex = false;
+                    }">
+>>>>>>> Stashed changes
                     <component :is="item.icon" class="size-5" />
                   </Button>
                 </TooltipTrigger>
@@ -421,9 +486,16 @@ async function sendFeedback() {
             <TooltipProvider :delay-duration="0">
               <Tooltip>
                 <TooltipTrigger>
+<<<<<<< Updated upstream
                   <Button size="icon" variant="ghost" @click="() => {
                     if (item.route) router.push(item.route);
                     else if (item.command) item.command();
+=======
+                  <Button size="icon" variant="ghost" class="size-9 text-muted-foreground" @click="() => {
+                    if (item.route) router.push(item.route);
+                    else if (item.command) item.command();
+                    showIndex = false;
+>>>>>>> Stashed changes
                   }">
                     <component :is="item.icon" class="size-5" />
                   </Button>
@@ -462,11 +534,26 @@ async function sendFeedback() {
                 <summary class="font-bold">
                   <i class="pi pi-bookmark" /> 第一章
                 </summary>
+<<<<<<< Updated upstream
                 <ul>
                   <li v-for="item in chapter1Items" :key="item.label">
                     <a :class="{ active: isActiveRoute(item.route) }"
                       @click="() => { item.command(); toggleDrawer(); }">
                       <i :class="item.icon" /> {{ item.label }}
+=======
+                <ul class="space-y-0">
+                  <li v-for="(item, index) in chapter1Items" :key="item.label">
+                    <a :class="{ active: isActiveRoute(item.route) }"
+                      @click="() => { item.command(); toggleDrawer(); }">
+                      <i :class="item.icon" />
+                      1.{{ index + 1 }}-{{ item.label }}
+                      <Star
+                        v-if="userStore.favoriteExperiments.map(item_ => item_.expId).includes(item.route.substring(item.route.lastIndexOf('/') + 1) || item.route)"
+                        class="size-4 ml-auto" :style="{
+                          fill: '#FFA500',
+                          stroke: '#FFA500',
+                        }" />
+>>>>>>> Stashed changes
                     </a>
                   </li>
                 </ul>
@@ -478,21 +565,52 @@ async function sendFeedback() {
                 <summary class="font-bold">
                   <i class="pi pi-bookmark" /> 第二章
                 </summary>
+<<<<<<< Updated upstream
                 <ul>
                   <li v-for="item in chapter2Items" :key="item.label">
                     <a :class="{ active: isActiveRoute(item.route) }"
                       @click="() => { item.command(); toggleDrawer(); }">
                       <i :class="item.icon" /> {{ item.label }}
+=======
+                <ul class="space-y-0">
+                  <li v-for="(item, index) in chapter2Items" :key="item.label">
+                    <a :class="{ active: isActiveRoute(item.route) }"
+                      @click="() => { item.command(); toggleDrawer(); }">
+                      <i :class="item.icon" />
+                      2.{{ index + 1 }}-{{ item.label }}
+                      <Star
+                        v-if="userStore.favoriteExperiments.map(item_ => item_.expId).includes(item.route.substring(item.route.lastIndexOf('/') + 1) || item.route)"
+                        class="size-4 ml-auto" :style="{
+                          fill: '#FFA500',
+                          stroke: '#FFA500',
+                        }" />
+>>>>>>> Stashed changes
                     </a>
                   </li>
                   <li>
                     <details open>
+<<<<<<< Updated upstream
                       <summary><i class="pi pi-chart-bar" />分布的对比</summary>
                       <ul>
                         <li v-for="item in comparisonOfDistributions" :key="item.label">
                           <a :class="{ active: isActiveRoute(item.route) }"
                             @click="() => { item.command(); toggleDrawer(); }">
                             <i :class="item.icon" /> {{ item.label }}
+=======
+                      <summary><i class="pi pi-chart-bar" />2.7-分布的对比</summary>
+                      <ul class="space-y-0">
+                        <li v-for="(item, index) in comparisonOfDistributions" :key="item.label">
+                          <a :class="{ active: isActiveRoute(item.route) }"
+                            @click="() => { item.command(); toggleDrawer(); }">
+                            <i />
+                            2.7.{{ index + 1 }}-{{ item.label }}
+                            <Star
+                              v-if="userStore.favoriteExperiments.map(item_ => item_.expId).includes(item.route.substring(item.route.lastIndexOf('/') + 1) || item.route)"
+                              class="size-4 ml-auto" :style="{
+                                fill: '#FFA500',
+                                stroke: '#FFA500',
+                              }" />
+>>>>>>> Stashed changes
                           </a>
                         </li>
                       </ul>
@@ -501,6 +619,147 @@ async function sendFeedback() {
                 </ul>
               </details>
             </li>
+<<<<<<< Updated upstream
+=======
+            <li>
+              <details open>
+                <summary class="font-bold">
+                  <i class="pi pi-bookmark" /> 第三章-多维随机变量
+                </summary>
+                <ul class="space-y-0">
+                  <li v-for="(item, index) in chapter3Items" :key="item.label">
+                    <a :class="{ active: isActiveRoute(item.route) }"
+                      @click="() => { item.command(); toggleDrawer(); }">
+                      <i :class="item.icon" />
+                      3.{{ index + 1 }}-{{ item.label }}
+                      <Star
+                        v-if="userStore.favoriteExperiments.map(item_ => item_.expId).includes(item.route.substring(item.route.lastIndexOf('/') + 1) || item.route)"
+                        class="size-4 ml-auto" :style="{
+                          fill: '#FFA500',
+                          stroke: '#FFA500',
+                        }" />
+                    </a>
+                  </li>
+                </ul>
+              </details>
+            </li>
+
+            <li>
+              <details open>
+                <summary class="font-bold">
+                  <i class="pi pi-bookmark" /> 第四章-数字特征
+                </summary>
+                <ul class="space-y-0">
+                  <li v-for="(item, index) in chapter4Items" :key="item.label">
+                    <a :class="{ active: isActiveRoute(item.route) }"
+                      @click="() => { item.command(); toggleDrawer(); }">
+                      <i :class="item.icon" />
+                      4.{{ index + 1 }}-{{ item.label }}
+                      <Star
+                        v-if="userStore.favoriteExperiments.map(item_ => item_.expId).includes(item.route.substring(item.route.lastIndexOf('/') + 1) || item.route)"
+                        class="size-4 ml-auto" :style="{
+                          fill: '#FFA500',
+                          stroke: '#FFA500',
+                        }" />
+                    </a>
+                  </li>
+                </ul>
+              </details>
+            </li>
+
+            <li>
+              <details open>
+                <summary class="font-bold">
+                  <i class="pi pi-bookmark" /> 第五章-极限定理
+                </summary>
+                <ul class="sapce-y-1">
+                  <li>
+                    <details open>
+                      <summary><i class="pi pi-chart-bar" />5.1-中心极限定理</summary>
+                      <ul class="space-y-0">
+                        <li v-for="(item, index) in chapter5Items" :key="item.label">
+                          <a :class="{ active: isActiveRoute(item.route) }"
+                            @click="() => { item.command(); toggleDrawer(); }">
+                            <i />
+                            5.1.{{ index + 1 }}-{{ item.label }}
+                            <Star
+                              v-if="userStore.favoriteExperiments.map(item_ => item_.expId).includes(item.route.substring(item.route.lastIndexOf('/') + 1) || item.route)"
+                              class="size-4 ml-auto" :style="{
+                                fill: '#FFA500',
+                                stroke: '#FFA500',
+                              }" />
+                          </a>
+                        </li>
+                      </ul>
+                    </details>
+                  </li>
+
+                  <!--                  <li v-for="(item, index) in chapter5Items" :key="item.label"> -->
+                  <!--                    <a -->
+                  <!--                      :class="{ active: isActiveRoute(item.route) }" -->
+                  <!--                      @click="() => { item.command(); toggleDrawer(); }" -->
+                  <!--                    > -->
+                  <!--                      <i :class="item.icon" /> -->
+                  <!--                      5.{{ index + 1 }}-{{ item.label }} -->
+                  <!--                      <Star -->
+                  <!--                        v-if="userStore.favoriteExperiments.map(item_ => item_.expId).includes(item.route.substring(item.route.lastIndexOf('/') + 1) || item.route)" class="size-4 ml-auto" -->
+                  <!--                        :style="{ -->
+                  <!--                          fill: '#FFA500', -->
+                  <!--                          stroke: '#FFA500', -->
+                  <!--                        }" -->
+                  <!--                      /> -->
+                  <!--                    </a> -->
+                  <!--                  </li> -->
+                </ul>
+              </details>
+            </li>
+
+            <li>
+              <details open>
+                <summary class="font-bold">
+                  <i class="pi pi-bookmark" /> 第六章-随机过程
+                </summary>
+                <ul class="space-y-0">
+                  <li v-for="(item, index) in chapter6Items" :key="item.label">
+                    <a :class="{ active: isActiveRoute(item.route) }"
+                      @click="() => { item.command(); toggleDrawer(); }">
+                      <i :class="item.icon" />
+                      6.{{ index + 1 }}-{{ item.label }}
+                      <Star
+                        v-if="userStore.favoriteExperiments.map(item_ => item_.expId).includes(item.route.substring(item.route.lastIndexOf('/') + 1) || item.route)"
+                        class="size-4 ml-auto" :style="{
+                          fill: '#FFA500',
+                          stroke: '#FFA500',
+                        }" />
+                    </a>
+                  </li>
+                </ul>
+              </details>
+            </li>
+
+            <li>
+              <details open>
+                <summary class="font-bold">
+                  <i class="pi pi-bookmark" /> 第七章-数理统计
+                </summary>
+                <ul class="space-y-0">
+                  <li v-for="(item, index) in chapter7Items" :key="item.label">
+                    <a :class="{ active: isActiveRoute(item.route) }"
+                      @click="() => { item.command(); toggleDrawer(); }">
+                      <i :class="item.icon" />
+                      6.{{ index + 1 }}-{{ item.label }}
+                      <Star
+                        v-if="userStore.favoriteExperiments.map(item_ => item_.expId).includes(item.route.substring(item.route.lastIndexOf('/') + 1) || item.route)"
+                        class="size-4 ml-auto" :style="{
+                          fill: '#FFA500',
+                          stroke: '#FFA500',
+                        }" />
+                    </a>
+                  </li>
+                </ul>
+              </details>
+            </li>
+>>>>>>> Stashed changes
           </ul>
         </div>
       </div>
@@ -508,12 +767,34 @@ async function sendFeedback() {
     <Dialog v-model:open="isFeedback">
       <DialogContent class="overflow-y-auto p-10 max-w-xl">
         <DialogHeader>
+<<<<<<< Updated upstream
           <DialogTitle>意见反馈</DialogTitle>
           <DialogDescription>
             感谢您对邮趣概率的支持！我们非常重视您的意见和建议，以便不断改进我们的服务。欢迎您分享以下内容：<br>
             1. <strong>功能建议：</strong>您希望我们增加哪些新功能或改进现有功能？<br>
             2. <strong>遇到的错误：</strong>在使用过程中，您是否遇到了任何技术或内容错误？<br>
             3. <strong>其他建议：</strong>任何其他您觉得有价值的意见和建议，我们都欢迎您告诉我们！
+=======
+          <DialogTitle>
+            问题反馈
+            <button v-if="userStore.user?.role === 1 && seeFeedback === false" class="mr-5 underline"
+              @click="seeFeedback = true">
+              (查看所有意见反馈)
+            </button>
+            <button v-if="userStore.user?.role === 1 && seeFeedback === true" class="mr-5 underline"
+              @click="seeFeedback = false">
+              (返回)
+            </button>
+          </DialogTitle>
+          <DialogDescription v-if="seeFeedback === false">
+            <!--            感谢您对邮趣概率的支持！我们非常重视您的意见和建议，以便不断改进我们的服务。欢迎您分享以下内容：<br> -->
+            <!--            1. <strong>功能建议：</strong>您希望我们增加哪些新功能或改进现有功能？<br> -->
+            <!--            2. <strong>遇到的错误：</strong>在使用过程中，您是否遇到了任何技术或内容错误？<br> -->
+            <!--            3. <strong>其他建议：</strong>任何其他您觉得有价值的意见和建议，我们都欢迎您告诉我们！ -->
+            <!--            感谢您对概率论学习和本软件的支持！<br> -->
+            如果您在学习概率论时遇到了任何问题，或者有任何希望改进本软件的建议，请随时告诉我们。
+            课堂上您提出的学习问题会由老师统一答复，而关于软件的反馈，我们的开发团队会及时调整和优化，确保更好地满足您的需求！期待您的宝贵意见！
+>>>>>>> Stashed changes
           </DialogDescription>
         </DialogHeader>
         <div class="flex flex-wrap gap-4 mt-5">

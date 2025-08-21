@@ -1,4 +1,10 @@
 import AiPanel from '@/components/ai/AiPanel.vue';
+<<<<<<< Updated upstream
+=======
+import MindMapPanel from '@/components/mindmap/MindMapPanel.vue';
+import Callback from '@/components/auth/Callback.vue';
+import CasLoginCard from '@/components/auth/CasLoginCard.vue';
+>>>>>>> Stashed changes
 import LoginCard from '@/components/auth/LoginCard.vue';
 import RegisterCard from '@/components/auth/RegisterCard.vue';
 import BirthdayAttack from '@/components/experiment/chapter1/BirthdayAttack.vue';
@@ -106,8 +112,33 @@ const router = createRouter({
           component: AiPanel,
         },
         {
+<<<<<<< Updated upstream
           path: '/dashboard/star',
           component: StarPanel,
+=======
+          path: '/dashboard/mindmap',
+          component: MindMapPanel,
+        },
+        {
+          path: '/dashboard/favorite',
+          component: FavoritePanel,
+        },
+        {
+          path: '/dashboard/mindmap/distribution',
+          component: DistributionDiagram,
+        },
+        {
+          path: '/dashboard/mindmap/chapter-1',
+          component: Chatper1Diagram,
+        },
+        {
+          path: '/dashboard/mindmap/chapter-4',
+          component: Chatper4Diagram,
+        },
+        {
+          path: '/:pathMatch(.*)*',
+          redirect: '/dashboard',
+>>>>>>> Stashed changes
         },
       ],
     },

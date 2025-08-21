@@ -44,6 +44,18 @@ declare module 'vue' {
     ChartLegend: typeof import('./src/components/ui/chart/ChartLegend.vue')['default']
     ChartSingleTooltip: typeof import('./src/components/ui/chart/ChartSingleTooltip.vue')['default']
     ChartTooltip: typeof import('./src/components/ui/chart/ChartTooltip.vue')['default']
+<<<<<<< Updated upstream
+=======
+    Chat: typeof import('./src/components/mindmap/chat/index.vue')['default']
+    ChatBoard: typeof import('./src/components/mindmap/chat/ChatBoard.vue')['default']
+    Checkbox: typeof import('./src/components/ui/checkbox/Checkbox.vue')['default']
+    ChildCommentCard: typeof import('./src/components/comment/ChildCommentCard.vue')['default']
+    ChiSquareDistribution: typeof import('./src/components/experiment/chapter7/ChiSquareDistribution.vue')['default']
+    ChiSquareDistributionQuantile: typeof import('./src/components/experiment/chapter7/ChiSquareDistributionQuantile.vue')['default']
+    Clt: typeof import('./src/components/experiment/chapter5/central-limit-theorem/clt.vue')['default']
+    CoinFliping: typeof import('./src/components/experiment/chapter5/CoinFliping.vue')['default']
+    CoinTossing: typeof import('./src/components/experiment/chapter7/CoinTossing.vue')['default']
+>>>>>>> Stashed changes
     CommentCard: typeof import('./src/components/comment/CommentCard.vue')['default']
     CommentPanel: typeof import('./src/components/comment/CommentPanel.vue')['default']
     Container: typeof import('./src/components/Container.vue')['default']
@@ -74,7 +86,16 @@ declare module 'vue' {
     Input: typeof import('./src/components/ui/input/Input.vue')['default']
     InputNumber: typeof import('primevue/inputnumber')['default']
     Label: typeof import('./src/components/ui/label/Label.vue')['default']
+    LatexNode: typeof import('./src/components/mindmap/LatexNode.vue')['default']
     LoginCard: typeof import('./src/components/auth/LoginCard.vue')['default']
+<<<<<<< Updated upstream
+=======
+    MarkdownPreview: typeof import('./src/components/mindmap/chat/MarkdownPreview.vue')['default']
+    Mindmap: typeof import('./src/components/mindmap/mindmap.vue')['default']
+    Mindmappanel: typeof import('./src/components/mindmap/mindmappanel.vue')['default']
+    MindMapPanel: typeof import('./src/components/mindmap/MindMapPanel.vue')['default']
+    MonteCarlo: typeof import('./src/components/experiment/chapter7/MonteCarlo.vue')['default']
+>>>>>>> Stashed changes
     NavBar: typeof import('./src/components/NavBar.vue')['default']
     NormalDistribution: typeof import('./src/components/experiment/distribution/NormalDistribution.vue')['default']
     PE: typeof import('./src/components/experiment/distribution/comparison/PE.vue')['default']
@@ -129,5 +150,8 @@ declare module 'vue' {
     UniformDiagram: typeof import('./src/components/experiment/distribution/UniformDiagram.vue')['default']
     UniformDistribution: typeof import('./src/components/experiment/distribution/UniformDistribution.vue')['default']
     UserPanel: typeof import('./src/components/user/UserPanel.vue')['default']
+  }
+  export interface ComponentCustomProperties {
+    Ripple: typeof import('primevue/ripple')['default']
   }
 }
