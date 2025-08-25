@@ -8,11 +8,44 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
+import { ChartColumnIncreasing, GraduationCap, MessagesSquare, Presentation } from 'lucide-vue-next';
+import { ref } from 'vue';
 
+<<<<<<< Updated upstream
+//
+defineProps({
+  title: {
+    type: String,
+    required: true,
+  },
+  tags: {
+    type: Array as PropType<string[]>,
+    required: true,
+  },
+  discussTabList: {
+    type: Array as PropType<Tab[]>,
+    required: false,
+    default: [
+      {
+        id: 0,
+        label: '实验结论',
+        name: 'conclusion',
+        icon: GraduationCap,
+      },
+      {
+        id: 1,
+        label: '讨论区',
+        name: 'comment',
+        icon: MessagesSquare,
+      },
+    ],
+  },
+=======
 const args = withDefaults(defineProps<{
   discussTabList?: Tab[];
   panelSize?: number;
   layout?: number;
+  showParameterPanel?: boolean;
 }>(), {
   discussTabList: () => [
     {
@@ -30,6 +63,8 @@ const args = withDefaults(defineProps<{
   ],
   panelSize: 40,
   layout: 0,
+  showParameterPanel: true
+>>>>>>> Stashed changes
 });
 
 const displayTabList = ref([{
@@ -85,9 +120,15 @@ onMounted(() => {
               </Container>
             </div>
           </ResizablePanel>
+<<<<<<< Updated upstream
+          <ResizableHandle id="demo-handle-2" />
+          <ResizablePanel id="demo-panel-4" :default-size="60">
+            <div class="flex h-full items-center justify-center p-1">
+=======
           <ResizableHandle id="demo-handle-2" class="bg-transparent p-1" />
-          <ResizablePanel id="demo-panel-4">
+          <ResizablePanel id="demo-panel-4" v-if="showParameterPanel">
             <div class="flex h-full items-center justify-center">
+>>>>>>> Stashed changes
               <Container class="h-full w-full" :tabs="parameterTabList">
                 <slot name="parameter" />
               </Container>

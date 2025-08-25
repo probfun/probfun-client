@@ -155,16 +155,16 @@ const route = useRoute();
 function updateExperiment() {
   const path = route.path.split('/').pop();
   if (path === 'buffon') {
-    title.value = 'Buffon投针';
-    tags.value = ['蒙特卡罗模拟', '辛钦大数定律', '几何概率、概率密度、条件概率', '独立事件'];
+    title.value = '蒲丰投针';
+    tags.value = ['几何概率', '微积分与积分计算', '大数定律', '蒙特卡罗模拟'];
   }
   else if (path === 'three-doors') {
     title.value = '三门问题';
-    tags.value = ['贝叶斯定理', '条件概率', '全概率公式', '独立事件'];
+    tags.value = ['条件概率', '乘法公式', '全概率公式', '贝叶斯公式', '蒙特卡罗模拟', '最优策略'];
   }
   else if (path === 'birthday-problem') {
     title.value = '生日问题';
-    tags.value = ['蒙特卡罗模拟', '排列组合', '互补事件的概率', '均匀分布', '大数定律'];
+    tags.value = ['排列组合', '大数定律', '蒙特卡罗模拟'];
   }
   else if (path === 'birthday-attack') {
     title.value = '生日攻击问题';
@@ -172,7 +172,7 @@ function updateExperiment() {
   }
   else if (path === 'positive-test') {
     title.value = '阳性检测';
-    tags.value = ['条件概率', '互斥事件', '独立事件'];
+    tags.value = ['条件概率', '乘法公式', '全概率公式', '贝叶斯公式', '蒙特卡罗模拟'];
   }
   else if (path === 'binomial-distribution') {
     title.value = '二项分布';
@@ -214,31 +214,91 @@ function updateExperiment() {
     title.value = '泊松分布与正态分布';
     tags.value = ['λ较大，泊松分布可近似为均值和方差均为λ的正态分布'];
   }
+<<<<<<< Updated upstream
+  else if (path === '') {
+    title.value = '';
+    tags.value = [''];
+  }
+  else if (path === '') {
+    title.value = '';
+    tags.value = [''];
+=======
   else if (path === '2d-uniform-distribution') {
     title.value = '二维均匀分布';
-    tags.value = ['边缘分布', '条件分布', '(x,y) ∈ Area G = (x2-x1)·(y2-y1)', 'P((X,Y) ∈ A) = Area A / Area G'];
+    tags.value = ['联合分布', '边缘分布', '条件分布', '随机变量的独立性', '区域积分'];
   }
   else if (path === '2d-normal-distribution') {
     title.value = '二维正态分布';
-    tags.value = ['边缘分布', '条件分布', '(X,Y) ~ N(μ1,μ2;σ1²,σ2²;ρ)'];
+    tags.value = ['联合分布', '边缘分布', '条件分布', '随机变量的独立性', '区域积分'];
+  }
+  else if (path === 'group-detection') {
+    title.value = '分组检测';
+    tags.value = ['事件的独立性', 'n重伯努利概型', '二项分布', '期望', '方差', '函数优化'];
+  }
+  else if (path === 'portfolio') {
+    title.value = '投资组合优化';
+    tags.value = ['期望', '方差', '协方差', '蒙特卡罗抽样'];
+  }
+  else if (path === 'NetworkTrafficCharacteristics') {
+    title.value = '网络流量分析与异常检测系统';
+    tags.value = ['相关系数矩阵', '蒙特卡罗模拟'];
+>>>>>>> Stashed changes
   }
   else if (path === 'expectation-test') {
     title.value = '期望检验';
     tags.value = ['分组检测'];
   }
+<<<<<<< Updated upstream
+=======
+  else if (path === 'CoinFliping') {
+    title.value = '抛硬币实验';
+    tags.value = ['大数定律', '蒙特卡罗模拟'];
+  }
+  else if (path === 'EstimationOfPai') {
+    title.value = '蒙特卡罗方法估算π值';
+    tags.value = ['大数定律', '蒙特卡罗模拟'];
+  }
   else if (path === 'central-limit-theorem') {
     title.value = '高尔顿钉板实验';
-    tags.value = ['正态分布'];
+    tags.value = ['中心极限定理', '蒙特卡罗模拟'];
   }
   else if (path === 'bertrand') {
     title.value = '贝特朗悖论';
-    tags.value = ['随机变量产生机制影响事件概率'];
+    tags.value = ['几何概率', '测度论', '概率的公理化定义'];
   }
   else if (path === 'distribution-clt') {
     title.value = '各种分布的中心极限定理';
     tags.value = ['分布的可加性'];
   }
-
+  else if (path === 'brownian-motion') {
+    title.value = '布朗运动模拟';
+    tags.value = ['随机变量的独立性','正态分布','随机过程','平稳过程','独立增量过程'];
+  }
+  else if (path === 'geometric-brownian-motion') {
+    title.value = '几何布朗运动模拟';
+    tags.value = ['正态分布','随机过程','随机分布'];
+  }
+  else if (path === 'poisson-process') {
+    title.value = '泊松过程模拟';
+    tags.value = ['泊松分布','随机过程','平稳过程','独立增量过程'];
+  }
+  else if (path === 't-distribution') {
+    title.value = 't分布';
+    tags.value = ['正态分布','卡方分布','抽样分布'];
+  }
+  else if (path === 'chi-square-distribution') {
+    title.value = '卡方分布';
+    tags.value = ['正态分布','随机变量和的分布','抽样分布'];
+  }
+  else if (path === 't-distribution-quantile') {
+    title.value = 't分布上分位点';
+    tags.value = ['t分布'];
+  }
+  else if (path === 'chi-square-distribution-quantile') {
+    title.value = '卡方分布上分位点';
+    tags.value = ['卡方分布'];
+  }
+>>>>>>> Stashed changes
   // else if (path === '') {
   // title.value ='';
   // tags.value =[''];
@@ -343,13 +403,18 @@ function openFeishuDoc() {
           {{ item }}
         </Badge>
       </div>
-      <Button v-if="title !== '邮趣概率' && !isVisitor()" size="icon" variant="ghost" class="p-1 size-auto" @click="toggleFavorite">
-        <Star
-          class="size-5 transition-all" :style="{
-            fill: isFavorite ? '#FFA500' : 'none',
-            stroke: isFavorite ? '#FFA500' : '#999',
-          }"
-        />
+<<<<<<< Updated upstream
+    </div>
+    <div class="flex items-center gap-2 ml-auto">
+      <Label class="text-base font-bold hover:underline underline-offset-4"> {{ userStore.user?.nickname ?? 'unknown' }}</Label>
+      <Button variant="ghost" size="icon" class="rounded-full" @click="isOpen = true">
+=======
+      <Button v-if="title !== '邮趣概率' && !isVisitor()" size="icon" variant="ghost" class="p-1 size-auto"
+        @click="toggleFavorite">
+        <Star class="size-5 transition-all" :style="{
+          fill: isFavorite ? '#FFA500' : 'none',
+          stroke: isFavorite ? '#FFA500' : '#999',
+        }" />
       </Button>
     </div>
     <div class="flex items-center gap-4 ml-auto">
@@ -361,13 +426,10 @@ function openFeishuDoc() {
           <PopoverTrigger>
             <Button size="icon" class="size-8 relative text-muted-foreground" variant="ghost">
               <Bell :stroke-width="2" class="size-6" />
-              <Badge
-                v-if="messageNumber !== 0"
+              <Badge v-if="messageNumber !== 0"
                 class="absolute right-1.5 top-0 translate-x-1/2 rounded-full min-w-4 h-4 p-0 flex items-center justify-center"
-                variant="destructive"
-              >
-                {{ messageNumber <= 99 ? messageNumber : '99+' }}
-              </Badge>
+                variant="destructive">
+                {{ messageNumber <= 99 ? messageNumber : '99+' }} </Badge>
             </Button>
           </PopoverTrigger>
           <PopoverContent>
@@ -405,36 +467,24 @@ function openFeishuDoc() {
                 </Avatar>
                 <div class="flex flex-col">
                   <span v-if="item.type === 'post'">{{ item.postData?.post.user.nickname }}</span>
-                  <span
-                    v-if="item.type === 'pin'"
-                    @click="router.push(`/dashboard/experiment/${item.pinData?.comment.expId}`)"
-                  >{{
-                    item.pinData?.user.nickname }}</span>
-                  <span
-                    v-if="item.type === 'reply'"
-                    @click="router.push(`/dashboard/experiment/${item.replyData?.comment.expId}`)"
-                  >{{
-                    item.replyData?.reply.user.nickname }}</span>
-                  <span
-                    v-if="item.type === 'like'"
-                    @click="router.push(`/dashboard/experiment/${item.likeData?.comment.expId}`)"
-                  >{{
-                    item.likeData?.user.nickname }}</span>
+                  <span v-if="item.type === 'pin'"
+                    @click="router.push(`/dashboard/experiment/${item.pinData?.comment.expId}`)">{{
+                      item.pinData?.user.nickname }}</span>
+                  <span v-if="item.type === 'reply'"
+                    @click="router.push(`/dashboard/experiment/${item.replyData?.comment.expId}`)">{{
+                      item.replyData?.reply.user.nickname }}</span>
+                  <span v-if="item.type === 'like'"
+                    @click="router.push(`/dashboard/experiment/${item.likeData?.comment.expId}`)">{{
+                      item.likeData?.user.nickname }}</span>
                   <span v-if="item.type === 'delete'">管理员</span>
 
                   <span v-if="item.type === 'post'" class="content text-sm text-gray-600">老师发布了新的班级公告</span>
-                  <span
-                    v-if="item.type === 'pin'" class="content text-sm text-gray-600"
-                    @click="router.push(`/dashboard/experiment/${item.pinData?.comment.expId}`)"
-                  >老师置顶了你的评论</span>
-                  <span
-                    v-if="item.type === 'reply'" class="content text-sm text-gray-600"
-                    @click="router.push(`/dashboard/experiment/${item.replyData?.comment.expId}`)"
-                  >回复了你的评论</span>
-                  <span
-                    v-if="item.type === 'like'" class="content text-sm text-gray-600"
-                    @click="router.push(`/dashboard/experiment/${item.likeData?.comment.expId}`)"
-                  >赞了你的评论</span>
+                  <span v-if="item.type === 'pin'" class="content text-sm text-gray-600"
+                    @click="router.push(`/dashboard/experiment/${item.pinData?.comment.expId}`)">老师置顶了你的评论</span>
+                  <span v-if="item.type === 'reply'" class="content text-sm text-gray-600"
+                    @click="router.push(`/dashboard/experiment/${item.replyData?.comment.expId}`)">回复了你的评论</span>
+                  <span v-if="item.type === 'like'" class="content text-sm text-gray-600"
+                    @click="router.push(`/dashboard/experiment/${item.likeData?.comment.expId}`)">赞了你的评论</span>
                   <span v-if="item.type === 'delete'" class="content text-sm text-gray-600">管理员删除了你的评论</span>
                 </div>
                 <div v-if="!item.read" class="ml-auto">
@@ -449,6 +499,7 @@ function openFeishuDoc() {
       <!--      <Label class="text-base font-bold"> {{ userStore.user?.nickname ?? 'unknown' -->
       <!--      }}</Label> -->
       <Button v-if="!isVisitor()" variant="ghost" size="icon" class="rounded-full" @click="isOpen = true">
+>>>>>>> Stashed changes
         <img :src="userStore.user?.avatarUrl" class="w-8 rounded-full" alt="">
       </Button>
       <Button v-else @click="router.push('/login')">
@@ -488,10 +539,8 @@ function openFeishuDoc() {
                 <FormItem>
                   <FormLabel>昵称</FormLabel>
                   <FormControl>
-                    <Input
-                      v-bind="componentField" v-model="tempUser.nickname" type="text" placeholder=""
-                      class="transition-all"
-                    />
+                    <Input v-bind="componentField" v-model="tempUser.nickname" type="text" placeholder=""
+                      class="transition-all" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -525,40 +574,13 @@ function openFeishuDoc() {
               </FormField>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
-              <FormField v-slot="{ componentField }" name="username">
-                <FormItem>
-                  <FormLabel>学院</FormLabel>
-                  <FormControl>
-                    <Input
-                      v-bind="componentField" v-model="tempUser.school" type="text" placeholder=""
-                      class="transition-all"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              </FormField>
-
-              <FormField v-slot="{ componentField }" name="username">
-                <FormItem>
-                  <FormLabel>专业</FormLabel>
-                  <FormControl>
-                    <Input
-                      v-bind="componentField" v-model="tempUser.major" type="text" placeholder=""
-                      class="transition-all"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              </FormField>
-            </div>
-
+<<<<<<< Updated upstream
             <FormField v-slot="{ componentField }" name="username">
               <FormItem>
-                <FormLabel>邮箱</FormLabel>
+                <FormLabel>学院</FormLabel>
                 <FormControl>
                   <Input
-                    v-bind="componentField" v-model="tempUser.email" type="email" placeholder=""
+                    v-bind="componentField" v-model="tempUser.school" type="text" placeholder=""
                     class="transition-all"
                   />
                 </FormControl>
@@ -568,12 +590,59 @@ function openFeishuDoc() {
 
             <FormField v-slot="{ componentField }" name="username">
               <FormItem>
-                <FormLabel>手机号</FormLabel>
+                <FormLabel>专业</FormLabel>
                 <FormControl>
                   <Input
-                    v-bind="componentField" v-model="tempUser.phone" type="text" placeholder=""
+                    v-bind="componentField" v-model="tempUser.major" type="text" placeholder=""
                     class="transition-all"
                   />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
+=======
+            <div class="grid grid-cols-2 gap-4">
+              <FormField v-slot="{ componentField }" name="username">
+                <FormItem>
+                  <FormLabel>学院</FormLabel>
+                  <FormControl>
+                    <Input v-bind="componentField" v-model="tempUser.school" type="text" placeholder=""
+                      class="transition-all" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
+
+              <FormField v-slot="{ componentField }" name="username">
+                <FormItem>
+                  <FormLabel>专业</FormLabel>
+                  <FormControl>
+                    <Input v-bind="componentField" v-model="tempUser.major" type="text" placeholder=""
+                      class="transition-all" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
+            </div>
+>>>>>>> Stashed changes
+
+            <FormField v-slot="{ componentField }" name="username">
+              <FormItem>
+                <FormLabel>邮箱</FormLabel>
+                <FormControl>
+                  <Input v-bind="componentField" v-model="tempUser.email" type="email" placeholder=""
+                    class="transition-all" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
+
+            <FormField v-slot="{ componentField }" name="username">
+              <FormItem>
+                <FormLabel>手机号</FormLabel>
+                <FormControl>
+                  <Input v-bind="componentField" v-model="tempUser.phone" type="text" placeholder=""
+                    class="transition-all" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -585,11 +654,9 @@ function openFeishuDoc() {
             <div class="flex justify-center items-start">
               <Avatar class="size-32 relative">
                 <AvatarImage :src="tempUser.avatarUrl" alt="avatar" />
-                <Button
-                  variant="ghost"
+                <Button variant="ghost"
                   class="absolute top-0 left-0 size-32 rounded-full opacity-0 transition-all hover:opacity-100 hover:bg-opacity-30 hover:bg-black"
-                  @click="triggerFileUpload"
-                >
+                  @click="triggerFileUpload">
                   <div class="flex flex-col items-center text-background">
                     <Plus class="size-6" />
                     <div class="font-semibold">
@@ -657,6 +724,57 @@ function openFeishuDoc() {
                 </FormField>
               </div>
 
+<<<<<<< Updated upstream
+        <DialogFooter>
+=======
+        <DialogFooter class="md:gap-5">
+          <Dialog v-model:open="isOpenPassword">
+            <DialogTrigger>
+              <Button> 修改密码 </Button>
+            </DialogTrigger>
+            <DialogContent class=" w-auto">
+              <DialogHeader>
+                <DialogTitle> 修改密码 </DialogTitle>
+                <DialogDescription>
+                  在此更改您的密码。完成后单击“保存”。
+                </DialogDescription>
+              </DialogHeader>
+
+              <div class="max-w-sm w-full grid gap-2">
+                <FormField v-slot="{ componentField }" name="username">
+                  <FormItem>
+                    <FormLabel>旧密码</FormLabel>
+                    <FormControl>
+                      <Input v-bind="componentField" v-model="oldPassword" type="password" placeholder=""
+                        class="transition-all" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormField>
+
+                <FormField v-slot="{ componentField }" name="username">
+                  <FormItem>
+                    <FormLabel>新密码</FormLabel>
+                    <FormControl>
+                      <Input v-bind="componentField" v-model="newPassword" type="password" placeholder=""
+                        class="transition-all" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormField>
+
+                <FormField v-slot="{ componentField }" name="username">
+                  <FormItem>
+                    <FormLabel>确认密码</FormLabel>
+                    <FormControl>
+                      <Input v-bind="componentField" v-model="confirmPassword" type="password" placeholder=""
+                        class="transition-all" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormField>
+              </div>
+
               <DialogFooter>
                 <Button @click="updatePassword">
                   设置密码
@@ -664,6 +782,7 @@ function openFeishuDoc() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
+>>>>>>> Stashed changes
           <DialogClose>
             <Button @click="onSubmit">
               保存设置

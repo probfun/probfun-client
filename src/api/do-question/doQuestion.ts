@@ -21,13 +21,16 @@ interface Chapter {
   config: Record<string, any>;
 }
 
-async function fetchSubjectListApi() {
-  const result = await get(`/assessment/subject/list/`);
-  return result.data;
+interface Question {
+  id: number;
+  content: string;
+  difficulty: '简单' | '中等' | '困难';
+  chapter: string;
+  chapter_id: number;
 }
 
-async function fetchQuestionListApi(chapterId: number) {
-  const result = await get(`/assessment/question/list/`, { chapterId });
+async function fetchSubjectListApi() {
+  const result = await get(`/assessment/subject/list/`);
   return result.data;
 }
 
@@ -38,7 +41,14 @@ async function fetchChapterListApi(subjectId: number) {
   return result.data;
 }
 
-export type { Chapter, Subject };
+async function fetchQuestionListApi(chapterId: number) {
+  const result = await get<{
+    questions: Question[];
+  }>(`/assessment/question/list/`, { chapterId });
+  return result.data;
+}
+
+export type { Chapter, Subject, Question };
 
 export {
   fetchChapterListApi,

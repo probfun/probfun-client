@@ -1,5 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import AiPanel from '@/components/ai/AiPanel.vue';
+
+import MindMapPanel from '@/components/mindmap/MindMapPanel.vue';
+import Callback from '@/components/auth/Callback.vue';
+import CasLoginCard from '@/components/auth/CasLoginCard.vue';
 import Callback from '@/components/auth/Callback.vue';
 import CasLoginCard from '@/components/auth/CasLoginCard.vue';
 import LoginCard from '@/components/auth/LoginCard.vue';
@@ -20,6 +24,12 @@ import NormalDistribution from '@/components/experiment/distribution/normal-dist
 import PoissonDistribution from '@/components/experiment/distribution/poisson-distribution/PoissonDistribution.vue';
 import UniformDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
 import FavoritePanel from '@/components/favorite/FavoritePanel.vue';
+
+import HomePage from '@/components/home/HomePage.vue';
+import StudentPanel from '@/components/user/StudentPanel.vue';
+import TeacherPanel from '@/components/user/TeacherPanel.vue';
+import FavoritePanel from '@/components/favorite/FavoritePanel.vue';
+import StatisticsPanel from '@/components/statistics/StatisticsPanel.vue';
 
 import HomePage from '@/components/home/HomePage.vue';
 import StudentPanel from '@/components/user/StudentPanel.vue';
@@ -256,6 +266,38 @@ const router = createRouter({
         {
           path: '/dashboard/question/:pathMatch(.*)*',
           component: DoQuestionPanel,
+        },
+        {
+          path: '/:pathMatch(.*)*',
+          redirect: '/dashboard',
+        },
+        {
+          path: '/dashboard/mindmap',
+          component: MindMapPanel,
+        },
+        {
+          path: '/dashboard/favorite',
+          component: FavoritePanel,
+        },
+        {
+          path: '/dashboard/mindmap/distribution',
+          component: DistributionDiagram,
+        },
+        {
+          path: '/dashboard/mindmap/chapter-1',
+          component: Chatper1Diagram,
+        },
+        {
+          path: '/dashboard/mindmap/chapter-4',
+          component: Chatper4Diagram,
+        },
+        {
+          path: '/dashboard/question/:pathMatch(.*)*',
+          component: DoQuestionPanel,
+        },
+        {
+          path: '/dashboard/statistics',
+          component: StatisticsPanel,
         },
         {
           path: '/:pathMatch(.*)*',

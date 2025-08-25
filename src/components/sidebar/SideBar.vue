@@ -5,10 +5,10 @@ import type { Feedback } from '@/api/feedback/feedbackType';
 import type { DrawerItem } from '@/components/sidebar/DrawerItem.ts';
 import vAutoAnimate from '@formkit/auto-animate';
 import { Icon } from '@iconify/vue';
-import { Book, Bot, CircleHelp, Dices, FlaskConical, Home, LogOut, Star, Sun, User } from 'lucide-vue-next';
+import { Book, Bot, CircleHelp, Dices, FlaskConical, Home, LogOut, Star, Sun, User, Moon, ChartColumn } from 'lucide-vue-next';
 import { useToast } from 'primevue/usetoast';
 import { TreeItem, TreeRoot } from 'radix-vue';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { fetchChapterListApi, fetchSubjectListApi } from '@/api/do-question/doQuestion.ts';
 import { fetchFeedbackApi, postFeedbackApi } from '@/api/feedback/feedbackApi.ts';
@@ -33,9 +33,11 @@ import {
 import { cn } from '@/lib/utils.ts';
 import { useUserStore } from '@/store';
 import { isVisitor, logout } from '@/utils/auth.ts';
+import { useConfigStore } from '@/store/config.ts';
 
 const toast = useToast();
 const userStore = useUserStore();
+const config = useConfigStore();
 
 interface SideBarItem {
   label: string;
@@ -67,7 +69,9 @@ function isActiveRoute(itemRoute: string) {
 const router = useRouter();
 const vistorAllowedItem = [
   '主页',
-  '目录',
+  '实验',
+  '练习',
+  '学情数据',
 ];
 const sideBarItem = ref<SideBarItem[]>([
   {
@@ -76,13 +80,13 @@ const sideBarItem = ref<SideBarItem[]>([
     route: '/dashboard',
   },
   {
-    label: '实验目录',
+    label: '实验',
     icon: FlaskConical,
     route: '/dashboard/experiment',
     command: toggleExperimentDrawer,
   },
   {
-    label: '做题目录',
+    label: '练习',
     icon: Book,
     route: '/dashboard/experiment',
     command: toggleQuestionDrawer,
@@ -102,12 +106,17 @@ const sideBarItem = ref<SideBarItem[]>([
     icon: User,
     route: userStore.user?.role === 0 ? '/dashboard/info0' : '/dashboard/info1',
   },
+  {
+    label: '学情数据',
+    icon: ChartColumn,
+    route: '/dashboard/statistics',
+  },
 ]);
 
-const sideBarBottomItem = ref<SideBarItem[]>([
+const sideBarBottomItem = computed<SideBarItem[]>(() => [
   {
     label: '切换主题',
-    icon: Sun,
+    icon: config.theme === 'dark' ? Moon : Sun,
     command: async () => {
       try {
         await clickApi('CLICK', 'sideBar', '切换主题', window.location.href);
@@ -118,9 +127,11 @@ const sideBarBottomItem = ref<SideBarItem[]>([
       }
       if (document.documentElement.classList.contains('dark')) {
         document.documentElement.classList.remove('dark');
+        config.theme = 'light';
       }
       else {
         document.documentElement.classList.toggle('dark');
+        config.theme = 'dark';
       }
     },
   },
@@ -193,9 +204,9 @@ function toItemTree(root: Chapter): DrawerItem {
   return mapNode(rootProjected);
 }
 
-async function refreshQuestionList() {
+async function refreshChapterList() {
   try {
-    const response = await fetchChapterListApi(2); // 传subjectId
+    const response = await fetchChapterListApi(1); // 传subjectId
     const chapterList = response.chapters;
     questionItems.value = chapterList.map(chapter => toItemTree(chapter));
   }
@@ -218,7 +229,7 @@ onMounted(() => {
   // TODO: 先获取所有subject，根据subjectId获取所有chapter，用chapterId获取章节内所有question
   refreshSubjectList();
   refreshFeedback();
-  refreshQuestionList();
+  refreshChapterList();
 });
 
 async function sendFeedback() {
@@ -250,11 +261,9 @@ function goHome() {
 <template>
   <div class="relative">
     <aside class="h-full border rounded-xl flex flex-col relative bg-background z-50 items-center gap-4 p-3 shadow-lg">
-      <Button
-        size="icon"
+      <Button size="icon"
         class="group rounded-full bg-primary text-lg font-semibold text-primary-foreground size-10 md:text-base"
-        @click="goHome()"
-      >
+        @click="goHome()">
         <Dices class="size-6 group-hover:scale-110 transition-all" />
       </Button>
       <div class="space-y-2 flex flex-col items-center">
@@ -262,15 +271,13 @@ function goHome() {
           <TooltipProvider v-if="!isVisitor() || vistorAllowedItem.includes(item.label)" :delay-duration="0">
             <Tooltip>
               <TooltipTrigger>
-                <Button
-                  size="icon" variant="ghost"
+                <Button size="icon" variant="ghost"
                   :class="cn('size-11 rounded-lg text-muted-foreground', isActiveRoute(item.route ?? '') && '!bg-muted !text-primary')"
                   @click="() => {
                     if (item.command) item.command();
                     else if (item.route) router.push(item.route);
-                    if (item.label !== '实验目录') openExperimentDrawer = false;
-                  }"
-                >
+                    if (item.label !== '实验') openExperimentDrawer = false;
+                  }">
                   <component :is="item.icon" class="size-6" :stroke-width="2" />
                 </Button>
               </TooltipTrigger>
@@ -286,14 +293,12 @@ function goHome() {
           <TooltipProvider v-if="!isVisitor() || item.label === '切换主题'" :delay-duration="0">
             <Tooltip>
               <TooltipTrigger>
-                <Button
-                  size="icon" variant="ghost" class="size-10 text-muted-foreground" @click="() => {
-                    if (item.route) router.push(item.route);
-                    else if (item.command) item.command();
-                    openExperimentDrawer = false;
-                    openQuestionDrawer = false;
-                  }"
-                >
+                <Button size="icon" variant="ghost" class="size-10 text-muted-foreground" @click="() => {
+                  if (item.route) router.push(item.route);
+                  else if (item.command) item.command();
+                  openExperimentDrawer = false;
+                  openQuestionDrawer = false;
+                }">
                   <component :is="item.icon" class="size-6" :stroke-width="2" />
                 </Button>
               </TooltipTrigger>
@@ -307,118 +312,76 @@ function goHome() {
     </aside>
 
     <!-- experiment drawer -->
-    <div class="absolute left-full ml-2 top-[4rem] z-50 transition-all bottom-0 rounded-xl overflow-y-auto border w-96 bg-background shadow-xl" :class="!openExperimentDrawer && 'opacity-0 pointer-events-none'">
-      <TreeRoot
-        v-slot="{ flattenItems }"
-        v-auto-animate
-        class="list-none select-none w-full rounded-lg px-3 py-2 text-base font-medium"
-        :items="experimentItems"
-        :get-key="(item) => item.title"
-        :default-expanded="['components']"
-      >
-        <TreeItem
-          v-for="item in flattenItems"
-          v-slot="{ isExpanded }"
-          :key="item._id"
-          :style="{ 'padding-left': `${item.level - 0.5}rem` }"
-          v-bind="item.bind"
+    <div
+      class="absolute left-full ml-2 top-[4rem] z-50 transition-all bottom-0 rounded-xl overflow-y-auto border w-96 bg-background shadow-xl"
+      :class="!openExperimentDrawer && 'opacity-0 pointer-events-none'">
+      <TreeRoot v-slot="{ flattenItems }" v-auto-animate
+        class="list-none select-none w-full rounded-lg px-3 py-2 text-base font-medium" :items="experimentItems"
+        :get-key="(item) => item.title" :default-expanded="['components']">
+        <TreeItem v-for="item in flattenItems" v-slot="{ isExpanded }" :key="item._id"
+          :style="{ 'padding-left': `${item.level - 0.5}rem` }" v-bind="item.bind"
           class="flex items-center p-2 cursor-pointer my-0.5 rounded outline-none focus:ring-primary focus:ring-2 data-[selected]:bg-muted"
           @click="() => {
             if (item.value.route) {
               router.push(item.value.route);
               openExperimentDrawer = false;
             }
-          }"
-        >
+          }">
           <template v-if="item.hasChildren">
-            <Icon
-              v-if="!isExpanded"
-              icon="lucide:folder"
-              class="h-4 w-4"
-            />
-            <Icon
-              v-else
-              icon="lucide:folder-open"
-              class="h-4 w-4"
-            />
+            <Icon v-if="!isExpanded" icon="lucide:folder" class="h-4 w-4" />
+            <Icon v-else icon="lucide:folder-open" class="h-4 w-4" />
           </template>
-          <Icon
-            v-else
-            :icon="item.value.icon || 'lucide:file'"
-            class="h-4 w-4"
-          />
+          <Icon v-else :icon="item.value.icon || 'lucide:file'" class="h-4 w-4" />
           <div class="pl-2">
             {{ item.value.title }}
           </div>
         </TreeItem>
       </TreeRoot>
     </div>
-    <div v-if="openExperimentDrawer" class="left-full top-0 h-full absolute w-screen z-40" @click="openExperimentDrawer = false" />
+    <div v-if="openExperimentDrawer" class="left-full top-0 h-full absolute w-screen z-40"
+      @click="openExperimentDrawer = false" />
 
     <!-- question drawer -->
-    <div class="absolute left-full ml-2 top-[4rem] z-50 transition-all bottom-0 rounded-xl overflow-y-auto border w-96 bg-background shadow-xl" :class="!openQuestionDrawer && 'opacity-0 pointer-events-none'">
-      <TreeRoot
-        v-slot="{ flattenItems }"
-        v-auto-animate
-        class="list-none select-none w-full rounded-lg px-3 py-2 text-base font-medium"
-        :items="questionItems"
-        :get-key="(item) => item.title"
-        :default-expanded="['components']"
-      >
-        <TreeItem
-          v-for="item in flattenItems"
-          v-slot="{ isExpanded }"
-          :key="item._id"
-          :style="{ 'padding-left': `${item.level - 0.5}rem` }"
-          v-bind="item.bind"
+    <div
+      class="absolute left-full ml-2 top-[4rem] z-50 transition-all bottom-0 rounded-xl overflow-y-auto border w-96 bg-background shadow-xl"
+      :class="!openQuestionDrawer && 'opacity-0 pointer-events-none'">
+      <TreeRoot v-slot="{ flattenItems }" v-auto-animate
+        class="list-none select-none w-full rounded-lg px-3 py-2 text-base font-medium" :items="questionItems"
+        :get-key="(item) => item.title" :default-expanded="['components']">
+        <TreeItem v-for="item in flattenItems" v-slot="{ isExpanded }" :key="item._id"
+          :style="{ 'padding-left': `${item.level - 0.5}rem` }" v-bind="item.bind"
           class="flex items-center p-2 cursor-pointer my-0.5 rounded outline-none focus:ring-primary focus:ring-2 data-[selected]:bg-muted"
           @click="() => {
             if (item.value.route) {
               router.push(item.value.route);
               openQuestionDrawer = false;
             }
-          }"
-        >
+          }">
           <template v-if="item.hasChildren">
-            <Icon
-              v-if="!isExpanded"
-              icon="lucide:folder"
-              class="h-4 w-4"
-            />
-            <Icon
-              v-else
-              icon="lucide:folder-open"
-              class="h-4 w-4"
-            />
+            <Icon v-if="!isExpanded" icon="lucide:folder" class="h-4 w-4" />
+            <Icon v-else icon="lucide:folder-open" class="h-4 w-4" />
           </template>
-          <Icon
-            v-else
-            :icon="item.value.icon || 'lucide:file'"
-            class="h-4 w-4"
-          />
+          <Icon v-else :icon="item.value.icon || 'lucide:file'" class="h-4 w-4" />
           <div class="pl-2">
             {{ item.value.title }}
           </div>
         </TreeItem>
       </TreeRoot>
     </div>
-    <div v-if="openQuestionDrawer" class="left-full top-0 h-full absolute w-screen z-40" @click="openQuestionDrawer = false" />
+    <div v-if="openQuestionDrawer" class="left-full top-0 h-full absolute w-screen z-40"
+      @click="openQuestionDrawer = false" />
 
     <Dialog v-model:open="isFeedback" class="overflow-y-auto h-2/3">
       <DialogContent class="overflow-y-auto h-2/3">
         <DialogHeader>
           <DialogTitle>
             问题反馈
-            <button
-              v-if="userStore.user?.role === 1 && seeFeedback === false" class="mr-5 underline"
-              @click="seeFeedback = true"
-            >
+            <button v-if="userStore.user?.role === 1 && seeFeedback === false" class="mr-5 underline"
+              @click="seeFeedback = true">
               (查看所有意见反馈)
             </button>
-            <button
-              v-if="userStore.user?.role === 1 && seeFeedback === true" class="mr-5 underline"
-              @click="seeFeedback = false"
-            >
+            <button v-if="userStore.user?.role === 1 && seeFeedback === true" class="mr-5 underline"
+              @click="seeFeedback = false">
               (返回)
             </button>
           </DialogTitle>
