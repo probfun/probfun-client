@@ -16,8 +16,17 @@ import GeometricDistribution from '@/components/experiment/distribution/Geometri
 import NormalDistribution from '@/components/experiment/distribution/NormalDistribution.vue';
 import PoissonDistribution from '@/components/experiment/distribution/PoissonDistribution.vue';
 import UniformDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
+<<<<<<< Updated upstream
 import StarPanel from '@/components/star/StarPanel.vue';
 import UserPanel from '@/components/user/UserPanel.vue';
+=======
+import FavoritePanel from '@/components/favorite/FavoritePanel.vue';
+import StatisticsPanel from '@/components/statistics/StatisticsPanel.vue';
+
+import HomePage from '@/components/home/HomePage.vue';
+import StudentPanel from '@/components/user/StudentPanel.vue';
+import TeacherPanel from '@/components/user/TeacherPanel.vue';
+>>>>>>> Stashed changes
 import AuthPage from '@/pages/AuthPage.vue';
 import DashBoard from '@/pages/DashBoard.vue';
 import { createRouter, createWebHistory } from 'vue-router';
@@ -136,6 +145,17 @@ const router = createRouter({
           component: Chatper4Diagram,
         },
         {
+<<<<<<< Updated upstream
+=======
+          path: '/dashboard/question/:pathMatch(.*)*',
+          component: DoQuestionPanel,
+        },
+        {
+          path: '/dashboard/statistics',
+          component: StatisticsPanel,
+        },
+        {
+>>>>>>> Stashed changes
           path: '/:pathMatch(.*)*',
           redirect: '/dashboard',
 >>>>>>> Stashed changes

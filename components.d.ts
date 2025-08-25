@@ -52,6 +52,7 @@ declare module 'vue' {
     ChildCommentCard: typeof import('./src/components/comment/ChildCommentCard.vue')['default']
     ChiSquareDistribution: typeof import('./src/components/experiment/chapter7/ChiSquareDistribution.vue')['default']
     ChiSquareDistributionQuantile: typeof import('./src/components/experiment/chapter7/ChiSquareDistributionQuantile.vue')['default']
+    ChoiceQuestionViewer: typeof import('./src/components/do-question/ChoiceQuestionViewer.vue')['default']
     Clt: typeof import('./src/components/experiment/chapter5/central-limit-theorem/clt.vue')['default']
     CoinFliping: typeof import('./src/components/experiment/chapter5/CoinFliping.vue')['default']
     CoinTossing: typeof import('./src/components/experiment/chapter7/CoinTossing.vue')['default']
@@ -97,12 +98,30 @@ declare module 'vue' {
     MonteCarlo: typeof import('./src/components/experiment/chapter7/MonteCarlo.vue')['default']
 >>>>>>> Stashed changes
     NavBar: typeof import('./src/components/NavBar.vue')['default']
+<<<<<<< Updated upstream
     NormalDistribution: typeof import('./src/components/experiment/distribution/NormalDistribution.vue')['default']
+=======
+    NetworkTrafficCharacteristics: typeof import('./src/components/experiment/chapter4/NetworkTrafficCharacteristics.vue')['default']
+    NormalDiagram: typeof import('./src/components/experiment/distribution/normal-distribution/NormalDiagram.vue')['default']
+    NormalDistribution: typeof import('./src/components/experiment/distribution/normal-distribution/NormalDistribution.vue')['default']
+    NumberInput: typeof import('./src/components/argument/NumberInput.vue')['default']
+    ObstacleOptions: typeof import('./src/components/experiment/chapter7/ObstacleOptions.vue')['default']
+    PanelMenu: typeof import('primevue/panelmenu')['default']
+>>>>>>> Stashed changes
     PE: typeof import('./src/components/experiment/distribution/comparison/PE.vue')['default']
     PN: typeof import('./src/components/experiment/distribution/comparison/PN.vue')['default']
     PoissonDistribution: typeof import('./src/components/experiment/distribution/PoissonDistribution.vue')['default']
     PositiveTest: typeof import('./src/components/experiment/chapter1/PositiveTest.vue')['default']
+<<<<<<< Updated upstream
     RadioButton: typeof import('primevue/radiobutton')['default']
+=======
+    PricingofAmericanPutOptions: typeof import('./src/components/experiment/chapter7/PricingofAmericanPutOptions.vue')['default']
+    ProcessNode: typeof import('./src/components/diagram/diagram-test/ProcessNode.vue')['default']
+    ProgressCurve: typeof import('./src/components/statistics/ProgressCurve.vue')['default']
+    RadarChart: typeof import('./src/components/statistics/RadarChart.vue')['default']
+    RadioGroup: typeof import('./src/components/ui/radio-group/RadioGroup.vue')['default']
+    RadioGroupItem: typeof import('./src/components/ui/radio-group/RadioGroupItem.vue')['default']
+>>>>>>> Stashed changes
     RegisterCard: typeof import('./src/components/auth/RegisterCard.vue')['default']
     ResizableHandle: typeof import('./src/components/ui/resizable/ResizableHandle.vue')['default']
     ResizablePanelGroup: typeof import('./src/components/ui/resizable/ResizablePanelGroup.vue')['default']
@@ -132,7 +151,20 @@ declare module 'vue' {
     SideBar: typeof import('./src/components/SideBar.vue')['default']
     Skeleton: typeof import('./src/components/ui/skeleton/Skeleton.vue')['default']
     Slider: typeof import('./src/components/ui/slider/Slider.vue')['default']
+<<<<<<< Updated upstream
     StarPanel: typeof import('./src/components/star/StarPanel.vue')['default']
+=======
+    Sonner: typeof import('./src/components/ui/sonner/Sonner.vue')['default']
+    StatisticsPanel: typeof import('./src/components/statistics/StatisticsPanel.vue')['default']
+    StudentPanel: typeof import('./src/components/user/StudentPanel.vue')['default']
+    Tabs: typeof import('./src/components/ui/tabs/Tabs.vue')['default']
+    TabsContent: typeof import('./src/components/ui/tabs/TabsContent.vue')['default']
+    TabsList: typeof import('./src/components/ui/tabs/TabsList.vue')['default']
+    TabsTrigger: typeof import('./src/components/ui/tabs/TabsTrigger.vue')['default']
+    TDistribution: typeof import('./src/components/experiment/chapter7/TDistribution.vue')['default']
+    TDistributionQuantile: typeof import('./src/components/experiment/chapter7/TDistributionQuantile.vue')['default']
+    TeacherPanel: typeof import('./src/components/user/TeacherPanel.vue')['default']
+>>>>>>> Stashed changes
     Textarea: typeof import('./src/components/ui/textarea/Textarea.vue')['default']
     ThreeDoors: typeof import('./src/components/experiment/chapter1/ThreeDoors.vue')['default']
     Toast: typeof import('./src/components/ui/toast/Toast.vue')['default']
@@ -150,6 +182,9 @@ declare module 'vue' {
     UniformDiagram: typeof import('./src/components/experiment/distribution/UniformDiagram.vue')['default']
     UniformDistribution: typeof import('./src/components/experiment/distribution/UniformDistribution.vue')['default']
     UserPanel: typeof import('./src/components/user/UserPanel.vue')['default']
+  }
+  export interface ComponentCustomProperties {
+    Ripple: typeof import('primevue/ripple')['default']
   }
   export interface ComponentCustomProperties {
     Ripple: typeof import('primevue/ripple')['default']
