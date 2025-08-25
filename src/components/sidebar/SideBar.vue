@@ -229,7 +229,7 @@ onMounted(() => {
   // TODO: 先获取所有subject，根据subjectId获取所有chapter，用chapterId获取章节内所有question
   refreshSubjectList();
   refreshFeedback();
-  // refreshChapterList();
+  refreshChapterList();
 });
 
 async function sendFeedback() {
