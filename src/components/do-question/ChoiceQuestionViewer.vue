@@ -182,8 +182,8 @@ async function refreshQuestionList() {
     }));
 
     // 更新题目映射表（兼容原有数据结构）
-    questionSectionMap[props.currentSection] = formattedQuestions;
-
+    questionSectionMap['chapter1/section1'] = formattedQuestions;
+    console.log('刷新题目列表:', questionSectionMap);
     // 自动加载第一题（保持原有交互）
     if (formattedQuestions.length > 0 && (!currentQuestion.value || !props.questionId)) {
       const firstId = formattedQuestions[0].id;
