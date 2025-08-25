@@ -260,23 +260,23 @@ function updateExperiment() {
   }
   else if (path === 'brownian-motion') {
     title.value = '布朗运动模拟';
-    tags.value = ['随机变量的独立性','正态分布','随机过程','平稳过程','独立增量过程'];
+    tags.value = ['随机变量的独立性', '正态分布', '随机过程', '平稳过程', '独立增量过程'];
   }
   else if (path === 'geometric-brownian-motion') {
     title.value = '几何布朗运动模拟';
-    tags.value = ['正态分布','随机过程','随机分布'];
+    tags.value = ['正态分布', '随机过程', '随机分布'];
   }
   else if (path === 'poisson-process') {
     title.value = '泊松过程模拟';
-    tags.value = ['泊松分布','随机过程','平稳过程','独立增量过程'];
+    tags.value = ['泊松分布', '随机过程', '平稳过程', '独立增量过程'];
   }
   else if (path === 't-distribution') {
     title.value = 't分布';
-    tags.value = ['正态分布','卡方分布','抽样分布'];
+    tags.value = ['正态分布', '卡方分布', '抽样分布'];
   }
   else if (path === 'chi-square-distribution') {
     title.value = '卡方分布';
-    tags.value = ['正态分布','随机变量和的分布','抽样分布'];
+    tags.value = ['正态分布', '随机变量和的分布', '抽样分布'];
   }
   else if (path === 't-distribution-quantile') {
     title.value = 't分布上分位点';

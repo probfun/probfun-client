@@ -48,7 +48,7 @@ async function fetchQuestionListApi(chapterId: number) {
   return result.data;
 }
 
-export type { Chapter, Subject, Question };
+export type { Chapter, Question, Subject};
 
 export {
   fetchChapterListApi,
