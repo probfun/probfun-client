@@ -206,7 +206,7 @@ function toItemTree(root: Chapter): DrawerItem {
 
 async function refreshChapterList() {
   try {
-    const response = await fetchChapterListApi(1); // 传subjectId
+    const response = await fetchChapterListApi(5); // 传subjectId
     const chapterList = response.chapters;
     questionItems.value = chapterList.map(chapter => toItemTree(chapter));
   }
