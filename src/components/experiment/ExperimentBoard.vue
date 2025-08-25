@@ -8,8 +8,6 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
-import { ChartColumnIncreasing, GraduationCap, MessagesSquare, Presentation } from 'lucide-vue-next';
-import { ref } from 'vue';
 
 const args = withDefaults(defineProps<{
   discussTabList?: Tab[];

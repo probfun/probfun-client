@@ -170,7 +170,7 @@ async function refreshQuestionList() {
     const apiQuestions = response.questions || [];
 
     // 转换为本地题目格式（保留原有结构）
-    const formattedQuestions = apiQuestions.map(question => ({
+    const formattedQuestions = apiQuestions.map((question: { id: any; chapter: any; content: any; difficulty: any; }) => ({
       id: question.id,
       category: question.chapter,
       content: question.content,
