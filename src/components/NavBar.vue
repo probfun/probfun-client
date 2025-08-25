@@ -214,15 +214,6 @@ function updateExperiment() {
     title.value = '泊松分布与正态分布';
     tags.value = ['λ较大，泊松分布可近似为均值和方差均为λ的正态分布'];
   }
-<<<<<<< Updated upstream
-  else if (path === '') {
-    title.value = '';
-    tags.value = [''];
-  }
-  else if (path === '') {
-    title.value = '';
-    tags.value = [''];
-=======
   else if (path === '2d-uniform-distribution') {
     title.value = '二维均匀分布';
     tags.value = ['联合分布', '边缘分布', '条件分布', '随机变量的独立性', '区域积分'];
@@ -242,14 +233,11 @@ function updateExperiment() {
   else if (path === 'NetworkTrafficCharacteristics') {
     title.value = '网络流量分析与异常检测系统';
     tags.value = ['相关系数矩阵', '蒙特卡罗模拟'];
->>>>>>> Stashed changes
   }
   else if (path === 'expectation-test') {
     title.value = '期望检验';
     tags.value = ['分组检测'];
   }
-<<<<<<< Updated upstream
-=======
   else if (path === 'CoinFliping') {
     title.value = '抛硬币实验';
     tags.value = ['大数定律', '蒙特卡罗模拟'];
@@ -298,7 +286,6 @@ function updateExperiment() {
     title.value = '卡方分布上分位点';
     tags.value = ['卡方分布'];
   }
->>>>>>> Stashed changes
   // else if (path === '') {
   // title.value ='';
   // tags.value =[''];
@@ -403,12 +390,6 @@ function openFeishuDoc() {
           {{ item }}
         </Badge>
       </div>
-<<<<<<< Updated upstream
-    </div>
-    <div class="flex items-center gap-2 ml-auto">
-      <Label class="text-base font-bold hover:underline underline-offset-4"> {{ userStore.user?.nickname ?? 'unknown' }}</Label>
-      <Button variant="ghost" size="icon" class="rounded-full" @click="isOpen = true">
-=======
       <Button v-if="title !== '邮趣概率' && !isVisitor()" size="icon" variant="ghost" class="p-1 size-auto"
         @click="toggleFavorite">
         <Star class="size-5 transition-all" :style="{
@@ -499,7 +480,6 @@ function openFeishuDoc() {
       <!--      <Label class="text-base font-bold"> {{ userStore.user?.nickname ?? 'unknown' -->
       <!--      }}</Label> -->
       <Button v-if="!isVisitor()" variant="ghost" size="icon" class="rounded-full" @click="isOpen = true">
->>>>>>> Stashed changes
         <img :src="userStore.user?.avatarUrl" class="w-8 rounded-full" alt="">
       </Button>
       <Button v-else @click="router.push('/login')">
@@ -574,33 +554,6 @@ function openFeishuDoc() {
               </FormField>
             </div>
 
-<<<<<<< Updated upstream
-            <FormField v-slot="{ componentField }" name="username">
-              <FormItem>
-                <FormLabel>学院</FormLabel>
-                <FormControl>
-                  <Input
-                    v-bind="componentField" v-model="tempUser.school" type="text" placeholder=""
-                    class="transition-all"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-
-            <FormField v-slot="{ componentField }" name="username">
-              <FormItem>
-                <FormLabel>专业</FormLabel>
-                <FormControl>
-                  <Input
-                    v-bind="componentField" v-model="tempUser.major" type="text" placeholder=""
-                    class="transition-all"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-=======
             <div class="grid grid-cols-2 gap-4">
               <FormField v-slot="{ componentField }" name="username">
                 <FormItem>
@@ -624,7 +577,6 @@ function openFeishuDoc() {
                 </FormItem>
               </FormField>
             </div>
->>>>>>> Stashed changes
 
             <FormField v-slot="{ componentField }" name="username">
               <FormItem>
@@ -669,64 +621,6 @@ function openFeishuDoc() {
           </div>
           <input ref="fileInput" type="file" class="hidden" accept="image/*" @change="handleFileUpload">
         </div>
-
-        <DialogFooter class="md:gap-5">
-          <Dialog v-model:open="isOpenPassword">
-            <DialogTrigger>
-              <Button> 修改密码 </Button>
-            </DialogTrigger>
-            <DialogContent class=" w-auto">
-              <DialogHeader>
-                <DialogTitle> 修改密码 </DialogTitle>
-                <DialogDescription>
-                  在此更改您的密码。完成后单击“保存”。
-                </DialogDescription>
-              </DialogHeader>
-
-              <div class="max-w-sm w-full grid gap-2">
-                <FormField v-slot="{ componentField }" name="username">
-                  <FormItem>
-                    <FormLabel>旧密码</FormLabel>
-                    <FormControl>
-                      <Input
-                        v-bind="componentField" v-model="oldPassword" type="password" placeholder=""
-                        class="transition-all"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                </FormField>
-
-                <FormField v-slot="{ componentField }" name="username">
-                  <FormItem>
-                    <FormLabel>新密码</FormLabel>
-                    <FormControl>
-                      <Input
-                        v-bind="componentField" v-model="newPassword" type="password" placeholder=""
-                        class="transition-all"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                </FormField>
-
-                <FormField v-slot="{ componentField }" name="username">
-                  <FormItem>
-                    <FormLabel>确认密码</FormLabel>
-                    <FormControl>
-                      <Input
-                        v-bind="componentField" v-model="confirmPassword" type="password" placeholder=""
-                        class="transition-all"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                </FormField>
-              </div>
-
-<<<<<<< Updated upstream
-        <DialogFooter>
-=======
         <DialogFooter class="md:gap-5">
           <Dialog v-model:open="isOpenPassword">
             <DialogTrigger>
@@ -782,7 +676,6 @@ function openFeishuDoc() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
->>>>>>> Stashed changes
           <DialogClose>
             <Button @click="onSubmit">
               保存设置
