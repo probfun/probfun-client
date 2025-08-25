@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import AiPanel from '@/components/ai/AiPanel.vue';
 
-import MindMapPanel from '@/components/mindmap/MindMapPanel.vue';
 import Callback from '@/components/auth/Callback.vue';
 import CasLoginCard from '@/components/auth/CasLoginCard.vue';
 import Callback from '@/components/auth/Callback.vue';
@@ -270,10 +269,6 @@ const router = createRouter({
         {
           path: '/:pathMatch(.*)*',
           redirect: '/dashboard',
-        },
-        {
-          path: '/dashboard/mindmap',
-          component: MindMapPanel,
         },
         {
           path: '/dashboard/favorite',
