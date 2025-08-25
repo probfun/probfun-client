@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { get } from '@/api/request.ts';
 
 interface Subject {
