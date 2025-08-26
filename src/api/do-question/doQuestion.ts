@@ -24,8 +24,13 @@ interface Chapter {
 interface Question {
   id: number;
   content: string;
-  difficulty: '简单' | '中等' | '困难';
-  chapter_id: number;
+  difficulty: number;
+  chapter: {
+    id: number;
+    name: string;
+    parentId: number;
+    subject: string;
+  };
 }
 
 async function fetchSubjectListApi() {

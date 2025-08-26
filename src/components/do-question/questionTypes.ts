@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { ref,toRaw } from 'vue';
 
 interface QuestionChoice {
   content: string;
@@ -13,7 +13,7 @@ interface Question {
   choices: QuestionChoice[];
   analysis: string;
   knowledgePoint: string;
-  difficulty: '简单' | '中等' | '困难';
+  difficulty: string;
   lastResult?: boolean | null;
 }
 
@@ -436,8 +436,8 @@ const chapter2Section1Questions = ref<Question[]>([
 export type { Question, QuestionChoice };
 
 // 章节题目映射
-export const questionSectionMap: { [key: string]: Question[] } = {
-  '1.1': chapter1Section1Questions.value,
-  '1.2': chapter1Section2Questions.value,
-  '2.1': chapter2Section1Questions.value
-};
+export const questionSectionMap = ref<{ [key: string]: Question[] }>({
+  '1.1': toRaw(chapter1Section1Questions.value),
+  '1.2': toRaw(chapter1Section2Questions.value),
+  '2.1': toRaw(chapter2Section1Questions.value)
+});

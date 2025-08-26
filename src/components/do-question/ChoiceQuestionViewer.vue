@@ -6,7 +6,6 @@
         <!-- 题目内容-->
         <div class="p-4 border border-gray-200 rounded-md relative">
           <div class="text-xl">
-            <span>{{ currentQuestion.id }}.</span>
             <span v-html="currentQuestion.content" class="ml-2"></span>
           </div>
           <!-- 难度标签调整到右下角 -->
@@ -143,7 +142,7 @@ const resetSelection = () => {
 
 // 原有题目加载功能
 function loadQuestion(id: number) {
-  const sectionQuestions = questionSectionMap[props.currentSection] || [];
+  const sectionQuestions = questionSectionMap.value[props.currentSection] || [];
   currentQuestion.value = sectionQuestions.find(q => q.id === id) || null;
   viewAnswer.value = false;
   selectedChoice.value = null;
@@ -171,23 +170,25 @@ async function refreshQuestionList() {
     const apiQuestions = response.questions || [];
     console.log('获取题目列表:', apiQuestions);
 
+    // 转换难度数字为文本描述
+    const difficultyMap: { [key: number]: string } = {1: '简单', 2: '中等', 3: '困难'};
     // 转换为本地题目格式（保留原有结构）
-    const formattedQuestions = apiQuestions.map((question: { id: any; content: any; difficulty: any; }) => ({
+    const formattedQuestions = apiQuestions.map((question: { id: number; content: string; difficulty: number; }) => ({
       id: question.id,
       category: '',
       content: question.content,
       choices: [], // 按要求不加载选项
       analysis: '',
       knowledgePoint: '',
-      difficulty: question.difficulty,
+      difficulty: difficultyMap[question.difficulty] || '未知',
       lastResult: null
     }));
     console.log('格式化题目列表:', formattedQuestions);
 
     // 更新题目映射表（兼容原有数据结构）
-    questionSectionMap['1.1'] = formattedQuestions;
+    questionSectionMap.value['1.1'] = formattedQuestions;
     console.log('刷新题目列表:', questionSectionMap);
-    
+
     // 自动加载第一题（保持原有交互）
     if (formattedQuestions.length > 0 && (!currentQuestion.value || !props.questionId)) {
       const firstId = formattedQuestions[0].id;
@@ -220,7 +221,8 @@ function handleSubmit() {
 // 原有导航功能
 function prevQuestion() {
   if (!currentQuestion.value) return;
-  const sectionQuestions = questionSectionMap[props.currentSection] || [];
+  const sectionQuestions = questionSectionMap.value[props.currentSection] || [];
+
   const currentIndex = sectionQuestions.findIndex(q => q.id === currentQuestion.value!.id);
   if (currentIndex > 0) {
     const prevId = sectionQuestions[currentIndex - 1].id;
@@ -231,7 +233,7 @@ function prevQuestion() {
 
 function nextQuestion() {
   if (!currentQuestion.value) return;
-  const sectionQuestions = questionSectionMap[props.currentSection] || [];
+  const sectionQuestions = questionSectionMap.value[props.currentSection] || [];
   const currentIndex = sectionQuestions.findIndex(q => q.id === currentQuestion.value!.id);
   if (currentIndex < sectionQuestions.length - 1) {
     const nextId = sectionQuestions[currentIndex + 1].id;
