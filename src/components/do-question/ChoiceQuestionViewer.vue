@@ -185,6 +185,7 @@ async function refreshQuestionList(x: string) {
     const resChapter = await fetchChapterListApi(5);
     const apiChapter = resChapter.chapters || [];
     console.log('apiChapter:', apiChapter)
+    console.log(x, y, z)
 
     chapterId.value = apiChapter[y - 1]?.children?.[z - 1]?.id || 1;
 
@@ -328,32 +329,28 @@ async function refreshQuestionList(x: string) {
     // }
 
     if (chapterId.value && props.currentSection) {
-      const resQuestion = await fetchQuestionListApi(chapterId.value);
-      const apiQuestion = resQuestion.questions || [];
+      const response = await fetchQuestionListApi(chapterId.value);
+      const apiQuestions = response.questions || [];
+      console.log('apiQuestion', apiQuestions)
 
       // 转换难度数字为文本描述
       const difficultyMap: { [key: number]: string } = { 1: '简单', 2: '中等', 3: '困难' };
-      const formattedQuestions = await Promise.all(apiQuestion.map(async (question: any) => {
-        // 获取当前题目的选项
-        const resChoiceOption = await fetchChoiceOptionApi(question.id);
-        const apiOption = resChoiceOption.options || [];
-        console.log('apiOption:', apiOption)
-
-        return {
-          id: question.id,
-          category: '',
-          content: question.content,
-          // 将API返回选项转换为组件所需格式
-          choices: apiOption.map((option: any) => ({
-            content: option.content,
-            isCorrect: option.is_correct
-          })),
-          analysis: '题目解析内容...',
-          knowledgePoint: '相关知识点',
-          difficulty: difficultyMap[question.difficulty] || '未知',
-          lastResult: null
-        };
+      const formattedQuestions = apiQuestions.map((question: any) => ({
+        id: question.id,
+        category: props.currentSection,
+        content: question.content,
+        choices: [
+          { content: '选项A', isCorrect: false },
+          { content: '选项B', isCorrect: true },
+          { content: '选项C', isCorrect: false },
+          { content: '选项D', isCorrect: false }
+        ],
+        analysis: '题目解析内容...',
+        knowledgePoint: '相关知识点',
+        difficulty: difficultyMap[question.difficulty] || '未知',
+        lastResult: null
       }));
+
       console.log('formattedQuestions:', formattedQuestions)
 
       // 更新题目映射表
