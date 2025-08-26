@@ -159,12 +159,13 @@ const resetSelection = () => {
 // 加载题目
 function loadQuestion(id: number) {
   const question = currentSectionQuestions.value.find(q => q.id === id);
-  if (question) {
+   if (question) {
     currentQuestion.value = question;
     viewAnswer.value = false;
     selectedChoice.value = null;
-
-    // 加载保存的结果
+    // 保存当前题目ID到localStorage
+    localStorage.setItem(`currentQuestion_${props.currentSection}`, id.toString());
+    
     const storedResults = JSON.parse(localStorage.getItem('questionResults') || '{}');
     const resultKey = `${props.currentSection}-${id}`;
     userResults.value[id] = storedResults[resultKey] ?? null;
@@ -414,18 +415,32 @@ defineExpose({
 });
 
 // 初始化和监听
-onMounted(() => {
-  refreshQuestionList(props.currentSection);
+onMounted(async () => {
+  await refreshQuestionList(props.currentSection);
+  // 优先从localStorage加载上次保存的题目
+  const savedId = localStorage.getItem(`currentQuestion_${props.currentSection}`);
+  if (savedId) {
+    const numericId = parseInt(savedId, 10);
+    // 验证ID是否属于当前章节
+    const isValidId = currentSectionQuestions.value.some(q => q.id === numericId);
+    if (isValidId) {
+      loadQuestion(numericId);
+      return;
+    }
+  }
+  // 回退逻辑
   if (props.questionId) {
     loadQuestion(props.questionId);
+  } else if (currentSectionQuestions.value.length > 0) {
+    loadQuestion(currentSectionQuestions.value[0].id);
   }
 });
 
 watch(
   () => props.currentSection,
-  (newSection, oldSection) => {
+  async (newSection, oldSection) => {
     if (newSection && newSection !== oldSection) {
-      refreshQuestionList(props.currentSection);
+      await refreshQuestionList(props.currentSection);
     }
   }
 );
