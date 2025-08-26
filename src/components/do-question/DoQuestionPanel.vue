@@ -154,9 +154,11 @@ watch(
 
 watch(
   () => questionCount.value,
-  (newCount) => {
-    // 生成1到newCount的连续ID数组（如果题目ID不连续，需要从API获取实际ID）
-    questionIds.value = Array.from({ length: newCount }, (_, i) => i + 1);
+  async (newCount) => {
+    if (questionViewer.value) {
+      // 从子组件获取真实题目ID列表，替换之前的连续数字生成逻辑
+      questionIds.value = await questionViewer.value.getQuestionIds();
+    }
   }
 );
 

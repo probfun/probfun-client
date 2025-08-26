@@ -184,8 +184,137 @@ async function refreshQuestionList(x: string) {
     else if (x === '1.2') {
       chapterId.value = apiChapter[0]?.children?.[1]?.id || 1;
     }
-    else {
-      chapterId.value = apiChapter[0]?.children?.[2]?.id || 1; 
+    else if (x === '1.3') {
+      chapterId.value = apiChapter[0]?.children?.[2]?.id || 1;
+    }
+    else if (x === '1.4') {
+      chapterId.value = apiChapter[0]?.children?.[3]?.id || 1;
+    }
+    else if (x === '2.1') {
+      chapterId.value = apiChapter[4]?.children?.[0]?.id || 1;
+    }
+    else if (x === '2.2') {
+      chapterId.value = apiChapter[4]?.children?.[1]?.id || 1;
+    }
+    else if (x === '2.3') {
+      chapterId.value = apiChapter[4]?.children?.[2]?.id || 1;
+    }
+    else if (x === '2.4') {
+      chapterId.value = apiChapter[4]?.children?.[3]?.id || 1;
+    }
+    else if (x === '3.1') {
+      chapterId.value = apiChapter[2]?.children?.[0]?.id || 1;
+    }
+    else if (x === '3.2') {
+      chapterId.value = apiChapter[2]?.children?.[1]?.id || 1;
+    }
+    else if (x === '3.3') {
+      chapterId.value = apiChapter[2]?.children?.[2]?.id || 1;
+    }
+    else if (x === '3.4') {
+      chapterId.value = apiChapter[2]?.children?.[3]?.id || 1;
+    }
+    else if (x === '3.5') {
+      chapterId.value = apiChapter[2]?.children?.[4]?.id || 1;
+    }
+    else if (x === '4.1') {
+      chapterId.value = apiChapter[8]?.children?.[0]?.id || 1;
+    }
+    else if (x === '4.2') {
+      chapterId.value = apiChapter[8]?.children?.[1]?.id || 1;
+    }
+    else if (x === '4.3') {
+      chapterId.value = apiChapter[8]?.children?.[2]?.id || 1;
+    }
+    else if (x === '4.4') {
+      chapterId.value = apiChapter[8]?.children?.[3]?.id || 1;
+    }
+    else if (x === '4.5') {
+      chapterId.value = apiChapter[8]?.children?.[4]?.id || 1;
+    }
+    else if (x === '5.1') {
+      chapterId.value = apiChapter[5]?.children?.[0]?.id || 1;
+    }
+    else if (x === '5.2') { 
+      chapterId.value = apiChapter[5]?.children?.[1]?.id || 1;
+    }
+    else if (x === '5.3') {
+      chapterId.value = apiChapter[5]?.children?.[2]?.id || 1;
+    }
+    else if (x === '6.1') {
+      chapterId.value = apiChapter[7]?.children?.[0]?.id || 1;
+    }
+    else if (x === '6.2') {
+      chapterId.value = apiChapter[7]?.children?.[1]?.id || 1;
+    }
+    else if (x === '6.3') {
+      chapterId.value = apiChapter[7]?.children?.[2]?.id || 1;
+    }
+    else if (x === '6.4') {
+      chapterId.value = apiChapter[7]?.children?.[3]?.id || 1;
+    }
+    else if (x === '7.1') {
+      chapterId.value = apiChapter[1]?.children?.[0]?.id || 1;
+    }
+    else if (x === '7.2') {
+      chapterId.value = apiChapter[1]?.children?.[1]?.id || 1;
+    }
+    else if (x === '7.3') {
+      chapterId.value = apiChapter[1]?.children?.[2]?.id || 1;
+    }
+    else if (x === '7.4') {
+      chapterId.value = apiChapter[1]?.children?.[3]?.id || 1;
+    }
+    else if (x === '7.5') {
+      chapterId.value = apiChapter[1]?.children?.[4]?.id || 1;
+    }
+    else if (x === '7.6') {
+      chapterId.value = apiChapter[1]?.children?.[5]?.id || 1;
+    }
+    else if (x === '7.7') {
+      chapterId.value = apiChapter[1]?.children?.[6]?.id || 1;
+    }
+    else if (x === '7.8') {
+      chapterId.value = apiChapter[1]?.children?.[7]?.id || 1;
+    }
+    else if (x === '8.1') {
+      chapterId.value = apiChapter[6]?.children?.[0]?.id || 1;
+    }
+    else if (x === '8.2') {
+      chapterId.value = apiChapter[6]?.children?.[1]?.id || 1;
+    }
+    else if (x === '8.3') {
+      chapterId.value = apiChapter[6]?.children?.[2]?.id || 1;
+    }
+    else if (x === '8.4') {
+      chapterId.value = apiChapter[6]?.children?.[3]?.id || 1;
+    }
+    else if (x === '8.5') {
+      chapterId.value = apiChapter[6]?.children?.[4]?.id || 1;
+    }
+    else if (x === '8.6') {
+      chapterId.value = apiChapter[6]?.children?.[5]?.id || 1;
+    }
+    else if (x === '8.7') {
+      chapterId.value = apiChapter[6]?.children?.[6]?.id || 1;
+    }
+    else if (x === '9.1') {
+      chapterId.value = apiChapter[3]?.children?.[0]?.id || 1;
+    }
+    else if (x === '9.2') {
+      chapterId.value = apiChapter[3]?.children?.[1]?.id || 1;
+    }
+    else if (x === '9.3') {
+      chapterId.value = apiChapter[3]?.children?.[2]?.id || 1;
+    }
+    else if (x === '9.4') {
+      chapterId.value = apiChapter[3]?.children?.[3]?.id || 1;
+    }
+    else if (x === '9.5') {
+      chapterId.value = apiChapter[3]?.children?.[4]?.id || 1;
+    }
+    else if (x === '9.6') {
+      chapterId.value = apiChapter[3]?.children?.[5]?.id || 1;
     }
 
     if (chapterId.value && props.currentSection) {
@@ -280,7 +409,8 @@ defineExpose({
   getQuestionResult: (id: number) => {
     const storedResults = JSON.parse(localStorage.getItem('questionResults') || '{}');
     return storedResults[`${props.currentSection}-${id}`] ?? null;
-  }
+  },
+  getQuestionIds: () => currentSectionQuestions.value.map(q => q.id) // 添加此方法
 });
 
 // 初始化和监听
