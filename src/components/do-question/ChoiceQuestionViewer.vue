@@ -112,19 +112,23 @@
 import { ref, defineProps, defineExpose, onMounted, defineEmits, watch } from 'vue';
 import Button from 'primevue/button';
 import { Question, questionSectionMap } from './questionTypes';
-import { fetchQuestionListApi } from '@/api/do-question/doQuestion.ts';
+import { fetchQuestionListApi, fetchChapterListApi } from '@/api/do-question/doQuestion.ts';
 
 // 定义Props（兼容原有接口并新增chapterId）
 const props = defineProps<{
   questionId: number | null;
   currentSection: string;
-  chapterId: number; // 新增章节ID参数
 }>();
 
 // 定义事件
 const emit = defineEmits<{
   (e: 'update:questionId', id: number): void;
 }>();
+
+// 监听章节变化自动刷新题目
+watch(() => props.currentSection, (newSection) => {
+  if (newSection) refreshQuestionList();
+}, { immediate: true });
 
 // 状态管理（保留所有原有状态）
 const currentQuestion = ref<Question | null>(null);
@@ -133,6 +137,7 @@ const selectedChoice = ref<number | null>(null);
 const userResults = ref<Record<number, boolean>>({});
 const loading = ref(false); // 新增加载状态
 const error = ref<string | null>(null); // 新增错误状态
+const chapterId = ref(1)
 
 // 原有重置功能
 const resetSelection = () => {
@@ -160,10 +165,15 @@ async function refreshQuestionList() {
   error.value = null;
   try {
     // 验证参数
-    if (!props.chapterId || !props.currentSection) {
+    const res = await fetchChapterListApi(5);
+    console.log('章节信息:', res);
+    const apiChapter = res.chapters || [];
+    console.log('获取章节列表:', apiChapter);
+    chapterId.value = apiChapter[0]?.id || 1;
+
+    if (!chapterId.value || !props.currentSection) {
       throw new Error('章节参数不完整');
     }
-
     // 调用API获取数据
     const response = await fetchQuestionListApi(97);
     console.log('API返回:', response);
@@ -177,7 +187,12 @@ async function refreshQuestionList() {
       id: question.id,
       category: '',
       content: question.content,
-      choices: [], // 按要求不加载选项
+      choices: [
+      { content: '组件必须有template标签', isCorrect: false },
+      { content: '组件可以通过props接收父组件数据', isCorrect: true },
+      { content: '组件不能嵌套使用', isCorrect: false },
+      { content: '组件的数据必须是对象类型', isCorrect: false }
+    ],
       analysis: '',
       knowledgePoint: '',
       difficulty: difficultyMap[question.difficulty] || '未知',

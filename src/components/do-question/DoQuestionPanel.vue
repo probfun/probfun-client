@@ -25,7 +25,7 @@
 
     <div class="flex h-[calc(100vh-150px)] p-5">
       <ChoiceQuestionViewer ref="questionViewer" :question-id="currentQuestionId" :current-section="currentSection"
-        :chapter-id="chapterId" @update:questionId="(id) => currentQuestionId = id" />
+        @update:questionId="(id) => currentQuestionId = id" />
     </div>
 
     <Dialog v-model:visible="viewReleaseDialog" header="发布新的自测" :style="{ width: '60%' }">
@@ -65,7 +65,6 @@ const route = useRoute();
 const currentChapterTitle = ref('');
 const currentSection = ref('');
 const questionCount = ref(0);
-let chapterId = ref(1);
 
 const findTitleByRoute = (routePath: string, items: DrawerItem[]): string => {
   for (const item of items) {
