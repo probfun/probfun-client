@@ -46,8 +46,7 @@
 
         <!-- 操作按钮 -->
         <div class="flex justify-between mt-6">
-          <Button severity="secondary" :disabled="!hasPrevQuestion"
-            @click="prevQuestion">
+          <Button severity="secondary" :disabled="!hasPrevQuestion" @click="prevQuestion">
             上一题
           </Button>
           <Button severity="success" @click="handleSubmit">
@@ -56,8 +55,7 @@
           <Button severity="danger" @click="resetSelection">
             删除
           </Button>
-          <Button severity="secondary" :disabled="!hasNextQuestion"
-            @click="nextQuestion">
+          <Button severity="secondary" :disabled="!hasNextQuestion" @click="nextQuestion">
             下一题
           </Button>
         </div>
@@ -165,7 +163,7 @@ function loadQuestion(id: number) {
     currentQuestion.value = question;
     viewAnswer.value = false;
     selectedChoice.value = null;
-    
+
     // 加载保存的结果
     const storedResults = JSON.parse(localStorage.getItem('questionResults') || '{}');
     const resultKey = `${props.currentSection}-${id}`;
@@ -174,18 +172,26 @@ function loadQuestion(id: number) {
 }
 
 // 刷新题目列表
-async function refreshQuestionList() {
+async function refreshQuestionList(x: string) {
   loading.value = true;
   error.value = null;
   try {
     const res = await fetchChapterListApi(5);
     const apiChapter = res.chapters || [];
-    chapterId.value = apiChapter[0]?.children?.[0]?.id || 1;
+    if (x === '1.1') {
+      chapterId.value = apiChapter[0]?.children?.[0]?.id || 1;
+    }
+    else if (x === '1.2') {
+      chapterId.value = apiChapter[0]?.children?.[1]?.id || 1;
+    }
+    else {
+      chapterId.value = apiChapter[0]?.children?.[2]?.id || 1; 
+    }
 
     if (chapterId.value && props.currentSection) {
       const response = await fetchQuestionListApi(chapterId.value);
       const apiQuestions = response.questions || [];
-      
+
       // 转换难度数字为文本描述
       const difficultyMap: { [key: number]: string } = { 1: '简单', 2: '中等', 3: '困难' };
       const formattedQuestions = apiQuestions.map((question: any) => ({
@@ -206,10 +212,10 @@ async function refreshQuestionList() {
 
       // 更新题目映射表
       questionSectionMap.value[props.currentSection] = formattedQuestions;
-      
+
       // 通知父组件更新题目数量
       emit('update:questionCount', formattedQuestions.length);
-      
+
       // 自动加载第一题
       if (formattedQuestions.length > 0 && (!currentQuestion.value || !props.questionId)) {
         const firstId = formattedQuestions[0].id;
@@ -232,7 +238,7 @@ function handleSubmit() {
     // 判断答案是否正确（找到正确选项的索引）
     const correctIndex = currentQuestion.value.choices.findIndex(c => c.isCorrect);
     const correct = selectedChoice.value === correctIndex;
-    
+
     userResults.value[currentQuestion.value.id] = correct;
 
     // 保存结果到localStorage
@@ -246,7 +252,7 @@ function handleSubmit() {
 // 上一题/下一题导航
 function prevQuestion() {
   if (!currentQuestion.value) return;
-  
+
   const currentIndex = currentSectionQuestions.value.findIndex(q => q.id === currentQuestion.value!.id);
   if (currentIndex > 0) {
     const prevQuestion = currentSectionQuestions.value[currentIndex - 1];
@@ -257,7 +263,7 @@ function prevQuestion() {
 
 function nextQuestion() {
   if (!currentQuestion.value) return;
-  
+
   const currentIndex = currentSectionQuestions.value.findIndex(q => q.id === currentQuestion.value!.id);
   if (currentIndex < currentSectionQuestions.value.length - 1) {
     const nextQuestion = currentSectionQuestions.value[currentIndex + 1];
@@ -279,7 +285,7 @@ defineExpose({
 
 // 初始化和监听
 onMounted(() => {
-  refreshQuestionList();
+  refreshQuestionList(props.currentSection);
   if (props.questionId) {
     loadQuestion(props.questionId);
   }
@@ -289,7 +295,7 @@ watch(
   () => props.currentSection,
   (newSection, oldSection) => {
     if (newSection && newSection !== oldSection) {
-      refreshQuestionList();
+      refreshQuestionList(props.currentSection);
     }
   }
 );

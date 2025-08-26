@@ -19,68 +19,8 @@ interface Question {
 
 // 题目数据
 const chapter1Section1Questions = ref<Question[]>([
-  {
-    id: 1,
-    category: '1.1样本空间与随机事件',
-    content: '1. 下列试验能够构成事件的是',
-    choices: [
-      { content: '组件必须有template标签', isCorrect: false },
-      { content: '组件可以通过props接收父组件数据', isCorrect: true },
-      { content: '组件不能嵌套使用', isCorrect: false },
-      { content: '组件的数据必须是对象类型', isCorrect: false }
-    ],
-    analysis: '',
-    knowledgePoint: '',
-    difficulty: '简单',
-    lastResult: null,
-  }
 ]);
 const chapter1Section2Questions = ref<Question[]>([
-  {
-    id: 1,
-    category: '1.2 事件的概率',
-    content: '下列哪个CSS属性用于改变元素的背景颜色？',
-    choices: [
-      { content: 'color', isCorrect: false },
-      { content: 'background', isCorrect: true },
-      { content: 'text-decoration', isCorrect: false },
-      { content: 'border', isCorrect: false }
-    ],
-    analysis: 'background属性用于设置元素的背景样式，包括背景颜色、背景图片等。<br><br>选项A错误：color用于设置文本颜色<br>选项C错误：text-decoration用于设置文本装饰（如下划线）<br>选项D错误：border用于设置元素边框',
-    knowledgePoint: 'CSS背景属性、文本样式属性',
-    difficulty: '简单',
-    lastResult: null,
-  },
-  {
-    id: 2,
-    category: '1.2 事件的概率',
-    content: 'React中哪个钩子函数用于在组件挂载后执行操作？',
-    choices: [
-      { content: 'useState', isCorrect: false },
-      { content: 'useEffect', isCorrect: true },
-      { content: 'useContext', isCorrect: false },
-      { content: 'useReducer', isCorrect: false }
-    ],
-    analysis: 'useEffect钩子函数可以在组件挂载后、更新后执行副作用操作，通过设置空依赖数组[]可以仅在挂载时执行一次。<br><br>选项A错误：useState用于管理组件状态<br>选项C错误：useContext用于获取上下文数据<br>选项D错误：useReducer用于复杂状态管理',
-    knowledgePoint: 'React Hooks、组件生命周期',
-    difficulty: '中等',
-    lastResult: null,
-  },
-  {
-    id: 3,
-    category: '1.2 事件的概率',
-    content: 'TypeScript中，下列哪种类型表示可以为null或undefined的值？',
-    choices: [
-      { content: 'any', isCorrect: false },
-      { content: 'void', isCorrect: false },
-      { content: 'never', isCorrect: false },
-      { content: 'null', isCorrect: true }
-    ],
-    analysis: '本题四个选项中没有正确答案。TypeScript中表示可以为null或undefined的类型需要使用联合类型，如`string | null | undefined`。<br><br>选项A：any表示任意类型，会关闭类型检查<br>选项B：void表示没有返回值<br>选项C：never表示永远不会发生的值<br>选项D：unknown表示未知类型，需要类型断言才能使用',
-    knowledgePoint: 'TypeScript基础类型、联合类型',
-    difficulty: '困难',
-    lastResult: null,
-  }
 ]);
 const chapter1Section3Questions = ref<Question[]>([
 ]);

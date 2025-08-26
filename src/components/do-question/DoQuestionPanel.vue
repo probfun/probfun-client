@@ -17,15 +17,14 @@
     <div v-if="showQuestionList"
       class="absolute left-[485px] bottom-[567px] mt-3 w-180 bg-white border border-gray-200 rounded-md shadow-lg z-50">
       <div class="p-3 flex flex-wrap gap-2 min-w-[200px]">
-        <Button v-for="i in questionCount" :key="i" :label="i.toString()" :severity="getButtonSeverity(i)" size="sm"
-          @click.stop="handleSelectQuestion(i)" />
+        <Button v-for="id in questionIds" :key="id" :label="id.toString()" :severity="getButtonSeverity(id)" size="sm"
+          @click.stop="handleSelectQuestion(id)" />
       </div>
     </div>
 
     <div class="flex h-[calc(100vh-150px)] p-5">
       <ChoiceQuestionViewer ref="questionViewer" :question-id="currentQuestionId" :current-section="currentSection"
-        @update:questionId="(id) => currentQuestionId = id"
-        @update:questionCount="(count) => questionCount = count" />
+        @update:questionId="(id) => currentQuestionId = id" @update:questionCount="(count) => questionCount = count" />
     </div>
 
     <Dialog v-model:visible="viewReleaseDialog" header="发布新的自测" :style="{ width: '60%' }">
@@ -65,6 +64,7 @@ const route = useRoute();
 const currentChapterTitle = ref('');
 const currentSection = ref('');
 const questionCount = ref(0);
+const questionIds = ref<number[]>([]);
 
 // 改进：更可靠的路径解析函数
 const findTitleByRoute = (routePath: string, items: DrawerItem[]): string => {
@@ -78,7 +78,7 @@ const findTitleByRoute = (routePath: string, items: DrawerItem[]): string => {
       if (childTitle) return childTitle;
     }
   }
-  
+
   // 如果精确匹配失败，尝试模糊匹配（处理可能的路由参数差异）
   for (const item of items) {
     if (item.route && routePath.startsWith(item.route.replace(/\/$/, ''))) {
@@ -89,7 +89,7 @@ const findTitleByRoute = (routePath: string, items: DrawerItem[]): string => {
       if (childTitle) return childTitle;
     }
   }
-  
+
   return '';
 };
 
@@ -105,7 +105,7 @@ const initChapterInfo = async (path: string) => {
     if (!title && route.params && route.params.chapter) {
       title = route.params.chapter as string;
     }
-    
+
     currentQuestionId.value = 1;
 
     await nextTick();
@@ -149,6 +149,14 @@ watch(
   () => route.path,
   async (newPath) => {
     await initChapterInfo(newPath);
+  }
+);
+
+watch(
+  () => questionCount.value,
+  (newCount) => {
+    // 生成1到newCount的连续ID数组（如果题目ID不连续，需要从API获取实际ID）
+    questionIds.value = Array.from({ length: newCount }, (_, i) => i + 1);
   }
 );
 
