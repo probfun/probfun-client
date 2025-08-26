@@ -19,21 +19,21 @@ interface Question {
 
 // 章节1题目数据
 const chapter1Section1Questions = ref<Question[]>([
-  // {
-  //   id: 1,
-  //   category: '1.1 样本空间与随机事件',
-  //   content: '下列关于Vue组件的说法，正确的是？',
-  //   choices: [
-  //     { content: '组件必须有template标签', isCorrect: false },
-  //     { content: '组件可以通过props接收父组件数据', isCorrect: true },
-  //     { content: '组件不能嵌套使用', isCorrect: false },
-  //     { content: '组件的数据必须是对象类型', isCorrect: false }
-  //   ],
-  //   analysis: 'Vue组件可以通过props接收父组件传递的数据，这是组件间通信的基本方式之一。<br><br>选项A错误：单文件组件(SFC)可以没有template标签，可通过render函数渲染<br>选项C错误：组件可以多层嵌套使用，形成组件树<br>选项D错误：组件的数据必须是函数类型（为了避免多个实例共享同一数据对象），只有根实例可以是对象',
-  //   knowledgePoint: 'Vue组件定义、props传递、组件嵌套规则',
-  //   difficulty: '简单',
-  //   lastResult: null,
-  // },
+  {
+    id: 1,
+    category: '1.1 样本空间与随机事件',
+    content: '下列关于Vue组件的说法，正确的是？',
+    choices: [
+      { content: '组件必须有template标签', isCorrect: false },
+      { content: '组件可以通过props接收父组件数据', isCorrect: true },
+      { content: '组件不能嵌套使用', isCorrect: false },
+      { content: '组件的数据必须是对象类型', isCorrect: false }
+    ],
+    analysis: 'Vue组件可以通过props接收父组件传递的数据，这是组件间通信的基本方式之一。<br><br>选项A错误：单文件组件(SFC)可以没有template标签，可通过render函数渲染<br>选项C错误：组件可以多层嵌套使用，形成组件树<br>选项D错误：组件的数据必须是函数类型（为了避免多个实例共享同一数据对象），只有根实例可以是对象',
+    knowledgePoint: 'Vue组件定义、props传递、组件嵌套规则',
+    difficulty: '简单',
+    lastResult: null,
+  },
   // {
   //   id: 2,
   //   category: '1.1 样本空间与随机事件',

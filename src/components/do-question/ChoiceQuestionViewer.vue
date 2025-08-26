@@ -8,7 +8,7 @@
           <div class="text-xl">
             <span v-html="currentQuestion.content" class="ml-2"></span>
           </div>
-          <!-- 难度标签调整到右下角 -->
+          <!-- 难度标签 -->
           <span :class="['absolute right-3 bottom-3 px-3 py-1 rounded-full text-sm font-medium', {
             'bg-green-100 text-green-800': currentQuestion.difficulty === '简单',
             'bg-yellow-100 text-yellow-800': currentQuestion.difficulty === '中等',
@@ -18,7 +18,7 @@
           </span>
         </div>
 
-        <!-- 选项区域（添加图标） -->
+        <!-- 选项区域 -->
         <div class="space-y-3 mt-4">
           <div v-for="(choice, index) in currentQuestion.choices" :key="index"
             class="p-3 border rounded-md cursor-pointer transition-all flex items-start" :class="{
@@ -46,7 +46,7 @@
 
         <!-- 操作按钮 -->
         <div class="flex justify-between mt-6">
-          <Button severity="secondary" :disabled="currentQuestion?.id <= 1"
+          <Button severity="secondary" :disabled="!hasPrevQuestion"
             @click="prevQuestion">
             上一题
           </Button>
@@ -56,7 +56,7 @@
           <Button severity="danger" @click="resetSelection">
             删除
           </Button>
-          <Button severity="secondary" :disabled="currentQuestion?.id >= 23"
+          <Button severity="secondary" :disabled="!hasNextQuestion"
             @click="nextQuestion">
             下一题
           </Button>
@@ -91,7 +91,6 @@
 
     <!-- 分步骤辅导区 -->
     <div class="w-1/3 h-full bg-gray-50 border border-gray-200 rounded-r-lg p-4">
-      <!-- 添加外层条件判断 -->
       <div v-if="viewAnswer && currentQuestion">
         <div class="border-b border-gray-200 pb-2 mb-4">
           <h3 class="font-semibold text-gray-800">分步骤辅导</h3>
@@ -109,12 +108,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, defineExpose, onMounted, defineEmits, watch } from 'vue';
+import { ref, defineProps, defineExpose, onMounted, defineEmits, watch, computed } from 'vue';
 import Button from 'primevue/button';
 import { Question, questionSectionMap } from './questionTypes';
 import { fetchQuestionListApi, fetchChapterListApi } from '@/api/do-question/doQuestion.ts';
 
-// 定义Props（兼容原有接口并新增chapterId）
+// 定义Props
 const props = defineProps<{
   questionId: number | null;
   currentSection: string;
@@ -123,95 +122,100 @@ const props = defineProps<{
 // 定义事件
 const emit = defineEmits<{
   (e: 'update:questionId', id: number): void;
+  (e: 'update:questionCount', count: number): void;
 }>();
 
-// 监听章节变化自动刷新题目
-watch(() => props.currentSection, (newSection) => {
-  if (newSection) refreshQuestionList();
-}, { immediate: true });
-
-// 状态管理（保留所有原有状态）
+// 状态管理
 const currentQuestion = ref<Question | null>(null);
 const viewAnswer = ref(false);
 const selectedChoice = ref<number | null>(null);
 const userResults = ref<Record<number, boolean>>({});
-const loading = ref(false); // 新增加载状态
-const error = ref<string | null>(null); // 新增错误状态
-const chapterId = ref(1)
-const questionCount = ref(23); // 题目总数硬编码为23
+const loading = ref(false);
+const error = ref<string | null>(null);
+const chapterId = ref(1);
 
-// 原有重置功能
+// 计算属性：获取当前章节的题目列表
+const currentSectionQuestions = computed(() => {
+  return questionSectionMap.value[props.currentSection] || [];
+});
+
+// 计算属性：判断是否有上一题/下一题
+const hasPrevQuestion = computed(() => {
+  if (!currentQuestion.value) return false;
+  const currentIndex = currentSectionQuestions.value.findIndex(q => q.id === currentQuestion.value!.id);
+  return currentIndex > 0;
+});
+
+const hasNextQuestion = computed(() => {
+  if (!currentQuestion.value) return false;
+  const currentIndex = currentSectionQuestions.value.findIndex(q => q.id === currentQuestion.value!.id);
+  return currentIndex < currentSectionQuestions.value.length - 1;
+});
+
+// 重置功能
 const resetSelection = () => {
   selectedChoice.value = null;
   viewAnswer.value = false;
 };
 
-// 原有题目加载功能
+// 加载题目
 function loadQuestion(id: number) {
-  const sectionQuestions = questionSectionMap.value[props.currentSection] || [];
-  currentQuestion.value = sectionQuestions.find(q => q.id === id) || null;
-  viewAnswer.value = false;
-  selectedChoice.value = null;
-
-  if (currentQuestion.value) {
+  const question = currentSectionQuestions.value.find(q => q.id === id);
+  if (question) {
+    currentQuestion.value = question;
+    viewAnswer.value = false;
+    selectedChoice.value = null;
+    
+    // 加载保存的结果
     const storedResults = JSON.parse(localStorage.getItem('questionResults') || '{}');
-    const resultKey = `${props.currentSection}-${currentQuestion.value.id}`;
-    currentQuestion.value.lastResult = storedResults[resultKey] ?? null;
+    const resultKey = `${props.currentSection}-${id}`;
+    userResults.value[id] = storedResults[resultKey] ?? null;
   }
 }
 
-// 核心：刷新题目列表（完整兼容版）
+// 刷新题目列表
 async function refreshQuestionList() {
   loading.value = true;
   error.value = null;
   try {
-    // 验证参数
     const res = await fetchChapterListApi(5);
-    console.log('章节信息:', res);
     const apiChapter = res.chapters || [];
-    console.log('获取章节列表:', apiChapter);
-    chapterId.value = apiChapter[0].children[0].id || 1;
+    chapterId.value = apiChapter[0]?.children?.[0]?.id || 1;
 
-    if (!chapterId.value || !props.currentSection) {
-      throw new Error('章节参数不完整');
-    }
-    // 调用API获取数据
-    const response = await fetchQuestionListApi(chapterId.value);
-    console.log('API返回:', response);
-    const apiQuestions = response.questions || [];
-    questionCount.value = 23; // 硬编码题目总数为23
-    console.log('获取题目列表:', apiQuestions);
-    console.log('长度', apiQuestions.length);
+    if (chapterId.value && props.currentSection) {
+      const response = await fetchQuestionListApi(chapterId.value);
+      const apiQuestions = response.questions || [];
+      
+      // 转换难度数字为文本描述
+      const difficultyMap: { [key: number]: string } = { 1: '简单', 2: '中等', 3: '困难' };
+      const formattedQuestions = apiQuestions.map((question: any) => ({
+        id: question.id,
+        category: props.currentSection,
+        content: question.content,
+        choices: [
+          { content: '选项A', isCorrect: false },
+          { content: '选项B', isCorrect: true },
+          { content: '选项C', isCorrect: false },
+          { content: '选项D', isCorrect: false }
+        ],
+        analysis: '题目解析内容...',
+        knowledgePoint: '相关知识点',
+        difficulty: difficultyMap[question.difficulty] || '未知',
+        lastResult: null
+      }));
 
-    // 转换难度数字为文本描述
-    const difficultyMap: { [key: number]: string } = { 1: '简单', 2: '中等', 3: '困难' };
-    // 转换为本地题目格式（保留原有结构）
-    const formattedQuestions = apiQuestions.map((question: { id: number; content: string; difficulty: number; }) => ({
-      id: question.id,
-      category: '',
-      content: question.content,
-      choices: [
-        { content: '组件必须有template标签', isCorrect: false },
-        { content: '组件可以通过props接收父组件数据', isCorrect: true },
-        { content: '组件不能嵌套使用', isCorrect: false },
-        { content: '组件的数据必须是对象类型', isCorrect: false }
-      ],
-      analysis: 'Vue组件可以通过props接收父组件传递的数据，这是组件间通信的基本方式之一。<br><br>选项A错误：单文件组件(SFC)可以没有template标签，可通过render函数渲染<br>选项C错误：组件可以多层嵌套使用，形成组件树<br>选项D错误：组件的数据必须是函数类型（为了避免多个实例共享同一数据对象），只有根实例可以是对象',
-      knowledgePoint: 'Vue组件定义、props传递、组件嵌套规则',
-      difficulty: difficultyMap[question.difficulty] || '未知',
-      lastResult: null
-    }));
-    console.log('格式化题目列表:', formattedQuestions);
-
-    // 更新题目映射表（兼容原有数据结构）
-    questionSectionMap.value['1.1'] = formattedQuestions;
-    console.log('刷新题目列表:', questionSectionMap);
-
-    // 自动加载第一题（保持原有交互）
-    if (apiQuestions.length > 0 && (!currentQuestion.value || !props.questionId)) {
-      const firstId = formattedQuestions[0].id;
-      loadQuestion(firstId);
-      emit('update:questionId', firstId);
+      // 更新题目映射表
+      questionSectionMap.value[props.currentSection] = formattedQuestions;
+      
+      // 通知父组件更新题目数量
+      emit('update:questionCount', formattedQuestions.length);
+      
+      // 自动加载第一题
+      if (formattedQuestions.length > 0 && (!currentQuestion.value || !props.questionId)) {
+        const firstId = formattedQuestions[0].id;
+        loadQuestion(firstId);
+        emit('update:questionId', firstId);
+      }
     }
   } catch (err) {
     error.value = err instanceof Error ? err.message : '加载题目失败';
@@ -221,55 +225,61 @@ async function refreshQuestionList() {
   }
 }
 
-// 原有提交功能
+// 提交功能
 function handleSubmit() {
   viewAnswer.value = !viewAnswer.value;
   if (viewAnswer.value && selectedChoice.value !== null && currentQuestion.value) {
-    const correct = selectedChoice.value === 0; // 兼容无选项场景
+    // 判断答案是否正确（找到正确选项的索引）
+    const correctIndex = currentQuestion.value.choices.findIndex(c => c.isCorrect);
+    const correct = selectedChoice.value === correctIndex;
+    
     userResults.value[currentQuestion.value.id] = correct;
 
+    // 保存结果到localStorage
     const storedResults = JSON.parse(localStorage.getItem('questionResults') || '{}');
     const resultKey = `${props.currentSection}-${currentQuestion.value.id}`;
     storedResults[resultKey] = correct;
     localStorage.setItem('questionResults', JSON.stringify(storedResults));
-    currentQuestion.value.lastResult = correct;
   }
 }
 
-// 原有导航功能
+// 上一题/下一题导航
 function prevQuestion() {
   if (!currentQuestion.value) return;
-  const sectionQuestions = questionSectionMap.value[props.currentSection] || [];
-
-  const currentIndex = sectionQuestions.findIndex(q => q.id === currentQuestion.value!.id);
+  
+  const currentIndex = currentSectionQuestions.value.findIndex(q => q.id === currentQuestion.value!.id);
   if (currentIndex > 0) {
-    const prevId = sectionQuestions[currentIndex - 1].id;
-    loadQuestion(prevId);
-    emit('update:questionId', prevId);
+    const prevQuestion = currentSectionQuestions.value[currentIndex - 1];
+    loadQuestion(prevQuestion.id);
+    emit('update:questionId', prevQuestion.id);
   }
 }
 
 function nextQuestion() {
   if (!currentQuestion.value) return;
-  const sectionQuestions = questionSectionMap.value[props.currentSection] || [];
-  const currentIndex = sectionQuestions.findIndex(q => q.id === currentQuestion.value!.id);
-  if (currentIndex < 23 - 1) {
-    const nextId = sectionQuestions[currentIndex + 1].id;
-    loadQuestion(nextId);
-    emit('update:questionId', nextId);
+  
+  const currentIndex = currentSectionQuestions.value.findIndex(q => q.id === currentQuestion.value!.id);
+  if (currentIndex < currentSectionQuestions.value.length - 1) {
+    const nextQuestion = currentSectionQuestions.value[currentIndex + 1];
+    loadQuestion(nextQuestion.id);
+    emit('update:questionId', nextQuestion.id);
   }
 }
 
-// 暴露原有接口
+// 暴露方法给父组件
 defineExpose({
   loadQuestion,
   getUserResults: () => userResults.value,
-  questionSectionMap
+  getQuestionCount: () => currentSectionQuestions.value.length,
+  getQuestionResult: (id: number) => {
+    const storedResults = JSON.parse(localStorage.getItem('questionResults') || '{}');
+    return storedResults[`${props.currentSection}-${id}`] ?? null;
+  }
 });
 
-// 原有生命周期和监听
+// 初始化和监听
 onMounted(() => {
-  refreshQuestionList(); // 初始化时刷新题目
+  refreshQuestionList();
   if (props.questionId) {
     loadQuestion(props.questionId);
   }
@@ -279,14 +289,22 @@ watch(
   () => props.currentSection,
   (newSection, oldSection) => {
     if (newSection && newSection !== oldSection) {
-      refreshQuestionList(); // 章节变化时刷新题目
+      refreshQuestionList();
+    }
+  }
+);
+
+watch(
+  () => props.questionId,
+  (newId) => {
+    if (newId) {
+      loadQuestion(newId);
     }
   }
 );
 </script>
 
 <style scoped>
-/* 优化图标显示 */
 ::v-deep .pi {
   font-size: 1.2rem;
 }

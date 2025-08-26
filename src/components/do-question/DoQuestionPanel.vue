@@ -17,7 +17,6 @@
     <div v-if="showQuestionList"
       class="absolute left-[485px] bottom-[567px] mt-3 w-180 bg-white border border-gray-200 rounded-md shadow-lg z-50">
       <div class="p-3 flex flex-wrap gap-2 min-w-[200px]">
-        <!-- 修改按钮循环逻辑 -->
         <Button v-for="i in questionCount" :key="i" :label="i.toString()" :severity="getButtonSeverity(i)" size="sm"
           @click.stop="handleSelectQuestion(i)" />
       </div>
@@ -25,7 +24,8 @@
 
     <div class="flex h-[calc(100vh-150px)] p-5">
       <ChoiceQuestionViewer ref="questionViewer" :question-id="currentQuestionId" :current-section="currentSection"
-        @update:questionId="(id) => currentQuestionId = id" />
+        @update:questionId="(id) => currentQuestionId = id"
+        @update:questionCount="(count) => questionCount = count" />
     </div>
 
     <Dialog v-model:visible="viewReleaseDialog" header="发布新的自测" :style="{ width: '60%' }">
@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, nextTick } from 'vue';
+import { ref, watch, nextTick, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
@@ -66,7 +66,9 @@ const currentChapterTitle = ref('');
 const currentSection = ref('');
 const questionCount = ref(0);
 
+// 改进：更可靠的路径解析函数
 const findTitleByRoute = (routePath: string, items: DrawerItem[]): string => {
+  // 先尝试精确匹配
   for (const item of items) {
     if (item.route === routePath) {
       return item.title;
@@ -76,45 +78,83 @@ const findTitleByRoute = (routePath: string, items: DrawerItem[]): string => {
       if (childTitle) return childTitle;
     }
   }
+  
+  // 如果精确匹配失败，尝试模糊匹配（处理可能的路由参数差异）
+  for (const item of items) {
+    if (item.route && routePath.startsWith(item.route.replace(/\/$/, ''))) {
+      return item.title;
+    }
+    if (item.children) {
+      const childTitle = findTitleByRoute(routePath, item.children);
+      if (childTitle) return childTitle;
+    }
+  }
+  
   return '';
 };
 
+// 改进：分离初始化逻辑为独立函数
+const initChapterInfo = async (path: string) => {
+  let title = '';
+  const pathMatch = path.match(/\/dashboard\/question\/([\d.]+)%20/);
+  currentSection.value = pathMatch ? pathMatch[1] : '';
+
+  if (path.startsWith('/dashboard/question/')) {
+    title = findTitleByRoute(path, questionItems.value);
+    // 如果找不到标题，尝试从路由参数中获取
+    if (!title && route.params && route.params.chapter) {
+      title = route.params.chapter as string;
+    }
+    
+    currentQuestionId.value = 1;
+
+    await nextTick();
+
+    // 获取当前章节题目数量
+    if (questionViewer.value) {
+      questionCount.value = questionViewer.value.getQuestionCount();
+      if (questionCount.value > 0) {
+        questionViewer.value.loadQuestion(1);
+      }
+    }
+  } else if (path.startsWith('/dashboard/experiment/')) {
+    title = findTitleByRoute(path, experimentItems.value);
+  }
+
+  // 如果仍然没有标题，尝试从本地存储恢复
+  if (!title) {
+    const savedTitle = localStorage.getItem('lastChapterTitle');
+    if (savedTitle) {
+      title = savedTitle;
+    } else {
+      title = '选择章节';
+    }
+  } else {
+    // 保存标题到本地存储，用于刷新时恢复
+    localStorage.setItem('lastChapterTitle', title);
+  }
+
+  currentChapterTitle.value = title;
+};
+
+// 改进：使用onMounted确保路由已准备好
+onMounted(async () => {
+  // 等待路由完全就绪
+  await nextTick();
+  initChapterInfo(route.path);
+});
+
+// 监听路由变化
 watch(
   () => route.path,
   async (newPath) => {
-    let title = '';
-    const pathMatch = newPath.match(/\/dashboard\/question\/([\d.]+)%20/);
-    currentSection.value = pathMatch ? pathMatch[1] : '';
-
-    if (newPath.startsWith('/dashboard/question/')) {
-      const pathWithoutPrefix = newPath.replace('/dashboard/question/', '');
-      title = findTitleByRoute(newPath, questionItems.value);
-      currentQuestionId.value = 1;
-
-      // 等待组件初始化完成
-      await nextTick();
-
-      // 获取当前章节题目数量
-      const sectionQuestions = questionViewer.value?.questionSectionMap[currentSection.value] || [];
-      questionCount.value = sectionQuestions.length;
-
-      if (questionViewer.value) {
-        questionViewer.value.loadQuestion(1);
-      }
-    } else if (newPath.startsWith('/dashboard/experiment/')) {
-      title = findTitleByRoute(newPath, experimentItems.value);
-    }
-
-    currentChapterTitle.value = title || '选择章节';
-  },
-  { immediate: true }
+    await initChapterInfo(newPath);
+  }
 );
 
 // 切换试题弹窗显示/隐藏
 function toggleQuestionList() {
   showQuestionList.value = !showQuestionList.value;
-  console.log('showQuestionList:', showQuestionList.value);
-  console.log('questionListTrigger element:', questionListTrigger.value);
   if (showQuestionList.value && !questionListTrigger.value) {
     console.error('questionListTrigger ref未初始化');
   }
@@ -124,26 +164,22 @@ function toggleQuestionList() {
 function handleSelectQuestion(id: number) {
   currentQuestionId.value = id;
   showQuestionList.value = false;
-  // 调用子组件加载题目
   if (questionViewer.value) {
     questionViewer.value.loadQuestion(id);
-    // 新增：获取答题结果
     questionResults.value = questionViewer.value.getUserResults();
   }
 }
 
 function getButtonSeverity(id: number): string {
-  if (currentQuestionId.value === id) return 'primary'; // 当前选中题目
-
-  // 直接从localStorage读取结果
-  const storedResults = JSON.parse(localStorage.getItem('questionResults') || '{}');
-  const resultKey = `${currentSection.value}-${id}`;
-  const lastResult = storedResults[resultKey];
-
-  // 根据上次结果显示不同颜色
-  if (lastResult === true) return 'success'; // 上次做对
-  if (lastResult === false) return 'danger'; // 上次做错
-  return 'secondary'; // 未做过
+  if (currentQuestionId.value === id) return 'primary';
+  
+  if (questionViewer.value) {
+    const result = questionViewer.value.getQuestionResult(id);
+    if (result === true) return 'success';
+    if (result === false) return 'danger';
+  }
+  
+  return 'secondary';
 }
 </script>
 
