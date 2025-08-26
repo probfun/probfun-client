@@ -4,8 +4,13 @@
     <div class="px-6 py-4 border-b border-gray-200 bg-white flex justify-between items-center">
       <div class="flex items-center gap-4">
         <span class="text-gray-700">在 【{{ currentChapterTitle }}】 中</span>
-        <Button ref="questionListTrigger" severity="secondary" class="text-sm text-gray-600"
-          @click="toggleQuestionList">
+        <Button 
+          ref="questionListTrigger" 
+          severity="secondary" 
+          class="text-sm text-gray-600"
+          @click="toggleQuestionList"
+          :disabled="!questionLoaded"
+        >
           <List class="w-4 h-4 mr-2" />选择试题
         </Button>
       </div>
@@ -14,20 +19,35 @@
       </Button>
     </div>
 
-    <div v-if="showQuestionList"
-      class="absolute left-[485px] bottom-[567px] mt-3 w-180 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+    <!-- 题目选择弹窗 -->
+    <div 
+      v-if="showQuestionList && questionCount > 0"
+      class="absolute left-6 mt-2 w-auto bg-white border border-gray-200 rounded-md shadow-lg z-50"
+    >
       <div class="p-3 flex flex-wrap gap-2 min-w-[200px]">
-        <Button v-for="i in questionCount" :key="i" :label="i.toString()" :severity="getButtonSeverity(i)" size="sm"
-          @click.stop="handleSelectQuestion(i)" />
+        <Button 
+          v-for="i in questionCount" 
+          :key="i" 
+          :label="i.toString()" 
+          :severity="getButtonSeverity(i)" 
+          size="sm"
+          @click.stop="handleSelectQuestion(i)"
+        />
       </div>
     </div>
 
+    <!-- 题目查看区 -->
     <div class="flex h-[calc(100vh-150px)] p-5">
-      <ChoiceQuestionViewer ref="questionViewer" :question-id="currentQuestionId" :current-section="currentSection"
+      <ChoiceQuestionViewer 
+        ref="questionViewer" 
+        :current-section="currentSection"
         @update:questionId="(id) => currentQuestionId = id"
-        @update:questionCount="(count) => questionCount = count" />
+        @update:questionCount="(count) => questionCount = count"
+        @questionLoaded="(loaded) => questionLoaded = loaded"
+      />
     </div>
 
+    <!-- 发布弹窗 -->
     <Dialog v-model:visible="viewReleaseDialog" header="发布新的自测" :style="{ width: '60%' }">
       <div class="p-6 text-center text-gray-600">
         <p>自测发布功能正在开发中</p>
@@ -65,10 +85,11 @@ const route = useRoute();
 const currentChapterTitle = ref('');
 const currentSection = ref('');
 const questionCount = ref(0);
+const questionLoaded = ref(false); // 标记题目是否加载完成
 
-// 改进：更可靠的路径解析函数
+// 查找章节标题
 const findTitleByRoute = (routePath: string, items: DrawerItem[]): string => {
-  // 先尝试精确匹配
+  // 精确匹配
   for (const item of items) {
     if (item.route === routePath) {
       return item.title;
@@ -79,7 +100,7 @@ const findTitleByRoute = (routePath: string, items: DrawerItem[]): string => {
     }
   }
   
-  // 如果精确匹配失败，尝试模糊匹配（处理可能的路由参数差异）
+  // 模糊匹配
   for (const item of items) {
     if (item.route && routePath.startsWith(item.route.replace(/\/$/, ''))) {
       return item.title;
@@ -90,10 +111,17 @@ const findTitleByRoute = (routePath: string, items: DrawerItem[]): string => {
     }
   }
   
-  return '';
+  // 从路由参数获取
+  if (route.params && route.params.chapter) {
+    return route.params.chapter as string;
+  }
+  
+  // 从本地存储恢复
+  const savedTitle = localStorage.getItem('lastChapterTitle');
+  return savedTitle || '选择章节';
 };
 
-// 改进：分离初始化逻辑为独立函数
+// 初始化章节信息
 const initChapterInfo = async (path: string) => {
   let title = '';
   const pathMatch = path.match(/\/dashboard\/question\/([\d.]+)%20/);
@@ -101,45 +129,23 @@ const initChapterInfo = async (path: string) => {
 
   if (path.startsWith('/dashboard/question/')) {
     title = findTitleByRoute(path, questionItems.value);
-    // 如果找不到标题，尝试从路由参数中获取
-    if (!title && route.params && route.params.chapter) {
-      title = route.params.chapter as string;
-    }
-    
-    currentQuestionId.value = 1;
+    currentQuestionId.value = null; // 重置题目ID，等待子组件加载
 
     await nextTick();
 
-    // 获取当前章节题目数量
-    if (questionViewer.value) {
-      questionCount.value = questionViewer.value.getQuestionCount();
-      if (questionCount.value > 0) {
-        questionViewer.value.loadQuestion(1);
-      }
+    // 保存标题到本地存储
+    if (title && title !== '选择章节') {
+      localStorage.setItem('lastChapterTitle', title);
     }
   } else if (path.startsWith('/dashboard/experiment/')) {
     title = findTitleByRoute(path, experimentItems.value);
   }
 
-  // 如果仍然没有标题，尝试从本地存储恢复
-  if (!title) {
-    const savedTitle = localStorage.getItem('lastChapterTitle');
-    if (savedTitle) {
-      title = savedTitle;
-    } else {
-      title = '选择章节';
-    }
-  } else {
-    // 保存标题到本地存储，用于刷新时恢复
-    localStorage.setItem('lastChapterTitle', title);
-  }
-
   currentChapterTitle.value = title;
 };
 
-// 改进：使用onMounted确保路由已准备好
+// 组件挂载时初始化
 onMounted(async () => {
-  // 等待路由完全就绪
   await nextTick();
   initChapterInfo(route.path);
 });
@@ -152,35 +158,51 @@ watch(
   }
 );
 
-// 切换试题弹窗显示/隐藏
+// 切换题目选择弹窗
 function toggleQuestionList() {
+  if (!questionLoaded.value) return; // 未加载完成不允许打开
   showQuestionList.value = !showQuestionList.value;
-  if (showQuestionList.value && !questionListTrigger.value) {
-    console.error('questionListTrigger ref未初始化');
-  }
 }
 
-// 选择试题
-function handleSelectQuestion(id: number) {
-  currentQuestionId.value = id;
-  showQuestionList.value = false;
-  if (questionViewer.value) {
-    questionViewer.value.loadQuestion(id);
-    questionResults.value = questionViewer.value.getUserResults();
-  }
-}
-
-function getButtonSeverity(id: number): string {
-  if (currentQuestionId.value === id) return 'primary';
+// 处理题目选择
+function handleSelectQuestion(index: number) {
+  if (!questionViewer.value) return;
   
-  if (questionViewer.value) {
-    const result = questionViewer.value.getQuestionResult(id);
-    if (result === true) return 'success';
-    if (result === false) return 'danger';
+  // 获取当前章节的题目列表
+  const questions = questionViewer.value.getCurrentSectionQuestions();
+  if (questions && questions[index - 1]) {
+    const questionId = questions[index - 1].id;
+    currentQuestionId.value = questionId;
+    questionViewer.value.loadQuestion(questionId);
+    showQuestionList.value = false;
   }
+}
+
+// 获取按钮样式
+function getButtonSeverity(index: number): string {
+  if (!questionViewer.value) return 'secondary';
+  
+  // 获取当前章节的题目列表
+  const questions = questionViewer.value.getCurrentSectionQuestions();
+  if (!questions || !questions[index - 1]) return 'secondary';
+  
+  const questionId = questions[index - 1].id;
+  
+  // 当前选中题目
+  if (currentQuestionId.value === questionId) return 'primary';
+  
+  // 题目结果
+  const result = questionViewer.value.getQuestionResult(questionId);
+  if (result === true) return 'success';
+  if (result === false) return 'danger';
   
   return 'secondary';
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+/* 调整弹窗位置 */
+::v-deep .p-dialog {
+  z-index: 1000 !important;
+}
+</style>
