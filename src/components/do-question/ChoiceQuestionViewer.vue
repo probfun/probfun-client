@@ -109,7 +109,7 @@
 import { ref, defineProps, defineExpose, onMounted, defineEmits, watch, computed } from 'vue';
 import Button from 'primevue/button';
 import { Question, questionSectionMap } from './questionTypes';
-import { fetchQuestionListApi, fetchChapterListApi } from '@/api/do-question/doQuestion.ts';
+import { fetchQuestionListApi, fetchChapterListApi, fetchChoiceOptionApi } from '@/api/do-question/doQuestion.ts';
 
 // 定义Props
 const props = defineProps<{
@@ -159,13 +159,13 @@ const resetSelection = () => {
 // 加载题目
 function loadQuestion(id: number) {
   const question = currentSectionQuestions.value.find(q => q.id === id);
-   if (question) {
+  if (question) {
     currentQuestion.value = question;
     viewAnswer.value = false;
     selectedChoice.value = null;
     // 保存当前题目ID到localStorage
     localStorage.setItem(`currentQuestion_${props.currentSection}`, id.toString());
-    
+
     const storedResults = JSON.parse(localStorage.getItem('questionResults') || '{}');
     const resultKey = `${props.currentSection}-${id}`;
     userResults.value[id] = storedResults[resultKey] ?? null;
@@ -176,169 +176,185 @@ function loadQuestion(id: number) {
 async function refreshQuestionList(x: string) {
   loading.value = true;
   error.value = null;
+
+  const [yStr, zStr] = x.split(".");
+  const y = Number(yStr);
+  const z = Number(zStr);
+
   try {
-    const res = await fetchChapterListApi(5);
-    const apiChapter = res.chapters || [];
-    if (x === '1.1') {
-      chapterId.value = apiChapter[0]?.children?.[0]?.id || 1;
-    }
-    else if (x === '1.2') {
-      chapterId.value = apiChapter[0]?.children?.[1]?.id || 1;
-    }
-    else if (x === '1.3') {
-      chapterId.value = apiChapter[0]?.children?.[2]?.id || 1;
-    }
-    else if (x === '1.4') {
-      chapterId.value = apiChapter[0]?.children?.[3]?.id || 1;
-    }
-    else if (x === '2.1') {
-      chapterId.value = apiChapter[4]?.children?.[0]?.id || 1;
-    }
-    else if (x === '2.2') {
-      chapterId.value = apiChapter[4]?.children?.[1]?.id || 1;
-    }
-    else if (x === '2.3') {
-      chapterId.value = apiChapter[4]?.children?.[2]?.id || 1;
-    }
-    else if (x === '2.4') {
-      chapterId.value = apiChapter[4]?.children?.[3]?.id || 1;
-    }
-    else if (x === '3.1') {
-      chapterId.value = apiChapter[2]?.children?.[0]?.id || 1;
-    }
-    else if (x === '3.2') {
-      chapterId.value = apiChapter[2]?.children?.[1]?.id || 1;
-    }
-    else if (x === '3.3') {
-      chapterId.value = apiChapter[2]?.children?.[2]?.id || 1;
-    }
-    else if (x === '3.4') {
-      chapterId.value = apiChapter[2]?.children?.[3]?.id || 1;
-    }
-    else if (x === '3.5') {
-      chapterId.value = apiChapter[2]?.children?.[4]?.id || 1;
-    }
-    else if (x === '4.1') {
-      chapterId.value = apiChapter[8]?.children?.[0]?.id || 1;
-    }
-    else if (x === '4.2') {
-      chapterId.value = apiChapter[8]?.children?.[1]?.id || 1;
-    }
-    else if (x === '4.3') {
-      chapterId.value = apiChapter[8]?.children?.[2]?.id || 1;
-    }
-    else if (x === '4.4') {
-      chapterId.value = apiChapter[8]?.children?.[3]?.id || 1;
-    }
-    else if (x === '4.5') {
-      chapterId.value = apiChapter[8]?.children?.[4]?.id || 1;
-    }
-    else if (x === '5.1') {
-      chapterId.value = apiChapter[5]?.children?.[0]?.id || 1;
-    }
-    else if (x === '5.2') { 
-      chapterId.value = apiChapter[5]?.children?.[1]?.id || 1;
-    }
-    else if (x === '5.3') {
-      chapterId.value = apiChapter[5]?.children?.[2]?.id || 1;
-    }
-    else if (x === '6.1') {
-      chapterId.value = apiChapter[7]?.children?.[0]?.id || 1;
-    }
-    else if (x === '6.2') {
-      chapterId.value = apiChapter[7]?.children?.[1]?.id || 1;
-    }
-    else if (x === '6.3') {
-      chapterId.value = apiChapter[7]?.children?.[2]?.id || 1;
-    }
-    else if (x === '6.4') {
-      chapterId.value = apiChapter[7]?.children?.[3]?.id || 1;
-    }
-    else if (x === '7.1') {
-      chapterId.value = apiChapter[1]?.children?.[0]?.id || 1;
-    }
-    else if (x === '7.2') {
-      chapterId.value = apiChapter[1]?.children?.[1]?.id || 1;
-    }
-    else if (x === '7.3') {
-      chapterId.value = apiChapter[1]?.children?.[2]?.id || 1;
-    }
-    else if (x === '7.4') {
-      chapterId.value = apiChapter[1]?.children?.[3]?.id || 1;
-    }
-    else if (x === '7.5') {
-      chapterId.value = apiChapter[1]?.children?.[4]?.id || 1;
-    }
-    else if (x === '7.6') {
-      chapterId.value = apiChapter[1]?.children?.[5]?.id || 1;
-    }
-    else if (x === '7.7') {
-      chapterId.value = apiChapter[1]?.children?.[6]?.id || 1;
-    }
-    else if (x === '7.8') {
-      chapterId.value = apiChapter[1]?.children?.[7]?.id || 1;
-    }
-    else if (x === '8.1') {
-      chapterId.value = apiChapter[6]?.children?.[0]?.id || 1;
-    }
-    else if (x === '8.2') {
-      chapterId.value = apiChapter[6]?.children?.[1]?.id || 1;
-    }
-    else if (x === '8.3') {
-      chapterId.value = apiChapter[6]?.children?.[2]?.id || 1;
-    }
-    else if (x === '8.4') {
-      chapterId.value = apiChapter[6]?.children?.[3]?.id || 1;
-    }
-    else if (x === '8.5') {
-      chapterId.value = apiChapter[6]?.children?.[4]?.id || 1;
-    }
-    else if (x === '8.6') {
-      chapterId.value = apiChapter[6]?.children?.[5]?.id || 1;
-    }
-    else if (x === '8.7') {
-      chapterId.value = apiChapter[6]?.children?.[6]?.id || 1;
-    }
-    else if (x === '9.1') {
-      chapterId.value = apiChapter[3]?.children?.[0]?.id || 1;
-    }
-    else if (x === '9.2') {
-      chapterId.value = apiChapter[3]?.children?.[1]?.id || 1;
-    }
-    else if (x === '9.3') {
-      chapterId.value = apiChapter[3]?.children?.[2]?.id || 1;
-    }
-    else if (x === '9.4') {
-      chapterId.value = apiChapter[3]?.children?.[3]?.id || 1;
-    }
-    else if (x === '9.5') {
-      chapterId.value = apiChapter[3]?.children?.[4]?.id || 1;
-    }
-    else if (x === '9.6') {
-      chapterId.value = apiChapter[3]?.children?.[5]?.id || 1;
-    }
+    const resChapter = await fetchChapterListApi(5);
+    const apiChapter = resChapter.chapters || [];
+    console.log('apiChapter:', apiChapter)
+
+    chapterId.value = apiChapter[y - 1]?.children?.[z - 1]?.id || 1;
+
+    // if (x === '1.1') {
+    //   chapterId.value = apiChapter[0]?.children?.[0]?.id || 1;
+    // }
+    // else if (x === '1.2') {
+    //   chapterId.value = apiChapter[0]?.children?.[1]?.id || 1;
+    // }
+    // else if (x === '1.3') {
+    //   chapterId.value = apiChapter[0]?.children?.[2]?.id || 1;
+    // }
+    // else if (x === '1.4') {
+    //   chapterId.value = apiChapter[0]?.children?.[3]?.id || 1;
+    // }
+    // else if (x === '2.1') {
+    //   chapterId.value = apiChapter[4]?.children?.[0]?.id || 1;
+    // }
+    // else if (x === '2.2') {
+    //   chapterId.value = apiChapter[4]?.children?.[1]?.id || 1;
+    // }
+    // else if (x === '2.3') {
+    //   chapterId.value = apiChapter[4]?.children?.[2]?.id || 1;
+    // }
+    // else if (x === '2.4') {
+    //   chapterId.value = apiChapter[4]?.children?.[3]?.id || 1;
+    // }
+    // else if (x === '3.1') {
+    //   chapterId.value = apiChapter[2]?.children?.[0]?.id || 1;
+    // }
+    // else if (x === '3.2') {
+    //   chapterId.value = apiChapter[2]?.children?.[1]?.id || 1;
+    // }
+    // else if (x === '3.3') {
+    //   chapterId.value = apiChapter[2]?.children?.[2]?.id || 1;
+    // }
+    // else if (x === '3.4') {
+    //   chapterId.value = apiChapter[2]?.children?.[3]?.id || 1;
+    // }
+    // else if (x === '3.5') {
+    //   chapterId.value = apiChapter[2]?.children?.[4]?.id || 1;
+    // }
+    // else if (x === '4.1') {
+    //   chapterId.value = apiChapter[8]?.children?.[0]?.id || 1;
+    // }
+    // else if (x === '4.2') {
+    //   chapterId.value = apiChapter[8]?.children?.[1]?.id || 1;
+    // }
+    // else if (x === '4.3') {
+    //   chapterId.value = apiChapter[8]?.children?.[2]?.id || 1;
+    // }
+    // else if (x === '4.4') {
+    //   chapterId.value = apiChapter[8]?.children?.[3]?.id || 1;
+    // }
+    // else if (x === '4.5') {
+    //   chapterId.value = apiChapter[8]?.children?.[4]?.id || 1;
+    // }
+    // else if (x === '5.1') {
+    //   chapterId.value = apiChapter[5]?.children?.[0]?.id || 1;
+    // }
+    // else if (x === '5.2') {
+    //   chapterId.value = apiChapter[5]?.children?.[1]?.id || 1;
+    // }
+    // else if (x === '5.3') {
+    //   chapterId.value = apiChapter[5]?.children?.[2]?.id || 1;
+    // }
+    // else if (x === '6.1') {
+    //   chapterId.value = apiChapter[7]?.children?.[0]?.id || 1;
+    // }
+    // else if (x === '6.2') {
+    //   chapterId.value = apiChapter[7]?.children?.[1]?.id || 1;
+    // }
+    // else if (x === '6.3') {
+    //   chapterId.value = apiChapter[7]?.children?.[2]?.id || 1;
+    // }
+    // else if (x === '6.4') {
+    //   chapterId.value = apiChapter[7]?.children?.[3]?.id || 1;
+    // }
+    // else if (x === '7.1') {
+    //   chapterId.value = apiChapter[1]?.children?.[0]?.id || 1;
+    // }
+    // else if (x === '7.2') {
+    //   chapterId.value = apiChapter[1]?.children?.[1]?.id || 1;
+    // }
+    // else if (x === '7.3') {
+    //   chapterId.value = apiChapter[1]?.children?.[2]?.id || 1;
+    // }
+    // else if (x === '7.4') {
+    //   chapterId.value = apiChapter[1]?.children?.[3]?.id || 1;
+    // }
+    // else if (x === '7.5') {
+    //   chapterId.value = apiChapter[1]?.children?.[4]?.id || 1;
+    // }
+    // else if (x === '7.6') {
+    //   chapterId.value = apiChapter[1]?.children?.[5]?.id || 1;
+    // }
+    // else if (x === '7.7') {
+    //   chapterId.value = apiChapter[1]?.children?.[6]?.id || 1;
+    // }
+    // else if (x === '7.8') {
+    //   chapterId.value = apiChapter[1]?.children?.[7]?.id || 1;
+    // }
+    // else if (x === '8.1') {
+    //   chapterId.value = apiChapter[6]?.children?.[0]?.id || 1;
+    // }
+    // else if (x === '8.2') {
+    //   chapterId.value = apiChapter[6]?.children?.[1]?.id || 1;
+    // }
+    // else if (x === '8.3') {
+    //   chapterId.value = apiChapter[6]?.children?.[2]?.id || 1;
+    // }
+    // else if (x === '8.4') {
+    //   chapterId.value = apiChapter[6]?.children?.[3]?.id || 1;
+    // }
+    // else if (x === '8.5') {
+    //   chapterId.value = apiChapter[6]?.children?.[4]?.id || 1;
+    // }
+    // else if (x === '8.6') {
+    //   chapterId.value = apiChapter[6]?.children?.[5]?.id || 1;
+    // }
+    // else if (x === '8.7') {
+    //   chapterId.value = apiChapter[6]?.children?.[6]?.id || 1;
+    // }
+    // else if (x === '9.1') {
+    //   chapterId.value = apiChapter[3]?.children?.[0]?.id || 1;
+    // }
+    // else if (x === '9.2') {
+    //   chapterId.value = apiChapter[3]?.children?.[1]?.id || 1;
+    // }
+    // else if (x === '9.3') {
+    //   chapterId.value = apiChapter[3]?.children?.[2]?.id || 1;
+    // }
+    // else if (x === '9.4') {
+    //   chapterId.value = apiChapter[3]?.children?.[3]?.id || 1;
+    // }
+    // else if (x === '9.5') {
+    //   chapterId.value = apiChapter[3]?.children?.[4]?.id || 1;
+    // }
+    // else if (x === '9.6') {
+    //   chapterId.value = apiChapter[3]?.children?.[5]?.id || 1;
+    // }
 
     if (chapterId.value && props.currentSection) {
-      const response = await fetchQuestionListApi(chapterId.value);
-      const apiQuestions = response.questions || [];
+      const resQuestion = await fetchQuestionListApi(chapterId.value);
+      const apiQuestion = resQuestion.questions || [];
 
       // 转换难度数字为文本描述
       const difficultyMap: { [key: number]: string } = { 1: '简单', 2: '中等', 3: '困难' };
-      const formattedQuestions = apiQuestions.map((question: any) => ({
-        id: question.id,
-        category: props.currentSection,
-        content: question.content,
-        choices: [
-          { content: '选项A', isCorrect: false },
-          { content: '选项B', isCorrect: true },
-          { content: '选项C', isCorrect: false },
-          { content: '选项D', isCorrect: false }
-        ],
-        analysis: '题目解析内容...',
-        knowledgePoint: '相关知识点',
-        difficulty: difficultyMap[question.difficulty] || '未知',
-        lastResult: null
+      const formattedQuestions = await Promise.all(apiQuestion.map(async (question: any) => {
+        // 获取当前题目的选项
+        const resChoiceOption = await fetchChoiceOptionApi(question.id);
+        const apiOption = resChoiceOption.options || [];
+        console.log('apiOption:', apiOption)
+
+        return {
+          id: question.id,
+          category: '',
+          content: question.content,
+          // 将API返回选项转换为组件所需格式
+          choices: apiOption.map((option: any) => ({
+            content: option.content,
+            isCorrect: option.is_correct
+          })),
+          analysis: '题目解析内容...',
+          knowledgePoint: '相关知识点',
+          difficulty: difficultyMap[question.difficulty] || '未知',
+          lastResult: null
+        };
       }));
+      console.log('formattedQuestions:', formattedQuestions)
 
       // 更新题目映射表
       questionSectionMap.value[props.currentSection] = formattedQuestions;

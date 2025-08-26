@@ -33,6 +33,12 @@ interface Question {
   };
 }
 
+interface Option {
+  id: number;
+  content: string;
+  is_correct: boolean;
+}
+
 async function fetchSubjectListApi() {
   const result = await get(`/assessment/subject/list/`);
   return result.data;
@@ -52,10 +58,18 @@ async function fetchQuestionListApi(chapterId: number) {
   return result.data;
 }
 
-export type { Chapter, Question, Subject};
+async function fetchChoiceOptionApi(questionId: number) {
+  const result = await get<{
+    options: Option[];
+  }>(`/assessment/choiceoption/list/`, { questionId });
+  return result.data;
+}
+
+export type { Chapter, Question, Subject, Option };
 
 export {
   fetchChapterListApi,
   fetchQuestionListApi,
   fetchSubjectListApi,
+  fetchChoiceOptionApi,
 };
