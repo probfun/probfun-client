@@ -46,7 +46,7 @@
 
         <!-- 操作按钮 -->
         <div class="flex justify-between mt-6">
-          <Button severity="secondary" :disabled="currentQuestion?.id <= 1 || questionCount === 0"
+          <Button severity="secondary" :disabled="currentQuestion?.id <= 1"
             @click="prevQuestion">
             上一题
           </Button>
@@ -56,7 +56,7 @@
           <Button severity="danger" @click="resetSelection">
             删除
           </Button>
-          <Button severity="secondary" :disabled="currentQuestion?.id >= questionCount || questionCount === 0"
+          <Button severity="secondary" :disabled="currentQuestion?.id >= 23"
             @click="nextQuestion">
             下一题
           </Button>
@@ -138,7 +138,7 @@ const userResults = ref<Record<number, boolean>>({});
 const loading = ref(false); // 新增加载状态
 const error = ref<string | null>(null); // 新增错误状态
 const chapterId = ref(1)
-const questionCount = ref(0); // 题目总数
+const questionCount = ref(23); // 题目总数硬编码为23
 
 // 原有重置功能
 const resetSelection = () => {
@@ -179,7 +179,7 @@ async function refreshQuestionList() {
     const response = await fetchQuestionListApi(chapterId.value);
     console.log('API返回:', response);
     const apiQuestions = response.questions || [];
-    questionCount.value = apiQuestions.length;
+    questionCount.value = 23; // 硬编码题目总数为23
     console.log('获取题目列表:', apiQuestions);
     console.log('长度', apiQuestions.length);
 
@@ -253,7 +253,7 @@ function nextQuestion() {
   if (!currentQuestion.value) return;
   const sectionQuestions = questionSectionMap.value[props.currentSection] || [];
   const currentIndex = sectionQuestions.findIndex(q => q.id === currentQuestion.value!.id);
-  if (currentIndex < questionCount.value - 1) {
+  if (currentIndex < 23 - 1) {
     const nextId = sectionQuestions[currentIndex + 1].id;
     loadQuestion(nextId);
     emit('update:questionId', nextId);
