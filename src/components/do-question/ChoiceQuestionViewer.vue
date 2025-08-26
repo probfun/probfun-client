@@ -46,7 +46,8 @@
 
         <!-- 操作按钮 -->
         <div class="flex justify-between mt-6">
-          <Button severity="secondary" :disabled="currentQuestion.id <= 1" @click="prevQuestion">
+          <Button severity="secondary" :disabled="currentQuestion?.id <= 1 || questionCount === 0"
+            @click="prevQuestion">
             上一题
           </Button>
           <Button severity="success" @click="handleSubmit">
@@ -55,8 +56,7 @@
           <Button severity="danger" @click="resetSelection">
             删除
           </Button>
-          <Button severity="secondary"
-            :disabled="currentQuestion.id >= (questionSectionMap[props.currentSection] || []).length"
+          <Button severity="secondary" :disabled="currentQuestion?.id >= questionCount || questionCount === 0"
             @click="nextQuestion">
             下一题
           </Button>
@@ -138,6 +138,7 @@ const userResults = ref<Record<number, boolean>>({});
 const loading = ref(false); // 新增加载状态
 const error = ref<string | null>(null); // 新增错误状态
 const chapterId = ref(1)
+const questionCount = ref(0); // 题目总数
 
 // 原有重置功能
 const resetSelection = () => {
@@ -169,32 +170,34 @@ async function refreshQuestionList() {
     console.log('章节信息:', res);
     const apiChapter = res.chapters || [];
     console.log('获取章节列表:', apiChapter);
-    chapterId.value = apiChapter[0]?.id || 1;
+    chapterId.value = apiChapter[0].children[0].id || 1;
 
     if (!chapterId.value || !props.currentSection) {
       throw new Error('章节参数不完整');
     }
     // 调用API获取数据
-    const response = await fetchQuestionListApi(97);
+    const response = await fetchQuestionListApi(chapterId.value);
     console.log('API返回:', response);
     const apiQuestions = response.questions || [];
+    questionCount.value = apiQuestions.length;
     console.log('获取题目列表:', apiQuestions);
+    console.log('长度', apiQuestions.length);
 
     // 转换难度数字为文本描述
-    const difficultyMap: { [key: number]: string } = {1: '简单', 2: '中等', 3: '困难'};
+    const difficultyMap: { [key: number]: string } = { 1: '简单', 2: '中等', 3: '困难' };
     // 转换为本地题目格式（保留原有结构）
     const formattedQuestions = apiQuestions.map((question: { id: number; content: string; difficulty: number; }) => ({
       id: question.id,
       category: '',
       content: question.content,
       choices: [
-      { content: '组件必须有template标签', isCorrect: false },
-      { content: '组件可以通过props接收父组件数据', isCorrect: true },
-      { content: '组件不能嵌套使用', isCorrect: false },
-      { content: '组件的数据必须是对象类型', isCorrect: false }
-    ],
-      analysis: '',
-      knowledgePoint: '',
+        { content: '组件必须有template标签', isCorrect: false },
+        { content: '组件可以通过props接收父组件数据', isCorrect: true },
+        { content: '组件不能嵌套使用', isCorrect: false },
+        { content: '组件的数据必须是对象类型', isCorrect: false }
+      ],
+      analysis: 'Vue组件可以通过props接收父组件传递的数据，这是组件间通信的基本方式之一。<br><br>选项A错误：单文件组件(SFC)可以没有template标签，可通过render函数渲染<br>选项C错误：组件可以多层嵌套使用，形成组件树<br>选项D错误：组件的数据必须是函数类型（为了避免多个实例共享同一数据对象），只有根实例可以是对象',
+      knowledgePoint: 'Vue组件定义、props传递、组件嵌套规则',
       difficulty: difficultyMap[question.difficulty] || '未知',
       lastResult: null
     }));
@@ -205,7 +208,7 @@ async function refreshQuestionList() {
     console.log('刷新题目列表:', questionSectionMap);
 
     // 自动加载第一题（保持原有交互）
-    if (formattedQuestions.length > 0 && (!currentQuestion.value || !props.questionId)) {
+    if (apiQuestions.length > 0 && (!currentQuestion.value || !props.questionId)) {
       const firstId = formattedQuestions[0].id;
       loadQuestion(firstId);
       emit('update:questionId', firstId);
@@ -250,7 +253,7 @@ function nextQuestion() {
   if (!currentQuestion.value) return;
   const sectionQuestions = questionSectionMap.value[props.currentSection] || [];
   const currentIndex = sectionQuestions.findIndex(q => q.id === currentQuestion.value!.id);
-  if (currentIndex < sectionQuestions.length - 1) {
+  if (currentIndex < questionCount.value - 1) {
     const nextId = sectionQuestions[currentIndex + 1].id;
     loadQuestion(nextId);
     emit('update:questionId', nextId);
