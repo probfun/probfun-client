@@ -172,13 +172,11 @@ function handleSelectQuestion(id: number) {
 
 function getButtonSeverity(id: number): string {
   if (currentQuestionId.value === id) return 'primary';
-  
   if (questionViewer.value) {
     const result = questionViewer.value.getQuestionResult(id);
     if (result === true) return 'success';
     if (result === false) return 'danger';
   }
-  
   return 'secondary';
 }
 </script>
