@@ -25,6 +25,7 @@ interface Question {
   id: number;
   content: string;
   difficulty: number;
+  full_answer: string;
   chapter: {
     id: number;
     name: string;
