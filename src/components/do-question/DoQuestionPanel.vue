@@ -17,8 +17,8 @@
     <div v-if="showQuestionList"
       class="absolute left-[485px] bottom-[567px] mt-3 w-180 bg-white border border-gray-200 rounded-md shadow-lg z-50">
       <div class="p-3 flex flex-wrap gap-2 min-w-[200px]">
-        <Button v-for="id in questionIds" :key="id" :label="id.toString()" :severity="getButtonSeverity(id)" size="sm"
-          @click.stop="handleSelectQuestion(id)" />
+        <Button v-for="(id, index) in questionIds" :key="id" :label="(index + 1).toString()"
+          :severity="getButtonSeverity(id)" size="sm" @click.stop="handleSelectQuestion(id)" />
       </div>
     </div>
 
@@ -150,6 +150,16 @@ watch(
   async (newPath) => {
     await initChapterInfo(newPath);
   }
+);
+
+watch(
+  () => questionItems.value,
+  async (newItems) => {
+    if (newItems.length > 0) {
+      initChapterInfo(route.path);
+    }
+  },
+  { deep: true }
 );
 
 watch(
