@@ -19,66 +19,21 @@ interface Question {
 
 // 题目数据
 const chapter1Section1Questions = ref<Question[]>([
-  // {
-  //   id: 1,
-  //   category: '1.1 样本空间与随机事件',
-  //   content: '下列关于Vue组件的说法，正确的是？',
-  //   choices: [
-  //     { content: '组件必须有template标签', isCorrect: false },
-  //     { content: '组件可以通过props接收父组件数据', isCorrect: true },
-  //     { content: '组件不能嵌套使用', isCorrect: false },
-  //     { content: '组件的数据必须是对象类型', isCorrect: false }
-  //   ],
-  //   analysis: 'Vue组件可以通过props接收父组件传递的数据，这是组件间通信的基本方式之一。<br><br>选项A错误：单文件组件(SFC)可以没有template标签，可通过render函数渲染<br>选项C错误：组件可以多层嵌套使用，形成组件树<br>选项D错误：组件的数据必须是函数类型（为了避免多个实例共享同一数据对象），只有根实例可以是对象',
-  //   knowledgePoint: 'Vue组件定义、props传递、组件嵌套规则',
-  //   difficulty: '简单',
-  //   lastResult: null,
-  // },
-  // {
-  //   id: 2,
-  //   category: '1.1 样本空间与随机事件',
-  //   content: '以下哪种不是JavaScript的基本数据类型？',
-  //   choices: [
-  //     { content: 'String', isCorrect: false },
-  //     { content: 'Number', isCorrect: false },
-  //     { content: 'Object', isCorrect: true },
-  //     { content: 'Boolean', isCorrect: false }
-  //   ],
-  //   analysis: 'JavaScript的基本数据类型包括：String（字符串）、Number（数字）、Boolean（布尔）、Null（空值）、Undefined（未定义）、Symbol（符号，ES6新增）和BigInt（大整数，ES11新增）。<br><br>Object（对象）属于引用数据类型，包括数组、函数、日期等都是对象的特殊形式。',
-  //   knowledgePoint: 'JavaScript数据类型分类、基本类型与引用类型区别',
-  //   difficulty: '中等',
-  //   lastResult: null,
-  // },
-  // {
-  //   id: 3,
-  //   category: '1.1 样本空间与随机事件',
-  //   content: '下列哪个HTML标签用于定义文档的主体部分？',
-  //   choices: [
-  //     { content: '&lt;head&gt;', isCorrect: false },
-  //     { content: '&lt;body&gt;', isCorrect: true },
-  //     { content: '&lt;main&gt;', isCorrect: false },
-  //     { content: '&lt;section&gt;', isCorrect: false }
-  //   ],
-  //   analysis: '&lt;body&gt;标签定义了HTML文档的主体部分，包含了可见的页面内容，如文本、图像、链接、表格、列表等。<br><br>选项A错误：&lt;head&gt;用于定义文档的头部信息，通常包含元数据<br>选项C错误：&lt;main&gt;用于定义文档的主要内容，但不是整个主体<br>选项D错误：&lt;section&gt;用于定义文档中的章节或区块',
-  //   knowledgePoint: 'HTML基本结构标签、语义化标签',
-  //   difficulty: '困难',
-  //   lastResult: null,
-  // },
-  // {
-  //   id: 4,
-  //   category: '1.1 样本空间与随机事件',
-  //   content: '下列哪个HTML标签用于创建有序列表？',
-  //   choices: [
-  //     { content: '&lt;ul&gt;', isCorrect: false },
-  //     { content: '&lt;ol&gt;', isCorrect: true },
-  //     { content: '&lt;li&gt;', isCorrect: false },
-  //     { content: '&lt;dl&gt;', isCorrect: false }
-  //   ],
-  //   analysis: '&lt;ol&gt;标签用于创建有序列表，列表项会按照数字或字母顺序排列。<br><br>选项A错误：&lt;ul&gt;用于创建无序列表，列表项前显示项目符号<br>选项C错误：&lt;li&gt;用于定义列表项，必须嵌套在&lt;ul&gt;或&lt;ol&gt;中使用<br>选项D错误：&lt;dl&gt;用于创建定义列表，通常包含术语和对应的描述',
-  //   knowledgePoint: 'HTML列表标签、有序列表与无序列表区别',
-  //   difficulty: '简单',
-  //   lastResult: null,
-  // }
+  {
+    id: 1,
+    category: '1.1样本空间与随机事件',
+    content: '1. 下列试验能够构成事件的是',
+    choices: [
+      { content: '组件必须有template标签', isCorrect: false },
+      { content: '组件可以通过props接收父组件数据', isCorrect: true },
+      { content: '组件不能嵌套使用', isCorrect: false },
+      { content: '组件的数据必须是对象类型', isCorrect: false }
+    ],
+    analysis: '',
+    knowledgePoint: '',
+    difficulty: '简单',
+    lastResult: null,
+  }
 ]);
 const chapter1Section2Questions = ref<Question[]>([
   {
