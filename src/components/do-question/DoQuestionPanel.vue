@@ -84,7 +84,7 @@ watch(
   () => route.path,
   async (newPath) => {
     let title = '';
-    const pathMatch = newPath.match(/\/dashboard\/question\/(.*)/);
+    const pathMatch = newPath.match(/\/dashboard\/question\/([\d.]+)%20/);
     currentSection.value = pathMatch ? pathMatch[1] : '';
 
     if (newPath.startsWith('/dashboard/question/')) {

@@ -3,8 +3,6 @@ import AiPanel from '@/components/ai/AiPanel.vue';
 
 import Callback from '@/components/auth/Callback.vue';
 import CasLoginCard from '@/components/auth/CasLoginCard.vue';
-import Callback from '@/components/auth/Callback.vue';
-import CasLoginCard from '@/components/auth/CasLoginCard.vue';
 import LoginCard from '@/components/auth/LoginCard.vue';
 import RegisterCard from '@/components/auth/RegisterCard.vue';
 import Chatper1Diagram from '@/components/diagram/chapter-1/Chapter1Diagram.vue';
@@ -22,7 +20,6 @@ import NormalDistribution from '@/components/experiment/distribution/normal-dist
 
 import PoissonDistribution from '@/components/experiment/distribution/poisson-distribution/PoissonDistribution.vue';
 import UniformDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
-import FavoritePanel from '@/components/favorite/FavoritePanel.vue';
 
 import HomePage from '@/components/home/HomePage.vue';
 import StudentPanel from '@/components/user/StudentPanel.vue';
@@ -30,9 +27,6 @@ import TeacherPanel from '@/components/user/TeacherPanel.vue';
 import FavoritePanel from '@/components/favorite/FavoritePanel.vue';
 import StatisticsPanel from '@/components/statistics/StatisticsPanel.vue';
 
-import HomePage from '@/components/home/HomePage.vue';
-import StudentPanel from '@/components/user/StudentPanel.vue';
-import TeacherPanel from '@/components/user/TeacherPanel.vue';
 import AuthPage from '@/pages/AuthPage.vue';
 import DashBoard from '@/pages/DashBoard.vue';
 import { isVisitor } from '@/utils/auth.ts';

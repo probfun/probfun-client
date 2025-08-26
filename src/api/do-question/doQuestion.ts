@@ -25,7 +25,6 @@ interface Question {
   id: number;
   content: string;
   difficulty: '简单' | '中等' | '困难';
-  chapter: string;
   chapter_id: number;
 }
 

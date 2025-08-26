@@ -166,13 +166,15 @@ async function refreshQuestionList() {
     }
 
     // 调用API获取数据
-    const response = await fetchQuestionListApi(props.chapterId);
+    const response = await fetchQuestionListApi(97);
+    console.log('API返回:', response);
     const apiQuestions = response.questions || [];
+    console.log('获取题目列表:', apiQuestions);
 
     // 转换为本地题目格式（保留原有结构）
-    const formattedQuestions = apiQuestions.map((question: { id: any; chapter: any; content: any; difficulty: any; }) => ({
+    const formattedQuestions = apiQuestions.map((question: { id: any; content: any; difficulty: any; }) => ({
       id: question.id,
-      category: question.chapter,
+      category: '',
       content: question.content,
       choices: [], // 按要求不加载选项
       analysis: '',
@@ -180,10 +182,12 @@ async function refreshQuestionList() {
       difficulty: question.difficulty,
       lastResult: null
     }));
+    console.log('格式化题目列表:', formattedQuestions);
 
     // 更新题目映射表（兼容原有数据结构）
-    questionSectionMap['chapter1/section1'] = formattedQuestions;
+    questionSectionMap['1.1'] = formattedQuestions;
     console.log('刷新题目列表:', questionSectionMap);
+    
     // 自动加载第一题（保持原有交互）
     if (formattedQuestions.length > 0 && (!currentQuestion.value || !props.questionId)) {
       const firstId = formattedQuestions[0].id;
