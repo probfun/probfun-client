@@ -64,9 +64,8 @@
           <!-- 知识点标签 -->
           <div v-if="currentQuestion.knowledgePoint" class="flex flex-wrap gap-2 mb-4">
             <span class="text-gray-700 font-medium">相关知识点：</span>
-            <span v-for="(tag, index) in currentQuestion.knowledgePoint" :key="index"
-              class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-              {{ tag }}
+            <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+              {{ currentQuestion.knowledgePoint }}
             </span>
           </div>
 
