@@ -4,22 +4,30 @@
     <div class="px-6 py-4 border-b border-gray-200 bg-white flex justify-between items-center">
       <div class="flex items-center gap-4">
         <span class="text-gray-700">在 【{{ currentChapterTitle }}】 中</span>
-        <Button ref="questionListTrigger" severity="secondary" class="text-sm text-gray-600"
-          @click="toggleQuestionList">
-          <List class="w-4 h-4 mr-2" />选择试题
-        </Button>
+        
+        <!-- 关键修改：添加相对定位容器 -->
+        <div class="relative">
+          <Button ref="questionListTrigger" severity="secondary" class="text-sm text-gray-600"
+            @click="toggleQuestionList">
+            <List class="w-4 h-4 mr-2" />选择试题
+          </Button>
+
+          <!-- 选择试题弹出框 - 使用Tailwind定位 -->
+          <div 
+            v-if="showQuestionList"
+            class="absolute left-full top-0 ml-2 mt-0 w-[750px] bg-white border border-gray-200 rounded-md shadow-lg z-50"
+            :class="{ 'right-full left-auto': shouldFlipPosition }"
+          >
+            <div class="p-3 flex flex-wrap gap-2 min-w-[750px]">
+              <Button v-for="(id, index) in questionIds" :key="id" :label="(index + 1).toString()"
+                :severity="getButtonSeverity(id)" size="sm" @click.stop="handleSelectQuestion(id)" />
+            </div>
+          </div>
+        </div>
       </div>
       <Button severity="primary" class="text-white bg-indigo-600 hover:bg-indigo-700" @click="viewReleaseDialog = true">
         发布一个自测
       </Button>
-    </div>
-
-    <div v-if="showQuestionList"
-      class="absolute left-[485px] bottom-[567px] mt-3 w-180 bg-white border border-gray-200 rounded-md shadow-lg z-50">
-      <div class="p-3 flex flex-wrap gap-2 min-w-[200px]">
-        <Button v-for="(id, index) in questionIds" :key="id" :label="(index + 1).toString()"
-          :severity="getButtonSeverity(id)" size="sm" @click.stop="handleSelectQuestion(id)" />
-      </div>
     </div>
 
     <div class="flex h-[calc(100vh-150px)] p-5">
@@ -45,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, nextTick, onMounted } from 'vue';
+import { ref, watch, nextTick, onMounted, onUnmounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
@@ -66,10 +74,20 @@ const currentChapterTitle = ref('');
 const currentSection = ref('');
 const questionCount = ref(0);
 const questionIds = ref<number[]>([]);
+const shouldFlipPosition = ref(false); // 控制弹窗是否需要翻转到左侧
 
-// 改进：更可靠的路径解析函数
+// 检查弹窗是否会超出视口右侧
+const checkPosition = () => {
+  if (questionListTrigger.value && questionListTrigger.value.$el) {
+    const buttonRect = questionListTrigger.value.$el.getBoundingClientRect();
+    // 弹窗宽度约为200px，检查右侧空间是否足够
+    shouldFlipPosition.value = (window.innerWidth - buttonRect.right) < 220;
+  }
+};
+
+// 路径解析函数
 const findTitleByRoute = (routePath: string, items: DrawerItem[]): string => {
-  // 先尝试精确匹配
+  // 保持原有实现...
   for (const item of items) {
     if (item.route === routePath) {
       return item.title;
@@ -80,7 +98,6 @@ const findTitleByRoute = (routePath: string, items: DrawerItem[]): string => {
     }
   }
 
-  // 如果精确匹配失败，尝试模糊匹配（处理可能的路由参数差异）
   for (const item of items) {
     if (item.route && routePath.startsWith(item.route.replace(/\/$/, ''))) {
       return item.title;
@@ -94,15 +111,15 @@ const findTitleByRoute = (routePath: string, items: DrawerItem[]): string => {
   return '';
 };
 
-// 改进：分离初始化逻辑为独立函数
+// 初始化章节信息
 const initChapterInfo = async (path: string) => {
+  // 保持原有实现...
   let title = '';
   const pathMatch = path.match(/\/dashboard\/question\/([\d.]+)%20/);
   currentSection.value = pathMatch ? pathMatch[1] : '';
 
   if (path.startsWith('/dashboard/question/')) {
     title = findTitleByRoute(path, questionItems.value);
-    // 如果找不到标题，尝试从路由参数中获取
     if (!title && route.params && route.params.chapter) {
       title = route.params.chapter as string;
     }
@@ -111,7 +128,6 @@ const initChapterInfo = async (path: string) => {
 
     await nextTick();
 
-    // 获取当前章节题目数量
     if (questionViewer.value) {
       questionCount.value = questionViewer.value.getQuestionCount();
       if (questionCount.value > 0) {
@@ -122,7 +138,6 @@ const initChapterInfo = async (path: string) => {
     title = findTitleByRoute(path, experimentItems.value);
   }
 
-  // 如果仍然没有标题，尝试从本地存储恢复
   if (!title) {
     const savedTitle = localStorage.getItem('lastChapterTitle');
     if (savedTitle) {
@@ -131,18 +146,21 @@ const initChapterInfo = async (path: string) => {
       title = '选择章节';
     }
   } else {
-    // 保存标题到本地存储，用于刷新时恢复
     localStorage.setItem('lastChapterTitle', title);
   }
 
   currentChapterTitle.value = title;
 };
 
-// 改进：使用onMounted确保路由已准备好
+// 生命周期
 onMounted(async () => {
-  // 等待路由完全就绪
   await nextTick();
   initChapterInfo(route.path);
+  window.addEventListener('resize', checkPosition);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkPosition);
 });
 
 // 监听路由变化
@@ -167,17 +185,16 @@ watch(
   () => questionCount.value,
   async (newCount: number) => {
     if (questionViewer.value) {
-      // 从子组件获取真实题目ID列表，替换之前的连续数字生成逻辑
       questionIds.value = await questionViewer.value.getQuestionIds();
     }
   }
 );
 
-// 切换试题弹窗显示/隐藏
+// 切换试题弹窗
 function toggleQuestionList() {
   showQuestionList.value = !showQuestionList.value;
-  if (showQuestionList.value && !questionListTrigger.value) {
-    console.error('questionListTrigger ref未初始化');
+  if (showQuestionList.value) {
+    checkPosition(); // 显示时检查位置
   }
 }
 
