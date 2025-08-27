@@ -24,7 +24,8 @@
 
     <div class="flex h-[calc(100vh-150px)] p-5">
       <ChoiceQuestionViewer ref="questionViewer" :question-id="currentQuestionId" :current-section="currentSection"
-        @update:questionId="(id) => currentQuestionId = id" @update:questionCount="(count) => questionCount = count" />
+        @update:questionId="(id: number) => currentQuestionId = id"
+        @update:questionCount="(count) => questionCount = count" />
     </div>
 
     <Dialog v-model:visible="viewReleaseDialog" header="发布新的自测" :style="{ width: '60%' }">
@@ -147,14 +148,14 @@ onMounted(async () => {
 // 监听路由变化
 watch(
   () => route.path,
-  async (newPath) => {
+  async (newPath: string) => {
     await initChapterInfo(newPath);
   }
 );
 
 watch(
   () => questionItems.value,
-  async (newItems) => {
+  async (newItems: any[]) => {
     if (newItems.length > 0) {
       initChapterInfo(route.path);
     }
@@ -164,7 +165,7 @@ watch(
 
 watch(
   () => questionCount.value,
-  async (newCount) => {
+  async (newCount: number) => {
     if (questionViewer.value) {
       // 从子组件获取真实题目ID列表，替换之前的连续数字生成逻辑
       questionIds.value = await questionViewer.value.getQuestionIds();

@@ -6,7 +6,7 @@
         <!-- 题目内容-->
         <div class="p-4 border border-gray-200 rounded-md relative">
           <div class="text-xl">
-            <span v-html="currentQuestion.content" class="ml-2"></span>
+            <span v-html="renderMarkdown(currentQuestion.content)" class="ml-2"></span>
           </div>
           <!-- 难度标签 -->
           <span :class="['absolute right-3 bottom-3 px-3 py-1 rounded-full text-sm font-medium', {
@@ -38,7 +38,7 @@
 
             <!-- 选项内容 -->
             <div>
-              <span v-html="choice.content"></span>
+              <span v-html="renderMarkdown(choice.content)"></span>
             </div>
           </div>
         </div>
@@ -64,7 +64,7 @@
           <!-- 知识点标签 -->
           <div v-if="currentQuestion.knowledgePoint" class="flex flex-wrap gap-2 mb-4">
             <span class="text-gray-700 font-medium">相关知识点：</span>
-            <span v-for="(tag, index) in currentQuestion.knowledgePoint.split('、')" :key="index"
+            <span v-for="(tag, index) in currentQuestion.knowledgePoint" :key="index"
               class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
               {{ tag }}
             </span>
@@ -75,7 +75,7 @@
           </div>
           <div class="text-gray-700">
             <p class="font-medium mb-2">解析：</p>
-            <p v-html="currentQuestion.analysis"></p>
+            <p v-html="renderMarkdown(currentQuestion.analysis)"></p>
           </div>
         </div>
       </div>
@@ -109,7 +109,117 @@ import { ref, defineProps, defineExpose, onMounted, defineEmits, watch, computed
 import Button from 'primevue/button';
 import { Question, questionSectionMap } from './questionTypes';
 import { fetchQuestionListApi, fetchChapterListApi, fetchQuestionDetailApi } from '@/api/do-question/doQuestion.ts';
-import { renderLatex, toMarkdown } from '@/utils/markdown';
+import MarkdownIt from 'markdown-it';
+import katex from 'katex';
+import 'katex/dist/katex.css';
+
+// 在现有代码后添加 markdown 解析器配置
+const md = new MarkdownIt({
+  html: true,
+  linkify: true,
+  typographer: true
+});
+
+// 自定义规则处理 LaTeX 公式
+// 用这个修正后的版本替换掉原来的 md.inline.ruler.before(...)
+md.inline.ruler.before('text', 'latex', (state, silent) => {
+  const start = state.pos;
+  const max = state.posMax;
+
+  // 块级 LaTeX 规则: $$...$$
+  if (start + 1 < max && state.src.charAt(start) === '$' && state.src.charAt(start + 1) === '$') {
+    let pos = start + 2;
+    // 查找下一个未被转义的 '$$'
+    while (pos < max - 1) {
+      if (state.src.charAt(pos) === '$' && state.src.charAt(pos + 1) === '$') {
+        // 检查定界符是否被前面的反斜杠转义
+        if (state.src.charAt(pos - 1) !== '\\') {
+          if (!silent) {
+            const token = state.push('latex_block', '', 0);
+            token.content = state.src.slice(start + 2, pos);
+            token.markup = '$$';
+            token.block = true;
+          }
+          state.pos = pos + 2;
+          return true;
+        }
+      }
+      pos++;
+    }
+    // 如果没有找到闭合的 '$$'，则不将其视为 LaTeX
+    return false;
+  }
+
+  // 行内 LaTeX 规则: $...$
+  if (state.src.charAt(start) === '$') {
+    // 行内公式后不能紧跟另一个'$'，因为那会是块级公式的开始
+    if (start + 1 < max && state.src.charAt(start + 1) === '$') {
+      return false;
+    }
+    let pos = start + 1;
+    // 查找下一个未被转义的 '$'
+    while (pos < max) {
+      if (state.src.charAt(pos) === '$') {
+        // 检查定界符是否被转义
+        if (state.src.charAt(pos - 1) !== '\\') {
+          // 确保这不是 '$$' 块的开始
+          if (pos + 1 === max || state.src.charAt(pos + 1) !== '$') {
+            if (!silent) {
+              const token = state.push('latex_inline', '', 0);
+              token.content = state.src.slice(start + 1, pos);
+              token.markup = '$';
+            }
+            state.pos = pos + 1;
+            return true;
+          }
+        }
+      }
+      pos++;
+    }
+    // 如果没有找到闭合的 '$'，则不将其视为 LaTeX
+    return false;
+  }
+
+  return false;
+});
+
+// LaTeX 渲染器
+md.renderer.rules.latex_inline = (tokens, idx) => {
+  try {
+    return katex.renderToString(tokens[idx].content, {
+      throwOnError: false,
+      displayMode: false
+    });
+  } catch (error) {
+    console.error('Error rendering inline LaTeX:', error);
+    return `<span style="color: red;">${tokens[idx].content}</span>`;
+  }
+};
+
+md.renderer.rules.latex_block = (tokens, idx) => {
+  try {
+    return katex.renderToString(tokens[idx].content, {
+      throwOnError: false,
+      displayMode: true
+    });
+  } catch (error) {
+    console.error('Error rendering block LaTeX:', error);
+    return `<div style="color: red;">${tokens[idx].content}</div>`;
+  }
+};
+
+// 添加渲染函数
+const renderMarkdown = (text: string) => {
+  if (!text) return '';
+
+  // 如果包含块级公式，使用 render
+  if (/\$\$[\s\S]+?\$\$/.test(text)) {
+    return md.render(text);
+  }
+
+  // 其它情况用 renderInline，避免最开始出现换行
+  return md.renderInline(text);
+};
 
 // 定义Props
 const props = defineProps<{
@@ -349,5 +459,19 @@ watch(
 <style scoped>
 ::v-deep .pi {
   font-size: 1.2rem;
+}
+
+::v-deep .question-content .katex {
+  font-size: 1.1em;
+}
+
+::v-deep .question-content .katex-display {
+  margin: 1em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+::v-deep(.question-content) .katex-display>.katex {
+  white-space: nowrap;
 }
 </style>
