@@ -53,7 +53,7 @@
             {{ viewAnswer ? '隐藏' : '提交' }}
           </Button>
           <Button severity="danger" @click="resetSelection">
-            删除
+            取消
           </Button>
           <Button severity="secondary" :disabled="!hasNextQuestion" @click="nextQuestion">
             下一题
@@ -202,6 +202,7 @@ async function refreshQuestionList(x: string) {
 
     if (chapterId.value && props.currentSection) {
       const resQuestion = await fetchQuestionListApi(chapterId.value);
+      console.log('resQuestion:', resQuestion)
       const apiQuestions = resQuestion.questions || [];
       console.log('apiQuestions', apiQuestions)
 
