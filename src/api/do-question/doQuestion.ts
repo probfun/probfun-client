@@ -34,10 +34,17 @@ interface Question {
   };
 }
 
-interface Option {
+interface Detail {
   id: number;
-  content: string;
-  is_correct: number;
+  choices: {
+    id: number;
+    content: string;
+    is_correct: boolean;
+    knowledge_points: {
+      id: number;
+      name: string;
+    }
+  };
 }
 
 async function fetchSubjectListApi() {
@@ -59,18 +66,18 @@ async function fetchQuestionListApi(chapterId: number) {
   return result.data;
 }
 
-async function fetchChoiceOptionApi(questionId: number) {
+async function fetchQuestionDetailApi(questionId: number) {
   const result = await get<{
-    options: Option[];
-  }>(`/assessment/choiceoption/list/`, { questionId });
+    details: Detail[];
+  }>(`/assessment/question/${questionId}`);
   return result.data;
 }
 
-export type { Chapter, Question, Subject, Option };
+export type { Chapter, Question, Subject, Detail };
 
 export {
   fetchChapterListApi,
   fetchQuestionListApi,
   fetchSubjectListApi,
-  fetchChoiceOptionApi,
+  fetchQuestionDetailApi
 };

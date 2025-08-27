@@ -109,7 +109,7 @@
 import { ref, defineProps, defineExpose, onMounted, defineEmits, watch, computed } from 'vue';
 import Button from 'primevue/button';
 import { Question, questionSectionMap } from './questionTypes';
-import { fetchQuestionListApi, fetchChapterListApi, fetchChoiceOptionApi } from '@/api/do-question/doQuestion.ts';
+import { fetchQuestionListApi, fetchChapterListApi, fetchQuestionDetailApi } from '@/api/do-question/doQuestion.ts';
 import { renderLatex, toMarkdown } from '@/utils/markdown';
 
 // 定义Props
@@ -203,8 +203,13 @@ async function refreshQuestionList(x: string) {
     if (chapterId.value && props.currentSection) {
       const resQuestion = await fetchQuestionListApi(chapterId.value);
       console.log('resQuestion:', resQuestion)
+      const resDetail = await fetchQuestionDetailApi(69);
+      console.log('resDetail:', resDetail)
+
       const apiQuestions = resQuestion.questions || [];
       console.log('apiQuestions', apiQuestions)
+      const apiDetails = resDetail.details || [];
+      console.log('apiDetails', apiDetails)
 
       // 转换难度数字为文本描述
       const difficultyMap: { [key: number]: string } = { 1: '简单', 2: '中等', 3: '困难' };
