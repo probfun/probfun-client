@@ -42,7 +42,7 @@ interface Detail {
       id: number;
       content: string;
       is_correct: boolean;
-      knowledge_points: {
+      knowledge_point: {
         id: number;
         name: string;
       }

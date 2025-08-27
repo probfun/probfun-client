@@ -38,7 +38,6 @@
 
             <!-- 选项内容 -->
             <div>
-              <span class="font-medium mr-2">{{ String.fromCharCode(65 + index) }}.</span>
               <span v-html="choice.content"></span>
             </div>
           </div>
@@ -215,7 +214,8 @@ async function refreshQuestionList(x: string) {
         const apiChoices = Array.isArray(resDetail.question.choices) ? resDetail.question.choices : [];
         const choices = apiChoices.map((choice: any) => ({
           content: choice.content,
-          isCorrect: choice.is_correct
+          isCorrect: choice.is_correct,
+          knowledgePoint: choice.knowledge_point?.name || ''
         }));
         return {
           id: question.id,
@@ -223,7 +223,7 @@ async function refreshQuestionList(x: string) {
           content: question.content,
           choices: choices,
           analysis: question.full_answer,
-          knowledgePoint: '相关知识点',
+          knowledgePoint: apiChoices.map(c => c.knowledge_point?.name).filter(Boolean).join('、'),
           difficulty: difficultyMap[question.difficulty] || '未知',
           lastResult: null
         };
