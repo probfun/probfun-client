@@ -203,30 +203,30 @@ async function refreshQuestionList(x: string) {
     if (chapterId.value && props.currentSection) {
       const resQuestion = await fetchQuestionListApi(chapterId.value);
       console.log('resQuestion:', resQuestion)
-      const resDetail = await fetchQuestionDetailApi(69);
-      console.log('resDetail:', resDetail)
 
       const apiQuestions = resQuestion.questions || [];
       console.log('apiQuestions', apiQuestions)
-      const apiDetails = resDetail.question.choices || [];
-      console.log('apiDetails', apiDetails)
 
       // 转换难度数字为文本描述
       const difficultyMap: { [key: number]: string } = { 1: '简单', 2: '中等', 3: '困难' };
-      const formattedQuestions = apiQuestions.map((question: any) => ({
-        id: question.id,
-        category: props.currentSection,
-        content: question.content,
-        choices: [
-          { content: '选项A', isCorrect: false },
-          { content: '选项B', isCorrect: true },
-          { content: '选项C', isCorrect: false },
-          { content: '选项D', isCorrect: false }
-        ],
-        analysis: question.full_answer,
-        knowledgePoint: '相关知识点',
-        difficulty: difficultyMap[question.difficulty] || '未知',
-        lastResult: null
+      const formattedQuestions = await Promise.all(apiQuestions.map(async (question: any) => {
+        const resDetail = await fetchQuestionDetailApi(question.id);
+        // 映射选项数据，将is_correct转换为isCorrect
+        const apiChoices = Array.isArray(resDetail.question.choices) ? resDetail.question.choices : [];
+        const choices = apiChoices.map((choice: any) => ({
+          content: choice.content,
+          isCorrect: choice.is_correct
+        }));
+        return {
+          id: question.id,
+          category: '',
+          content: question.content,
+          choices: choices,
+          analysis: question.full_answer,
+          knowledgePoint: '相关知识点',
+          difficulty: difficultyMap[question.difficulty] || '未知',
+          lastResult: null
+        };
       }));
 
       console.log('formattedQuestions:', formattedQuestions)
