@@ -223,7 +223,7 @@ async function refreshQuestionList(x: string) {
           content: question.content,
           choices: choices,
           analysis: question.full_answer,
-          knowledgePoint: apiChoices.map(c => c.knowledge_point?.name).filter(Boolean).join('、'),
+          knowledgePoint: apiChoices[0]?.knowledge_point?.name || '',
           difficulty: difficultyMap[question.difficulty] || '未知',
           lastResult: null
         };
