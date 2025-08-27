@@ -35,15 +35,20 @@ interface Question {
 }
 
 interface Detail {
-  id: number;
-  choices: {
+  question: {
     id: number;
     content: string;
-    is_correct: boolean;
-    knowledge_points: {
+    choices: {
       id: number;
-      name: string;
-    }
+      content: string;
+      is_correct: boolean;
+      knowledge_points: {
+        id: number;
+        name: string;
+      }
+    };
+    difficulty: number;
+    full_answer: string;
   };
 }
 
@@ -67,9 +72,7 @@ async function fetchQuestionListApi(chapterId: number) {
 }
 
 async function fetchQuestionDetailApi(questionId: number) {
-  const result = await get<{
-    details: Detail[];
-  }>(`/assessment/question/${questionId}`);
+  const result = await get<Detail>(`/assessment/question/${questionId}`);
   return result.data;
 }
 

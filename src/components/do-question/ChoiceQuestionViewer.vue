@@ -208,7 +208,7 @@ async function refreshQuestionList(x: string) {
 
       const apiQuestions = resQuestion.questions || [];
       console.log('apiQuestions', apiQuestions)
-      const apiDetails = resDetail.details || [];
+      const apiDetails = resDetail.question.choices || [];
       console.log('apiDetails', apiDetails)
 
       // 转换难度数字为文本描述
