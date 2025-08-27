@@ -198,16 +198,12 @@ async function refreshQuestionList(x: string) {
     const apiChapters = resChapter.chapters || [];
     console.log('apiChapters:', apiChapters)
 
-    chapterId.value = apiChapters[y - 1]?.children?.[z - 1]?.id || 1;
+    chapterId.value = apiChapters[y - 1]?.children?.[z - 1]?.id;
 
     if (chapterId.value && props.currentSection) {
       const resQuestion = await fetchQuestionListApi(chapterId.value);
       const apiQuestions = resQuestion.questions || [];
       console.log('apiQuestions', apiQuestions)
-
-      const resOption = await fetchChoiceOptionApi(217);
-      const apiOptions = resOption.options || [];
-      console.log('apiOptions', apiOptions)
 
       // 转换难度数字为文本描述
       const difficultyMap: { [key: number]: string } = { 1: '简单', 2: '中等', 3: '困难' };
