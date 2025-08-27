@@ -49,10 +49,10 @@
             上一题
           </Button>
           <Button severity="success" @click="handleSubmit">
-            {{ viewAnswer ? '隐藏' : '提交' }}
+            {{ viewAnswer ? '隐藏解析' : '提交并查看解析' }}
           </Button>
           <Button severity="danger" @click="resetSelection">
-            取消
+            清除历史做题记录
           </Button>
           <Button severity="secondary" :disabled="!hasNextQuestion" @click="nextQuestion">
             下一题
@@ -104,121 +104,12 @@
 </template>
 
 <script setup lang="ts">
+import 'katex/dist/katex.css';
 import { ref, defineProps, defineExpose, onMounted, defineEmits, watch, computed } from 'vue';
 import Button from 'primevue/button';
 import { Question, questionSectionMap } from './questionTypes';
 import { fetchQuestionListApi, fetchChapterListApi, fetchQuestionDetailApi } from '@/api/do-question/doQuestion.ts';
-import MarkdownIt from 'markdown-it';
-import katex from 'katex';
-import 'katex/dist/katex.css';
-
-// 在现有代码后添加 markdown 解析器配置
-const md = new MarkdownIt({
-  html: true,
-  linkify: true,
-  typographer: true
-});
-
-// 自定义规则处理 LaTeX 公式
-// 用这个修正后的版本替换掉原来的 md.inline.ruler.before(...)
-md.inline.ruler.before('text', 'latex', (state, silent) => {
-  const start = state.pos;
-  const max = state.posMax;
-
-  // 块级 LaTeX 规则: $$...$$
-  if (start + 1 < max && state.src.charAt(start) === '$' && state.src.charAt(start + 1) === '$') {
-    let pos = start + 2;
-    // 查找下一个未被转义的 '$$'
-    while (pos < max - 1) {
-      if (state.src.charAt(pos) === '$' && state.src.charAt(pos + 1) === '$') {
-        // 检查定界符是否被前面的反斜杠转义
-        if (state.src.charAt(pos - 1) !== '\\') {
-          if (!silent) {
-            const token = state.push('latex_block', '', 0);
-            token.content = state.src.slice(start + 2, pos);
-            token.markup = '$$';
-            token.block = true;
-          }
-          state.pos = pos + 2;
-          return true;
-        }
-      }
-      pos++;
-    }
-    // 如果没有找到闭合的 '$$'，则不将其视为 LaTeX
-    return false;
-  }
-
-  // 行内 LaTeX 规则: $...$
-  if (state.src.charAt(start) === '$') {
-    // 行内公式后不能紧跟另一个'$'，因为那会是块级公式的开始
-    if (start + 1 < max && state.src.charAt(start + 1) === '$') {
-      return false;
-    }
-    let pos = start + 1;
-    // 查找下一个未被转义的 '$'
-    while (pos < max) {
-      if (state.src.charAt(pos) === '$') {
-        // 检查定界符是否被转义
-        if (state.src.charAt(pos - 1) !== '\\') {
-          // 确保这不是 '$$' 块的开始
-          if (pos + 1 === max || state.src.charAt(pos + 1) !== '$') {
-            if (!silent) {
-              const token = state.push('latex_inline', '', 0);
-              token.content = state.src.slice(start + 1, pos);
-              token.markup = '$';
-            }
-            state.pos = pos + 1;
-            return true;
-          }
-        }
-      }
-      pos++;
-    }
-    // 如果没有找到闭合的 '$'，则不将其视为 LaTeX
-    return false;
-  }
-
-  return false;
-});
-
-// LaTeX 渲染器
-md.renderer.rules.latex_inline = (tokens, idx) => {
-  try {
-    return katex.renderToString(tokens[idx].content, {
-      throwOnError: false,
-      displayMode: false
-    });
-  } catch (error) {
-    console.error('Error rendering inline LaTeX:', error);
-    return `<span style="color: red;">${tokens[idx].content}</span>`;
-  }
-};
-
-md.renderer.rules.latex_block = (tokens, idx) => {
-  try {
-    return katex.renderToString(tokens[idx].content, {
-      throwOnError: false,
-      displayMode: true
-    });
-  } catch (error) {
-    console.error('Error rendering block LaTeX:', error);
-    return `<div style="color: red;">${tokens[idx].content}</div>`;
-  }
-};
-
-// 添加渲染函数
-const renderMarkdown = (text: string) => {
-  if (!text) return '';
-
-  // 如果包含块级公式，使用 render
-  if (/\$\$[\s\S]+?\$\$/.test(text)) {
-    return md.render(text);
-  }
-
-  // 其它情况用 renderInline，避免最开始出现换行
-  return md.renderInline(text);
-};
+import { renderMarkdown } from './latexmarkdown.ts';
 
 // 定义Props
 const props = defineProps<{
