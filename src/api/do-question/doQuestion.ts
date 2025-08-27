@@ -37,7 +37,7 @@ interface Question {
 interface Option {
   id: number;
   content: string;
-  is_correct: boolean;
+  is_correct: number;
 }
 
 async function fetchSubjectListApi() {

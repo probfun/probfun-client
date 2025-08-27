@@ -110,6 +110,7 @@ import { ref, defineProps, defineExpose, onMounted, defineEmits, watch, computed
 import Button from 'primevue/button';
 import { Question, questionSectionMap } from './questionTypes';
 import { fetchQuestionListApi, fetchChapterListApi, fetchChoiceOptionApi } from '@/api/do-question/doQuestion.ts';
+import { renderLatex, toMarkdown } from '@/utils/markdown';
 
 // 定义Props
 const props = defineProps<{
@@ -154,6 +155,17 @@ const hasNextQuestion = computed(() => {
 const resetSelection = () => {
   selectedChoice.value = null;
   viewAnswer.value = false;
+  if (currentQuestion.value) {
+    // 清除内存中的lastResult
+    currentQuestion.value.lastResult = null;
+    // 清除localStorage中对应的结果记录
+    const storedResults = JSON.parse(localStorage.getItem('questionResults') || '{}');
+    const resultKey = `${props.currentSection}-${currentQuestion.value.id}`;
+    delete storedResults[resultKey];
+    localStorage.setItem('questionResults', JSON.stringify(storedResults));
+    // 清除用户结果对象中的记录
+    delete userResults.value[currentQuestion.value.id];
+  }
 };
 
 // 加载题目
@@ -183,15 +195,19 @@ async function refreshQuestionList(x: string) {
 
   try {
     const resChapter = await fetchChapterListApi(5);
-    const apiChapter = resChapter.chapters || [];
-    console.log('apiChapter:', apiChapter)
+    const apiChapters = resChapter.chapters || [];
+    console.log('apiChapters:', apiChapters)
 
-    chapterId.value = apiChapter[y - 1]?.children?.[z - 1]?.id || 1;
+    chapterId.value = apiChapters[y - 1]?.children?.[z - 1]?.id || 1;
 
     if (chapterId.value && props.currentSection) {
-      const response = await fetchQuestionListApi(chapterId.value);
-      const apiQuestions = response.questions || [];
-      console.log('apiQuestion', apiQuestions)
+      const resQuestion = await fetchQuestionListApi(chapterId.value);
+      const apiQuestions = resQuestion.questions || [];
+      console.log('apiQuestions', apiQuestions)
+
+      const resOption = await fetchChoiceOptionApi(217);
+      const apiOptions = resOption.options || [];
+      console.log('apiOptions', apiOptions)
 
       // 转换难度数字为文本描述
       const difficultyMap: { [key: number]: string } = { 1: '简单', 2: '中等', 3: '困难' };

@@ -1,4 +1,4 @@
-import { ref,toRaw } from 'vue';
+import { ref, toRaw } from 'vue';
 
 interface QuestionChoice {
   content: string;
