@@ -1,17 +1,17 @@
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
 export const useConfigStore = defineStore('config', () => {
-  const visible = ref(false)
-  const theme = ref<'dark' | 'light'>('light')
-  const isManualThemeChange = ref<boolean>(false)
+  const visible = ref(false);
+  const theme = ref<'dark' | 'light'>('light');
+  const isManualThemeChange = ref<boolean>(false);
 
   function setTheme(mode: 'dark' | 'light') {
-    theme.value = mode === 'dark' ? 'dark' : 'light'
+    theme.value = mode === 'dark' ? 'dark' : 'light';
   }
 
   function reset() {
-    visible.value = false
+    visible.value = false;
   }
 
   return {
@@ -20,7 +20,7 @@ export const useConfigStore = defineStore('config', () => {
     isManualThemeChange,
     setTheme,
     reset,
-  }
+  };
 }, {
   persist: true,
-})
+});

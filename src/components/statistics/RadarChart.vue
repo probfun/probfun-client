@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
 import type { RadarData } from '../../types/statistics';
+import { onMounted, ref, watch } from 'vue';
 
 const props = defineProps<{
   data: RadarData[];
@@ -9,12 +9,14 @@ const props = defineProps<{
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 
 // 绘制雷达图
-const drawRadarChart = () => {
-  if (!canvasRef.value || !props.data.length) return;
+function drawRadarChart() {
+  if (!canvasRef.value || !props.data.length)
+    return;
 
   const canvas = canvasRef.value;
   const ctx = canvas.getContext('2d');
-  if (!ctx) return;
+  if (!ctx)
+    return;
 
   // 设置画布尺寸
   canvas.width = canvas.offsetWidth;
@@ -96,7 +98,7 @@ const drawRadarChart = () => {
     const y = centerY + r * Math.sin(angle);
     ctx.fillText(props.data[i].subject, x, y);
   }
-};
+}
 
 onMounted(drawRadarChart);
 watch(() => props.data, drawRadarChart, { deep: true });
@@ -104,7 +106,7 @@ watch(() => props.data, drawRadarChart, { deep: true });
 
 <template>
   <div class="radar-chart-container">
-    <canvas ref="canvasRef" class="w-full h-full"></canvas>
+    <canvas ref="canvasRef" class="w-full h-full" />
   </div>
 </template>
 

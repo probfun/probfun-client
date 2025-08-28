@@ -1,104 +1,5 @@
-<template>
-  <ExperimentBoard :showParameterPanel="false">
-    <template #experiment>
-      <div class="bg-white rounded-lg shadow-md p-4 mb-6 overflow-hidden">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">概率密度函数</h2>
-        <!-- 两列布局 -->
-        <div class="flex flex-col md:flex-row gap-6">
-          <!-- 图表区域 - 左侧 -->
-          <div class="w-full md:w-2/3">
-            <canvas ref="canvasRef" class="w-full h-[400px] border rounded-md"></canvas>
-            <!-- 恢复参数显示区域 -->
-            <div class="grid grid-cols-2 gap-4 mt-4">
-              <Card class="p-2 border border-gray-200">
-                <CardHeader class="p-2 pb-0">
-                  <CardTitle class="text-sm font-medium text-center">当前自由度</CardTitle>
-                </CardHeader>
-                <CardContent class="p-2 pt-0">
-                  <p class="text-lg font-bold text-center">{{ df }}</p>
-                </CardContent>
-              </Card>
-              <Card class="p-2 border border-gray-200">
-                <CardHeader class="p-2 pb-0">
-                  <CardTitle class="text-sm font-medium text-center">分布均值</CardTitle>
-                </CardHeader>
-                <CardContent class="p-2 pt-0">
-                  <p class="text-lg font-bold text-center">{{ mean.toFixed(2) }}</p>
-                </CardContent>
-              </Card>
-              <Card class="p-2 border border-gray-200">
-                <CardHeader class="p-2 pb-0">
-                  <CardTitle class="text-sm font-medium text-center">分布方差</CardTitle>
-                </CardHeader>
-                <CardContent class="p-2 pt-0">
-                  <p class="text-lg font-bold text-center">{{ variance.toFixed(2) }}</p>
-                </CardContent>
-              </Card>
-              <Card class="p-2 border border-gray-200">
-                <CardHeader class="p-2 pb-0">
-                  <CardTitle class="text-sm font-medium text-center">分布偏度</CardTitle>
-                </CardHeader>
-                <CardContent class="p-2 pt-0">
-                  <p class="text-lg font-bold text-center">
-                    {{ df > 2 ? skewness.toFixed(2) : 'N/A' }}
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-          <!-- 参数控制区域 - 右侧 -->
-          <div class="w-full md:w-1/3">
-            <div class="mt-0 p-4 bg-gray-50 rounded-lg border border-gray-200 h-full">
-              <h3 class="text-lg font-semibold text-gray-800 mb-4">参数控制</h3>
-              <div class="space-y-4">
-                <div>
-                  <h4 class="text-base font-medium text-gray-700 mb-2">自由度 (df)</h4>
-                  <div class="space-y-2">
-                    <Label for="dfSlider" class="text-sm text-gray-600">调整卡方分布的自由度参数:</Label>
-                    <input type="range" id="dfSlider" min="1" max="50" :value="df" step="1"
-                      @input="updateDF(parseInt(($event.target as HTMLInputElement)?.value || '0'))"
-                      class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                    <div class="flex justify-between text-xs text-gray-500">
-                      <span>1</span>
-                      <span class="font-medium text-gray-800">{{ df }}</span>
-                      <span>50</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="bg-blue-50 p-4 rounded-lg">
-                  <h4 class="text-base font-medium text-blue-800 mb-2">卡方分布特性</h4>
-                  <ul class="text-sm text-gray-700 space-y-1">
-                    <li>卡方分布由自由度参数df控制，是<span class="font-semibold text-blue-700">多个独立标准正态变量平方和</span>的分布。</li>
-                    <li>• 当<span class="font-semibold text-blue-700">df=1</span>时，分布高度偏斜</li>
-                    <li>• 当<span class="font-semibold text-blue-700">df增大</span>时，分布逐渐趋于对称</li>
-                    <li>• df→∞时，卡方分布收敛于正态分布</li>
-                    <li>• 均值：<span class="font-semibold text-blue-700">df</span>，方差：<span
-                        class="font-semibold text-blue-700">2×df</span></li>
-                    <li>• 偏度：<span class="font-semibold text-blue-700">√(8/df)</span>（df&gt;2时）</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </template>
-
-    <template #conclusion>
-      <CardContent class="markdown-body prose prose-sm max-w-none space-y-4">
-        <div v-html="toMarkdown(conclusionContent)"></div>
-      </CardContent>
-    </template>
-
-    <template #comment>
-      <CommentPanel exp-id="chi-square-distribution" />
-    </template>
-  </ExperimentBoard>
-</template>
-
 <script setup lang="ts">
-import { onMounted, ref, watch, computed, onUnmounted } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -171,28 +72,30 @@ function gamma(z: number): number {
     12.507343278686905,
     -0.13857109526572012,
     9.9843695780195716e-6,
-    1.5056327351493116e-7
+    1.5056327351493116e-7,
   ];
 
   if (z < 0.5) {
     return Math.PI / (Math.sin(Math.PI * z) * gamma(1 - z));
-  } else {
+  }
+  else {
     z -= 1;
     let x = p[0];
     for (let i: number = 1; i < g + 2; i++) {
       x += p[i] / (z + i);
     }
     const t = z + g + 0.5;
-    return Math.sqrt(2 * Math.PI) * Math.pow(t, z + 0.5) * Math.exp(-t) * x;
+    return Math.sqrt(2 * Math.PI) * t ** (z + 0.5) * Math.exp(-t) * x;
   }
 }
 
 // 卡方分布 PDF
 function chiSquarePDF(x: number, df: number): number {
-  if (x <= 0) return 0;
+  if (x <= 0)
+    return 0;
 
-  const numerator = Math.pow(x, df / 2 - 1) * Math.exp(-x / 2);
-  const denominator = Math.pow(2, df / 2) * gamma(df / 2);
+  const numerator = x ** (df / 2 - 1) * Math.exp(-x / 2);
+  const denominator = 2 ** (df / 2) * gamma(df / 2);
 
   return numerator / denominator;
 }
@@ -204,7 +107,8 @@ function getMaxPDF(df: number, xMin: number, xMax: number): number {
 
   for (let x = xMin; x <= xMax; x += step) {
     const pdf = chiSquarePDF(x, df);
-    if (pdf > maxPDF) maxPDF = pdf;
+    if (pdf > maxPDF)
+      maxPDF = pdf;
   }
 
   return Math.min(1, maxPDF * 1.1); // 限制最大值，避免太高
@@ -226,16 +130,18 @@ function drawArrow(ctx: CanvasRenderingContext2D, fromX: number, fromY: number, 
 
 // 绘制图表 - 优化尺寸和比例
 function drawChart(): void {
-  if (!canvasRef.value) return;
+  if (!canvasRef.value)
+    return;
   const canvas = canvasRef.value;
   const ctx = canvas.getContext('2d');
-  if (!ctx) return;
+  if (!ctx)
+    return;
 
   // 重要：设置Canvas实际尺寸，避免拉伸变形
   const container = canvas.parentElement;
   if (container) {
     // 获取容器实际显示尺寸
-    const { width: containerWidth, height: containerHeight } = container.getBoundingClientRect();
+    const { width: containerWidth, height: _containerHeight } = container.getBoundingClientRect();
     // 设置Canvas内在尺寸（解决模糊问题）
     canvas.width = containerWidth - 40; // 减去内边距
     canvas.height = 400; // 固定高度确保图表不扁
@@ -310,7 +216,8 @@ function drawChart(): void {
   let xMax;
   if (df.value <= 30) {
     xMax = Math.min(50, df.value * 3);
-  } else {
+  }
+  else {
     xMax = 100;
   }
   const xMin = 0;
@@ -356,7 +263,7 @@ function drawChart(): void {
     { color: '#3b82f6', width: 3 }, // 当前卡方分布 - 蓝色
     { color: '#10b981', width: 2 }, // df=1 - 绿色
     { color: '#f59e0b', width: 1.5 }, // df=10 - 橙色
-    { color: '#ef4444', width: 1.5 }  // df=30 - 红色
+    { color: '#ef4444', width: 1.5 }, // df=30 - 红色
   ];
 
   // 要比较的df值
@@ -365,9 +272,11 @@ function drawChart(): void {
 
   if (currentDf >= 1 && currentDf <= 5) {
     otherDfs = [currentDf + 2, currentDf + 5, currentDf + 10];
-  } else if (currentDf >= 6 && currentDf <= 15) {
+  }
+  else if (currentDf >= 6 && currentDf <= 15) {
     otherDfs = [currentDf - 3, currentDf + 5, currentDf + 15];
-  } else {
+  }
+  else {
     otherDfs = [currentDf - 5, currentDf + 10, currentDf + 20];
   }
 
@@ -394,7 +303,8 @@ function drawChart(): void {
 
       if (i === 0) {
         ctx.moveTo(plotX, plotY);
-      } else {
+      }
+      else {
         ctx.lineTo(plotX, plotY);
       }
     }
@@ -433,13 +343,13 @@ function resizeCanvas(): void {
 onMounted(() => {
   // 初始化绘制
   drawChart();
-  
+
   // 监听窗口大小变化
   window.addEventListener('resize', resizeCanvas);
 
   // 监听父容器大小变化（更精确的响应式）
   if (canvasRef.value?.parentElement) {
-    resizeObserver = new ResizeObserver(entries => {
+    resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
         if (canvasRef.value) {
           canvasRef.value.width = entry.contentRect.width - 40;
@@ -466,6 +376,132 @@ onUnmounted(() => {
   }
 });
 </script>
+
+<template>
+  <ExperimentBoard :show-parameter-panel="false">
+    <template #experiment>
+      <div class="bg-white rounded-lg shadow-md p-4 mb-6 overflow-hidden">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">
+          概率密度函数
+        </h2>
+        <!-- 两列布局 -->
+        <div class="flex flex-col md:flex-row gap-6">
+          <!-- 图表区域 - 左侧 -->
+          <div class="w-full md:w-2/3">
+            <canvas ref="canvasRef" class="w-full h-[400px] border rounded-md" />
+            <!-- 恢复参数显示区域 -->
+            <div class="grid grid-cols-2 gap-4 mt-4">
+              <Card class="p-2 border border-gray-200">
+                <CardHeader class="p-2 pb-0">
+                  <CardTitle class="text-sm font-medium text-center">
+                    当前自由度
+                  </CardTitle>
+                </CardHeader>
+                <CardContent class="p-2 pt-0">
+                  <p class="text-lg font-bold text-center">
+                    {{ df }}
+                  </p>
+                </CardContent>
+              </Card>
+              <Card class="p-2 border border-gray-200">
+                <CardHeader class="p-2 pb-0">
+                  <CardTitle class="text-sm font-medium text-center">
+                    分布均值
+                  </CardTitle>
+                </CardHeader>
+                <CardContent class="p-2 pt-0">
+                  <p class="text-lg font-bold text-center">
+                    {{ mean.toFixed(2) }}
+                  </p>
+                </CardContent>
+              </Card>
+              <Card class="p-2 border border-gray-200">
+                <CardHeader class="p-2 pb-0">
+                  <CardTitle class="text-sm font-medium text-center">
+                    分布方差
+                  </CardTitle>
+                </CardHeader>
+                <CardContent class="p-2 pt-0">
+                  <p class="text-lg font-bold text-center">
+                    {{ variance.toFixed(2) }}
+                  </p>
+                </CardContent>
+              </Card>
+              <Card class="p-2 border border-gray-200">
+                <CardHeader class="p-2 pb-0">
+                  <CardTitle class="text-sm font-medium text-center">
+                    分布偏度
+                  </CardTitle>
+                </CardHeader>
+                <CardContent class="p-2 pt-0">
+                  <p class="text-lg font-bold text-center">
+                    {{ df > 2 ? skewness.toFixed(2) : 'N/A' }}
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+          <!-- 参数控制区域 - 右侧 -->
+          <div class="w-full md:w-1/3">
+            <div class="mt-0 p-4 bg-gray-50 rounded-lg border border-gray-200 h-full">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                参数控制
+              </h3>
+              <div class="space-y-4">
+                <div>
+                  <h4 class="text-base font-medium text-gray-700 mb-2">
+                    自由度 (df)
+                  </h4>
+                  <div class="space-y-2">
+                    <Label for="dfSlider" class="text-sm text-gray-600">调整卡方分布的自由度参数:</Label>
+                    <input
+                      id="dfSlider" type="range" min="1" max="50" :value="df" step="1"
+                      class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                      @input="updateDF(parseInt(($event.target as HTMLInputElement)?.value || '0'))"
+                    >
+                    <div class="flex justify-between text-xs text-gray-500">
+                      <span>1</span>
+                      <span class="font-medium text-gray-800">{{ df }}</span>
+                      <span>50</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="bg-blue-50 p-4 rounded-lg">
+                  <h4 class="text-base font-medium text-blue-800 mb-2">
+                    卡方分布特性
+                  </h4>
+                  <ul class="text-sm text-gray-700 space-y-1">
+                    <li>卡方分布由自由度参数df控制，是<span class="font-semibold text-blue-700">多个独立标准正态变量平方和</span>的分布。</li>
+                    <li>• 当<span class="font-semibold text-blue-700">df=1</span>时，分布高度偏斜</li>
+                    <li>• 当<span class="font-semibold text-blue-700">df增大</span>时，分布逐渐趋于对称</li>
+                    <li>• df→∞时，卡方分布收敛于正态分布</li>
+                    <li>
+                      • 均值：<span class="font-semibold text-blue-700">df</span>，方差：<span
+                        class="font-semibold text-blue-700"
+                      >2×df</span>
+                    </li>
+                    <li>• 偏度：<span class="font-semibold text-blue-700">√(8/df)</span>（df&gt;2时）</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <template #conclusion>
+      <CardContent class="markdown-body prose prose-sm max-w-none space-y-4">
+        <div v-html="toMarkdown(conclusionContent)" />
+      </CardContent>
+    </template>
+
+    <template #comment>
+      <CommentPanel exp-id="chi-square-distribution" />
+    </template>
+  </ExperimentBoard>
+</template>
 
 <style scoped>
 canvas {

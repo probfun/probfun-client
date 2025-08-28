@@ -31,7 +31,7 @@ const args = withDefaults(defineProps<{
   ],
   panelSize: 40,
   layout: 0,
-  showParameterPanel: true
+  showParameterPanel: true,
 });
 
 const displayTabList = ref([{
@@ -88,7 +88,7 @@ onMounted(() => {
             </div>
           </ResizablePanel>
           <ResizableHandle id="demo-handle-2" class="bg-transparent p-1" />
-          <ResizablePanel id="demo-panel-4" v-if="showParameterPanel">
+          <ResizablePanel v-if="showParameterPanel" id="demo-panel-4">
             <div class="flex h-full items-center justify-center">
               <Container class="h-full w-full" :tabs="parameterTabList">
                 <slot name="parameter" />

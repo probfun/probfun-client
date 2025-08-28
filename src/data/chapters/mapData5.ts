@@ -339,7 +339,7 @@ export const nodes = [{
     formula: ' \\begin{cases}\n\nX_1,X_2,\\ldots\\ \\text{相互独立} \\\\\\\\\n\\mathbb E(X_i) = \\mu_i,\\;\\;\\; \\text{Var}(X_i) = \\sigma_i^2\\\\\n\\end{cases}\n\\Rightarrow \\sum_{i=1}^{n}X_i \\overset{\\text{approx.}}{\\sim} N(\\sum_{i=1}^{n}\\mu_i,\\ \\sum_{i=1}^{n}\\sigma_i^2)',
   },
   class: 'nodrag',
-}]
+}];
 
 export const edges = [{
   id: 'e05~0501',
@@ -491,4 +491,4 @@ export const edges = [{
   source: '050303',
   target: '05030301',
   type: 'step',
-}]
+}];

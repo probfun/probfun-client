@@ -625,7 +625,7 @@ export const nodes = [{
     formula: ' 旋转不变性:\nn 维正态分布在进行线性变换时仍然保持正态分布的形式。即 \\mathbf{Y} = \\mathbf A \\mathbf{X} + \\mathbf{b}（其中 \\mathbf A 是矩阵，\\mathbf{b} 是常数向量），则 \\mathbf{Y} 仍然服从正态分布。其中   \\mathbb{E}[\\mathbf{Y}] = \\mathbf A \\boldsymbol{\\mu}+\\mathbf{b}，\n   \\text{Cov}(\\mathbf{Y}，\\mathbf{Y}) = \\text{Cov}(\\mathbf A \\mathbf{X}，\\mathbf A \\mathbf{X}) =\\mathbf A \\boldsymbol{\\Sigma} \\mathbf A^\\top\n',
   },
   class: 'nodrag',
-}]
+}];
 
 export const edges = [{
   id: 'e04~0401',
@@ -907,4 +907,4 @@ export const edges = [{
   source: '040702',
   target: '04070205',
   type: 'step',
-}]
+}];

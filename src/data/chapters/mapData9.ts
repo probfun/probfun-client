@@ -482,7 +482,7 @@ export const nodes = [{
     formula: '白噪声',
   },
   class: 'nodrag',
-}]
+}];
 
 export const edges = [{
   id: 'e09~0901',
@@ -699,4 +699,4 @@ export const edges = [{
   source: '090703',
   target: '09070302',
   type: 'step',
-}]
+}];

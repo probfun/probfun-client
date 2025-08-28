@@ -390,12 +390,16 @@ function openFeishuDoc() {
           {{ item }}
         </Badge>
       </div>
-      <Button v-if="title !== '邮趣概率' && !isVisitor()" size="icon" variant="ghost" class="p-1 size-auto"
-        @click="toggleFavorite">
-        <Star class="size-5 transition-all" :style="{
-          fill: isFavorite ? '#FFA500' : 'none',
-          stroke: isFavorite ? '#FFA500' : '#999',
-        }" />
+      <Button
+        v-if="title !== '邮趣概率' && !isVisitor()" size="icon" variant="ghost" class="p-1 size-auto"
+        @click="toggleFavorite"
+      >
+        <Star
+          class="size-5 transition-all" :style="{
+            fill: isFavorite ? '#FFA500' : 'none',
+            stroke: isFavorite ? '#FFA500' : '#999',
+          }"
+        />
       </Button>
     </div>
     <div class="flex items-center gap-4 ml-auto">
@@ -407,10 +411,13 @@ function openFeishuDoc() {
           <PopoverTrigger>
             <Button size="icon" class="size-8 relative text-muted-foreground" variant="ghost">
               <Bell :stroke-width="2" class="size-6" />
-              <Badge v-if="messageNumber !== 0"
+              <Badge
+                v-if="messageNumber !== 0"
                 class="absolute right-1.5 top-0 translate-x-1/2 rounded-full min-w-4 h-4 p-0 flex items-center justify-center"
-                variant="destructive">
-                {{ messageNumber <= 99 ? messageNumber : '99+' }} </Badge>
+                variant="destructive"
+              >
+                {{ messageNumber <= 99 ? messageNumber : '99+' }}
+              </Badge>
             </Button>
           </PopoverTrigger>
           <PopoverContent>
@@ -448,24 +455,36 @@ function openFeishuDoc() {
                 </Avatar>
                 <div class="flex flex-col">
                   <span v-if="item.type === 'post'">{{ item.postData?.post.user.nickname }}</span>
-                  <span v-if="item.type === 'pin'"
-                    @click="router.push(`/dashboard/experiment/${item.pinData?.comment.expId}`)">{{
-                      item.pinData?.user.nickname }}</span>
-                  <span v-if="item.type === 'reply'"
-                    @click="router.push(`/dashboard/experiment/${item.replyData?.comment.expId}`)">{{
-                      item.replyData?.reply.user.nickname }}</span>
-                  <span v-if="item.type === 'like'"
-                    @click="router.push(`/dashboard/experiment/${item.likeData?.comment.expId}`)">{{
-                      item.likeData?.user.nickname }}</span>
+                  <span
+                    v-if="item.type === 'pin'"
+                    @click="router.push(`/dashboard/experiment/${item.pinData?.comment.expId}`)"
+                  >{{
+                    item.pinData?.user.nickname }}</span>
+                  <span
+                    v-if="item.type === 'reply'"
+                    @click="router.push(`/dashboard/experiment/${item.replyData?.comment.expId}`)"
+                  >{{
+                    item.replyData?.reply.user.nickname }}</span>
+                  <span
+                    v-if="item.type === 'like'"
+                    @click="router.push(`/dashboard/experiment/${item.likeData?.comment.expId}`)"
+                  >{{
+                    item.likeData?.user.nickname }}</span>
                   <span v-if="item.type === 'delete'">管理员</span>
 
                   <span v-if="item.type === 'post'" class="content text-sm text-gray-600">老师发布了新的班级公告</span>
-                  <span v-if="item.type === 'pin'" class="content text-sm text-gray-600"
-                    @click="router.push(`/dashboard/experiment/${item.pinData?.comment.expId}`)">老师置顶了你的评论</span>
-                  <span v-if="item.type === 'reply'" class="content text-sm text-gray-600"
-                    @click="router.push(`/dashboard/experiment/${item.replyData?.comment.expId}`)">回复了你的评论</span>
-                  <span v-if="item.type === 'like'" class="content text-sm text-gray-600"
-                    @click="router.push(`/dashboard/experiment/${item.likeData?.comment.expId}`)">赞了你的评论</span>
+                  <span
+                    v-if="item.type === 'pin'" class="content text-sm text-gray-600"
+                    @click="router.push(`/dashboard/experiment/${item.pinData?.comment.expId}`)"
+                  >老师置顶了你的评论</span>
+                  <span
+                    v-if="item.type === 'reply'" class="content text-sm text-gray-600"
+                    @click="router.push(`/dashboard/experiment/${item.replyData?.comment.expId}`)"
+                  >回复了你的评论</span>
+                  <span
+                    v-if="item.type === 'like'" class="content text-sm text-gray-600"
+                    @click="router.push(`/dashboard/experiment/${item.likeData?.comment.expId}`)"
+                  >赞了你的评论</span>
                   <span v-if="item.type === 'delete'" class="content text-sm text-gray-600">管理员删除了你的评论</span>
                 </div>
                 <div v-if="!item.read" class="ml-auto">
@@ -519,8 +538,10 @@ function openFeishuDoc() {
                 <FormItem>
                   <FormLabel>昵称</FormLabel>
                   <FormControl>
-                    <Input v-bind="componentField" v-model="tempUser.nickname" type="text" placeholder=""
-                      class="transition-all" />
+                    <Input
+                      v-bind="componentField" v-model="tempUser.nickname" type="text" placeholder=""
+                      class="transition-all"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -559,8 +580,10 @@ function openFeishuDoc() {
                 <FormItem>
                   <FormLabel>学院</FormLabel>
                   <FormControl>
-                    <Input v-bind="componentField" v-model="tempUser.school" type="text" placeholder=""
-                      class="transition-all" />
+                    <Input
+                      v-bind="componentField" v-model="tempUser.school" type="text" placeholder=""
+                      class="transition-all"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -570,8 +593,10 @@ function openFeishuDoc() {
                 <FormItem>
                   <FormLabel>专业</FormLabel>
                   <FormControl>
-                    <Input v-bind="componentField" v-model="tempUser.major" type="text" placeholder=""
-                      class="transition-all" />
+                    <Input
+                      v-bind="componentField" v-model="tempUser.major" type="text" placeholder=""
+                      class="transition-all"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -582,8 +607,10 @@ function openFeishuDoc() {
               <FormItem>
                 <FormLabel>邮箱</FormLabel>
                 <FormControl>
-                  <Input v-bind="componentField" v-model="tempUser.email" type="email" placeholder=""
-                    class="transition-all" />
+                  <Input
+                    v-bind="componentField" v-model="tempUser.email" type="email" placeholder=""
+                    class="transition-all"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -593,8 +620,10 @@ function openFeishuDoc() {
               <FormItem>
                 <FormLabel>手机号</FormLabel>
                 <FormControl>
-                  <Input v-bind="componentField" v-model="tempUser.phone" type="text" placeholder=""
-                    class="transition-all" />
+                  <Input
+                    v-bind="componentField" v-model="tempUser.phone" type="text" placeholder=""
+                    class="transition-all"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -606,9 +635,11 @@ function openFeishuDoc() {
             <div class="flex justify-center items-start">
               <Avatar class="size-32 relative">
                 <AvatarImage :src="tempUser.avatarUrl" alt="avatar" />
-                <Button variant="ghost"
+                <Button
+                  variant="ghost"
                   class="absolute top-0 left-0 size-32 rounded-full opacity-0 transition-all hover:opacity-100 hover:bg-opacity-30 hover:bg-black"
-                  @click="triggerFileUpload">
+                  @click="triggerFileUpload"
+                >
                   <div class="flex flex-col items-center text-background">
                     <Plus class="size-6" />
                     <div class="font-semibold">
@@ -639,8 +670,10 @@ function openFeishuDoc() {
                   <FormItem>
                     <FormLabel>旧密码</FormLabel>
                     <FormControl>
-                      <Input v-bind="componentField" v-model="oldPassword" type="password" placeholder=""
-                        class="transition-all" />
+                      <Input
+                        v-bind="componentField" v-model="oldPassword" type="password" placeholder=""
+                        class="transition-all"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -650,8 +683,10 @@ function openFeishuDoc() {
                   <FormItem>
                     <FormLabel>新密码</FormLabel>
                     <FormControl>
-                      <Input v-bind="componentField" v-model="newPassword" type="password" placeholder=""
-                        class="transition-all" />
+                      <Input
+                        v-bind="componentField" v-model="newPassword" type="password" placeholder=""
+                        class="transition-all"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -661,8 +696,10 @@ function openFeishuDoc() {
                   <FormItem>
                     <FormLabel>确认密码</FormLabel>
                     <FormControl>
-                      <Input v-bind="componentField" v-model="confirmPassword" type="password" placeholder=""
-                        class="transition-all" />
+                      <Input
+                        v-bind="componentField" v-model="confirmPassword" type="password" placeholder=""
+                        class="transition-all"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
