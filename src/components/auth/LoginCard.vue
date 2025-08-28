@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import { vAutoAnimate } from '@formkit/auto-animate';
+import Cookies from 'js-cookie';
+import { v4 as uuidv4 } from 'uuid';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { visitorApi } from '@/api/track/trackApi.ts';
 import { loginApi } from '@/api/user/userApi';
 import { Button } from '@/components/ui/button';
@@ -6,14 +11,9 @@ import { Label } from '@/components/ui/label';
 import { useUserStore } from '@/store';
 import { setLocalToken } from '@/utils/auth';
 import { error, success, warning } from '@/utils/toast';
-import { vAutoAnimate } from '@formkit/auto-animate';
-import Cookies from 'js-cookie';
-import { v4 as uuidv4 } from 'uuid';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
 
 const isLoading = ref(false);
-const studentId = ref('');
+const username = ref('');
 const password = ref('');
 
 const router = useRouter();
@@ -21,12 +21,12 @@ const userStore = useUserStore();
 
 // 登录函数
 async function login() {
-  if (!studentId.value || !password.value) {
+  if (!username.value || !password.value) {
     warning('请填写所有字段');
     return;
   }
   try {
-    const data = await loginApi(studentId.value, password.value);
+    const data = await loginApi(username.value, password.value);
     success('登录成功');
     const { token, user } = data;
 
@@ -50,7 +50,7 @@ async function login() {
 async function visitorLogin() {
   userStore.user = {
     uid: 'visitor-uid',
-    studentId: 'visitor',
+    username: 'visitor',
     classId: 'visitor-class',
     nickname: 'Visitor',
     gender: '0',
@@ -85,8 +85,8 @@ async function visitorLogin() {
 
     <div v-auto-animate class="w-full my-4">
       <div class="grid gap-2">
-        <Label for="studentId"> 学工号 </Label>
-        <Input id="studentId" v-model="studentId" class="transition-all" placeholder="" required />
+        <Label for="username"> 学工号 </Label>
+        <Input id="username" v-model="username" class="transition-all" placeholder="" required />
       </div>
     </div>
 

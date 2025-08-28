@@ -33,6 +33,7 @@ const props = defineProps<{
 }>();
 
 const commentList = ref<CommentWithChild[] | null>(null);
+const loadError = ref(false);
 const scrollArea = ref<typeof ScrollArea | null>(null);
 
 function convertToCommentWithChild(comments: CommentWithParent[]): CommentWithChild[] {
@@ -94,9 +95,11 @@ async function refreshComment() {
       }
       return a.pinned ? -1 : 1;
     });
+    loadError.value = false;
   }
   catch (error) {
     console.error('Error during fetching comments:', error);
+    loadError.value = true;
   }
 }
 
@@ -145,7 +148,10 @@ async function send() {
 </script>
 
 <template>
-  <div v-if="!isVisitor()" v-auto-animate class="h-full w-full flex flex-col">
+  <div v-if="loadError" class="flex items-center text-sm justify-center h-full text-muted-foreground">
+    评论区维护中...
+  </div>
+  <div v-else-if="!isVisitor()" v-auto-animate class="h-full w-full flex flex-col">
     <ScrollArea v-if="commentList && commentList.length !== 0" ref="scrollArea" v-auto-animate class="h-full w-full">
       <CommentCard
         v-for="(item, index) in commentList" :key="item.commentId" v-model="commentList![index]" @reply="(comment) => {

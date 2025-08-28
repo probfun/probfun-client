@@ -46,7 +46,7 @@ const isOpen = ref(false);
             {{ comment.user.nickname }}
           </span>
           <span class="text-sm text-muted-foreground">
-            {{ comment.user.studentId }} · {{ format(comment.timestamp, 'zh_CN') }}
+            {{ comment.user.username }} · {{ format(comment.timestamp, 'zh_CN') }}
           </span>
           <div v-if="comment.pinned">
             <Badge> 置顶 </Badge>

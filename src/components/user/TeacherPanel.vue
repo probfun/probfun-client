@@ -29,21 +29,21 @@ const products = ref([
   {
     expName: '正态分布',
     name: '李明',
-    studentID: '2023001',
+    username: '2023001',
     time: '2023-10-01',
     comment: '图像非常清晰，实验内容也很有趣。',
   },
   {
     expName: '正态分布',
     name: '刘红',
-    studentID: '2023002',
+    username: '2023002',
     time: '2023-10-02',
     comment: '我学会了很多知识，非常感谢老师。',
   },
   {
     expName: '三门问题',
     name: '王小兰',
-    studentID: '2023003',
+    username: '2023003',
     time: '2023-10-03',
     comment: '这个游戏激发了我的学习兴趣。',
   },
@@ -203,7 +203,7 @@ async function getComments() {
       products.value.push({
         expName: comment.expId,
         name: comment.user.nickname,
-        studentID: comment.user.studentId,
+        username: comment.user.username,
         time: comment.timestamp,
         comment: comment.content,
       });
@@ -501,7 +501,7 @@ function setChartOptionsBrowse() {
         </Avatar>
         <div class="flex flex-col">
           <span class="text-base font-semibold mb-3">教师姓名：{{ userStore.user?.nickname }}</span>
-          <span class="text-base font-semibold">教工号：{{ userStore.user?.studentId }}</span>
+          <span class="text-base font-semibold">教工号：{{ userStore.user?.username }}</span>
         </div>
       </div>
       <Panel header="已发布公告" class="mx-1 mt-3 mb-5 h-full overflow-auto">
@@ -530,7 +530,7 @@ function setChartOptionsBrowse() {
           </Column>
           <Column field="expName" header="实验名称" />
           <Column field="name" header="学生昵称" />
-          <Column field="studentID" header="学工号" />
+          <Column field="username" header="学工号" />
           <Column field="time" header="评论时间" />
           <Column field="comment" header="评论内容" />
         </DataTable>

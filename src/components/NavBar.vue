@@ -155,16 +155,16 @@ const route = useRoute();
 function updateExperiment() {
   const path = route.path.split('/').pop();
   if (path === 'buffon') {
-    title.value = 'Buffon投针';
-    tags.value = ['蒙特卡罗模拟', '辛钦大数定律', '几何概率、概率密度、条件概率', '独立事件'];
+    title.value = '蒲丰投针';
+    tags.value = ['几何概率', '微积分与积分计算', '大数定律', '蒙特卡罗模拟'];
   }
   else if (path === 'three-doors') {
     title.value = '三门问题';
-    tags.value = ['贝叶斯定理', '条件概率', '全概率公式', '独立事件'];
+    tags.value = ['条件概率', '乘法公式', '全概率公式', '贝叶斯公式', '蒙特卡罗模拟', '最优策略'];
   }
   else if (path === 'birthday-problem') {
     title.value = '生日问题';
-    tags.value = ['蒙特卡罗模拟', '排列组合', '互补事件的概率', '均匀分布', '大数定律'];
+    tags.value = ['排列组合', '大数定律', '蒙特卡罗模拟'];
   }
   else if (path === 'birthday-attack') {
     title.value = '生日攻击问题';
@@ -172,7 +172,7 @@ function updateExperiment() {
   }
   else if (path === 'positive-test') {
     title.value = '阳性检测';
-    tags.value = ['条件概率', '互斥事件', '独立事件'];
+    tags.value = ['条件概率', '乘法公式', '全概率公式', '贝叶斯公式', '蒙特卡罗模拟'];
   }
   else if (path === 'binomial-distribution') {
     title.value = '二项分布';
@@ -216,29 +216,76 @@ function updateExperiment() {
   }
   else if (path === '2d-uniform-distribution') {
     title.value = '二维均匀分布';
-    tags.value = ['边缘分布', '条件分布', '(x,y) ∈ Area G = (x2-x1)·(y2-y1)', 'P((X,Y) ∈ A) = Area A / Area G'];
+    tags.value = ['联合分布', '边缘分布', '条件分布', '随机变量的独立性', '区域积分'];
   }
   else if (path === '2d-normal-distribution') {
     title.value = '二维正态分布';
-    tags.value = ['边缘分布', '条件分布', '(X,Y) ~ N(μ1,μ2;σ1²,σ2²;ρ)'];
+    tags.value = ['联合分布', '边缘分布', '条件分布', '随机变量的独立性', '区域积分'];
+  }
+  else if (path === 'group-detection') {
+    title.value = '分组检测';
+    tags.value = ['事件的独立性', 'n重伯努利概型', '二项分布', '期望', '方差', '函数优化'];
+  }
+  else if (path === 'portfolio') {
+    title.value = '投资组合优化';
+    tags.value = ['期望', '方差', '协方差', '蒙特卡罗抽样'];
+  }
+  else if (path === 'NetworkTrafficCharacteristics') {
+    title.value = '网络流量分析与异常检测系统';
+    tags.value = ['相关系数矩阵', '蒙特卡罗模拟'];
   }
   else if (path === 'expectation-test') {
     title.value = '期望检验';
     tags.value = ['分组检测'];
   }
+  else if (path === 'CoinFliping') {
+    title.value = '抛硬币实验';
+    tags.value = ['大数定律', '蒙特卡罗模拟'];
+  }
+  else if (path === 'EstimationOfPai') {
+    title.value = '蒙特卡罗方法估算π值';
+    tags.value = ['大数定律', '蒙特卡罗模拟'];
+  }
   else if (path === 'central-limit-theorem') {
     title.value = '高尔顿钉板实验';
-    tags.value = ['正态分布'];
+    tags.value = ['中心极限定理', '蒙特卡罗模拟'];
   }
   else if (path === 'bertrand') {
     title.value = '贝特朗悖论';
-    tags.value = ['随机变量产生机制影响事件概率'];
+    tags.value = ['几何概率', '测度论', '概率的公理化定义'];
   }
   else if (path === 'distribution-clt') {
     title.value = '各种分布的中心极限定理';
     tags.value = ['分布的可加性'];
   }
-
+  else if (path === 'brownian-motion') {
+    title.value = '布朗运动模拟';
+    tags.value = ['随机变量的独立性', '正态分布', '随机过程', '平稳过程', '独立增量过程'];
+  }
+  else if (path === 'geometric-brownian-motion') {
+    title.value = '几何布朗运动模拟';
+    tags.value = ['正态分布', '随机过程', '随机分布'];
+  }
+  else if (path === 'poisson-process') {
+    title.value = '泊松过程模拟';
+    tags.value = ['泊松分布', '随机过程', '平稳过程', '独立增量过程'];
+  }
+  else if (path === 't-distribution') {
+    title.value = 't分布';
+    tags.value = ['正态分布', '卡方分布', '抽样分布'];
+  }
+  else if (path === 'chi-square-distribution') {
+    title.value = '卡方分布';
+    tags.value = ['正态分布', '随机变量和的分布', '抽样分布'];
+  }
+  else if (path === 't-distribution-quantile') {
+    title.value = 't分布上分位点';
+    tags.value = ['t分布'];
+  }
+  else if (path === 'chi-square-distribution-quantile') {
+    title.value = '卡方分布上分位点';
+    tags.value = ['卡方分布'];
+  }
   // else if (path === '') {
   // title.value ='';
   // tags.value =[''];
@@ -333,7 +380,7 @@ function openFeishuDoc() {
 </script>
 
 <template>
-  <nav class="w-full flex py-2 px-5 z-50 border-b bg-background gap-2">
+  <nav class="w-full flex py-2 px-5 z-50 border rounded-xl shadow-md bg-background gap-2">
     <div class="flex items-center  justify-center gap-2 overflow-x-hidden">
       <Label class="text-lg font-bold shrink-0">
         {{ title }}
@@ -343,7 +390,10 @@ function openFeishuDoc() {
           {{ item }}
         </Badge>
       </div>
-      <Button v-if="title !== '邮趣概率' && !isVisitor()" size="icon" variant="ghost" class="p-1 size-auto" @click="toggleFavorite">
+      <Button
+        v-if="title !== '邮趣概率' && !isVisitor()" size="icon" variant="ghost" class="p-1 size-auto"
+        @click="toggleFavorite"
+      >
         <Star
           class="size-5 transition-all" :style="{
             fill: isFavorite ? '#FFA500' : 'none',
@@ -356,11 +406,11 @@ function openFeishuDoc() {
       <Button @click="openFeishuDoc">
         用户手册
       </Button>
-      <div v-if="!isVisitor()" class="relative flex items-center justify-center ml-auto hover:scale-110">
+      <div v-if="!isVisitor()" class="relative flex items-center justify-center ml-auto">
         <Popover>
           <PopoverTrigger>
             <Button size="icon" class="size-8 relative text-muted-foreground" variant="ghost">
-              <Bell :stroke-width="2.5" class="size-5" />
+              <Bell :stroke-width="2" class="size-6" />
               <Badge
                 v-if="messageNumber !== 0"
                 class="absolute right-1.5 top-0 translate-x-1/2 rounded-full min-w-4 h-4 p-0 flex items-center justify-center"
@@ -469,7 +519,7 @@ function openFeishuDoc() {
             <div class="grid grid-cols-2 gap-4">
               <div class="grid gap-2">
                 <Label>学工号</Label>
-                <Input v-model="tempUser.studentId" disabled />
+                <Input v-model="tempUser.username" disabled />
               </div>
 
               <div class="grid gap-2">
@@ -602,7 +652,6 @@ function openFeishuDoc() {
           </div>
           <input ref="fileInput" type="file" class="hidden" accept="image/*" @change="handleFileUpload">
         </div>
-
         <DialogFooter class="md:gap-5">
           <Dialog v-model:open="isOpenPassword">
             <DialogTrigger>

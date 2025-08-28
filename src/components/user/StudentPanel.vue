@@ -162,7 +162,7 @@ onMounted(() => {
         </Avatar>
         <div class="flex flex-col">
           <span class="text-base font-semibold mb-3">昵称：{{ userStore.user?.nickname }}</span>
-          <span class="text-base font-semibold">学工号：{{ userStore.user?.studentId }}</span>
+          <span class="text-base font-semibold">学工号：{{ userStore.user?.username }}</span>
         </div>
       </div>
 

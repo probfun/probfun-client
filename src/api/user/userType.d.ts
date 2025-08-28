@@ -1,6 +1,6 @@
 export interface User {
   uid: string;
-  studentId: string;
+  username: string;
   classId: string;
   nickname: string;
   gender: string;
@@ -17,5 +17,5 @@ export interface UserPublic {
   uid: string;
   nickname: string;
   avatarUrl: string;
-  studentId: string;
+  username: string;
 }

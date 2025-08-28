@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { vAutoAnimate } from '@formkit/auto-animate';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { isValidApi, loginApi, registerApi } from '@/api/user/userApi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,16 +10,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useUserStore } from '@/store';
 import { setLocalToken } from '@/utils/auth';
 import { error, success, warning } from '@/utils/toast';
-import { vAutoAnimate } from '@formkit/auto-animate';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const userStore = useUserStore();
 
 const isValid = ref(false);
 const isLoading = ref(false);
-const studentId = ref('');
+const username = ref('');
 const nickname = ref('');
 const password = ref('');
 const gender = ref('0');
@@ -28,7 +28,7 @@ const school = ref('');
 async function checkValid() {
   try {
     isLoading.value = true;
-    const response = await isValidApi(studentId.value);
+    const response = await isValidApi(username.value);
     if (response.isValid === 0) {
       isValid.value = true;
     }
@@ -49,14 +49,14 @@ async function checkValid() {
 // 注册方法
 async function register() {
   // 校验所有字段是否填写
-  if (!studentId.value || !nickname.value || !password.value) {
+  if (!username.value || !nickname.value || !password.value) {
     warning('请填写所有必要信息');
     return;
   }
 
   try {
     await registerApi(
-      studentId.value,
+      username.value,
       password.value,
       nickname.value,
       Number.parseInt(gender.value),
@@ -65,7 +65,7 @@ async function register() {
       major.value,
       school.value,
     );
-    const data = await loginApi(studentId.value, password.value);
+    const data = await loginApi(username.value, password.value);
     const { token, user } = data;
     setLocalToken(token);
     userStore.user = user;
@@ -105,8 +105,8 @@ async function register() {
 
     <div v-auto-animate class="w-full my-4">
       <div class="grid gap-2">
-        <Label v-if="isValid" for="studentId"> 学工号 </Label>
-        <Input id="studentId" v-model="studentId" class="transition-all" placeholder="请输入学工号" :disabled="isValid" required />
+        <Label v-if="isValid" for="username"> 学工号 </Label>
+        <Input id="username" v-model="username" class="transition-all" placeholder="请输入学工号" :disabled="isValid" required />
       </div>
     </div>
 

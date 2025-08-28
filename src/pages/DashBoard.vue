@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router';
 import { fetchFavoriteExperimentsApi } from '@/api/experiment/experimentApi.ts';
 import { fetchUserApi } from '@/api/user/userApi';
 import NavBar from '@/components/NavBar.vue';
-import SideBar from '@/components/SideBar.vue';
+import SideBar from '@/components/sidebar/SideBar.vue';
 import { useUserStore } from '@/store';
 import { isVisitor } from '@/utils/auth.ts';
 
@@ -37,9 +37,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="w-screen h-screen flex">
-    <SideBar class="z-50" />
-    <div v-auto-animate class="w-screen h-screen flex flex-col relative transition-all overflow-y-hidden">
+  <div class="w-screen h-screen flex p-2 gap-2">
+    <SideBar />
+    <div v-auto-animate class="h-full flex-1 gap-2 flex flex-col relative transition-all overflow-y-hidden">
       <NavBar />
       <router-view class="flex-1 overflow-y-hidden" />
     </div>

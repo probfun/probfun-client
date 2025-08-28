@@ -13,6 +13,7 @@ const args = withDefaults(defineProps<{
   discussTabList?: Tab[];
   panelSize?: number;
   layout?: number;
+  showParameterPanel?: boolean;
 }>(), {
   discussTabList: () => [
     {
@@ -30,6 +31,7 @@ const args = withDefaults(defineProps<{
   ],
   panelSize: 40,
   layout: 0,
+  showParameterPanel: true,
 });
 
 const displayTabList = ref([{
@@ -70,7 +72,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full flex p-1 gap-1">
+  <div class="w-full flex gap-2">
     <ResizablePanelGroup
       id="demo-group-1"
       direction="horizontal"
@@ -79,15 +81,15 @@ onMounted(() => {
       <ResizablePanel id="demo-panel-2" :default-size="70" :min-size="20" :max-size="80">
         <ResizablePanelGroup id="demo-group-2" :direction="layout === 1 ? 'horizontal' : 'vertical'">
           <ResizablePanel id="demo-panel-3" :default-size="panelSize">
-            <div class="flex h-full items-center justify-center p-1">
+            <div class="flex h-full items-center justify-center">
               <Container class="h-full w-full" :tabs="displayTabList">
                 <slot name="experiment" />
               </Container>
             </div>
           </ResizablePanel>
-          <ResizableHandle id="demo-handle-2" class="bg-transparent" />
-          <ResizablePanel id="demo-panel-4">
-            <div class="flex h-full items-center justify-center p-1">
+          <ResizableHandle id="demo-handle-2" class="bg-transparent p-1" />
+          <ResizablePanel v-if="showParameterPanel" id="demo-panel-4">
+            <div class="flex h-full items-center justify-center">
               <Container class="h-full w-full" :tabs="parameterTabList">
                 <slot name="parameter" />
               </Container>
@@ -95,9 +97,9 @@ onMounted(() => {
           </ResizablePanel>
         </ResizablePanelGroup>
       </ResizablePanel>
-      <ResizableHandle id="demo-handle-1" class="bg-transparent" />
+      <ResizableHandle id="demo-handle-1" class="bg-transparent p-1" />
       <ResizablePanel id="demo-panel-1" :default-size="30">
-        <div class="flex h-full items-center justify-center p-1">
+        <div class="flex h-full items-center justify-center">
           <Container class="flex-1 h-full" :tabs="discussTabList">
             <template #default="{ activeTab }">
               <slot :name="activeTab.name" />
