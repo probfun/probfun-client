@@ -173,6 +173,11 @@ async function refreshQuestionList(x: string) {
 
 // 提交功能
 function handleSubmit() {
+  console.log('选项', selectedChoice.value);
+  if (!selectedChoice.value) {
+    toastError('请输入一个选项');
+    return;
+  }
   viewAnswer.value = !viewAnswer.value;
   if (viewAnswer.value && selectedChoice.value !== null && currentQuestion.value) {
     // 判断答案是否正确（找到正确选项的索引）
