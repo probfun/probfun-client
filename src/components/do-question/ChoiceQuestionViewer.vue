@@ -175,7 +175,7 @@ async function refreshQuestionList(x: string) {
 function handleSubmit() {
   console.log('选项', selectedChoice.value);
   if (!selectedChoice.value) {
-    toastError('请输入一个选项');
+    // toastError('请输入一个选项');
     return;
   }
   viewAnswer.value = !viewAnswer.value;
@@ -408,32 +408,41 @@ onMounted(async () => {
   }
 });
 
-watch(
-  () => props.currentSection,
-  async (newSection, oldSection) => {
-    if (newSection && newSection !== oldSection) {
-      await refreshQuestionList(props.currentSection);
-    }
-  },
-);
+// watch(
+//   () => props.currentSection,
+//   async (newSection, oldSection) => {
+//     if (newSection && newSection !== oldSection) {
+//       await refreshQuestionList(props.currentSection);
+//     }
+//   },
+// );
 
 watch(
-  () => props.questionId,
-  (newId) => {
-    if (newId) {
-      loadQuestion(newId);
-    }
-  },
-);
-
-watch(
-  () => route.params.section, // 例如 4.2
+  () => route.params.section,
   (newSection) => {
     if (newSection && typeof newSection === 'string') {
+      console.log('章节切换:', newSection);
       refreshQuestionList(newSection);
     }
   },
-  { immediate: true }, // 首次进入页面也触发
+  { immediate: true },
+);
+
+watch(
+  () => route.params.questionId,
+  (newQuestionId) => {
+    if (newQuestionId && currentSectionQuestions.value.length > 0) {
+      const questionId = typeof newQuestionId === 'string'
+        ? Number.parseInt(newQuestionId)
+        : Number(newQuestionId);
+
+      if (!Number.isNaN(questionId)) {
+        loadQuestion(questionId);
+        // 同步到父组件
+        emit('update:questionId', questionId);
+      }
+    }
+  },
 );
 
 // 在组件卸载时清理资源

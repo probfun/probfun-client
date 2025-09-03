@@ -63,7 +63,7 @@ function findTitleByRoute(routePath: string, items: DrawerItem[]): string {
 async function initChapterInfo(path: string) {
   // 保持原有实现...
   let title = '';
-  const pathMatch = path.match(/\/dashboard\/question\/([\d.]+)%20/);
+  const pathMatch = path.match(/\/dashboard\/question\/([\d.]+)/);
   currentSection.value = pathMatch ? pathMatch[1] : '';
 
   if (path.startsWith('/dashboard/question/')) {
