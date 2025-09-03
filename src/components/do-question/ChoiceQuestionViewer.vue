@@ -95,6 +95,7 @@ function loadQuestion(id: number) {
 
 // 刷新题目列表
 async function refreshQuestionList(x: string) {
+  console.log('refreshiing');
   loading.value = true;
   error.value = null;
 
@@ -175,7 +176,7 @@ async function refreshQuestionList(x: string) {
 function handleSubmit() {
   console.log('选项', selectedChoice.value);
   if (!selectedChoice.value) {
-    // toastError('请输入一个选项');
+    // toastError('请输入一个选项');?
     return;
   }
   viewAnswer.value = !viewAnswer.value;
@@ -407,6 +408,32 @@ onMounted(async () => {
     loadQuestion(currentSectionQuestions.value[0].id);
   }
 });
+watch(
+  () => props.currentSection,
+  async (newSection, oldSection) => {
+    console.log('111666shuaiwatch', newSection, oldSection);
+
+    if (newSection && newSection !== oldSection) {
+      await refreshQuestionList(newSection);
+      console.log(currentSectionQuestions.value, props.currentSection);
+
+      const questions = currentSectionQuestions.value;
+      console.log(questions);
+      if (questions && questions.length > 0) {
+        const firstId = questions[0].id;
+        if (!props.questionId && firstId !== props.questionId) {
+          loadQuestion(firstId);
+          emit('update:questionId', firstId);
+        }
+      }
+      else {
+        // 空题目时不清空 questionId，让父组件决定
+        currentQuestion.value = null;
+        // 不 emit update:questionId
+      }
+    }
+  },
+);
 
 // watch(
 //   () => props.currentSection,
@@ -414,35 +441,26 @@ onMounted(async () => {
 //     if (newSection && newSection !== oldSection) {
 //       await refreshQuestionList(props.currentSection);
 //     }
-//   },
+//   }
 // );
 
 watch(
-  () => route.params.section,
-  (newSection) => {
-    if (newSection && typeof newSection === 'string') {
-      console.log('章节切换:', newSection);
-      refreshQuestionList(newSection);
+  () => props.questionId,
+  (newId) => {
+    if (newId) {
+      loadQuestion(newId);
     }
   },
-  { immediate: true },
 );
 
 watch(
-  () => route.params.questionId,
-  (newQuestionId) => {
-    if (newQuestionId && currentSectionQuestions.value.length > 0) {
-      const questionId = typeof newQuestionId === 'string'
-        ? Number.parseInt(newQuestionId)
-        : Number(newQuestionId);
-
-      if (!Number.isNaN(questionId)) {
-        loadQuestion(questionId);
-        // 同步到父组件
-        emit('update:questionId', questionId);
-      }
+  () => route.params.section, // 例如 4.2
+  (newSection) => {
+    if (newSection && typeof newSection === 'string') {
+      refreshQuestionList(newSection);
     }
   },
+  { immediate: true }, // 首次进入页面也触发
 );
 
 // 在组件卸载时清理资源
