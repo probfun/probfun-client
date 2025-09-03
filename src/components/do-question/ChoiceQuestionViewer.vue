@@ -443,7 +443,7 @@ onUnmounted(() => {
 <template>
   <div class="w-full h-full flex">
     <!-- 题目展示区 -->
-    <div class="w-2/3 h-full p-6 overflow-auto bg-white border border-gray-200 rounded-l-lg">
+    <div :key="`${props.currentSection}-${props.questionId || 0}`" class="w-2/3 h-full p-6 overflow-auto bg-white border border-gray-200 rounded-l-lg">
       <div v-if="currentQuestion" class="space-y-6">
         <!-- 题目内容 -->
         <div class="p-4 border border-gray-200 rounded-md relative">
