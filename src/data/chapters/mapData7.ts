@@ -284,7 +284,7 @@ export const nodes = [{
     formula: '维纳过程',
   },
   class: 'nodrag',
-}]
+}];
 
 export const edges = [{
   id: 'e07~0701',
@@ -411,4 +411,4 @@ export const edges = [{
   source: '0705',
   target: '070506',
   type: 'step',
-}]
+}];

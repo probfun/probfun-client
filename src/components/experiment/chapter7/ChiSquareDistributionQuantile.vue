@@ -13,7 +13,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <ExperimentBoard :panel-size="90" :showParameterPanel="false">
+  <ExperimentBoard :panel-size="90" :show-parameter-panel="false">
     <template #experiment>
       <div class="html-experiment-container">
         <iframe

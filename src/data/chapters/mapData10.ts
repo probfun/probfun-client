@@ -306,7 +306,7 @@ export const nodes = [{
     formula: ' \n\\begin{cases}\n\\pi = \\pi P \\\\\n\\sum_i \\pi_i = 1\n\\end{cases}\n',
   },
   class: 'nodrag',
-}]
+}];
 
 export const edges = [{
   id: 'e10~1001',
@@ -443,4 +443,4 @@ export const edges = [{
   source: '1006',
   target: '100601',
   type: 'step',
-}]
+}];

@@ -1318,7 +1318,7 @@ export const nodes = [{
     formula: ' 那么 (U, V) 的联合概率密度函数\n f_{U,V}(u,v) = f_{X,Y}(x(u,v),y(u,v)) \\cdot \\left| J \\right|\n \n ',
   },
   class: 'nodrag',
-}]
+}];
 
 export const edges = [{
   id: 'e03~0301',
@@ -1915,4 +1915,4 @@ export const edges = [{
   source: '030707',
   target: '03070704',
   type: 'step',
-}]
+}];

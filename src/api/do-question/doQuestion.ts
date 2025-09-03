@@ -45,7 +45,7 @@ interface Detail {
       knowledge_point: {
         id: number;
         name: string;
-      }
+      };
     };
     difficulty: number;
     full_answer: string;
@@ -76,11 +76,11 @@ async function fetchQuestionDetailApi(questionId: number) {
   return result.data;
 }
 
-export type { Chapter, Question, Subject, Detail };
+export type { Chapter, Detail, Question, Subject };
 
 export {
   fetchChapterListApi,
+  fetchQuestionDetailApi,
   fetchQuestionListApi,
   fetchSubjectListApi,
-  fetchQuestionDetailApi
 };

@@ -1131,7 +1131,7 @@ export const nodes = [{
     formula: ' f_Y(y)=\n\\begin{cases}\nf_X(g^{-1}(y))\\cdot |\\frac{d}{dy}g^{-1}(y)| &, \\ \\text{if} \\;\\; y = g(x);\\\\\n0 &, \\ \\text{if} \\;\\; y \\neq g(x)\n\n\\end{cases}',
   },
   class: 'nodrag',
-}]
+}];
 
 export const edges = [{
   id: 'e02~0201',
@@ -1643,4 +1643,4 @@ export const edges = [{
   source: '020403',
   target: '02040301',
   type: 'step',
-}]
+}];

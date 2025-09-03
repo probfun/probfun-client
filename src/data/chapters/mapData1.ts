@@ -933,7 +933,7 @@ export const nodes = [{
     formula: ' 若 A_1 \\subset A_2 \\subset \\cdots,\\; 且 \\bigcup_{i=1}^{\\infty}A_i = A,\\; 则 \\lim_{n\\rightarrow\\infty }\\mathrm P(A_n) = \\mathrm P(A) ',
   },
   class: 'nodrag',
-}]
+}];
 
 export const edges = [{
   id: 'e01~0101',
@@ -1355,4 +1355,4 @@ export const edges = [{
   source: '01040506',
   target: '0104050602',
   type: 'step',
-}]
+}];

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
 import type { ProgressData } from '../../types/statistics';
+import { onMounted, ref, watch } from 'vue';
 
 const props = defineProps<{
   data: ProgressData[];
@@ -9,12 +9,14 @@ const props = defineProps<{
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 
 // 绘制折线图
-const drawCurveChart = () => {
-  if (!canvasRef.value || !props.data.length) return;
+function drawCurveChart() {
+  if (!canvasRef.value || !props.data.length)
+    return;
 
   const canvas = canvasRef.value;
   const ctx = canvas.getContext('2d');
-  if (!ctx) return;
+  if (!ctx)
+    return;
 
   // 设置画布尺寸
   canvas.width = canvas.offsetWidth;
@@ -102,7 +104,8 @@ const drawCurveChart = () => {
 
     if (i === 0) {
       ctx.moveTo(x, y);
-    } else {
+    }
+    else {
       ctx.lineTo(x, y);
     }
   });
@@ -125,7 +128,7 @@ const drawCurveChart = () => {
     ctx.fillStyle = 'rgba(66, 185, 131, 0.2)';
     ctx.fill();
   });
-};
+}
 
 onMounted(drawCurveChart);
 watch(() => props.data, drawCurveChart, { deep: true });
@@ -133,7 +136,7 @@ watch(() => props.data, drawCurveChart, { deep: true });
 
 <template>
   <div class="progress-curve-container">
-    <canvas ref="canvasRef" class="w-full h-full"></canvas>
+    <canvas ref="canvasRef" class="w-full h-full" />
   </div>
 </template>
 

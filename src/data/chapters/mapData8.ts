@@ -218,7 +218,7 @@ export const nodes = [{
     formula: '随机事件的到达伴随有随机取值的问题',
   },
   class: 'nodrag',
-}]
+}];
 
 export const edges = [{
   id: 'e08~0801',
@@ -315,4 +315,4 @@ export const edges = [{
   source: '0808',
   target: '080801',
   type: 'step',
-}]
+}];

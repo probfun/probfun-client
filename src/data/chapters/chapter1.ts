@@ -1,4 +1,4 @@
-import { Position } from '@vue-flow/core'
+import { Position } from '@vue-flow/core';
 
 export const nodes = [
   {
@@ -56,7 +56,7 @@ export const nodes = [
     sourcePosition: Position.Right,
     targetPosition: Position.Left,
   },
-]
+];
 
 export const edges = [
   {
@@ -89,4 +89,4 @@ export const edges = [
     target: '010104',
     type: 'step',
   },
-]
+];

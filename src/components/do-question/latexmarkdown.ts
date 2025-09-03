@@ -1,5 +1,5 @@
-import MarkdownIt from 'markdown-it';
 import katex from 'katex';
+import MarkdownIt from 'markdown-it';
 import 'katex/dist/katex.css';
 import 'katex/dist/katex.min.css';
 
@@ -7,7 +7,7 @@ import 'katex/dist/katex.min.css';
 const md = new MarkdownIt({
   html: true,
   linkify: true,
-  typographer: true
+  typographer: true,
 });
 
 // 自定义规则处理 LaTeX 公式
@@ -81,9 +81,10 @@ md.renderer.rules.latex_inline = (tokens, idx) => {
   try {
     return katex.renderToString(tokens[idx].content, {
       throwOnError: false,
-      displayMode: false
+      displayMode: false,
     });
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Error rendering inline LaTeX:', error);
     return `<span style="color: red;">${tokens[idx].content}</span>`;
   }
@@ -93,17 +94,19 @@ md.renderer.rules.latex_block = (tokens, idx) => {
   try {
     return katex.renderToString(tokens[idx].content, {
       throwOnError: false,
-      displayMode: true
+      displayMode: true,
     });
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Error rendering block LaTeX:', error);
     return `<div style="color: red;">${tokens[idx].content}</div>`;
   }
 };
 
 // 添加渲染函数
-const renderMarkdown = (text: string) => {
-  if (!text) return '';
+function renderMarkdown(text: string) {
+  if (!text)
+    return '';
 
   // 如果包含块级公式，使用 render
   if (/\$\$[\s\S]+?\$\$/.test(text)) {
@@ -112,6 +115,6 @@ const renderMarkdown = (text: string) => {
 
   // 其它情况用 renderInline，避免最开始出现换行
   return md.renderInline(text);
-};
+}
 
 export { renderMarkdown };
