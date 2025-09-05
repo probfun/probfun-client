@@ -175,8 +175,8 @@ async function refreshQuestionList(x: string) {
 // 提交功能
 function handleSubmit() {
   console.log('选项', selectedChoice.value);
-  if (!selectedChoice.value) {
-    // toastError('请输入一个选项');?
+  if (selectedChoice.value === null) {
+    toastError('请输入一个选项');
     return;
   }
   viewAnswer.value = !viewAnswer.value;
