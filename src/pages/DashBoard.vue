@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { vAutoAnimate } from '@formkit/auto-animate';
-import { onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { fetchFavoriteExperimentsApi } from '@/api/experiment/experimentApi.ts';
 import { fetchUserApi } from '@/api/user/userApi';
 import NavBar from '@/components/NavBar.vue';
@@ -10,6 +10,8 @@ import { useUserStore } from '@/store';
 import { isVisitor } from '@/utils/auth.ts';
 
 const router = useRouter();
+const route = useRoute();
+const hideSideBar = computed(() => route.path.startsWith('/subjects'));
 const userStore = useUserStore();
 
 onMounted(async () => {
@@ -38,7 +40,7 @@ onMounted(async () => {
 
 <template>
   <div class="w-screen h-screen flex p-2 gap-2">
-    <SideBar />
+    <SideBar v-if="!hideSideBar" />
     <div v-auto-animate class="h-full flex-1 gap-2 flex flex-col relative transition-all overflow-y-hidden">
       <NavBar />
       <router-view class="flex-1 overflow-y-hidden" />

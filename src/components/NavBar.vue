@@ -147,12 +147,29 @@ watch(isOpen, () => {
   }
 });
 
+const subjectNameMap: Record<string, string> = {
+  calculusA: '高等数学上',
+  calculusB: '高等数学下',
+  linearAlgebra: '线性代数',
+  numberTheory: '数论',
+  bayes: '统计决策与贝叶斯分析',
+  probability: '邮趣概率',
+};
+
 const title = ref<string>('');
 const tags = ref<string[]>([]);
 
 const route = useRoute();
 
 function updateExperiment() {
+  // 科目优先级：/subject/:subject/* -> 显示科目名；否则按原逻辑
+  if (route.path.startsWith('/subject/')) {
+    const seg = route.path.split('/')[2];
+    title.value = subjectNameMap[seg] || '学科主页';
+    tags.value = [];
+    return;
+  }
+  // 原有 updateExperiment 逻辑
   const path = route.path.split('/').pop();
   if (path === 'buffon') {
     title.value = '蒲丰投针';
@@ -286,10 +303,6 @@ function updateExperiment() {
     title.value = '卡方分布上分位点';
     tags.value = ['卡方分布'];
   }
-  // else if (path === '') {
-  // title.value ='';
-  // tags.value =[''];
-  // }
   else {
     title.value = '邮趣概率';
     tags.value = [];
