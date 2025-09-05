@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拉格朗日中值定理演示</title>
+    <!-- 引入外部资源 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+
+    <!-- 配置Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#10b981',
+                        accent: '#8b5cf6',
+                        neutral: '#1f2937',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        math: ['STIX Two Math', 'serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50 text-neutral">
+    <!-- 页面头部 -->
+    <div class="container mx-auto px-4 py-6">
+        <h2 class="text-2xl font-bold text-[#3b82f6] border-b-2 border-[#3b82f6] pb-2 text-center">
+            拉格朗日中值定理可视化实验
+        </h2>
+    </div>
+
+    <!-- 主要内容区 -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full items-stretch">
+            <!-- 左侧控制面板 -->
+            <div class="lg:col-span-1 bg-white rounded-xl shadow-md p-6">
+                <h2 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fa fa-sliders mr-2 text-primary"></i>参数控制
+                </h2>
+
+                <!-- 函数选择 -->
+                <div class="mb-6">
+                    <label class="block text-gray-700 mb-2 font-medium">选择函数</label>
+                    <select id="functionSelect"
+                        class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all-300">
+                        <option value="quadratic">二次函数: f(x) = x² - 3x</option>
+                        <option value="cubic">三次函数: f(x) = x³/10 - x</option>
+                        <option value="sinusoidal">正弦函数: f(x) = sin(x)</option>
+                        <option value="exponential">指数函数: f(x) = e^(-x²)</option>
+                        <option value="custom">自定义函数</option>
+                    </select>
+
+                    <div id="customFunctionContainer" class="mt-3 hidden">
+                        <label class="block text-gray-700 mb-2 font-medium">自定义函数 (使用x作为变量)</label>
+                        <input type="text" id="customFunction" value="x^3 - 2*x + 5"
+                            class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <p class="text-sm text-gray-500 mt-1">支持的运算: +, -, *, /, ^(幂), sin(), cos(), tan(), exp(), ln()
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 区间控制 -->
+                <div class="mb-6">
+                    <label class="block text-gray-700 mb-2 font-medium">区间 [a, b]</label>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="aValue" class="block text-sm text-gray-600 mb-1">a 值</label>
+                            <input type="number" id="aValue" step="0.1" value="-2"
+                                class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                        <div>
+                            <label for="bValue" class="block text-sm text-gray-600 mb-1">b 值</label>
+                            <input type="number" id="bValue" step="0.1" value="3"
+                                class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                    </div>
+
+                    <!-- 视图范围控制 -->
+                    <div class="mt-6">
+                        <label class="block text-sm text-gray-600 mb-1">视图范围调整</label>
+                        <input type="range" id="viewRange" min="2" max="30" value="15"
+                            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary">
+                        <p class="text-xs text-gray-500 mt-1">调整可见区域大小，不改变函数形状</p>
+                    </div>
+                </div>
+
+                <!-- 显示选项 -->
+                <div class="mb-6">
+                    <label class="block text-gray-700 mb-2 font-medium">显示选项</label>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="checkbox" id="showSecant" checked
+                                class="w-4 h-4 text-primary focus:ring-primary border-gray-300 rounded">
+                            <span class="ml-2 text-gray-700">显示割线</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="showTangent" checked
+                                class="w-4 h-4 text-primary focus:ring-primary border-gray-300 rounded">
+                            <span class="ml-2 text-gray-700">显示切线</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="showPoints" checked
+                                class="w-4 h-4 text-primary focus:ring-primary border-gray-300 rounded">
+                            <span class="ml-2 text-gray-700">显示点 (a,f(a)), (b,f(b)), (ξ,f(ξ))</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="showDerivative" checked
+                                class="w-4 h-4 text-primary focus:ring-primary border-gray-300 rounded">
+                            <span class="ml-2 text-gray-700">显示导数信息</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 按钮控制 -->
+                <div class="flex space-x-3">
+                    <button id="resetButton"
+                        class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-lg transition-all-300 flex items-center justify-center">
+                        <i class="fa fa-refresh mr-1"></i> 重置
+                    </button>
+                    <button id="randomButton"
+                        class="flex-1 bg-accent hover:bg-accent/90 text-white py-2 px-4 rounded-lg transition-all-300 flex items-center justify-center">
+                        <i class="fa fa-random mr-1"></i> 随机区间
+                    </button>
+                </div>
+            </div>
+
+            <!-- 右侧图像和说明 -->
+            <div class="lg:col-span-2 flex flex-col gap-6">
+                <!-- 图像显示区域 -->
+                <div class="bg-white rounded-xl shadow-md p-4 lg:p-6 flex-grow">
+                    <div class="relative" style="min-height: 400px;">
+                        <canvas id="functionChart" class="w-full h-full"></canvas>
+                    </div>
+
+                    <!-- 计算结果显示 -->
+                    <div id="resultInfo" class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                        <h3 class="font-semibold text-primary mb-2">计算结果</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                            <div>
+                                <p><span class="font-medium">f(a) = </span><span id="faValue"
+                                        class="math-expression"></span></p>
+                                <p><span class="font-medium">f(b) = </span><span id="fbValue"
+                                        class="math-expression"></span></p>
+                                <p><span class="font-medium">割线斜率 = </span><span id="secantSlope"
+                                        class="math-expression"></span></p>
+                            </div>
+                            <div>
+                                <p><span class="font-medium">ξ = </span><span id="xiValue"
+                                        class="math-expression"></span></p>
+                                <p><span class="font-medium">f(ξ) = </span><span id="fXiValue"
+                                        class="math-expression"></span></p>
+                                <p><span class="font-medium">f'(ξ) = </span><span id="derivativeValue"
+                                        class="math-expression"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 全局变量
+        let functionChart;
+        let a = -2;
+        let b = 3;
+        let currentFunction = 'quadratic';
+        let customFunctionStr = 'x^3 - 2*x + 5';
+        let viewRange = 15; // 函数图像的显示范围
+        let functionData = null; // 存储函数数据，避免重复计算
+        let draggingPoint = null; // 记录当前正在拖动的点：'a' 或 'b'
+        let isDragging = false; // 是否正在拖动
+        let originalViewRange = null; // 初始视图范围，用于保持函数形状
+
+        // 初始化图表 - 只在页面加载或函数改变时调用
+        function initChart() {
+            const ctx = document.getElementById('functionChart').getContext('2d');
+
+            // 销毁已存在的图表
+            if (functionChart) {
+                functionChart.destroy();
+            }
+
+            // 计算函数数据 - 只在初始化或函数改变时计算一次
+            functionData = calculateFunctionData();
+            const { xValues, yValues, xMin, xMax, yMin, yMax } = functionData;
+
+            // 保存初始视图范围，用于后续保持函数形状
+            originalViewRange = { xMin, xMax, yMin, yMax };
+
+            // 创建图表
+            functionChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        // 函数曲线 - 固定不变的部分
+                        {
+                            type: 'line',
+                            label: '函数 f(x)',
+                            data: xValues.map((x, i) => ({ x, y: yValues[i] })),
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.1,
+                            pointRadius: 0,
+                            order: 0
+                        },
+                        // 割线 - 会随区间变化的部分
+                        {
+                            type: 'line',
+                            label: '割线',
+                            data: [
+                                { x: a, y: calculateFunction(a) },
+                                { x: b, y: calculateFunction(b) }
+                            ],
+                            borderColor: '#ef4444',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            order: 1
+                        },
+                        // 切线 - 会随区间变化的部分
+                        {
+                            type: 'line',
+                            label: '切线',
+                            data: calculateTangentPoints(),
+                            borderColor: '#10b981',
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            order: 2
+                        },
+                        // 点 a (可拖动)
+                        {
+                            label: '点 a',
+                            data: [{ x: a, y: calculateFunction(a) }],
+                            backgroundColor: '#ef4444',
+                            pointRadius: 6,
+                            pointHoverRadius: 8,
+                            order: 3
+                        },
+                        // 点 b (可拖动)
+                        {
+                            label: '点 b',
+                            data: [{ x: b, y: calculateFunction(b) }],
+                            backgroundColor: '#ef4444',
+                            pointRadius: 6,
+                            pointHoverRadius: 8,
+                            order: 4
+                        },
+                        // 点 ξ
+                        {
+                            label: '点 ξ',
+                            data: findXiPoint().map(xi => ({ x: xi, y: calculateFunction(xi) })),
+                            backgroundColor: '#10b981',
+                            pointRadius: 5,
+                            order: 5
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 300
+                    },
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'center',
+                            title: {
+                                display: true,
+                                text: 'x'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            min: xMin,
+                            max: xMax,
+                            ticks: {
+                                stepSize: Math.max(1, Math.round((xMax - xMin) / 10))
+                            }
+                        },
+                        y: {
+                            type: 'linear',
+                            position: 'center',
+                            title: {
+                                display: true,
+                                text: 'f(x)'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            min: yMin,
+                            max: yMax,
+                            ticks: {
+                                stepSize: Math.max(0.5, Math.round((yMax - yMin) / 10))
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    const label = context.dataset.label || '';
+                                    const x = context.parsed.x.toFixed(2);
+                                    const y = context.parsed.y.toFixed(2);
+                                    return `${label}: (${x}, ${y})`;
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        intersect: false
+                    }
+                }
+            });
+
+            // 添加鼠标事件监听以实现拖拽功能
+            setupDragEvents();
+
+            // 更新结果信息
+            updateResultInfo();
+        }
+
+        // 设置拖拽事件监听
+        function setupDragEvents() {
+            const canvas = document.getElementById('functionChart');
+
+            // 鼠标按下事件
+            canvas.addEventListener('mousedown', startDrag);
+            // 鼠标移动事件
+            document.addEventListener('mousemove', drag);
+            // 鼠标释放事件
+            document.addEventListener('mouseup', endDrag);
+            // 触摸设备支持
+            canvas.addEventListener('touchstart', startDragTouch);
+            canvas.addEventListener('touchmove', dragTouch);
+            canvas.addEventListener('touchend', endDrag);
+
+            // 处理鼠标按下，开始拖拽
+            function startDrag(event) {
+                if (!functionChart) return;
+
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = event.clientX - rect.left;
+                const mouseY = event.clientY - rect.top;
+
+                // 将鼠标位置转换为图表数据坐标
+                const point = {
+                    x: mouseX,
+                    y: mouseY
+                };
+
+                // 检查是否点击了点a或点b
+                const aPoint = functionChart.data.datasets[3].data[0];
+                const bPoint = functionChart.data.datasets[4].data[0];
+
+                const aDistance = getDistanceFromPoint(point, aPoint);
+                const bDistance = getDistanceFromPoint(point, bPoint);
+
+                // 如果距离足够近，开始拖拽
+                const threshold = 10; // 像素
+                if (aDistance < threshold) {
+                    isDragging = true;
+                    draggingPoint = 'a';
+                    canvas.style.cursor = 'grabbing';
+                } else if (bDistance < threshold) {
+                    isDragging = true;
+                    draggingPoint = 'b';
+                    canvas.style.cursor = 'grabbing';
+                }
+            }
+
+            // 处理触摸开始
+            function startDragTouch(event) {
+                if (!functionChart || event.touches.length !== 1) return;
+
+                event.preventDefault();
+                const rect = canvas.getBoundingClientRect();
+                const touchX = event.touches[0].clientX - rect.left;
+                const touchY = event.touches[0].clientY - rect.top;
+
+                const point = {
+                    x: touchX,
+                    y: touchY
+                };
+
+                // 检查是否点击了点a或点b
+                const aPoint = functionChart.data.datasets[3].data[0];
+                const bPoint = functionChart.data.datasets[4].data[0];
+
+                const aDistance = getDistanceFromPoint(point, aPoint);
+                const bDistance = getDistanceFromPoint(point, bPoint);
+
+                const threshold = 15; // 触摸设备阈值稍大
+                if (aDistance < threshold) {
+                    isDragging = true;
+                    draggingPoint = 'a';
+                } else if (bDistance < threshold) {
+                    isDragging = true;
+                    draggingPoint = 'b';
+                }
+            }
+
+            // 处理鼠标移动，执行拖拽
+            function drag(event) {
+                if (!isDragging || !draggingPoint || !functionChart) return;
+
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = event.clientX - rect.left;
+
+                // 将鼠标X位置转换为图表X数据坐标
+                const xAxis = functionChart.scales.x;
+                const newX = xAxis.getValueForPixel(mouseX);
+
+                // 限制不能拖动到超出视图范围
+                const minX = xAxis.min;
+                const maxX = xAxis.max;
+                const constrainedX = Math.max(minX, Math.min(maxX, newX));
+
+                // 更新a或b的值，确保a < b
+                if (draggingPoint === 'a') {
+                    a = Math.min(constrainedX, b - 0.5); // 确保a至少比b小0.5
+                    document.getElementById('aValue').value = a.toFixed(1);
+                } else if (draggingPoint === 'b') {
+                    b = Math.max(constrainedX, a + 0.5); // 确保b至少比a大0.5
+                    document.getElementById('bValue').value = b.toFixed(1);
+                }
+
+                // 更新图表元素，但保持函数图形不变
+                updateIntervalElements(false);
+            }
+
+            // 处理触摸移动
+            function dragTouch(event) {
+                if (!isDragging || !draggingPoint || !functionChart || event.touches.length !== 1) return;
+
+                event.preventDefault();
+                const rect = canvas.getBoundingClientRect();
+                const touchX = event.touches[0].clientX - rect.left;
+
+                // 将触摸X位置转换为图表X数据坐标
+                const xAxis = functionChart.scales.x;
+                const newX = xAxis.getValueForPixel(touchX);
+
+                // 限制不能拖动到超出视图范围
+                const minX = xAxis.min;
+                const maxX = xAxis.max;
+                const constrainedX = Math.max(minX, Math.min(maxX, newX));
+
+                // 更新a或b的值，确保a < b
+                if (draggingPoint === 'a') {
+                    a = Math.min(constrainedX, b - 0.5);
+                    document.getElementById('aValue').value = a.toFixed(1);
+                } else if (draggingPoint === 'b') {
+                    b = Math.max(constrainedX, a + 0.5);
+                    document.getElementById('bValue').value = b.toFixed(1);
+                }
+
+                // 更新图表元素，但保持函数图形不变
+                updateIntervalElements(false);
+            }
+
+            // 处理鼠标释放，结束拖拽
+            function endDrag() {
+                if (isDragging) {
+                    isDragging = false;
+                    draggingPoint = null;
+                    canvas.style.cursor = 'default';
+                }
+            }
+
+            // 计算鼠标位置到数据点的距离（像素）
+            function getDistanceFromPoint(mousePoint, dataPoint) {
+                const xAxis = functionChart.scales.x;
+                const yAxis = functionChart.scales.y;
+
+                // 将数据点转换为像素坐标
+                const dataPointPixelX = xAxis.getPixelForValue(dataPoint.x);
+                const dataPointPixelY = yAxis.getPixelForValue(dataPoint.y);
+
+                // 计算欧氏距离
+                return Math.sqrt(
+                    Math.pow(mousePoint.x - dataPointPixelX, 2) +
+                    Math.pow(mousePoint.y - dataPointPixelY, 2)
+                );
+            }
+        }
+
+        // 计算函数数据 - 只在函数改变时重新计算
+        function calculateFunctionData() {
+            // 计算初始视图范围，以初始a和b为中心
+            const centerX = (a + b) / 2;
+            const xMin = centerX - viewRange / 2;
+            const xMax = centerX + viewRange / 2;
+
+            // 生成足够密集的点以确保曲线平滑
+            const xValues = Array.from({ length: 600 }, (_, i) => xMin + (xMax - xMin) * i / 599);
+            const yValues = xValues.map(x => calculateFunction(x));
+
+            // 计算y轴范围，确保完整显示函数
+            const yMin = Math.min(...yValues) - 0.5;
+            const yMax = Math.max(...yValues) + 0.5;
+
+            return { xValues, yValues, xMin, xMax, yMin, yMax };
+        }
+
+        // 仅更新区间相关元素 - 区间变化时调用
+        // 参数: resetView - 是否重置视图范围（仅在函数改变时为true）
+        function updateIntervalElements(resetView = false) {
+            if (!functionChart) return;
+
+            // 计算新的点值
+            const fa = calculateFunction(a);
+            const fb = calculateFunction(b);
+
+            // 更新割线数据
+            functionChart.data.datasets[1].data = [
+                { x: a, y: fa },
+                { x: b, y: fb }
+            ];
+
+            // 更新切线数据
+            functionChart.data.datasets[2].data = calculateTangentPoints();
+
+            // 更新点a
+            functionChart.data.datasets[3].data = [{ x: a, y: fa }];
+
+            // 更新点b
+            functionChart.data.datasets[4].data = [{ x: b, y: fb }];
+
+            // 更新点ξ
+            functionChart.data.datasets[5].data = findXiPoint().map(xi => ({ x: xi, y: calculateFunction(xi) }));
+
+            // 仅在重置视图时才改变视图范围，否则保持原范围不变
+            if (resetView && originalViewRange) {
+                functionChart.options.scales.x.min = originalViewRange.xMin;
+                functionChart.options.scales.x.max = originalViewRange.xMax;
+                functionChart.options.scales.y.min = originalViewRange.yMin;
+                functionChart.options.scales.y.max = originalViewRange.yMax;
+            }
+
+            // 只更新图表，不重绘整个图表
+            functionChart.update('none');
+
+            // 更新结果信息
+            updateResultInfo();
+        }
+
+        // 计算函数值
+        function calculateFunction(x) {
+            switch (currentFunction) {
+                case 'quadratic':
+                    return x * x - 3 * x;
+                case 'cubic':
+                    return (x * x * x) / 10 - x;
+                case 'sinusoidal':
+                    return Math.sin(x);
+                case 'exponential':
+                    return Math.exp(-x * x);
+                case 'custom':
+                    return evaluateCustomFunction(x);
+                default:
+                    return x * x - 3 * x;
+            }
+        }
+
+        // 计算导数（使用数值方法）
+        function calculateDerivative(x, h = 0.0001) {
+            return (calculateFunction(x + h) - calculateFunction(x - h)) / (2 * h);
+        }
+
+        // 解析并计算自定义函数
+        function evaluateCustomFunction(x) {
+            try {
+                // 替换^为**用于幂运算
+                let expr = customFunctionStr.replace(/\^/g, '**');
+                // 确保函数中的x是小写
+                expr = expr.replace(/X/g, 'x');
+
+                // 使用安全的计算环境
+                const mathEnv = {
+                    x: x,
+                    Math: {
+                        sin: Math.sin,
+                        cos: Math.cos,
+                        tan: Math.tan,
+                        exp: Math.exp,
+                        ln: Math.log,
+                        log: Math.log,
+                        sqrt: Math.sqrt,
+                        PI: Math.PI,
+                        E: Math.E
+                    }
+                };
+
+                const func = new Function('x', 'Math', `return ${expr};`);
+                return func(x, mathEnv.Math);
+            } catch (error) {
+                console.error('函数解析错误:', error);
+                return 0;
+            }
+        }
+
+        // 找到满足拉格朗日中值定理的ξ点
+        function findXiPoint() {
+            const fa = calculateFunction(a);
+            const fb = calculateFunction(b);
+            const slope = (fb - fa) / (b - a);
+
+            // 使用二分法查找ξ点
+            const epsilon = 0.001;
+            const maxIterations = 100;
+            const xiPoints = [];
+
+            // 在区间(a, b)内细分查找多个可能的ξ点
+            const segments = 10;
+            const step = (b - a) / segments;
+
+            for (let i = 0; i < segments; i++) {
+                let x1 = a + i * step;
+                let x2 = x1 + step;
+
+                let f1 = calculateDerivative(x1) - slope;
+                let f2 = calculateDerivative(x2) - slope;
+
+                // 如果在这个子区间内有根
+                if (f1 * f2 <= 0) {
+                    let iteration = 0;
+                    let xi = (x1 + x2) / 2;
+
+                    while (Math.abs(x2 - x1) > epsilon && iteration < maxIterations) {
+                        xi = (x1 + x2) / 2;
+                        const fXi = calculateDerivative(xi) - slope;
+
+                        if (f1 * fXi <= 0) {
+                            x2 = xi;
+                            f2 = fXi;
+                        } else {
+                            x1 = xi;
+                            f1 = fXi;
+                        }
+
+                        iteration++;
+                    }
+
+                    // 确保ξ不在区间端点
+                    if (xi > a + epsilon && xi < b - epsilon) {
+                        // 避免重复点
+                        if (!xiPoints.some(p => Math.abs(p - xi) < epsilon)) {
+                            xiPoints.push(xi);
+                        }
+                    }
+                }
+            }
+
+            // 如果没有找到，返回区间中点作为近似
+            if (xiPoints.length === 0) {
+                xiPoints.push((a + b) / 2);
+            }
+
+            return xiPoints;
+        }
+
+        // 计算切线上的点
+        function calculateTangentPoints() {
+            const xiPoints = findXiPoint();
+            if (xiPoints.length === 0) return [];
+
+            // 只取第一个ξ点绘制切线
+            const xi = xiPoints[0];
+            const fXi = calculateFunction(xi);
+            const fa = calculateFunction(a);
+            const fb = calculateFunction(b);
+            const slope = (fb - fa) / (b - a);
+
+            // 计算切线方程上的两个点用于绘图
+            const x1 = Math.max(originalViewRange.xMin, xi - 2);
+            const y1 = fXi + slope * (x1 - xi);
+            const x2 = Math.min(originalViewRange.xMax, xi + 2);
+            const y2 = fXi + slope * (x2 - xi);
+
+            return [{ x: x1, y: y1 }, { x: x2, y: y2 }];
+        }
+
+        // 更新结果信息显示
+        function updateResultInfo() {
+            const fa = calculateFunction(a);
+            const fb = calculateFunction(b);
+            const slope = (fb - fa) / (b - a);
+            const xiPoints = findXiPoint();
+            const xi = xiPoints[0] || (a + b) / 2;
+            const fXi = calculateFunction(xi);
+            const derivative = calculateDerivative(xi);
+
+            document.getElementById('faValue').textContent = fa.toFixed(4);
+            document.getElementById('fbValue').textContent = fb.toFixed(4);
+            document.getElementById('secantSlope').textContent = slope.toFixed(4);
+            document.getElementById('xiValue').textContent = xi.toFixed(4);
+            document.getElementById('fXiValue').textContent = fXi.toFixed(4);
+            document.getElementById('derivativeValue').textContent = derivative.toFixed(4);
+
+            // 根据显示选项更新图表
+            updateChartDisplayOptions();
+        }
+
+        // 更新图表显示选项
+        function updateChartDisplayOptions() {
+            const showSecant = document.getElementById('showSecant').checked;
+            const showTangent = document.getElementById('showTangent').checked;
+            const showPoints = document.getElementById('showPoints').checked;
+
+            if (functionChart) {
+                // 割线
+                functionChart.data.datasets[1].hidden = !showSecant;
+                // 切线
+                functionChart.data.datasets[2].hidden = !showTangent;
+                // 点 a
+                functionChart.data.datasets[3].hidden = !showPoints;
+                // 点 b
+                functionChart.data.datasets[4].hidden = !showPoints;
+                // 点 ξ
+                functionChart.data.datasets[5].hidden = !showPoints;
+
+                functionChart.update('none');
+            }
+
+            // 显示/隐藏导数信息
+            document.getElementById('resultInfo').style.display =
+                document.getElementById('showDerivative').checked ? 'block' : 'none';
+        }
+
+        // 事件监听器设置
+        function setupEventListeners() {
+            // 函数选择变化 - 需要重新绘制函数
+            document.getElementById('functionSelect').addEventListener('change', function () {
+                currentFunction = this.value;
+                document.getElementById('customFunctionContainer').classList.toggle('hidden', currentFunction !== 'custom');
+                initChart(); // 函数改变时才重新初始化图表
+            });
+
+            // 自定义函数变化 - 需要重新绘制函数
+            document.getElementById('customFunction').addEventListener('input', function () {
+                customFunctionStr = this.value;
+                if (currentFunction === 'custom') {
+                    initChart(); // 函数改变时才重新初始化图表
+                }
+            });
+
+            // a值变化 - 只更新区间相关元素
+            document.getElementById('aValue').addEventListener('input', function () {
+                const newA = parseFloat(this.value);
+                if (!isNaN(newA) && newA < b - 0.4) {
+                    a = newA;
+                    updateIntervalElements(false); // 不重置视图，保持函数形状
+                }
+            });
+
+            // b值变化 - 只更新区间相关元素
+            document.getElementById('bValue').addEventListener('input', function () {
+                const newB = parseFloat(this.value);
+                if (!isNaN(newB) && newB > a + 0.4) {
+                    b = newB;
+                    updateIntervalElements(false); // 不重置视图，保持函数形状
+                }
+            });
+
+            // 视图范围调整 - 调整可见区域但保持函数形状比例
+            document.getElementById('viewRange').addEventListener('input', function () {
+                viewRange = parseFloat(this.value);
+                initChart(); // 重新初始化以保持正确比例
+            });
+
+            // 显示选项变化
+            document.getElementById('showSecant').addEventListener('change', updateChartDisplayOptions);
+            document.getElementById('showTangent').addEventListener('change', updateChartDisplayOptions);
+            document.getElementById('showPoints').addEventListener('change', updateChartDisplayOptions);
+            document.getElementById('showDerivative').addEventListener('change', updateChartDisplayOptions);
+
+            // 重置按钮
+            document.getElementById('resetButton').addEventListener('click', function () {
+                a = -2;
+                b = 3;
+                viewRange = 15;
+                currentFunction = 'quadratic';
+                document.getElementById('aValue').value = a;
+                document.getElementById('bValue').value = b;
+                document.getElementById('viewRange').value = viewRange;
+                document.getElementById('functionSelect').value = currentFunction;
+                document.getElementById('customFunctionContainer').classList.add('hidden');
+                document.getElementById('showSecant').checked = true;
+                document.getElementById('showTangent').checked = true;
+                document.getElementById('showPoints').checked = true;
+                document.getElementById('showDerivative').checked = true;
+                initChart(); // 重置时重新初始化
+            });
+
+            // 随机按钮（只随机区间）
+            document.getElementById('randomButton').addEventListener('click', function () {
+                // 保持当前函数不变，只随机区间
+                const currentCenter = (a + b) / 2;
+                const range = b - a;
+
+                // 随机生成新的区间，保持类似的范围大小
+                const newCenter = currentCenter + (Math.random() * range) - range / 2;
+                const newRange = range * (0.8 + Math.random() * 0.4);
+
+                a = newCenter - newRange / 2;
+                b = newCenter + newRange / 2;
+
+                document.getElementById('aValue').value = a.toFixed(1);
+                document.getElementById('bValue').value = b.toFixed(1);
+
+                updateIntervalElements(false); // 不重置视图，保持函数形状
+            });
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('load', function () {
+            setupEventListeners();
+            initChart(); // 初始加载时创建图表
+        });
+    </script>
+</body>
+
+</html>
