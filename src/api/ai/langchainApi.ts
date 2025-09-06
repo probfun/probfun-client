@@ -17,17 +17,11 @@ export interface LangchainChatResponse {
 /* ---------- 工具函数 ---------- */
 function getAuthToken(): string {
   const token = localStorage.getItem('token') || '';
+  console.log(token);
   return `Bearer ${token}`;
 }
 
-function generateUUID(): string {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0;
-    const v = c === 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-}
-
+/* ---------- 公共流式调用 ---------- */
 /* ---------- 公共流式调用 ---------- */
 async function streamChat(
   message: string,
@@ -36,18 +30,27 @@ async function streamChat(
   onChunk?: (chunk: string) => void,
 ): Promise<LangchainChatResponse> {
   let fullMessage = '';
-  let cid = '';
+  let cid = conversationId || '';
+
+  // ===== 打印即将发出的请求 =====
+  const headers = {
+    'Content-Type': 'application/json',
+    'Accept': 'text/event-stream',
+    'Authorization': getAuthToken(),
+  };
+  const body = JSON.stringify({
+    messages: cid
+      ? [{ id: cid, content: message }]
+      : [{ content: message }],
+  });
+  console.log('【Request Headers】', headers);
+  console.log('【Request Body】', body);
+  // ==============================
 
   await fetchEventSource('/langchain/chat/', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': getAuthToken(),
-    },
-    body: JSON.stringify({
-      messages: [{ id: generateUUID(), content: message }],
-      ...(conversationId && { conversationId }),
-    }),
+    headers,
+    body,
     signal: abortCtrl?.signal,
     async onopen(res) {
       if (!res.ok)
@@ -55,12 +58,13 @@ async function streamChat(
     },
     onmessage(ev) {
       const data = JSON.parse(ev.data);
-      if (data.message) {
-        fullMessage += data.message;
-        onChunk?.(data.message);
+      if (data.type === 'conversation_info') {
+        cid = data.content;
       }
-      if (data.conversation_id)
-        cid = data.conversation_id;
+      if (data.type === 'text' && typeof data.content === 'string') {
+        fullMessage += data.content;
+        onChunk?.(data.content);
+      }
     },
   });
 
@@ -86,7 +90,7 @@ async function streamChat(
 // }
 
 export async function langchainChatApi(
-  message: string,
+  messages: string,
   conversationId?: string,
   onMessage?: (chunk: string) => void,
   onComplete?: (full: string, cid: string) => void,
@@ -95,8 +99,8 @@ export async function langchainChatApi(
 ): Promise<void> {
   try {
     let full = '';
-    await streamChat(
-      message,
+    const { conversation_id: cid } = await streamChat(
+      messages,
       conversationId,
       abortController,
       (chunk) => {
@@ -104,7 +108,7 @@ export async function langchainChatApi(
         onMessage?.(chunk);
       },
     );
-    onComplete?.(full, '');
+    onComplete?.(full, cid);
   }
   catch (err: any) {
     const msg = err.message || '网络错误';

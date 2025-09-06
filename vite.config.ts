@@ -30,7 +30,7 @@ export default defineConfig({
         target: 'https://fun.prob-mind.online',
         changeOrigin: true,
         secure: false,
-        rewrite: path => path.replace(/^\/langchain\/chat/, '/backend-api/langchain/chat'),
+        rewrite: path => path.replace(/^\/langchain\/chat/, '/backend-api/langchain/chat/'),
       },
       '/backend-api/ai': {
         target: 'wss://fun.prob-mind.online', // 本地调试 本地用这个
