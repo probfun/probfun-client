@@ -134,7 +134,6 @@ declare module 'vue' {
     FormMessage: typeof import('./src/components/ui/form/FormMessage.vue')['default']
     FunctionLimit: typeof import('./src/components/experiment/calculus/FunctionLimit.vue')['default']
     GabrielHorn: typeof import('./src/components/experiment/calculus/GabrielHorn.vue')['default']
-    GalltonBoard: typeof import('./src/components/experiment/chapter5/central-limit-theorem/GalltonBoard.vue')['default']
     GeoGebraApplet: typeof import('./src/components/experiment/GeoGebraApplet.vue')['default']
     GeometricBrownian: typeof import('./src/components/experiment/chapter6/GeometricBrownian.vue')['default']
     GeometricDiagram: typeof import('./src/components/experiment/distribution/geometric-distribution/GeometricDiagram.vue')['default']

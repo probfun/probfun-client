@@ -128,21 +128,23 @@ async function refreshQuestionList(x: string) {
       const difficultyMap: { [key: number]: string } = { 1: '简单', 2: '中等', 3: '困难' };
       const formattedQuestions = await Promise.all(apiQuestions.map(async (question: any) => {
         const resDetail = await fetchQuestionDetailApi(question.id);
-        // 映射选项数据，将is_correct转换为isCorrect
-        const apiChoices = Array.isArray(resDetail.question.choices) ? resDetail.question.choices : [];
-        const choices = apiChoices.map((choice: any) => ({
-          content: choice.content,
-          isCorrect: choice.is_correct,
-          knowledgePoint: choice.knowledge_point?.name || '',
-        }));
+        const apiChoices = Array.isArray(resDetail.question?.choices)
+          ? resDetail.question.choices
+          : [];
+
         return {
           id: question.id,
           category: '',
           content: question.content,
-          choices,
-          analysis: question.full_answer,
+          choices: apiChoices.map((c: any) => ({
+            content: c.content,
+            isCorrect: Boolean(c.is_correct),
+            knowledgePoint: c.knowledge_point?.name || '',
+          })),
+          analysis: resDetail.question?.full_answer || '暂无解析',
           knowledgePoint: apiChoices[0]?.knowledge_point?.name || '',
-          difficulty: difficultyMap[question.difficulty] || '未知',
+          // 把 key 转成数字再映射，防止字符串 key 失效
+          difficulty: difficultyMap[Number(question.difficulty)] || '未知',
           lastResult: null,
         };
       }));
@@ -172,7 +174,7 @@ async function refreshQuestionList(x: string) {
   }
 }
 
-// 提交功能
+// 提交功能 为啥你电脑这么慢
 function handleSubmit() {
   console.log('选项', selectedChoice.value);
   if (selectedChoice.value === null) {
@@ -223,74 +225,50 @@ async function provideAiFeedback(isCorrect: boolean) {
     feedbackMessage = wrongMessages[Math.floor(Math.random() * wrongMessages.length)];
   }
 
-  try {
-    const response = await langchainChatApi(
-      feedbackMessage,
+  if (!isCorrect) {
+    /* 创建本次对话专用的 AbortController */
+    abortController.value = new AbortController();
+
+    /* 逐字渲染 */
+    let assistantMsg = '';
+    await langchainChatApi(
+    // feedbackMessage,//这里message应该改为题目信息+询问错误愿意和解题思路
+      `当前问题：${currentQuestion.value?.content}
+    我的回答是：${selectedChoice.value}
+    请分析我的错误原因和解题思路`,
       conversationId.value || undefined,
-      (response) => {
-        if (response.conversation_id && !conversationId.value) {
-          conversationId.value = response.conversation_id;
+      (chunk) => {
+      // 首块：先插入一条空消息占位
+        if (!assistantMsg) {
+          aiMessages.value.push({ role: 'assistant', content: '' });
         }
-
-        aiMessages.value.push({
-          role: 'assistant',
-          content: response.message,
-        });
-
-        // 如果是错误答案，添加询问思路的消息
-        if (!isCorrect) {
-          setTimeout(async () => {
-            const followUpResponse = await langchainChatApi(
-              '你能告诉我为什么选择这个答案吗？你的解题思路是什么？这样我可以更好地帮助你理解。',
-              conversationId.value,
-            );
-
-            if (followUpResponse) {
-              aiMessages.value.push({
-                role: 'assistant',
-                content: followUpResponse.message,
-              });
-            }
-          }, 1000);
-        }
-
+        assistantMsg += chunk;
+        // 实时更新最后一条消息
+        aiMessages.value[aiMessages.value.length - 1].content = assistantMsg;
+      },
+      (full, cid) => {
+        conversationId.value = cid || conversationId.value;
         isAiTyping.value = false;
-
-        // 滚动到底部
         nextTick(() => {
           const container = document.querySelector('.ai-messages-container');
-          if (container) {
+          if (container)
             container.scrollTop = container.scrollHeight;
-          }
         });
       },
       (errorMessage) => {
         console.log(errorMessage);
         // 错误处理
-        // aiMessages.value.push({
-        //   role: 'assistant',
-        //   content: feedbackMessage, // 使用本地生成的消息作为备选
-        // });
+        aiMessages.value.push({
+          role: 'assistant',
+          content: feedbackMessage, // 使用本地生成的消息作为备选
+        });
         isAiTyping.value = false;
       },
+      abortController.value,
     );
-
-    if (!response) {
-      // API调用失败时使用本地消息
-      // aiMessages.value.push({
-      //   role: 'assistant',
-      //   content: feedbackMessage,
-      // });
-      isAiTyping.value = false;
-    }
   }
-  catch (error) {
-    console.error('AI反馈失败:', error);
-    // aiMessages.value.push({
-    //   role: 'assistant',
-    //   content: feedbackMessage,
-    // });
-    isAiTyping.value = false;
+  else {
+    aiMessages.value.push({ role: 'assistant', content: feedbackMessage });
   }
 }
 
@@ -342,48 +320,38 @@ async function sendAiMessage() {
   aiInputMessage.value = '';
   isAiTyping.value = true;
 
-  try {
-    const response = await langchainChatApi(
-      userMessage,
-      conversationId.value || undefined,
-      (response) => {
-        if (response.conversation_id && !conversationId.value) {
-          conversationId.value = response.conversation_id;
-        }
+  /* 创建/复用 AbortController */
+  if (abortController.value)
+    abortController.value.abort();
+  abortController.value = new AbortController();
+  let assistantMsg = '';
 
-        aiMessages.value.push({
-          role: 'assistant',
-          content: response.message,
-        });
-
-        isAiTyping.value = false;
-
-        // 滚动到底部
-        nextTick(() => {
-          const container = document.querySelector('.ai-messages-container');
-          if (container) {
-            container.scrollTop = container.scrollHeight;
-          }
-        });
-      },
-      (errorMessage) => {
-        console.log(errorMessage);
-        toastError(`AI服务故障: ${errorMessage}`);
-        isAiTyping.value = false;
-      },
-    );
-
-    if (!response) {
-      // API调用失败时的处理
-      toastError('AI服务暂时不可用');
+  await langchainChatApi(
+    userMessage,
+    conversationId.value || undefined,
+    (chunk) => {
+      if (!assistantMsg) {
+        aiMessages.value.push({ role: 'assistant', content: '' });
+      }
+      assistantMsg += chunk;
+      aiMessages.value[aiMessages.value.length - 1].content = assistantMsg;
+    },
+    (full, cid) => {
+      conversationId.value = cid || conversationId.value;
       isAiTyping.value = false;
-    }
-  }
-  catch (error) {
-    console.error('发送AI消息失败:', error);
-    toastError('发送消息失败，请稍后重试');
-    isAiTyping.value = false;
-  }
+      nextTick(() => {
+        const container = document.querySelector('.ai-messages-container');
+        if (container)
+          container.scrollTop = container.scrollHeight;
+      });
+    },
+    (err) => {
+      console.error(err);
+      toastError(err);
+      isAiTyping.value = false;
+    },
+    abortController.value,
+  );
 }
 
 // 初始化和监听
