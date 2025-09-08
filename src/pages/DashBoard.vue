@@ -43,7 +43,7 @@ onMounted(async () => {
     <SideBar v-if="!hideSideBar" />
     <div v-auto-animate class="h-full flex-1 gap-2 flex flex-col relative transition-all overflow-y-hidden">
       <NavBar />
-      <router-view class="flex-1 overflow-y-hidden" />
+      <router-view class="flex-1 overflow-y-auto" />
     </div>
   </div>
 </template>

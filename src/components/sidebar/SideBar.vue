@@ -191,12 +191,19 @@ function toItemTree(root: Chapter): DrawerItem {
     return item;
   };
 
-  return mapNode(rootProjected);
+  const chapter = mapNode(rootProjected);
+  chapter.children?.unshift({
+    title: '思维导图',
+    icon: 'lucide:chart-pie',
+    route: `/dashboard/mindmap/${root.name}`,
+  });
+
+  return chapter;
 }
 
 async function refreshQuestionList() {
   try {
-    const response = await fetchChapterListApi('2'); // 传subjectId
+    const response = await fetchChapterListApi('5'); // 传subjectId
     const chapterList = response.chapters;
     questionItems.value = chapterList.map(chapter => toItemTree(chapter));
   }

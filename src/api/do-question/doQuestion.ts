@@ -40,6 +40,13 @@ interface Choice {
   is_chosen: boolean | null;
 }
 
+interface Chat {
+  id: string;
+  role: string;
+  content: string;
+  created_at: string;
+}
+
 interface Question {
   id: string;
   content: string;
@@ -50,6 +57,7 @@ interface Question {
   updated_at: string;
   choices: Choice[];
   answer_records: Answer[];
+  chats: Chat[];
 }
 
 interface Answer {
@@ -96,17 +104,46 @@ async function answerQuestionApi(questionId: string, selectedOptionIds: string[]
 }
 
 async function draftQuestionApi(questionId: string, selectedOptionIds: string[]) {
-  const result = await post<null>(`/assessment/question/draft`, {
+  const result = await post<null>(`/assessment/question/draft/`, {
     question_id: questionId,
     selected_option_ids: selectedOptionIds,
   });
   return result.data;
 }
 
+async function chatWithAiAPi(questionId: string, content: string) {
+  return new Promise<{
+    chats: Chat[];
+  }>(resolve => setTimeout(() => resolve({
+    chats: [
+      {
+        id: '0',
+        role: 'user',
+        content,
+        created_at: '0',
+      },
+      {
+        id: '1',
+        role: 'ai',
+        content: '我不知道',
+        created_at: '0',
+      },
+    ],
+  }), 5000));
+  // const result = await get<{
+  //   chats: Chat[];
+  // }>(`/assessment/chat/`, {
+  //   question_id: questionId,
+  //   content,
+  // });
+  // return result.data;
+}
+
 export type { Chapter, Choice, Question, Subject };
 
 export {
   answerQuestionApi,
+  chatWithAiAPi,
   draftQuestionApi,
   fetchChapterListApi,
   fetchQuestionApi,

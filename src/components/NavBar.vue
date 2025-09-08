@@ -394,7 +394,7 @@ function openFeishuDoc() {
 
 <template>
   <nav class="w-full flex py-2 px-5 z-50 border rounded-xl shadow-md bg-background gap-2">
-    <div class="flex items-center  justify-center gap-2 overflow-x-hidden">
+    <div class="flex items-center justify-center gap-2 overflow-x-hidden">
       <Label class="text-lg font-bold shrink-0">
         {{ title }}
       </Label>
