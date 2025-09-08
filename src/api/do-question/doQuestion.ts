@@ -72,7 +72,7 @@ async function fetchQuestionListApi(chapterId: number) {
 }
 
 async function fetchQuestionDetailApi(questionId: number) {
-  const result = await get<Detail>(`/assessment/question/${questionId}`);
+  const result = await get<Detail>(`/assessment/question/${questionId}/`);
   return result.data;
 }
 
