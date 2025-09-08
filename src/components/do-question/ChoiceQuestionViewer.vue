@@ -314,6 +314,7 @@ defineExpose({
 async function sendAiMessage() {
   if (!aiInputMessage.value.trim())
     return;
+  console.log('sendmsg');
 
   const userMessage = aiInputMessage.value;
   aiMessages.value.push({ role: 'user', content: userMessage });
@@ -330,11 +331,15 @@ async function sendAiMessage() {
     userMessage,
     conversationId.value || undefined,
     (chunk) => {
+      console.log(chunk);
       if (!assistantMsg) {
         aiMessages.value.push({ role: 'assistant', content: '' });
       }
       assistantMsg += chunk;
-      aiMessages.value[aiMessages.value.length - 1].content = assistantMsg;
+      // 拆到下一微任务，让浏览器有机会重绘
+      nextTick(() => {
+        aiMessages.value[aiMessages.value.length - 1].content = assistantMsg;
+      });
     },
     (full, cid) => {
       conversationId.value = cid || conversationId.value;
@@ -352,6 +357,7 @@ async function sendAiMessage() {
     },
     abortController.value,
   );
+  // console.log("sendend",assistantMsg)
 }
 
 // 初始化和监听
@@ -561,13 +567,6 @@ onUnmounted(() => {
             ]"
           >
             {{ message.content }}
-          </div>
-        </div>
-
-        <!-- 加载状态 -->
-        <div v-if="isAiTyping" class="text-left">
-          <div class="inline-block px-3 py-2 bg-white text-gray-800 border border-gray-200 rounded-lg text-sm">
-            <span class="animate-pulse">AI正在思考...</span>
           </div>
         </div>
       </div>
