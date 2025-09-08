@@ -197,7 +197,7 @@ async function quickAsk(content: string) {
             <span class="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-semibold">
               {{ questionIndex + 1 }}
             </span>
-            <MarkdownDiv class="flex items-center gap-2" :text="currentQuestion.content" />
+            <MarkdownDiv :text="currentQuestion.content" />
           </div>
           <div class="mt-4 grid gap-2">
             <RadioGroup

@@ -66,7 +66,6 @@ declare module 'vue' {
     ChildCommentCard: typeof import('./src/components/comment/ChildCommentCard.vue')['default']
     ChiSquareDistribution: typeof import('./src/components/experiment/chapter7/new experiment/ChiSquareDistribution.vue')['default']
     ChiSquareDistributionQuantile: typeof import('./src/components/experiment/chapter7/ChiSquareDistributionQuantile.vue')['default']
-    ChoiceQuestionViewer: typeof import('./src/components/do-question/ChoiceQuestionViewer.vue')['default']
     Clt: typeof import('./src/components/experiment/chapter5/central-limit-theorem/clt.vue')['default']
     CoinFliping: typeof import('./src/components/experiment/chapter5/CoinFliping.vue')['default']
     CoinTossing: typeof import('./src/components/experiment/chapter7/CoinTossing.vue')['default']
