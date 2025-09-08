@@ -5,15 +5,15 @@ import type { Feedback } from '@/api/feedback/feedbackType';
 import type { DrawerItem } from '@/components/sidebar/DrawerItem.ts';
 import vAutoAnimate from '@formkit/auto-animate';
 import { Icon } from '@iconify/vue';
-import { Book, Bot, ChartColumn, CircleHelp, Dices, FlaskConical, Home, LogOut, Moon, Star, Sun, User } from 'lucide-vue-next';
+import { Book, Bot, CircleHelp, Dices, FlaskConical, Home, LogOut, Star, Sun, User } from 'lucide-vue-next';
 import { useToast } from 'primevue/usetoast';
 import { TreeItem, TreeRoot } from 'radix-vue';
-import { computed, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { fetchChapterListApi, fetchSubjectListApi } from '@/api/do-question/doQuestion.ts';
 import { fetchFeedbackApi, postFeedbackApi } from '@/api/feedback/feedbackApi.ts';
 import { clickApi } from '@/api/track/trackApi.ts';
-import { experimentItems as probabilityExperimentItems, questionItems as probabilityQuestionItems } from '@/components/sidebar/DrawerItem.ts';
+import { experimentItems, questionItems } from '@/components/sidebar/DrawerItem.ts';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -32,12 +32,10 @@ import {
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils.ts';
 import { useUserStore } from '@/store';
-import { useConfigStore } from '@/store/config.ts';
 import { isVisitor, logout } from '@/utils/auth.ts';
 
 const toast = useToast();
 const userStore = useUserStore();
-const config = useConfigStore();
 
 interface SideBarItem {
   label: string;
@@ -69,24 +67,22 @@ function isActiveRoute(itemRoute: string) {
 const router = useRouter();
 const vistorAllowedItem = [
   '主页',
-  '实验',
-  '练习',
-  '学情数据',
+  '目录',
 ];
 const sideBarItem = ref<SideBarItem[]>([
   {
     label: '主页',
     icon: Home,
-    route: '/subjects',
+    route: '/dashboard',
   },
   {
-    label: '实验',
+    label: '实验目录',
     icon: FlaskConical,
     route: '/dashboard/experiment',
     command: toggleExperimentDrawer,
   },
   {
-    label: '练习',
+    label: '做题目录',
     icon: Book,
     route: '/dashboard/experiment',
     command: toggleQuestionDrawer,
@@ -106,17 +102,12 @@ const sideBarItem = ref<SideBarItem[]>([
     icon: User,
     route: userStore.user?.role === 0 ? '/dashboard/info0' : '/dashboard/info1',
   },
-  {
-    label: '学情数据',
-    icon: ChartColumn,
-    route: '/dashboard/statistics',
-  },
 ]);
 
-const sideBarBottomItem = computed<SideBarItem[]>(() => [
+const sideBarBottomItem = ref<SideBarItem[]>([
   {
     label: '切换主题',
-    icon: config.theme === 'dark' ? Moon : Sun,
+    icon: Sun,
     command: async () => {
       try {
         await clickApi('CLICK', 'sideBar', '切换主题', window.location.href);
@@ -127,11 +118,9 @@ const sideBarBottomItem = computed<SideBarItem[]>(() => [
       }
       if (document.documentElement.classList.contains('dark')) {
         document.documentElement.classList.remove('dark');
-        config.theme = 'light';
       }
       else {
         document.documentElement.classList.toggle('dark');
-        config.theme = 'dark';
       }
     },
   },
@@ -178,8 +167,9 @@ async function refreshFeedback() {
 }
 
 function toItemTree(root: Chapter): DrawerItem {
-  interface AnyNode { name: string; children?: AnyNode[] }
+  interface AnyNode { id: number; name: string; children?: AnyNode[] }
   const project = (node: any): AnyNode => ({
+    id: node.id,
     name: node.name,
     children: node.children?.map(project) ?? [],
   });
@@ -193,7 +183,7 @@ function toItemTree(root: Chapter): DrawerItem {
       icon: isLeaf ? 'lucide:notebook' : 'lucide:folder',
     };
     if (isLeaf) {
-      item.route = `/dashboard/question/${node.name}`;
+      item.chapterId = node.id;
     }
     else {
       item.children = node.children!.map(mapNode);
@@ -204,12 +194,11 @@ function toItemTree(root: Chapter): DrawerItem {
   return mapNode(rootProjected);
 }
 
-async function refreshChapterList() {
+async function refreshQuestionList() {
   try {
-    const response = await fetchChapterListApi(5); // 传subjectId
+    const response = await fetchChapterListApi('2'); // 传subjectId
     const chapterList = response.chapters;
-    // 仅在概率论科目下动态更新
-    probabilityQuestionItems.value = chapterList.map(chapter => toItemTree(chapter));
+    questionItems.value = chapterList.map(chapter => toItemTree(chapter));
   }
   catch (error) {
     console.error('Error tracking button click:', error);
@@ -230,7 +219,7 @@ onMounted(() => {
   // TODO: 先获取所有subject，根据subjectId获取所有chapter，用chapterId获取章节内所有question
   refreshSubjectList();
   refreshFeedback();
-  refreshChapterList();
+  refreshQuestionList();
 });
 
 async function sendFeedback() {
@@ -255,129 +244,8 @@ async function sendFeedback() {
 }
 
 function goHome() {
-  if (route.path.startsWith('/subject/')) {
-    // /subject/:subject/xxx => /subject/:subject
-    const seg = route.path.split('/')[2];
-    if (seg) {
-      router.push(`/subject/${seg}`);
-      return;
-    }
-  }
-  if (route.path.startsWith('/dashboard')) {
-    router.push('/dashboard');
-    return;
-  }
-  // 其它情况回到总主页
-  router.push('/subjects');
+  router.push('/dashboard');
 }
-
-const currentSubject = computed(() => {
-  // /subject/:subject 开头则返回 subject 参数
-  if (route.path.startsWith('/subject/')) {
-    const seg = route.path.split('/')[2];
-    return seg || null;
-  }
-  // 概率论模块仍旧使用 dashboard
-  if (route.path.startsWith('/dashboard')) {
-    return 'probability';
-  }
-  return null;
-});
-
-function buildSubjectExperimentItems(subject: string): DrawerItem[] {
-  // 高等数学上真实实验目录
-  if (subject === 'calculusA') {
-    return [
-      {
-        title: '第一章 极限',
-        icon: 'lucide:folder',
-        children: [
-          { title: '数列极限', icon: 'lucide:flask-conical', route: `/subject/${subject}/experiment/sequence-limit` },
-          { title: '函数极限', icon: 'lucide:flask-conical', route: `/subject/${subject}/experiment/function-limit` },
-        ],
-      },
-      {
-        title: '第二章 导数与中值定理',
-        icon: 'lucide:folder',
-        children: [
-          { title: '导数几何意义', icon: 'lucide:flask-conical', route: `/subject/${subject}/experiment/derivative-geometry` },
-          { title: '拉格朗日中值定理', icon: 'lucide:flask-conical', route: `/subject/${subject}/experiment/lagrange-mvt` },
-        ],
-      },
-      {
-        title: '第三章 泰勒公式',
-        icon: 'lucide:folder',
-        children: [
-          { title: '泰勒展开', icon: 'lucide:flask-conical', route: `/subject/${subject}/experiment/taylor-expansion` },
-        ],
-      },
-      {
-        title: '第四章 积分与可积条件',
-        icon: 'lucide:folder',
-        children: [
-          { title: '可积条件', icon: 'lucide:flask-conical', route: `/subject/${subject}/experiment/integrability-conditions` },
-        ],
-      },
-      {
-        title: '第五章 反常积分与实例',
-        icon: 'lucide:folder',
-        children: [
-          { title: '加百利喇叭', icon: 'lucide:flask-conical', route: `/subject/${subject}/experiment/gabriel-horn` },
-        ],
-      },
-    ];
-  }
-  return [
-    {
-      title: '第一章 占位章节',
-      icon: 'lucide:folder',
-      children: [
-        { title: '实验示例A', icon: 'lucide:flask-conical', route: `/subject/${subject}/experiment/ch1-expA` },
-        { title: '实验示例B', icon: 'lucide:flask-conical', route: `/subject/${subject}/experiment/ch1-expB` },
-      ],
-    },
-    {
-      title: '第二章 占位章节',
-      icon: 'lucide:folder',
-      children: [
-        { title: '实验示例C', icon: 'lucide:flask-conical', route: `/subject/${subject}/experiment/ch2-expC` },
-      ],
-    },
-  ];
-}
-function buildSubjectQuestionItems(subject: string): DrawerItem[] {
-  return [
-    {
-      title: '第一章 占位章节',
-      icon: 'lucide:folder',
-      children: [
-        { title: '练习 1', icon: 'lucide:book', route: `/subject/${subject}/question/ch1-q1` },
-        { title: '练习 2', icon: 'lucide:book', route: `/subject/${subject}/question/ch1-q2` },
-      ],
-    },
-    {
-      title: '第二章 占位章节',
-      icon: 'lucide:folder',
-      children: [
-        { title: '练习 1', icon: 'lucide:book', route: `/subject/${subject}/question/ch2-q1` },
-      ],
-    },
-  ];
-}
-
-const experimentItemsComputed = computed<DrawerItem[]>(() => {
-  if (currentSubject.value && currentSubject.value !== 'probability') {
-    return buildSubjectExperimentItems(currentSubject.value);
-  }
-  return probabilityExperimentItems.value;
-});
-const questionItemsComputed = computed<DrawerItem[]>(() => {
-  if (currentSubject.value && currentSubject.value !== 'probability') {
-    return buildSubjectQuestionItems(currentSubject.value);
-  }
-  return probabilityQuestionItems.value;
-});
-// 替换模板里使用的 experimentItems / questionItems 为对应 computed (无需改其它逻辑)
 </script>
 
 <template>
@@ -401,7 +269,7 @@ const questionItemsComputed = computed<DrawerItem[]>(() => {
                   @click="() => {
                     if (item.command) item.command();
                     else if (item.route) router.push(item.route);
-                    if (item.label !== '实验') openExperimentDrawer = false;
+                    if (item.label !== '实验目录') openExperimentDrawer = false;
                   }"
                 >
                   <component :is="item.icon" class="size-6" :stroke-width="2" />
@@ -440,18 +308,21 @@ const questionItemsComputed = computed<DrawerItem[]>(() => {
     </aside>
 
     <!-- experiment drawer -->
-    <div
-      class="absolute left-full ml-2 top-[4rem] z-50 transition-all bottom-0 rounded-xl overflow-y-auto border w-96 bg-background shadow-xl"
-      :class="!openExperimentDrawer && 'opacity-0 pointer-events-none'"
-    >
+    <div class="absolute left-full ml-2 top-[4rem] z-50 transition-all bottom-0 rounded-xl overflow-y-auto border w-96 bg-background shadow-xl" :class="!openExperimentDrawer && 'opacity-0 pointer-events-none'">
       <TreeRoot
-        v-slot="{ flattenItems }" v-auto-animate
-        class="list-none select-none w-full rounded-lg px-3 py-2 text-base font-medium" :items="experimentItemsComputed"
-        :get-key="(item) => item.title" :default-expanded="['components']"
+        v-slot="{ flattenItems }"
+        v-auto-animate
+        class="list-none select-none w-full rounded-lg px-3 py-2 text-base font-medium"
+        :items="experimentItems"
+        :get-key="(item) => item.title"
+        :default-expanded="['components']"
       >
         <TreeItem
-          v-for="item in flattenItems" v-slot="{ isExpanded }" :key="item._id"
-          :style="{ 'padding-left': `${item.level - 0.5}rem` }" v-bind="item.bind"
+          v-for="item in flattenItems"
+          v-slot="{ isExpanded }"
+          :key="item._id"
+          :style="{ 'padding-left': `${item.level - 0.5}rem` }"
+          v-bind="item.bind"
           class="flex items-center p-2 cursor-pointer my-0.5 rounded outline-none focus:ring-primary focus:ring-2 data-[selected]:bg-muted"
           @click="() => {
             if (item.value.route) {
@@ -461,57 +332,81 @@ const questionItemsComputed = computed<DrawerItem[]>(() => {
           }"
         >
           <template v-if="item.hasChildren">
-            <Icon v-if="!isExpanded" icon="lucide:folder" class="h-4 w-4" />
-            <Icon v-else icon="lucide:folder-open" class="h-4 w-4" />
+            <Icon
+              v-if="!isExpanded"
+              icon="lucide:folder"
+              class="h-4 w-4"
+            />
+            <Icon
+              v-else
+              icon="lucide:folder-open"
+              class="h-4 w-4"
+            />
           </template>
-          <Icon v-else :icon="item.value.icon || 'lucide:file'" class="h-4 w-4" />
+          <Icon
+            v-else
+            :icon="item.value.icon || 'lucide:file'"
+            class="h-4 w-4"
+          />
           <div class="pl-2">
             {{ item.value.title }}
           </div>
         </TreeItem>
       </TreeRoot>
     </div>
-    <div
-      v-if="openExperimentDrawer" class="left-full top-0 h-full absolute w-screen z-40"
-      @click="openExperimentDrawer = false"
-    />
+    <div v-if="openExperimentDrawer" class="left-full top-0 h-full absolute w-screen z-40" @click="openExperimentDrawer = false" />
 
     <!-- question drawer -->
-    <div
-      class="absolute left-full ml-2 top-[4rem] z-50 transition-all bottom-0 rounded-xl overflow-y-auto border w-96 bg-background shadow-xl"
-      :class="!openQuestionDrawer && 'opacity-0 pointer-events-none'"
-    >
+    <div class="absolute left-full ml-2 top-[4rem] z-50 transition-all bottom-0 rounded-xl overflow-y-auto border w-96 bg-background shadow-xl" :class="!openQuestionDrawer && 'opacity-0 pointer-events-none'">
       <TreeRoot
-        v-slot="{ flattenItems }" v-auto-animate
-        class="list-none select-none w-full rounded-lg px-3 py-2 text-base font-medium" :items="questionItemsComputed"
-        :get-key="(item) => item.title" :default-expanded="['components']"
+        v-slot="{ flattenItems }"
+        v-auto-animate
+        class="list-none select-none w-full rounded-lg px-3 py-2 text-base font-medium"
+        :items="questionItems"
+        :get-key="(item) => item.title"
+        :default-expanded="['components']"
       >
         <TreeItem
-          v-for="item in flattenItems" v-slot="{ isExpanded }" :key="item._id"
-          :style="{ 'padding-left': `${item.level - 0.5}rem` }" v-bind="item.bind"
+          v-for="item in flattenItems"
+          v-slot="{ isExpanded }"
+          :key="item._id"
+          :style="{ 'padding-left': `${item.level - 0.5}rem` }"
+          v-bind="item.bind"
           class="flex items-center p-2 cursor-pointer my-0.5 rounded outline-none focus:ring-primary focus:ring-2 data-[selected]:bg-muted"
           @click="() => {
-            if (item.value.route) {
-              router.push(item.value.route);
+            if (item.value.chapterId) {
+              router.push({
+                name: 'DoQuestion',
+                params: { chapterId: item.value.chapterId },
+              });
               openQuestionDrawer = false;
             }
           }"
         >
           <template v-if="item.hasChildren">
-            <Icon v-if="!isExpanded" icon="lucide:folder" class="h-4 w-4" />
-            <Icon v-else icon="lucide:folder-open" class="h-4 w-4" />
+            <Icon
+              v-if="!isExpanded"
+              icon="lucide:folder"
+              class="h-4 w-4"
+            />
+            <Icon
+              v-else
+              icon="lucide:folder-open"
+              class="h-4 w-4"
+            />
           </template>
-          <Icon v-else :icon="item.value.icon || 'lucide:file'" class="h-4 w-4" />
+          <Icon
+            v-else
+            :icon="item.value.icon || 'lucide:file'"
+            class="h-4 w-4"
+          />
           <div class="pl-2">
             {{ item.value.title }}
           </div>
         </TreeItem>
       </TreeRoot>
     </div>
-    <div
-      v-if="openQuestionDrawer" class="left-full top-0 h-full absolute w-screen z-40"
-      @click="openQuestionDrawer = false"
-    />
+    <div v-if="openQuestionDrawer" class="left-full top-0 h-full absolute w-screen z-40" @click="openQuestionDrawer = false" />
 
     <Dialog v-model:open="isFeedback" class="overflow-y-auto h-2/3">
       <DialogContent class="overflow-y-auto h-2/3">

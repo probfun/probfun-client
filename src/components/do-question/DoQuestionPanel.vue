@@ -1,237 +1,253 @@
 <script setup lang="ts">
-import type { DrawerItem } from '@/components/sidebar/DrawerItem.ts';
-import { List } from 'lucide-vue-next';
-import Button from 'primevue/button';
-import Dialog from 'primevue/dialog';
-import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
-import { experimentItems, questionItems } from '@/components/sidebar/DrawerItem.ts';
-import ChoiceQuestionViewer from './ChoiceQuestionViewer.vue';
+import type { Question } from '@/api/do-question/doQuestion.ts';
+import { computed, onMounted, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { answerQuestionApi, draftQuestionApi, fetchQuestionListApi } from '@/api/do-question/doQuestion.ts';
+import MarkdownDiv from '@/components/markdown-div/MarkdownDiv.vue';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
-// 状态管理
-const showQuestionList = ref(false);
-const viewReleaseDialog = ref(false);
-const currentQuestionId = ref<number | null>(null);
-const questionViewer = ref<any>(null);
-const questionListTrigger = ref<any>(null);
-const questionResults = ref<Record<number, boolean>>({});
 const route = useRoute();
-const currentChapterTitle = ref('');
-const currentSection = ref('');
-const questionCount = ref(0);
-const questionIds = ref<number[]>([]);
-const shouldFlipPosition = ref(false); // 控制弹窗是否需要翻转到左侧
+const router = useRouter();
+const questionList = ref<Question[]>([]);
+const questionIndex = ref(0);
+const showSidebar = ref(false);
+const currentQuestion = computed(() => {
+  if (questionIndex.value < 0 || questionIndex.value >= questionList.value.length) {
+    return null;
+  }
+  return questionList.value[questionIndex.value];
+});
 
-// 检查弹窗是否会超出视口右侧
-function checkPosition() {
-  if (questionListTrigger.value && questionListTrigger.value.$el) {
-    const buttonRect = questionListTrigger.value.$el.getBoundingClientRect();
-    // 弹窗宽度约为200px，检查右侧空间是否足够
-    shouldFlipPosition.value = (window.innerWidth - buttonRect.right) < 220;
+async function loadQuestionList() {
+  const chapterId = route.params.chapterId as string | undefined;
+  try {
+    if (!chapterId) {
+      router.go(-1);
+      return;
+    }
+    const response = await fetchQuestionListApi(chapterId);
+    questionList.value = response.questions.map(question => ({
+      ...question,
+      choices: question.choices!.map(choice => ({
+        ...choice,
+        // is_chosen: false,
+        content: choice.content.replace(/^[A-Z]\.\s*/, ''),
+      })).sort(() => Math.random() - 0.5),
+      content: question.content.replace(/^\d+\.\s*/, ''),
+    }));
+    gotoQuestion(0);
+  }
+  catch (error) {
+    console.error('Error fetching question list:', error);
+    router.go(-1);
   }
 }
 
-// 路径解析函数
-function findTitleByRoute(routePath: string, items: DrawerItem[]): string {
-  // 保持原有实现...
-  for (const item of items) {
-    if (item.route === routePath) {
-      return item.title;
-    }
-    if (item.children) {
-      const childTitle = findTitleByRoute(routePath, item.children);
-      if (childTitle)
-        return childTitle;
-    }
-  }
-
-  for (const item of items) {
-    if (item.route && routePath.startsWith(item.route.replace(/\/$/, ''))) {
-      return item.title;
-    }
-    if (item.children) {
-      const childTitle = findTitleByRoute(routePath, item.children);
-      if (childTitle)
-        return childTitle;
-    }
-  }
-
-  return '';
+async function loadQuestion() {
+  // const questionId = questionList.value[questionIndex.value].id;
+  // if (questionList.value[questionIndex.value].choices) {
+  //   return;
+  // }
+  // try {
+  //   const response = await fetchQuestionApi(questionId);
+  //   const choices = response.question.choices!.map(choice => ({
+  //     ...choice,
+  //     is_chosen: false,
+  //     content: choice.content.replace(/^[A-Z]\.\s*/, ''),
+  //   }));
+  //   choices.sort(() => Math.random() - 0.5);
+  //   questionList.value[questionIndex.value].choices = choices;
+  // }
+  // catch (error) {
+  //   console.error('Error fetching question:', error);
+  // }
 }
 
-// 初始化章节信息
-async function initChapterInfo(path: string) {
-  // 保持原有实现...
-  let title = '';
-  const pathMatch = path.match(/\/dashboard\/question\/([\d.]+)/);
-  currentSection.value = pathMatch ? pathMatch[1] : '';
-
-  if (path.startsWith('/dashboard/question/')) {
-    title = findTitleByRoute(path, questionItems.value);
-    if (!title && route.params && route.params.chapter) {
-      title = route.params.chapter as string;
-    }
-
-    currentQuestionId.value = 1;
-
-    await nextTick();
-
-    if (questionViewer.value) {
-      questionCount.value = questionViewer.value.getQuestionCount();
-      if (questionCount.value > 0) {
-        questionViewer.value.loadQuestion(1);
-      }
-    }
-  }
-  else if (path.startsWith('/dashboard/experiment/')) {
-    title = findTitleByRoute(path, experimentItems.value);
-  }
-
-  if (!title) {
-    const savedTitle = localStorage.getItem('lastChapterTitle');
-    if (savedTitle) {
-      title = savedTitle;
-    }
-    else {
-      title = '选择章节';
-    }
-  }
-  else {
-    localStorage.setItem('lastChapterTitle', title);
-  }
-
-  currentChapterTitle.value = title;
+function gotoQuestion(index: number) {
+  router.push({
+    query: { questionIndex: index.toString() },
+  });
 }
 
-// 生命周期
+async function answerQuestion() {
+  if (currentQuestion.value === null)
+    return;
+  const optionIds = currentQuestion.value.choices?.filter(choice => choice.is_chosen).map(choice => choice.id) || [];
+  const questionId = currentQuestion.value.id;
+  try {
+    const response = await answerQuestionApi(questionId, optionIds, '');
+    questionList.value[questionIndex.value].answer_records = response.question.answer_records;
+  }
+  catch (error) {
+    console.error('Error answering question:', error);
+  }
+}
+
+async function draftQuestion() {
+  if (currentQuestion.value === null)
+    return;
+  const optionIds = currentQuestion.value.choices?.filter(choice => choice.is_chosen).map(choice => choice.id) || [];
+  const questionId = currentQuestion.value.id;
+  try {
+    await draftQuestionApi(questionId, optionIds);
+  }
+  catch (error) {
+    console.error('Error draftQuestion:', error);
+  }
+}
+
 onMounted(async () => {
-  await nextTick();
-  initChapterInfo(route.path);
-  window.addEventListener('resize', checkPosition);
+  await loadQuestionList();
+  await loadQuestion();
 });
 
-onUnmounted(() => {
-  window.removeEventListener('resize', checkPosition);
+watch(() => route.params.chapterId, () => {
+  loadQuestionList();
 });
 
-// 监听路由变化
-watch(
-  () => route.path,
-  async (newPath: string) => {
-    await initChapterInfo(newPath);
-  },
-);
-
-watch(
-  () => questionItems.value,
-  async (newItems: any[]) => {
-    if (newItems.length > 0) {
-      initChapterInfo(route.path);
+watch(() => route.query.questionIndex, () => {
+  if (route.query.questionIndex) {
+    const index = Number.parseInt(route.query.questionIndex as string, 10);
+    if (!Number.isNaN(index) && index >= 0 && index < questionList.value.length) {
+      questionIndex.value = index;
+      loadQuestion();
     }
-  },
-  { deep: true },
-);
-
-watch(
-  () => questionCount.value,
-  async (newCount: number) => {
-    console.log(newCount);
-    if (questionViewer.value) {
-      questionIds.value = await questionViewer.value.getQuestionIds();
-    }
-  },
-);
-
-// 切换试题弹窗
-function toggleQuestionList() {
-  showQuestionList.value = !showQuestionList.value;
-  if (showQuestionList.value) {
-    checkPosition(); // 显示时检查位置
   }
-}
-
-// 选择试题
-function handleSelectQuestion(id: number) {
-  currentQuestionId.value = id;
-  showQuestionList.value = false;
-  if (questionViewer.value) {
-    questionViewer.value.loadQuestion(id);
-    questionResults.value = questionViewer.value.getUserResults();
-  }
-}
-
-function getButtonSeverity(id: number): string {
-  if (currentQuestionId.value === id)
-    return 'primary';
-  if (questionViewer.value) {
-    const result = questionViewer.value.getQuestionResult(id);
-    if (result === true)
-      return 'success';
-    if (result === false)
-      return 'danger';
-  }
-  return 'secondary';
-}
+});
 </script>
 
 <template>
-  <div class="w-full h-screen bg-gray-50 overflow-auto">
-    <!-- 顶部操作栏 -->
-    <div class="px-6 py-4 border-b border-gray-200 bg-white flex justify-between items-center">
-      <div class="flex items-center gap-4">
-        <span class="text-gray-700">在 【{{ currentChapterTitle }}】 中</span>
-
-        <!-- 关键修改：添加相对定位容器 -->
-        <div class="relative">
+  <div
+    class="w-full h-full max-w-5xl mx-auto p-6 grid gap-6" :class="{
+      'grid-cols-[2fr_1fr]': showSidebar,
+    }"
+  >
+    <div class="space-y-4">
+      <div class="border rounded-2xl shadow-sm p-4 bg-background">
+        <div class="font-semibold mb-4">
+          题目列表
+        </div>
+        <div class="grid grid-cols-10 gap-2">
           <Button
-            ref="questionListTrigger" severity="secondary" class="text-sm text-gray-600"
-            @click="toggleQuestionList"
+            v-for="(item, index) in questionList"
+            :key="item.id"
+            class="text-xs font-medium transition-all border"
+            :class="{
+              'border-red-500 !bg-red-50': item.answer_records.length > 0 && !item.answer_records[0].is_correct,
+              'border-green-500 !bg-green-50': item.answer_records.length > 0 && item.answer_records[0].is_correct,
+              'border-orange-500': !(item.answer_records.length > 0) && item.choices.some(c => c.is_chosen),
+              'ring-2 border-none ring-primary': index === questionIndex,
+            }"
+            variant="outline"
+            @click="gotoQuestion(index)"
           >
-            <List class="w-4 h-4 mr-2" />选择试题
+            {{ index + 1 }}
+          </Button>
+        </div>
+      </div>
+      <div v-if="currentQuestion" class="border rounded-2xl shadow-sm p-5 bg-background">
+        <div class="flex items-start gap-3">
+          <span class="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-semibold">
+            {{ questionIndex + 1 }}
+          </span>
+          <MarkdownDiv class="flex items-center gap-2" :text="currentQuestion.content" />
+        </div>
+        <div class="mt-4 grid gap-2">
+          <RadioGroup
+            v-if="currentQuestion?.choices"
+            orientation="vertical"
+            :model-value="(currentQuestion.choices.find(c => c.is_chosen) || {}).id ?? null"
+            @update:model-value="id => {
+              currentQuestion?.choices.forEach(c => (c.is_chosen = c.id === id));
+              draftQuestion();
+            }"
+          >
+            <label
+              v-for="(choice, index) in currentQuestion.choices"
+              :key="choice.id"
+              :for="choice.id"
+              class="group border rounded-xl p-3 flex items-center justify-start transition-all h-auto cursor-pointer"
+              :class="{
+                'border-green-500 bg-green-50': currentQuestion.answer_records.length && choice.is_correct,
+                'border-red-500 bg-red-50': currentQuestion.answer_records.length && !choice.is_correct && choice.is_chosen,
+                'hover:border-primary': !currentQuestion.answer_records.length,
+              }"
+            >
+              <RadioGroupItem
+                :id="choice.id.toString()"
+                v-auto-animate="{ duration: 100 }"
+                :value="choice.id"
+                class="mr-3 text-foreground"
+                :disabled="currentQuestion.answer_records.length > 0"
+                @click="choice.is_chosen && currentQuestion.choices.forEach(c => (c.is_chosen = false))"
+              />
+              <label class="mr-2"> {{ String.fromCharCode(65 + index) }}. </label>
+              <MarkdownDiv class="" :text="choice.content" />
+            </label>
+          </RadioGroup>
+        </div>
+
+        <div class="mt-4 flex flex-wrap gap-2 items-center">
+          <Button
+            class="transition-all"
+            @click="() => {
+              if (!currentQuestion)
+                return;
+              if (currentQuestion.answer_records.length > 0) {
+                currentQuestion.answer_records = []
+                currentQuestion.choices.forEach(choice => choice.is_chosen = false)
+              }
+              else {
+                draftQuestion();
+                answerQuestion();
+              }
+            }"
+          >
+            {{ currentQuestion.answer_records.length === 0 ? '确认作答' : '重新作答' }}
+          </Button>
+          <Button
+            :disabled="currentQuestion.answer_records.length === 0" variant="outline"
+            class="transition-all"
+          >
+            查看解析
+          </Button>
+          <Button
+            :disabled="currentQuestion.answer_records.length === 0" variant="outline"
+            class="transition-all"
+          >
+            展开AI辅导
           </Button>
 
-          <!-- 选择试题弹出框 - 使用Tailwind定位 -->
-          <div
-            v-if="showQuestionList"
-            class="absolute left-full top-0 ml-2 mt-0 w-[750px] bg-white border border-gray-200 rounded-md shadow-lg z-50"
-            :class="{ 'right-full left-auto': shouldFlipPosition }"
-          >
-            <div class="p-3 flex flex-wrap gap-2 min-w-[750px]">
-              <Button
-                v-for="(id, index) in questionIds" :key="id" :label="(index + 1).toString()"
-                :severity="getButtonSeverity(id)" size="sm" @click.stop="handleSelectQuestion(id)"
-              />
-            </div>
+          <div class="ml-auto flex gap-2">
+            <Button
+              :disabled="questionIndex <= 0"
+              variant="outline"
+              @click="() => {
+                if (questionIndex > 0) {
+                  gotoQuestion(questionIndex - 1);
+                }
+              }"
+            >
+              上一题
+            </Button>
+            <Button
+              :disabled="questionIndex >= questionList.length - 1"
+              variant="outline"
+              @click="() => {
+                if (questionIndex < questionList.length - 1) {
+                  gotoQuestion(questionIndex + 1);
+                }
+              }"
+            >
+              下一题
+            </Button>
           </div>
         </div>
       </div>
-      <Button severity="primary" class="text-white bg-indigo-600 hover:bg-indigo-700" @click="viewReleaseDialog = true">
-        发布一个自测
-      </Button>
     </div>
-
-    <div class="flex h-[calc(100vh-150px)] p-5">
-      <ChoiceQuestionViewer
-        ref="questionViewer" :question-id="currentQuestionId" :current-section="currentSection"
-        @update:question-id="(id: number) => currentQuestionId = id"
-        @update:question-count="(count) => questionCount = count"
-      />
-    </div>
-
-    <Dialog v-model:visible="viewReleaseDialog" header="发布新的自测" :style="{ width: '60%' }">
-      <div class="p-6 text-center text-gray-600">
-        <p>自测发布功能正在开发中</p>
-      </div>
-      <template #footer>
-        <Button severity="secondary" @click="viewReleaseDialog = false">
-          取消
-        </Button>
-        <Button severity="primary" class="ml-2" @click="viewReleaseDialog = false">
-          确认
-        </Button>
-      </template>
-    </Dialog>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+
+</style>

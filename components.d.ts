@@ -150,6 +150,7 @@ declare module 'vue' {
     Label: typeof import('./src/components/ui/label/Label.vue')['default']
     LagrangeMVT: typeof import('./src/components/experiment/calculus/LagrangeMVT.vue')['default']
     LoginCard: typeof import('./src/components/auth/LoginCard.vue')['default']
+    MarkdownDiv: typeof import('./src/components/markdown-div/MarkdownDiv.vue')['default']
     MonteCarlo: typeof import('./src/components/experiment/chapter7/MonteCarlo.vue')['default']
     NavBar: typeof import('./src/components/NavBar.vue')['default']
     NetworkTrafficCharacteristics: typeof import('./src/components/experiment/chapter4/NetworkTrafficCharacteristics.vue')['default']

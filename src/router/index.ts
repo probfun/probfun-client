@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import AiPanel from '@/components/ai/AiPanel.vue';
-
 import Callback from '@/components/auth/Callback.vue';
 import CasLoginCard from '@/components/auth/CasLoginCard.vue';
 import LoginCard from '@/components/auth/LoginCard.vue';
@@ -20,27 +19,18 @@ import NormalDistribution from '@/components/experiment/distribution/normal-dist
 
 import PoissonDistribution from '@/components/experiment/distribution/poisson-distribution/PoissonDistribution.vue';
 import UniformDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
-
 import FavoritePanel from '@/components/favorite/FavoritePanel.vue';
+
 import HomePage from '@/components/home/HomePage.vue';
-import StatisticsPanel from '@/components/statistics/StatisticsPanel.vue';
 import StudentPanel from '@/components/user/StudentPanel.vue';
 import TeacherPanel from '@/components/user/TeacherPanel.vue';
-
 import AuthPage from '@/pages/AuthPage.vue';
 import DashBoard from '@/pages/DashBoard.vue';
-import SubjectPlaceholder from '@/pages/subject/SubjectPlaceholder.vue';
-import SubjectsHome from '@/pages/subject/SubjectsHome.vue';
 import { isVisitor } from '@/utils/auth.ts';
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    // 数学学科总主页（不显示侧边栏）
-    {
-      path: '/subjects',
-      component: SubjectsHome,
-    },
     {
       path: '/',
       component: AuthPage,
@@ -60,60 +50,6 @@ const router = createRouter({
         {
           path: '/callback',
           component: Callback,
-        },
-      ],
-    },
-    // 各科目占位主页（除了概率论用 dashboard，其余使用占位）
-    {
-      path: '/subject/:subject',
-      component: DashBoard,
-      children: [
-        // ================= 高等数学上（calculusA）实验实际组件路由 =================
-        // 注意：这些具体路由需要放在通配 /subject/:subject/experiment/:slug 之前，确保命中真实组件
-        {
-          path: '/subject/calculusA/experiment/sequence-limit',
-          component: () => import('@/components/experiment/calculus/SequenceLimit.vue'),
-        },
-        {
-          path: '/subject/calculusA/experiment/function-limit',
-          component: () => import('@/components/experiment/calculus/FunctionLimit.vue'),
-        },
-        {
-          path: '/subject/calculusA/experiment/derivative-geometry',
-          component: () => import('@/components/experiment/calculus/DerivativeGeometry.vue'),
-        },
-        {
-          path: '/subject/calculusA/experiment/taylor-expansion',
-          component: () => import('@/components/experiment/calculus/TaylorExpansion.vue'),
-        },
-        {
-          path: '/subject/calculusA/experiment/integrability-conditions',
-          component: () => import('@/components/experiment/calculus/IntegrabilityConditions.vue'),
-        },
-        {
-          path: '/subject/calculusA/experiment/lagrange-mvt',
-          component: () => import('@/components/experiment/calculus/LagrangeMVT.vue'),
-        },
-        {
-          path: '/subject/calculusA/experiment/gabriel-horn',
-          component: () => import('@/components/experiment/calculus/GabrielHorn.vue'),
-        },
-        // ========================================================================
-        {
-          path: '/subject/:subject',
-          component: SubjectPlaceholder,
-        },
-        {
-          path: '/subject/:subject/experiment/:slug',
-          component: () => import('@/pages/subject/SubjectContentPlaceholder.vue'),
-        },
-        {
-          path: '/subject/:subject/question/:slug',
-          component: () => import('@/pages/subject/SubjectContentPlaceholder.vue'),
-        },
-        {
-          path: '/subject/:subject/statistics',
-          component: () => import('@/pages/subject/SubjectContentPlaceholder.vue'),
         },
       ],
     },
@@ -237,14 +173,14 @@ const router = createRouter({
         //   path: '/dashboard/experiment/obstacle-options',
         //   component: () => import('@/components/experiment/chapter7/ObstacleOptions.vue'),
         // },
-        {
-          path: '/dashboard/experiment/t-distribution',
-          component: () => import('@/components/experiment/chapter7/new experiment/TDistribution.vue'),
-        },
-        {
-          path: '/dashboard/experiment/chi-square-distribution',
-          component: () => import('@/components/experiment/chapter7/new experiment/ChiSquareDistribution.vue'),
-        },
+        // {
+        //   path: '/dashboard/experiment/t-distribution',
+        //   component: () => import('@/components/experiment/chapter7/TDistribution.vue'),
+        // },
+        // {
+        //   path: '/dashboard/experiment/chi-square-distribution',
+        //   component: () => import('@/components/experiment/chapter7/ChiSquareDistribution.vue'),
+        // },
         {
           path: '/dashboard/experiment/t-distribution-quantile',
           component: () => import('@/components/experiment/chapter7/TDistributionQuantile.vue'),
@@ -318,36 +254,9 @@ const router = createRouter({
           component: Chatper4Diagram,
         },
         {
-          path: '/dashboard/question/:pathMatch(.*)*',
+          path: '/dashboard/question/:chapterId',
+          name: 'DoQuestion',
           component: DoQuestionPanel,
-        },
-        {
-          path: '/:pathMatch(.*)*',
-          redirect: '/dashboard',
-        },
-        {
-          path: '/dashboard/favorite',
-          component: FavoritePanel,
-        },
-        {
-          path: '/dashboard/mindmap/distribution',
-          component: DistributionDiagram,
-        },
-        {
-          path: '/dashboard/mindmap/chapter-1',
-          component: Chatper1Diagram,
-        },
-        {
-          path: '/dashboard/mindmap/chapter-4',
-          component: Chatper4Diagram,
-        },
-        {
-          path: '/dashboard/question/:pathMatch(.*)*',
-          component: DoQuestionPanel,
-        },
-        {
-          path: '/dashboard/statistics',
-          component: StatisticsPanel,
         },
         {
           path: '/:pathMatch(.*)*',
