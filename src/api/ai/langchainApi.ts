@@ -1,3 +1,4 @@
+import type { EventSourceMessage } from '@microsoft/fetch-event-source';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { error as toastError } from '@/utils/toast';
 
@@ -35,28 +36,27 @@ async function streamChat(
   // ===== 打印即将发出的请求 =====
   const headers = {
     'Content-Type': 'application/json',
-    'Accept': 'text/event-stream',
     'Authorization': getAuthToken(),
+    'Accept': '*/*',
   };
   const body = JSON.stringify({
-    messages: cid
-      ? [{ id: cid, content: message }]
-      : [{ content: message }],
+    messages: [{ content: message }],
+    ...(cid && { conversationId: cid }),
   });
   console.log('【Request Headers】', headers);
   console.log('【Request Body】', body);
   // ==============================
 
-  await fetchEventSource('/langchain/chat/', {
+  await fetchEventSource('/backend-api/langchain/chat/', {
     method: 'POST',
     headers,
     body,
     signal: abortCtrl?.signal,
-    async onopen(res) {
+    async onopen(res: Response) {
       if (!res.ok)
         throw new Error(`HTTP error! status: ${res.status}`);
     },
-    onmessage(ev) {
+    onmessage(ev: EventSourceMessage) {
       const data = JSON.parse(ev.data);
       if (data.type === 'conversation_info') {
         cid = data.content;

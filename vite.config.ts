@@ -25,13 +25,6 @@ export default defineConfig({
   server: {
     open: true,
     proxy: {
-      // 新的/langchain/chat代理配置
-      '/langchain/chat/': {
-        target: 'https://fun.prob-mind.online',
-        changeOrigin: true,
-        secure: false,
-        rewrite: path => path.replace(/^\/langchain\/chat/, '/backend-api/langchain/chat/'),
-      },
       '/backend-api/ai': {
         target: 'wss://fun.prob-mind.online', // 本地调试 本地用这个
         // target: 'ws://127.0.0.1:8000', // 线上部署
