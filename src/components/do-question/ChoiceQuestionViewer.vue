@@ -239,7 +239,7 @@ async function provideAiFeedback(isCorrect: boolean) {
       conversationId.value || undefined,
       (chunk) => {
       // 首块：先插入一条空消息占位
-        if (!assistantMsg) {
+        if (assistantMsg && chunk !== '') {
           aiMessages.value.push({ role: 'assistant', content: '' });
         }
         assistantMsg += chunk;
@@ -331,14 +331,16 @@ async function sendAiMessage() {
     userMessage,
     conversationId.value || undefined,
     (chunk) => {
-      console.log(chunk);
-      if (!assistantMsg) {
+      if (!assistantMsg && chunk !== '') {
         aiMessages.value.push({ role: 'assistant', content: '' });
       }
       assistantMsg += chunk;
       // 拆到下一微任务，让浏览器有机会重绘
       nextTick(() => {
         aiMessages.value[aiMessages.value.length - 1].content = assistantMsg;
+        const container = document.querySelector('.ai-messages-container');
+        if (container)
+          container.scrollTop = container.scrollHeight;
       });
     },
     (full, cid) => {

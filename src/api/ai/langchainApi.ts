@@ -17,7 +17,7 @@ export interface LangchainChatResponse {
 
 /* ---------- 工具函数 ---------- */
 function getAuthToken(): string {
-  const token = localStorage.getItem('token') || '';
+  const token = localStorage.getItem('token') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU3NDE5NjA5LCJpYXQiOjE3NTcxNjA0MDksImp0aSI6ImQ1ZWE5YjRjZWY2NjRlMDhhNjFhMGEwNWFhYTZkZDk2IiwidXNlcl9pZCI6IjgzIn0.N5ZzGGdzk_qHNqgskx84GrwgvRjAfC2cexRm0gBSElE';
   console.log(token);
   return `Bearer ${token}`;
 }
