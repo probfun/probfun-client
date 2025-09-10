@@ -5,7 +5,7 @@ import Button from 'primevue/button';
 import { computed, defineEmits, defineExpose, defineProps, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { langchainChatApi } from '@/api/ai/langchainApi';
-import { fetchChapterListApi, fetchQuestionDetailApi, fetchQuestionListApi } from '@/api/do-question/doQuestion.ts';
+import { fetchChapterListApi, fetchQuestionListApi } from '@/api/do-question/doQuestion.ts';
 import { error as toastError } from '@/utils/toast';
 import { renderMarkdown } from './latexmarkdown.ts';
 import { questionSectionMap } from './questionTypes';
@@ -106,16 +106,13 @@ async function refreshQuestionList(x: string) {
   aiMessages.value = [];
   userResults.value = {};
 
-  const [yStr, zStr] = x.split('.');
-  const y = Number(yStr);
-  const z = Number(zStr);
-
   try {
     const resChapter = await fetchChapterListApi(5);
     const apiChapters = resChapter.chapters || [];
     console.log('apiChapters:', apiChapters);
 
-    chapterId.value = apiChapters[y - 1]?.children?.[z - 1]?.id;
+    chapterId.value = Number(x);
+    console.log('chapterId:', chapterId.value);
 
     if (chapterId.value && props.currentSection) {
       const resQuestion = await fetchQuestionListApi(chapterId.value);
@@ -126,28 +123,25 @@ async function refreshQuestionList(x: string) {
 
       // 转换难度数字为文本描述
       const difficultyMap: { [key: number]: string } = { 1: '简单', 2: '中等', 3: '困难' };
-      const formattedQuestions = await Promise.all(apiQuestions.map(async (question: any) => {
-        const resDetail = await fetchQuestionDetailApi(question.id);
-        const apiChoices = Array.isArray(resDetail.question?.choices)
-          ? resDetail.question.choices
-          : [];
-
+      const formattedQuestions = apiQuestions.map((question: any) => {
+        // 直接从apiQuestions的question中获取choices
+        const apiChoices = Array.isArray(question.choices) ? question.choices : [];
+        const choices = apiChoices.map((choice: any) => ({
+          content: choice.content,
+          isCorrect: choice.is_correct,
+          knowledgePoint: choice.knowledge_point?.name || '',
+        }));
         return {
           id: question.id,
           category: '',
           content: question.content,
-          choices: apiChoices.map((c: any) => ({
-            content: c.content,
-            isCorrect: Boolean(c.is_correct),
-            knowledgePoint: c.knowledge_point?.name || '',
-          })),
-          analysis: resDetail.question?.full_answer || '暂无解析',
+          choices,
+          analysis: question.full_answer,
           knowledgePoint: apiChoices[0]?.knowledge_point?.name || '',
-          // 把 key 转成数字再映射，防止字符串 key 失效
-          difficulty: difficultyMap[Number(question.difficulty)] || '未知',
+          difficulty: difficultyMap[question.difficulty] || '未知',
           lastResult: null,
         };
-      }));
+      });
 
       console.log('formattedQuestions:', formattedQuestions);
 
@@ -157,11 +151,14 @@ async function refreshQuestionList(x: string) {
       // 通知父组件更新题目数量
       emit('update:questionCount', formattedQuestions.length);
 
-      // 自动加载第一题
+      // 检查URL中的questionIndex参数
+      const questionIndex = Number(route.query.questionIndex || '0');
+
+      // 自动加载指定索引的题目或第一题
       if (formattedQuestions.length > 0 && (!currentQuestion.value || !props.questionId)) {
-        const firstId = formattedQuestions[0].id;
-        loadQuestion(firstId);
-        emit('update:questionId', firstId);
+        const targetId = formattedQuestions[Math.min(questionIndex, formattedQuestions.length - 1)]?.id || formattedQuestions[0].id;
+        loadQuestion(targetId);
+        emit('update:questionId', targetId);
       }
     }
   }
@@ -174,7 +171,7 @@ async function refreshQuestionList(x: string) {
   }
 }
 
-// 提交功能 为啥你电脑这么慢
+// 提交功能
 function handleSubmit() {
   console.log('选项', selectedChoice.value);
   if (selectedChoice.value === null) {
@@ -437,6 +434,20 @@ watch(
     }
   },
   { immediate: true }, // 首次进入页面也触发
+);
+
+watch(
+  () => route.query.questionIndex,
+  (newIndex) => {
+    if (newIndex && typeof newIndex === 'string') {
+      const index = Number(newIndex);
+      if (currentSectionQuestions.value.length > 0 && index >= 0 && index < currentSectionQuestions.value.length) {
+        const targetId = currentSectionQuestions.value[index].id;
+        loadQuestion(targetId);
+        emit('update:questionId', targetId);
+      }
+    }
+  },
 );
 
 // 在组件卸载时清理资源

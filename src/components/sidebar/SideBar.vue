@@ -208,7 +208,6 @@ async function refreshChapterList() {
   try {
     const response = await fetchChapterListApi(5); // 传subjectId
     const chapterList = response.chapters;
-    // 仅在概率论科目下动态更新
     probabilityQuestionItems.value = chapterList.map(chapter => toItemTree(chapter));
   }
   catch (error) {
