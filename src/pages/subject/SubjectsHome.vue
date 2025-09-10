@@ -7,11 +7,11 @@ interface SubjectCard { key: string; title: string; desc: string; route: string 
 const router = useRouter();
 
 const subjects: SubjectCard[] = [
-  { key: 'calculusA', title: '高等数学上', desc: '高等数学上册，占位页面，结构与概率主页类似。', route: '/subject/calculusA' },
-  { key: 'linearAlgebra', title: '线性代数', desc: '线性代数，占位页面。', route: '/subject/linearAlgebra' },
-  { key: 'calculusB', title: '高等数学下', desc: '高等数学下册，占位页面。', route: '/subject/calculusB' },
-  { key: 'probability', title: '概率论', desc: '进入邮趣概率主页。', route: '/dashboard' },
-  { key: 'numberTheory', title: '数论', desc: '数论，占位页面。', route: '/subject/numberTheory' },
+  { key: 'calculusA', title: '高等数学(上)', desc: '鞠红杰', route: '/subject/calculusA' },
+  { key: 'linearAlgebra', title: '线性代数', desc: '仝辉', route: '/subject/linearAlgebra' },
+  { key: 'calculusB', title: '高等数学(下)', desc: '杜昊', route: '/subject/calculusB' },
+  { key: 'probability', title: '概率论', desc: '张丽华、周清', route: '/dashboard' },
+  { key: 'numberTheory', title: '数论', desc: '朱萍', route: '/subject/numberTheory' },
   { key: 'bayes', title: '统计决策与贝叶斯分析', desc: '统计决策与贝叶斯分析，占位页面。', route: '/subject/bayes' },
 ];
 </script>

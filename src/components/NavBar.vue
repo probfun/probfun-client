@@ -148,15 +148,15 @@ watch(isOpen, () => {
 });
 
 const subjectNameMap: Record<string, string> = {
-  calculusA: '高等数学上',
-  calculusB: '高等数学下',
+  calculusA: '高等数学(上)',
+  calculusB: '高等数学(下)',
   linearAlgebra: '线性代数',
   numberTheory: '数论',
   bayes: '统计决策与贝叶斯分析',
   probability: '邮趣概率',
 };
 
-// 高等数学上实验slug到中文名映射
+// 高等数学(上)实验slug到中文名映射
 const calculusAExperimentNameMap: Record<string, string> = {
   'sequence-limit': '数列极限',
   'function-limit': '函数极限',
@@ -173,10 +173,10 @@ const tags = ref<string[]>([]);
 const route = useRoute();
 
 function updateExperiment() {
-  // 高等数学上实验界面：/subject/calculusA/experiment/:slug
+  // 高等数学(上)实验界面：/subject/calculusA/experiment/:slug
   if (route.path.startsWith('/subject/calculusA/experiment/')) {
     const slug = route.path.split('/')[4];
-    title.value = calculusAExperimentNameMap[slug] || '高等数学上';
+    title.value = calculusAExperimentNameMap[slug] || '高等数学(上)';
     tags.value = [];
     return;
   }

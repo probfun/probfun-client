@@ -29,6 +29,7 @@ import TeacherPanel from '@/components/user/TeacherPanel.vue';
 
 import AuthPage from '@/pages/AuthPage.vue';
 import DashBoard from '@/pages/DashBoard.vue';
+import CalculusAHome from '@/pages/subject/calculusA/CalculusAHome.vue';
 import SubjectPlaceholder from '@/pages/subject/SubjectPlaceholder.vue';
 import SubjectsHome from '@/pages/subject/SubjectsHome.vue';
 import { isVisitor } from '@/utils/auth.ts';
@@ -68,7 +69,7 @@ const router = createRouter({
       path: '/subject/:subject',
       component: DashBoard,
       children: [
-        // ================= 高等数学上（calculusA）实验实际组件路由 =================
+        // ================= 高等数学(上)（calculusA）实验实际组件路由 =================
         // 注意：这些具体路由需要放在通配 /subject/:subject/experiment/:slug 之前，确保命中真实组件
         {
           path: '/subject/calculusA/experiment/sequence-limit',
@@ -99,6 +100,10 @@ const router = createRouter({
           component: () => import('@/components/experiment/calculus/GabrielHorn.vue'),
         },
         // ========================================================================
+        {
+          path: '/subject/calculusA',
+          component: CalculusAHome,
+        },
         {
           path: '/subject/:subject',
           component: SubjectPlaceholder,

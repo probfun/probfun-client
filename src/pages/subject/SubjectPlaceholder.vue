@@ -4,8 +4,8 @@ import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const map: Record<string, string> = {
-  calculusA: '高等数学上',
-  calculusB: '高等数学下',
+  calculusA: '高等数学(上)',
+  calculusB: '高等数学(下)',
   linearAlgebra: '线性代数',
   numberTheory: '数论',
   bayes: '统计决策与贝叶斯分析',

@@ -285,7 +285,7 @@ const currentSubject = computed(() => {
 });
 
 function buildSubjectExperimentItems(subject: string): DrawerItem[] {
-  // 高等数学上真实实验目录
+  // 高等数学(上)真实实验目录
   if (subject === 'calculusA') {
     return [
       {
