@@ -245,48 +245,32 @@ const router = createRouter({
           component: FavoritePanel,
         },
         {
-          path: '/dashboard/mindmap/distribution',
-          component: DistributionDiagram,
-        },
-        {
-          path: '/dashboard/mindmap/chapter-1',
-          component: Chatper1Diagram,
-        },
-        {
-          path: '/dashboard/mindmap/chapter-4',
-          component: Chatper4Diagram,
-        },
-        {
-          path: '/dashboard/question/:pathMatch(.*)*',
-          component: DoQuestionPanel,
-        },
-        {
-          path: '/:pathMatch(.*)*',
-          redirect: '/dashboard',
-        },
-        {
-          path: '/dashboard/favorite',
-          component: FavoritePanel,
-        },
-        {
-          path: '/dashboard/mindmap/distribution',
-          component: DistributionDiagram,
-        },
-        {
-          path: '/dashboard/mindmap/chapter-1',
-          component: Chatper1Diagram,
-        },
-        {
-          path: '/dashboard/mindmap/chapter-4',
-          component: Chatper4Diagram,
-        },
-        {
-          path: '/dashboard/question/:pathMatch(.*)*',
-          component: DoQuestionPanel,
-        },
-        {
           path: '/dashboard/statistics',
           component: StatisticsPanel,
+        },
+        {
+          path: '/dashboard/mindmap/distribution',
+          component: DistributionDiagram,
+        },
+        {
+          path: '/dashboard/mindmap/chapter-1',
+          component: Chatper1Diagram,
+        },
+        {
+          path: '/dashboard/mindmap/chapter-4',
+          component: Chatper4Diagram,
+        },
+        {
+          path: '/dashboard/question/Prob1',
+          component: () => import('@/components/mindmap/mindmap1/MindMapPanel.vue'),
+        },
+        {
+          path: '/dashboard/question/Prob2',
+          component: () => import('@/components/mindmap/mindmap2/MindMapPanel.vue'),
+        },
+        {
+          path: '/dashboard/question/:pathMatch(.*)*',
+          component: DoQuestionPanel,
         },
         {
           path: '/:pathMatch(.*)*',

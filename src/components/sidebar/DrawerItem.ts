@@ -94,7 +94,7 @@ const questionItems = ref<DrawerItem[]>([
     title: '第一章 概率论的基本概念',
     icon: 'lucide:folder',
     children: [
-      { title: 'Prob1思维导图', icon: 'lucide:network' },
+      { title: 'Prob1思维导图', icon: 'lucide:network', route: '/dashboard/question/Prob1' },
       { title: '1.1样本空间与随机事件', icon: 'lucide:book', route: '/dashboard/question/1.1%20样本空间与随机事件' },
       { title: '1.2事件的概率', icon: 'lucide:book', route: '/dashboard/question/1.2%20事件的概率' },
       { title: '1.3条件概率', icon: 'lucide:book', route: '/dashboard/question/1.3%20条件概率' },
@@ -105,7 +105,7 @@ const questionItems = ref<DrawerItem[]>([
     title: '第二章 一维随机变量',
     icon: 'lucide:folder',
     children: [
-      { title: 'Prob2思维导图', icon: 'lucide:network' },
+      { title: 'Prob2思维导图', icon: 'lucide:network', route: '/dashboard/question/Prob2' },
       { title: '2.1随机变量及其分布函数', icon: 'lucide:book', route: '/dashboard/question/2.1%20随机变量及其分布函数' },
       { title: '2.2离散型随机变量', icon: 'lucide:book', route: '/dashboard/question/2.2%20离散型随机变量' },
       { title: '2.3连续型随机变量', icon: 'lucide:book', route: '/dashboard/question/2.3%20连续型随机变量' },
