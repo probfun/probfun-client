@@ -4,8 +4,8 @@ interface Subject {
   id: string;
   name: string;
   description: string;
-  created_at: string;
-  updated_at: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface Chapter {
@@ -26,25 +26,26 @@ interface KnowledgePoint {
   name: string;
   description: string;
   chapters: Chapter[];
-  created_at: string;
-  updated_at: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface Choice {
   id: string;
   content: string;
-  is_correct: boolean;
-  knowledge_point: KnowledgePoint;
-  created_at: string;
-  updated_at: string;
-  is_chosen: boolean | null;
+  isCorrect: boolean;
+  knowledgePoint: KnowledgePoint;
+  createdAt: string;
+  updatedAt: string;
+  isChosen: boolean | null;
 }
 
 interface Chat {
   id: string;
   role: string;
   content: string;
-  created_at: string;
+  createdAt: string;
+  status: string;
 }
 
 interface Question {
@@ -52,19 +53,19 @@ interface Question {
   content: string;
   created_at: string;
   difficulty: string;
-  full_answer: string;
-  question_type: string;
-  updated_at: string;
+  fullAnswer: string;
+  questionType: string;
+  updatedAt: string;
   choices: Choice[];
-  answer_records: Answer[];
-  chats: Chat[];
+  answerRecords: Answer[];
+  chats: Chat[] | null;
 }
 
 interface Answer {
   id: string;
-  is_correct: boolean;
-  answered_at: string;
-  selected_option_ids: string[];
+  isCorrect: boolean;
+  answeredAt: string;
+  selectedOptionIds: string[];
 }
 
 async function fetchSubjectListApi() {
@@ -86,57 +87,63 @@ async function fetchChapterListApi(subjectId: string) {
   return result.data;
 }
 
-async function fetchQuestionApi(id: string) {
-  const result = await get<{ question: Question }>(`/assessment/question/${id}/`);
+async function fetchQuestionChatsApi(id: string) {
+  const result = await get<{ conversation: {
+    id: string;
+    messages: Chat[];
+    createdAt: string;
+    updatedAt: string;
+  }; }>(`/assessment/question/chat/${id}/`);
   return result.data;
 }
 
 async function answerQuestionApi(questionId: string, selectedOptionIds: string[], subjectiveAnswer: string) {
   const result = await post<{
     question: Question;
-    answer_record: Answer;
+    answerRecord: Answer;
   }>(`/assessment/question/answer/`, {
-    question_id: questionId,
-    selected_option_ids: selectedOptionIds,
-    subjective_answer: subjectiveAnswer,
+    questionId,
+    selectedOptionIds,
+    subjectiveAnswer,
   });
   return result.data;
 }
 
 async function draftQuestionApi(questionId: string, selectedOptionIds: string[]) {
   const result = await post<null>(`/assessment/question/draft/`, {
-    question_id: questionId,
-    selected_option_ids: selectedOptionIds,
+    questionId,
+    selectedOptionIds,
   });
   return result.data;
 }
 
 async function chatWithAiAPi(questionId: string, content: string) {
-  return new Promise<{
-    chats: Chat[];
-  }>(resolve => setTimeout(() => resolve({
-    chats: [
-      {
-        id: '0',
-        role: 'user',
-        content,
-        created_at: '0',
-      },
-      {
-        id: '1',
-        role: 'ai',
-        content: '我不知道',
-        created_at: '0',
-      },
-    ],
-  }), 5000));
-  // const result = await get<{
+  // return new Promise<{
   //   chats: Chat[];
-  // }>(`/assessment/chat/`, {
-  //   question_id: questionId,
-  //   content,
-  // });
-  // return result.data;
+  // }>(resolve => setTimeout(() => resolve({
+  //   chats: [
+  //     {
+  //       id: '0',
+  //       role: 'user',
+  //       content,
+  //       createdAt: '0',
+  //     },
+  //     {
+  //       id: '1',
+  //       role: 'ai',
+  //       content: '我不知道',
+  //       createdAt: '0',
+  //     },
+  //   ],
+  // }), 5000));
+  const result = await post<{
+    userMessage: Chat;
+    aiMessage: Chat;
+  }>(`/assessment/question/chat/`, {
+    questionId,
+    content,
+  });
+  return result.data;
 }
 
 export type { Chapter, Choice, Question, Subject };
@@ -146,7 +153,7 @@ export {
   chatWithAiAPi,
   draftQuestionApi,
   fetchChapterListApi,
-  fetchQuestionApi,
+  fetchQuestionChatsApi,
   fetchQuestionListApi,
   fetchSubjectListApi,
 };

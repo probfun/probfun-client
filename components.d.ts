@@ -171,6 +171,7 @@ declare module 'vue' {
     PricingofAmericanPutOptions: typeof import('./src/components/experiment/chapter7/PricingofAmericanPutOptions.vue')['default']
     ProcessNode: typeof import('./src/components/diagram/diagram-test/ProcessNode.vue')['default']
     ProgressCurve: typeof import('./src/components/statistics/ProgressCurve.vue')['default']
+    QuestionDiagram: typeof import('./src/components/diagram/question-diagram/QuestionDiagram.vue')['default']
     RadarChart: typeof import('./src/components/statistics/RadarChart.vue')['default']
     RadioGroup: typeof import('./src/components/ui/radio-group/RadioGroup.vue')['default']
     RadioGroupItem: typeof import('./src/components/ui/radio-group/RadioGroupItem.vue')['default']

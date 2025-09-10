@@ -5,7 +5,7 @@ interface DrawerItem {
   icon: string;
   children?: DrawerItem[];
   route?: string;
-  chapterId?: number;
+  chapterId?: string;
 }
 
 const experimentItems = ref<DrawerItem[]>([

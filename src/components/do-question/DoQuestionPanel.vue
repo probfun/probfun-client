@@ -2,7 +2,14 @@
 import type { Question } from '@/api/do-question/doQuestion.ts';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { answerQuestionApi, chatWithAiAPi, draftQuestionApi, fetchQuestionListApi } from '@/api/do-question/doQuestion.ts';
+import {
+  answerQuestionApi,
+  chatWithAiAPi,
+  draftQuestionApi,
+  fetchQuestionChatsApi,
+  fetchQuestionListApi,
+} from '@/api/do-question/doQuestion.ts';
+
 import MarkdownDiv from '@/components/markdown-div/MarkdownDiv.vue';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
@@ -47,11 +54,9 @@ async function loadQuestionList() {
       ...question,
       choices: question.choices!.map(choice => ({
         ...choice,
-        // is_chosen: false,
         content: choice.content.replace(/^[A-Z]\.\s*/, ''),
       })), // .sort(() => Math.random() - 0.5),
       content: question.content.replace(/^\d+\.\s*/, ''),
-      chats: [],
     }));
     gotoQuestion(0);
   }
@@ -61,24 +66,20 @@ async function loadQuestionList() {
   }
 }
 
-async function loadQuestion() {
-  // const questionId = questionList.value[questionIndex.value].id;
-  // if (questionList.value[questionIndex.value].choices) {
-  //   return;
-  // }
-  // try {
-  //   const response = await fetchQuestionApi(questionId);
-  //   const choices = response.question.choices!.map(choice => ({
-  //     ...choice,
-  //     is_chosen: false,
-  //     content: choice.content.replace(/^[A-Z]\.\s*/, ''),
-  //   }));
-  //   choices.sort(() => Math.random() - 0.5);
-  //   questionList.value[questionIndex.value].choices = choices;
-  // }
-  // catch (error) {
-  //   console.error('Error fetching question:', error);
-  // }
+async function loadQuestionChats() {
+  if (!currentQuestion.value || currentQuestion.value.chats) {
+    return;
+  }
+  try {
+    const response = await fetchQuestionChatsApi(currentQuestion.value.id);
+    currentQuestion.value.chats = response.conversation.messages;
+    if (response.conversation.messages.length > 0) {
+      showAiSidebar.value = true;
+    }
+  }
+  catch (error) {
+    console.error('Error fetching question:', error);
+  }
 }
 
 function gotoQuestion(index: number) {
@@ -90,11 +91,11 @@ function gotoQuestion(index: number) {
 async function answerQuestion() {
   if (currentQuestion.value === null)
     return;
-  const optionIds = currentQuestion.value.choices?.filter(choice => choice.is_chosen).map(choice => choice.id) || [];
+  const optionIds = currentQuestion.value.choices?.filter(choice => choice.isChosen).map(choice => choice.id) || [];
   const questionId = currentQuestion.value.id;
   try {
     const response = await answerQuestionApi(questionId, optionIds, '');
-    questionList.value[questionIndex.value].answer_records = response.question.answer_records;
+    questionList.value[questionIndex.value].answerRecords = response.question.answerRecords;
     showAnalytics.value = true;
   }
   catch (error) {
@@ -105,7 +106,7 @@ async function answerQuestion() {
 async function draftQuestion() {
   if (currentQuestion.value === null)
     return;
-  const optionIds = currentQuestion.value.choices?.filter(choice => choice.is_chosen).map(choice => choice.id) || [];
+  const optionIds = currentQuestion.value.choices?.filter(choice => choice.isChosen).map(choice => choice.id) || [];
   const questionId = currentQuestion.value.id;
   try {
     await draftQuestionApi(questionId, optionIds);
@@ -117,7 +118,7 @@ async function draftQuestion() {
 
 onMounted(async () => {
   await loadQuestionList();
-  await loadQuestion();
+  await loadQuestionChats();
 });
 
 watch(() => route.params.chapterId, () => {
@@ -129,16 +130,16 @@ watch(() => route.query.questionIndex, () => {
     const index = Number.parseInt(route.query.questionIndex as string, 10);
     if (!Number.isNaN(index) && index >= 0 && index < questionList.value.length) {
       questionIndex.value = index;
-      if (currentQuestion.value?.answer_records.length === 0) {
+      if (currentQuestion.value?.answerRecords.length === 0) {
         showAnalytics.value = false;
       }
-      loadQuestion();
+      loadQuestionChats();
     }
   }
 });
 
 async function quickAsk(content: string) {
-  if (currentQuestion.value === null)
+  if (currentQuestion.value === null || currentQuestion.value.chats === null)
     return;
   const chats = currentQuestion.value.chats;
   try {
@@ -147,11 +148,12 @@ async function quickAsk(content: string) {
       id: '-1',
       role: 'user',
       content,
-      created_at: '-1',
+      createdAt: '-1',
+      status: '-1',
     });
     const response = await chatWithAiAPi(currentQuestion.value.id, content);
-    chats[chats.length - 1] = response.chats[0];
-    chats.push(response.chats[1]);
+    chats[chats.length - 1] = response.userMessage;
+    chats.push(response.aiMessage);
     aiState.value = 'idle';
   }
   catch (error) {
@@ -180,9 +182,9 @@ async function quickAsk(content: string) {
               :key="item.id"
               class="text-xs font-medium transition-all border"
               :class="{
-                'border-red-500 !bg-red-50': item.answer_records.length > 0 && !item.answer_records[0].is_correct,
-                'border-green-500 !bg-green-50': item.answer_records.length > 0 && item.answer_records[0].is_correct,
-                'border-orange-500': !(item.answer_records.length > 0) && item.choices.some(c => c.is_chosen),
+                'border-red-500 !bg-red-50': item.answerRecords.length > 0 && !item.answerRecords[0].isCorrect,
+                'border-green-500 !bg-green-50': item.answerRecords.length > 0 && item.answerRecords[0].isCorrect,
+                'border-orange-500': !(item.answerRecords.length > 0) && item.choices.some(c => c.isChosen),
                 'ring-2 border-none ring-primary': index === questionIndex,
               }"
               variant="outline"
@@ -203,9 +205,9 @@ async function quickAsk(content: string) {
             <RadioGroup
               v-if="currentQuestion?.choices"
               orientation="vertical"
-              :model-value="(currentQuestion.choices.find(c => c.is_chosen) || {}).id ?? null"
+              :model-value="(currentQuestion.choices.find(c => c.isChosen) || {}).id ?? null"
               @update:model-value="id => {
-                currentQuestion?.choices.forEach(c => (c.is_chosen = c.id === id));
+                currentQuestion?.choices.forEach(c => (c.isChosen = c.id === id));
                 draftQuestion();
               }"
             >
@@ -215,9 +217,9 @@ async function quickAsk(content: string) {
                 :for="choice.id"
                 class="group border rounded-xl p-3 flex items-center justify-start transition-all h-auto cursor-pointer"
                 :class="{
-                  'border-green-500 bg-green-50': currentQuestion.answer_records.length && choice.is_correct,
-                  'border-red-500 bg-red-50': currentQuestion.answer_records.length && !choice.is_correct && choice.is_chosen,
-                  'hover:border-primary': !currentQuestion.answer_records.length,
+                  'border-green-500 bg-green-50': currentQuestion.answerRecords.length && choice.isCorrect,
+                  'border-red-500 bg-red-50': currentQuestion.answerRecords.length && !choice.isCorrect && choice.isChosen,
+                  'hover:border-primary': !currentQuestion.answerRecords.length,
                 }"
               >
                 <RadioGroupItem
@@ -225,8 +227,8 @@ async function quickAsk(content: string) {
                   v-auto-animate="{ duration: 100 }"
                   :value="choice.id"
                   class="mr-3 text-foreground"
-                  :disabled="currentQuestion.answer_records.length > 0"
-                  @click="choice.is_chosen && currentQuestion.choices.forEach(c => (c.is_chosen = false))"
+                  :disabled="currentQuestion.answerRecords.length > 0"
+                  @click="choice.isChosen && currentQuestion.choices.forEach(c => (c.isChosen = false))"
                 />
                 <label class="mr-2"> {{ String.fromCharCode(65 + index) }}. </label>
                 <MarkdownDiv class="" :text="choice.content" />
@@ -236,15 +238,15 @@ async function quickAsk(content: string) {
 
           <div class="mt-4 flex flex-wrap gap-2 items-center">
             <Button
-              :disabled="currentQuestion.answer_records.length === 0 && !currentQuestion.choices.some(c => c.is_chosen)"
+              :disabled="currentQuestion.answerRecords.length === 0 && !currentQuestion.choices.some(c => c.isChosen)"
               class="transition-all"
               @click="() => {
                 if (!currentQuestion)
                   return;
-                if (currentQuestion.answer_records.length > 0) {
+                if (currentQuestion.answerRecords.length > 0) {
                   showAnalytics = false;
-                  currentQuestion.answer_records = [];
-                  currentQuestion.choices.forEach(choice => choice.is_chosen = false);
+                  currentQuestion.answerRecords = [];
+                  currentQuestion.choices.forEach(choice => choice.isChosen = false);
                 }
                 else {
                   draftQuestion();
@@ -252,10 +254,10 @@ async function quickAsk(content: string) {
                 }
               }"
             >
-              {{ currentQuestion.answer_records.length === 0 ? '确认作答' : '重新作答' }}
+              {{ currentQuestion.answerRecords.length === 0 ? '确认作答' : '重新作答' }}
             </Button>
             <Button
-              :disabled="currentQuestion.answer_records.length === 0" variant="outline"
+              :disabled="currentQuestion.answerRecords.length === 0" variant="outline"
               class="transition-all"
               @click="showAnalytics = !showAnalytics"
             >
@@ -299,7 +301,7 @@ async function quickAsk(content: string) {
           <div class="font-semibold mb-1">
             答案解析
           </div>
-          <MarkdownDiv :text="currentQuestion.full_answer" />
+          <MarkdownDiv :text="currentQuestion.fullAnswer" />
         </div>
       </div>
 
@@ -315,7 +317,7 @@ async function quickAsk(content: string) {
           </div>
 
           <div v-auto-animate class="p-4 space-y-3 max-h-[600px] overflow-auto">
-            <div v-if="currentQuestion?.chats.length === 0" class="text-xs text-muted-foreground">
+            <div v-if="currentQuestion?.chats?.length === 0" class="text-xs text-muted-foreground">
               开始提问吧：可以描述你卡住的步骤或贴出你的推导。
             </div>
             <div v-for="(chat, index) in currentQuestion.chats" v-else :key="index">
@@ -325,14 +327,14 @@ async function quickAsk(content: string) {
               <div
                 class="inline-block px-3 py-2 rounded-sm border text-sm" :class="{
                   'bg-primary text-primary-foreground': chat.role === 'user',
-                  'bg-secondary text-secondary-foreground': chat.role === 'ai',
+                  'bg-secondary text-secondary-foreground': chat.role === 'assistant',
                 }"
               >
                 <MarkdownDiv
                   class="text-sm"
                   :class="{
                     'text-primary-foreground': chat.role === 'user',
-                    'text-secondary-foreground': chat.role === 'ai',
+                    'text-secondary-foreground': chat.role === 'assistant',
                   }" :text="chat.content"
                 />
               </div>

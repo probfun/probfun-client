@@ -7,6 +7,7 @@ import RegisterCard from '@/components/auth/RegisterCard.vue';
 import Chatper1Diagram from '@/components/diagram/chapter-1/Chapter1Diagram.vue';
 import Chatper4Diagram from '@/components/diagram/chapter-4/Chapter4Diagram.vue';
 import DistributionDiagram from '@/components/diagram/distribution-diagram/DistributionDiagram.vue';
+import QuestionDiagram from '@/components/diagram/question-diagram/QuestionDiagram.vue';
 import DoQuestionPanel from '@/components/do-question/DoQuestionPanel.vue';
 import BirthdayProblem from '@/components/experiment/chapter1/birthday-problem/BirthdayProblem.vue';
 import BirthdayAttack from '@/components/experiment/chapter1/BirthdayAttack.vue';
@@ -15,12 +16,12 @@ import PositiveTest from '@/components/experiment/chapter1/PositiveTest.vue';
 import ThreeDoors from '@/components/experiment/chapter1/three-doors/ThreeDoors.vue';
 import threeNormalDistribution from '@/components/experiment/chapter3/normal-distribution/threeNormalDistribution.vue';
 import GeometricDistribution from '@/components/experiment/distribution/geometric-distribution/GeometricDistribution.vue';
-import NormalDistribution from '@/components/experiment/distribution/normal-distribution/NormalDistribution.vue';
 
+import NormalDistribution from '@/components/experiment/distribution/normal-distribution/NormalDistribution.vue';
 import PoissonDistribution from '@/components/experiment/distribution/poisson-distribution/PoissonDistribution.vue';
 import UniformDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
-import FavoritePanel from '@/components/favorite/FavoritePanel.vue';
 
+import FavoritePanel from '@/components/favorite/FavoritePanel.vue';
 import HomePage from '@/components/home/HomePage.vue';
 import StudentPanel from '@/components/user/StudentPanel.vue';
 import TeacherPanel from '@/components/user/TeacherPanel.vue';
@@ -257,6 +258,11 @@ const router = createRouter({
           path: '/dashboard/question/:chapterId',
           name: 'DoQuestion',
           component: DoQuestionPanel,
+        },
+        {
+          path: '/dashboard/mindmap/question/:chapterId',
+          name: 'QuestionDiagram',
+          component: QuestionDiagram,
         },
         {
           path: '/:pathMatch(.*)*',

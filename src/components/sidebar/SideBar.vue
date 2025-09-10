@@ -167,7 +167,7 @@ async function refreshFeedback() {
 }
 
 function toItemTree(root: Chapter): DrawerItem {
-  interface AnyNode { id: number; name: string; children?: AnyNode[] }
+  interface AnyNode { id: string; name: string; children?: AnyNode[] }
   const project = (node: any): AnyNode => ({
     id: node.id,
     name: node.name,
@@ -195,7 +195,7 @@ function toItemTree(root: Chapter): DrawerItem {
   chapter.children?.unshift({
     title: '思维导图',
     icon: 'lucide:chart-pie',
-    route: `/dashboard/mindmap/${root.name}`,
+    chapterId: root.id,
   });
 
   return chapter;
@@ -383,7 +383,7 @@ function goHome() {
           @click="() => {
             if (item.value.chapterId) {
               router.push({
-                name: 'DoQuestion',
+                name: item.value.title === '思维导图' ? 'QuestionDiagram' : 'DoQuestion',
                 params: { chapterId: item.value.chapterId },
               });
               openQuestionDrawer = false;
