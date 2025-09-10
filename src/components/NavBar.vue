@@ -156,13 +156,31 @@ const subjectNameMap: Record<string, string> = {
   probability: '邮趣概率',
 };
 
+// 高等数学上实验slug到中文名映射
+const calculusAExperimentNameMap: Record<string, string> = {
+  'sequence-limit': '数列极限',
+  'function-limit': '函数极限',
+  'derivative-geometry': '导数几何意义',
+  'taylor-expansion': '泰勒展开',
+  'integrability-conditions': '可积条件',
+  'lagrange-mvt': '拉格朗日中值定理',
+  'gabriel-horn': '加百利喇叭',
+};
+
 const title = ref<string>('');
 const tags = ref<string[]>([]);
 
 const route = useRoute();
 
 function updateExperiment() {
-  // 科目优先级：/subject/:subject/* -> 显示科目名；否则按原逻辑
+  // 高等数学上实验界面：/subject/calculusA/experiment/:slug
+  if (route.path.startsWith('/subject/calculusA/experiment/')) {
+    const slug = route.path.split('/')[4];
+    title.value = calculusAExperimentNameMap[slug] || '高等数学上';
+    tags.value = [];
+    return;
+  }
+  // 其它科目主页、练习等仍显示科目名
   if (route.path.startsWith('/subject/')) {
     const seg = route.path.split('/')[2];
     title.value = subjectNameMap[seg] || '学科主页';
