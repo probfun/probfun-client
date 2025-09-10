@@ -417,7 +417,7 @@ function openFeishuDoc() {
         {{ title }}
       </Label>
       <div class="flex gap-2 overflow-x-auto">
-        <Badge v-for="item in tags" :key="item" class="text-sm shrink-0">
+        <Badge v-for="item in tags" :key="item" class="text-xs shrink-0">
           {{ item }}
         </Badge>
       </div>
