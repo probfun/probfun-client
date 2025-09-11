@@ -66,38 +66,38 @@ const router = createRouter({
     },
     // 各科目占位主页（除了概率论用 dashboard，其余使用占位）
     {
-      path: '/subject/:subject',
+      path: '/subject',
       component: DashBoard,
       children: [
         // ================= 高等数学(上)（calculusA）实验实际组件路由 =================
         // 注意：这些具体路由需要放在通配 /subject/:subject/experiment/:slug 之前，确保命中真实组件
         {
           path: '/subject/calculusA/experiment/sequence-limit',
-          component: () => import('@/components/experiment/calculus/SequenceLimit.vue'),
+          component: () => import('@/components/experiment/calculusA/SequenceLimit.vue'),
         },
         {
           path: '/subject/calculusA/experiment/function-limit',
-          component: () => import('@/components/experiment/calculus/FunctionLimit.vue'),
+          component: () => import('@/components/experiment/calculusA/FunctionLimit.vue'),
         },
         {
           path: '/subject/calculusA/experiment/derivative-geometry',
-          component: () => import('@/components/experiment/calculus/DerivativeGeometry.vue'),
+          component: () => import('@/components/experiment/calculusA/DerivativeGeometry.vue'),
         },
         {
           path: '/subject/calculusA/experiment/taylor-expansion',
-          component: () => import('@/components/experiment/calculus/TaylorExpansion.vue'),
+          component: () => import('@/components/experiment/calculusA/TaylorExpansion.vue'),
         },
         {
           path: '/subject/calculusA/experiment/integrability-conditions',
-          component: () => import('@/components/experiment/calculus/IntegrabilityConditions.vue'),
+          component: () => import('@/components/experiment/calculusA/IntegrabilityConditions.vue'),
         },
         {
           path: '/subject/calculusA/experiment/lagrange-mvt',
-          component: () => import('@/components/experiment/calculus/LagrangeMVT.vue'),
+          component: () => import('@/components/experiment/calculusA/LagrangeMVT.vue'),
         },
         {
           path: '/subject/calculusA/experiment/gabriel-horn',
-          component: () => import('@/components/experiment/calculus/GabrielHorn.vue'),
+          component: () => import('@/components/experiment/calculusA/GabrielHorn.vue'),
         },
         // ========================================================================
         {
@@ -331,32 +331,8 @@ const router = createRouter({
           redirect: '/dashboard',
         },
         {
-          path: '/dashboard/favorite',
-          component: FavoritePanel,
-        },
-        {
-          path: '/dashboard/mindmap/distribution',
-          component: DistributionDiagram,
-        },
-        {
-          path: '/dashboard/mindmap/chapter-1',
-          component: Chatper1Diagram,
-        },
-        {
-          path: '/dashboard/mindmap/chapter-4',
-          component: Chatper4Diagram,
-        },
-        {
-          path: '/dashboard/question/:pathMatch(.*)*',
-          component: DoQuestionPanel,
-        },
-        {
           path: '/dashboard/statistics',
           component: StatisticsPanel,
-        },
-        {
-          path: '/:pathMatch(.*)*',
-          redirect: '/dashboard',
         },
       ],
     },

@@ -149,7 +149,7 @@
             display: flex;
             justify-content: space-between;
             font-size: 1.1rem;
-            margin-top: gif10px;
+            margin-top: 10px;
             color: #666666;
         }
 
@@ -158,7 +158,7 @@
             border-left: 4px solid #3b82f6;
             padding: 20px;
             border-radius: 0 8px 8px 0;
-            margin-top: gif30px;
+            margin-top: 30px;
         }
 
         .info-box h3 {
@@ -177,7 +177,7 @@
             height: 450px;
             background: #ffffff;
             border-radius: 10px;
-            box-shadow: inset 0 0 20px rgba(0, 0, 0, gif0.05);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.05);
             border: 1px solid #e0e0e0;
         }
 
@@ -191,10 +191,10 @@
         .characteristic {
             background: #f9fafb;
             padding: 15px;
-            border-radius: gif8px;
+            border-radius: 8px;
             text-align: center;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, gif0, 0.05);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
             border: 1px solid #e0e0e0;
         }
 
@@ -204,11 +204,20 @@
             background: #3b82f6;
         }
 
+        .characteristic:hover .value {
+            color: #ffffff;
+        }
+
+        .characteristic:hover .label {
+            font-size: 0.9rem;
+            color: #ffffff;
+        }
+
         .characteristic .value {
-            font-size: gif1.5rem;
+            font-size: 1.5rem;
             font-weight: bold;
             color: #3b82f6;
-            margin-top: gif5px;
+            margin-top: 5px;
             text-shadow: none;
         }
 
@@ -243,13 +252,13 @@
         }
 
         .mode-display {
-            margin-top: gif20px;
+            margin-top: 20px;
             text-align: center;
             font-size: 1.1rem;
             color: #3b82f6;
             padding: 10px;
             background: #f0f9ff;
-            border-radius: gif8px;
+            border-radius: 8px;
         }
 
         .footer {

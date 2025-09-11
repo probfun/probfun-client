@@ -288,39 +288,33 @@ function buildSubjectExperimentItems(subject: string): DrawerItem[] {
   if (subject === 'calculusA') {
     return [
       {
-        title: '第一章 极限',
+        title: '第一章 函数、极限与连续',
         icon: 'lucide:folder',
         children: [
-          { title: '数列极限', icon: 'lucide:flask-conical', route: `/subject/${subject}/experiment/sequence-limit` },
-          { title: '函数极限', icon: 'lucide:flask-conical', route: `/subject/${subject}/experiment/function-limit` },
+          { title: '数列的极限', icon: 'lucide:flask-conical', route: `/subject/${subject}/experiment/sequence-limit` },
+          { title: '函数的极限', icon: 'lucide:flask-conical', route: `/subject/${subject}/experiment/function-limit` },
         ],
       },
       {
-        title: '第二章 导数与中值定理',
+        title: '第二章 导数与微分',
         icon: 'lucide:folder',
         children: [
-          { title: '导数几何意义', icon: 'lucide:flask-conical', route: `/subject/${subject}/experiment/derivative-geometry` },
+          { title: '导数的几何意义', icon: 'lucide:flask-conical', route: `/subject/${subject}/experiment/derivative-geometry` },
+        ],
+      },
+      {
+        title: '第三章 微分中值定理及其应用',
+        icon: 'lucide:folder',
+        children: [
           { title: '拉格朗日中值定理', icon: 'lucide:flask-conical', route: `/subject/${subject}/experiment/lagrange-mvt` },
-        ],
-      },
-      {
-        title: '第三章 泰勒公式',
-        icon: 'lucide:folder',
-        children: [
           { title: '泰勒展开', icon: 'lucide:flask-conical', route: `/subject/${subject}/experiment/taylor-expansion` },
         ],
       },
       {
-        title: '第四章 积分与可积条件',
+        title: '第五章 定积分',
         icon: 'lucide:folder',
         children: [
           { title: '可积条件', icon: 'lucide:flask-conical', route: `/subject/${subject}/experiment/integrability-conditions` },
-        ],
-      },
-      {
-        title: '第五章 反常积分与实例',
-        icon: 'lucide:folder',
-        children: [
           { title: '加百利喇叭', icon: 'lucide:flask-conical', route: `/subject/${subject}/experiment/gabriel-horn` },
         ],
       },

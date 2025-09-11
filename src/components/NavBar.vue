@@ -157,14 +157,14 @@ const subjectNameMap: Record<string, string> = {
 };
 
 // 高等数学(上)实验slug到中文名映射
-const calculusAExperimentNameMap: Record<string, string> = {
-  'sequence-limit': '数列极限',
-  'function-limit': '函数极限',
-  'derivative-geometry': '导数几何意义',
-  'taylor-expansion': '泰勒展开',
-  'integrability-conditions': '可积条件',
-  'lagrange-mvt': '拉格朗日中值定理',
-  'gabriel-horn': '加百利喇叭',
+const calculusAExperimentNameMap: Record<string, { name: string; tags: string[] }> = {
+  'sequence-limit': { name: '数列极限', tags: [] },
+  'function-limit': { name: '函数极限', tags: [] },
+  'derivative-geometry': { name: '导数几何意义', tags: [] },
+  'taylor-expansion': { name: '泰勒展开', tags: [] },
+  'integrability-conditions': { name: '可积条件', tags: [] },
+  'lagrange-mvt': { name: '拉格朗日中值定理', tags: [] },
+  'gabriel-horn': { name: '加百利喇叭', tags: [] },
 };
 
 const title = ref<string>('');
@@ -176,8 +176,8 @@ function updateExperiment() {
   // 高等数学(上)实验界面：/subject/calculusA/experiment/:slug
   if (route.path.startsWith('/subject/calculusA/experiment/')) {
     const slug = route.path.split('/')[4];
-    title.value = calculusAExperimentNameMap[slug] || '高等数学(上)';
-    tags.value = [];
+    title.value = calculusAExperimentNameMap[slug]?.name || '高等数学(上)';
+    tags.value = calculusAExperimentNameMap[slug]?.tags || [];
     return;
   }
   // 其它科目主页、练习等仍显示科目名
