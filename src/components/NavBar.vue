@@ -167,6 +167,13 @@ const calculusAExperimentNameMap: Record<string, { name: string; tags: string[] 
   'gabriel-horn': { name: '加百利喇叭', tags: [] },
 };
 
+// 高等数学(下)实验slug到中文名映射
+const calculusBExperimentNameMap: Record<string, { name: string; tags: string[] }> = {
+  'neighborhood': { name: '邻域', tags: [] },
+  'partial-derivative': { name: '偏导数', tags: [] },
+  'total-derivative': { name: '全微分', tags: [] },
+};
+
 const title = ref<string>('');
 const tags = ref<string[]>([]);
 
@@ -178,6 +185,13 @@ function updateExperiment() {
     const slug = route.path.split('/')[4];
     title.value = calculusAExperimentNameMap[slug]?.name || '高等数学(上)';
     tags.value = calculusAExperimentNameMap[slug]?.tags || [];
+    return;
+  }
+  // 高等数学(下)实验界面：/subject/calculusB/experiment/:slug
+  if (route.path.startsWith('/subject/calculusB/experiment/')) {
+    const slug = route.path.split('/')[4];
+    title.value = calculusBExperimentNameMap[slug]?.name || '高等数学(下)';
+    tags.value = calculusBExperimentNameMap[slug]?.tags || [];
     return;
   }
   // 其它科目主页、练习等仍显示科目名

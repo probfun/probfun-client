@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import AiPanel from '@/components/ai/AiPanel.vue';
 
+import AiPanel from '@/components/ai/AiPanel.vue';
 import Callback from '@/components/auth/Callback.vue';
 import CasLoginCard from '@/components/auth/CasLoginCard.vue';
 import LoginCard from '@/components/auth/LoginCard.vue';
@@ -16,20 +16,21 @@ import PositiveTest from '@/components/experiment/chapter1/PositiveTest.vue';
 import ThreeDoors from '@/components/experiment/chapter1/three-doors/ThreeDoors.vue';
 import threeNormalDistribution from '@/components/experiment/chapter3/normal-distribution/threeNormalDistribution.vue';
 import GeometricDistribution from '@/components/experiment/distribution/geometric-distribution/GeometricDistribution.vue';
+
 import NormalDistribution from '@/components/experiment/distribution/normal-distribution/NormalDistribution.vue';
-
 import PoissonDistribution from '@/components/experiment/distribution/poisson-distribution/PoissonDistribution.vue';
-import UniformDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
 
+import UniformDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
 import FavoritePanel from '@/components/favorite/FavoritePanel.vue';
 import HomePage from '@/components/home/HomePage.vue';
 import StatisticsPanel from '@/components/statistics/StatisticsPanel.vue';
 import StudentPanel from '@/components/user/StudentPanel.vue';
-import TeacherPanel from '@/components/user/TeacherPanel.vue';
 
+import TeacherPanel from '@/components/user/TeacherPanel.vue';
 import AuthPage from '@/pages/AuthPage.vue';
 import DashBoard from '@/pages/DashBoard.vue';
-import CalculusAHome from '@/pages/subject/calculusA/CalculusAHome.vue';
+import CalculusAHome from '@/pages/subject/calculus/CalculusAHome.vue';
+import CalculusBHome from '@/pages/subject/calculus/CalculusBHome.vue';
 import SubjectPlaceholder from '@/pages/subject/SubjectPlaceholder.vue';
 import SubjectsHome from '@/pages/subject/SubjectsHome.vue';
 import { isVisitor } from '@/utils/auth.ts';
@@ -99,10 +100,26 @@ const router = createRouter({
           path: '/subject/calculusA/experiment/gabriel-horn',
           component: () => import('@/components/experiment/calculusA/GabrielHorn.vue'),
         },
+        {
+          path: '/subject/calculusB/experiment/partial-derivative',
+          component: () => import('@/components/experiment/calculusB/PartialDerivative.vue'),
+        },
+        {
+          path: '/subject/calculusB/experiment/total-derivative',
+          component: () => import('@/components/experiment/calculusB/TotalDerivative.vue'),
+        },
+        {
+          path: '/subject/calculusB/experiment/neighborhood',
+          component: () => import('@/components/experiment/calculusB/Neighborhood.vue'),
+        },
         // ========================================================================
         {
           path: '/subject/calculusA',
           component: CalculusAHome,
+        },
+        {
+          path: '/subject/calculusB',
+          component: CalculusBHome,
         },
         {
           path: '/subject/:subject',
@@ -129,6 +146,18 @@ const router = createRouter({
         {
           path: '/dashboard',
           component: HomePage,
+        },
+        {
+          path: '/dashboard/experiment/event-relationship',
+          component: () => import('@/components/experiment/chapter1/EventRelationship.vue'),
+        },
+        {
+          path: '/dashboard/experiment/discrete-pmf',
+          component: () => import('@/components/experiment/chapter2/DiscretePMF.vue'),
+        },
+        {
+          path: '/dashboard/experiment/pdf-cdf',
+          component: () => import('@/components/experiment/chapter2/PdfCdf.vue'),
         },
         {
           path: '/dashboard/experiment/buffon',

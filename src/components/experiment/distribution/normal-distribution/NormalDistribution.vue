@@ -1,120 +1,8 @@
 <script setup lang="ts">
-import katex from 'katex';
-import { computed, onMounted, ref, watch } from 'vue';
+import { onMounted } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
-import DistributionDiagram from '@/components/experiment/distribution/normal-distribution/NormalDiagram.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
-import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { renderLatex, toMarkdown } from '@/utils/markdown';
-import 'katex/dist/katex.min.css';
-
-const mean = ref([0]);
-const stdDev = ref([1]);
-const a = ref([1]);
-const b = ref([0]);
-const transformedMean = ref(0);
-const transformedVariance = ref(1);
-const transformedMeanY = ref(0);
-const transformedVarianceY = ref(0);
-const lineShow = ref(false);
-
-const save = ref(false);
-function saveImg() {
-  save.value = true;
-}
-function back() {
-  save.value = false;
-  lineShow.value = false;
-}
-
-const latexFormula = computed(() => {
-  // const meanVal = transformedMean.value.toFixed(1);
-  // const varianceVal = transformedVariance.value.toFixed(2);
-
-  // 如果 meanVal 为负数，则添加括号
-  // const meanDisplay = transformedMean.value < 0 ? `(${meanVal})` : meanVal;
-  // 如果 varianceVal 为负数（虽然理论上方差不会是负数，但以防万一）
-  // const varianceDisplay = transformedVariance.value < 0 ? `(${varianceVal})` : varianceVal;
-
-  return `f_X(x) = \\frac{1}{\\sqrt{2\\pi}σ} e^{-\\frac{(x-μ)^2}{2{σ}^2}}`;
-});
-// }=\\frac{1}{\\sqrt{2\\pi\\times${varianceDisplay}}} e^{-\\frac{(x-${meanDisplay})^2}{2\\times${varianceDisplay}}
-
-watch([mean, stdDev], () => {
-  transformedMean.value = mean.value[0];
-  transformedVariance.value = stdDev.value[0];
-}, { deep: true });
-
-watch([a, b], () => {
-  transformedMean.value = a.value[0] * mean.value[0] + b.value[0];
-  transformedVariance.value = a.value[0] ** 2 * stdDev.value[0];
-}, { deep: true });
-
-const latexFormulaY = computed(() => {
-  // const meanValY = transformedMeanY.value.toFixed(2);
-  // const varianceValY = transformedVarianceY.value.toFixed(2);
-
-  // 如果 meanVal 为负数，则添加括号
-  // const meanDisplayY = transformedMeanY.value < 0 ? `(${meanValY})` : meanValY;
-  // 如果 varianceVal 为负数（虽然理论上方差不会是负数，但以防万一）
-  // const varianceDisplayY = transformedVarianceY.value < 0 ? `(${varianceValY})` : varianceValY;
-
-  return `f_Y(y) =\\frac{1}{\\sqrt{2\\pi}aσ} e^{-\\frac{(y-(aμ+b))^2}{2{(aσ)^2}} }`;
-});
-// \\frac{1}{\\sqrt{2\\pi{σ'}^2}} e^{-\\frac{(x-μ')^2}{2{σ'}^2}}= \\frac{1}{\\sqrt{2\\pi\\times${varianceDisplayY}}} e^{-\\frac{(x-${meanDisplayY})^2}{2\\times${varianceDisplayY}}
-
-const transformedFormula = computed(() => {
-  // 计算均值和方差
-  const transformedMean = mean.value[0];
-  const transformedVariance = stdDev.value[0];
-
-  return `X \\sim N(μ,σ^2) \\sim N(${transformedMean.toFixed(2)}, ${transformedVariance.toFixed(2)})`;
-});
-
-const transformedFormulaY = computed(() => {
-  // 计算均值和方差
-  const transformedMeanY = a.value[0] * mean.value[0] + b.value[0];
-  const transformedVarianceY = a.value[0] ** 2 * stdDev.value[0];
-
-  return `Y = aX+b \\sim N(aμ+b,a^2σ^2) \\sim N(${transformedMeanY.toFixed(2)}, ${transformedVarianceY.toFixed(2)})`;
-});
-
-const katexMainFormula = ref<HTMLElement | null>(null);
-const katexMainFormulaY = ref<HTMLElement | null>(null);
-
-const katexTransformedFormula = ref<HTMLElement | null>(null);
-const katexTransformedFormulaY = ref<HTMLElement | null>(null);
-
-function renderFormula() {
-  if (katexMainFormula.value) {
-    katex.render(latexFormula.value, katexMainFormula.value, {
-      throwOnError: false,
-    });
-  }
-  if (katexMainFormulaY.value) {
-    katex.render(latexFormulaY.value, katexMainFormulaY.value, {
-      throwOnError: false,
-    });
-  }
-  if (katexTransformedFormula.value) {
-    katex.render(transformedFormula.value, katexTransformedFormula.value, {
-      throwOnError: false,
-    });
-  }
-  if (katexTransformedFormulaY.value) {
-    katex.render(transformedFormulaY.value, katexTransformedFormulaY.value, {
-      throwOnError: false,
-    });
-  }
-}
-
-onMounted(() => {
-  renderFormula();
-});
-
-watch([latexFormula, latexFormulaY, transformedFormula, transformedFormulaY], () => {
-  renderFormula();
-});
+import { toMarkdown } from '@/utils/markdown';
 
 const content = `
 ## **概述**
@@ -152,178 +40,39 @@ $$
 
 **线性变换保留了正态分布的钟形曲线形状，只是改变了其位置和尺度。**
 `;
+
+function onHtmlLoad() {
+  console.log('正态分布HTML页面加载完成');
+}
+
+onMounted(() => {
+  console.log('正态分布实验组件已挂载');
+});
 </script>
 
 <template>
-  <ExperimentBoard :panel-size="55">
+  <ExperimentBoard title="正态分布" :tags="[]" :panel-size="90" :show-parameter-panel="false">
     <template #experiment>
-      <!-- <DistributionDiagram class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance" :a="a" :b="b"
-        :show-history="save" /> -->
-      <DistributionDiagram
-        class="flex-1 h-full" :mean="transformedMean" :std-dev="transformedVariance"
-        :transformed-mean-y="transformedMeanY" :transformed-variance-y="transformedVarianceY" :show-history="save"
-        :line-show="lineShow" line1-color="red" line2-color="blue"
-      />
-    </template>
-
-    <!-- <template #parameter>
-      <div class="w-full flex flex-col items-center justify-center min-h-full">
-        <div class="w-full flex items-center justify-center">
-          <div>
-            <button v-if="!save" class="btn mr-5" @click="saveImg">
-              显示历史图像模式
-            </button>
-            <div v-if="save" class="mr-5 flex flex-col items-center">
-              <div class="flex items-center justify-center mb-5">
-                <div class="mr-2">
-                  显示线性变化的历史图像模式
-                </div>
-                <label class="swap">
-                  <input type="checkbox">
-                  <div class="swap-on" @click="lineShow = true">ON</div>
-                  <div class="swap-off" @click="lineShow = false">OFF</div>
-                </label>
-              </div>
-              <div>
-                <button class="btn mr-5" @click="back">
-                  返回
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="flex flex-col items-start mb-1">
-            <div class="flex flex-col items-start mb-4">
-              <div ref="katexTransformedFormula" class="l mb-2" />
-              <div ref="katexMainFormula" class="text-xl " />
-            </div>
-            <div class="flex flex-col items-start mb-4" />
-            <div ref="katexTransformedFormulaY" class=" mb-2" />
-            <div ref="katexMainFormulaY" class="text-xl " />
-          </div>
-        </div>
-        <div class="grid grid-cols-2 gap-5 p-5">
-          <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-            <p>Mean</p>
-            <InputNumber v-model.number="mean[0]" fluid :min-fraction-digits="1" />
-            <Slider v-model="mean" :min="-10" :max="10" :step="0.1" class="w-full" />
-          </div>
-          <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-            <p>Variance</p>
-            <InputNumber v-model.number="stdDev[0]" fluid :min-fraction-digits="1" />
-            <Slider v-model="stdDev" :min="0.1" :max="10" :step="0.05" class="w-full" />
-          </div>
-          <div class="flex flex-col flex-1 font-sm items-center justify-center space-y-3">
-            <p> a </p>
-            <InputNumber v-model.number="a[0]" fluid :invalid="a[0] === 0" :min-fraction-digits="1" />
-            <Slider v-model="a" :min="-10" :max="10" :step="0.1" class="w-full" />
-          </div>
-          <div class="flex flex-col flex-1 items-center justify-center space-y-3">
-            <p> b </p>
-            <InputNumber v-model.number="b[0]" fluid :min-fraction-digits="1" />
-            <Slider v-model="b" :min="-10" :max="10" :step="0.1" class="w-5/6" />
-          </div>
-        </div>
-      </div>
-    </template> -->
-
-    <template #parameter>
-      <div class="w-full h-full flex flex-col p-3 !gap-3">
-        <!-- <Card class="h-full w-full card">
-          <CardHeader class="pb-10">
-            <CardTitle>正态分布公式</CardTitle>
-          </CardHeader>
-          <CardContent class="w-full  h-full flex flex-col items-start gap-3">
-            <div class="w-full h-1/2 space-y-5">
-              <div ref="katexTransformedFormula" class="text-base" />
-              <div ref="katexMainFormula" class="text-base  pb-5" />
-            </div>
-            <div class="w-full h-1/2 space-y-5">
-              <div ref="katexTransformedFormulaY" class="text-base" />
-              <div ref="katexMainFormulaY" class="text-base " />
-            </div>
-          </CardContent>
-        </Card> -->
-
-        <Card class="w-full flex flex-col flex-1">
-          <CardHeader class="pb-5">
-            <CardTitle>正态分布公式</CardTitle>
-          </CardHeader>
-          <CardContent class="w-full flex-1">
-            <div class="flex flex-1 mb-4">
-              <div ref="katexTransformedFormula" class="text-base   mt-1 mr-24" />
-              <div ref="katexMainFormula" class="text-base " />
-            </div>
-
-            <div class="flex flex-1 ">
-              <div ref="katexTransformedFormulaY" class="text-base mt-2 mr-8" />
-              <div ref="katexMainFormulaY" class="text-base" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card class="w-full">
-          <CardContent class="grid grid-cols-5 items-center justify-center gap-5 p-4">
-            <div class="flex flex-1 items-center justify-center font-bold">
-              <div class="flex flex-1 items-center justify-center">
-                <div class="mr-4" v-html="renderLatex('均值\\(μ\\) = ')" />
-                <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                  <Input v-model.number="mean[0]" fluid :min-fraction-digits="1" placeholder="-10~10" />
-                  <Slider v-model="mean" :min="-10" :max="10" :step="0.1" class="w-full" />
-                </div>
-              </div>
-            </div>
-            <div class="flex flex-1 items-center justify-center font-bold">
-              <div class="flex flex-1 items-center justify-center">
-                <div class="mr-4" v-html="renderLatex(' 方差\\(σ^2\\) = ')" />
-                <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                  <Input v-model.number="stdDev[0]" fluid :min-fraction-digits="1" placeholder="0.1~10" />
-                  <Slider v-model="stdDev" :min="0.1" :max="10" :step="0.05" class="w-full" />
-                </div>
-              </div>
-            </div>
-            <div class="flex flex-1 items-center justify-center font-bold">
-              <div class="flex flex-1 items-center justify-center">
-                <div class="mr-4" v-html="renderLatex(' \\(a\\) = ')" />
-                <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                  <Input v-model.number="a[0]" fluid :invalid="a[0] === 0" :min-fraction-digits="1" placeholder="-10~10" />
-                  <Slider v-model="a" :min="-10" :max="10" :step="0.01" class="w-full" />
-                </div>
-              </div>
-            </div>
-            <div class="flex flex-1 items-center justify-center font-bold">
-              <div class="flex flex-1 items-center justify-center">
-                <div class="mr-4" v-html="renderLatex(' \\(b\\) = ')" />
-                <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                  <Input v-model.number="b[0]" fluid :min-fraction-digits="1" />
-                  <Slider v-model="b" :min="-10" :max="10" :step="0.1" class="w-5/6" placeholder="-10~10" />
-                </div>
-              </div>
-            </div>
-
-            <div class="flex gap-2 items-center justify-center">
-              <Checkbox
-                id="terms" @update:checked="(checked: boolean) => {
-                  if (checked) {
-                    saveImg();
-                  }
-                  else {
-                    back();
-                  }
-                  console.log(checked)
-                }"
-              />
-              <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
-            </div>
-          </CardContent>
-        </Card>
+      <div class="html-experiment-container">
+        <iframe
+          src="/chapter2/normal-distribution.html"
+          width="100%"
+          height="800px"
+          frameborder="0"
+          class="integration-iframe"
+          @load="onHtmlLoad"
+        />
       </div>
     </template>
 
     <template #conclusion>
       <div class="w-full h-full p-5">
-        <div class="prose-sm max-w-none" v-html="toMarkdown(content)" />
+        <div class="markdown-body prose prose-sm max-w-none space-y-4">
+          <div v-html="toMarkdown(content)" />
+        </div>
       </div>
     </template>
+
     <template #comment>
       <CommentPanel exp-id="normal-distribution" />
     </template>
@@ -331,7 +80,14 @@ $$
 </template>
 
 <style scoped>
-.flex {
-  gap: 0; /* 设置间距为1rem */
+.html-experiment-container {
+  width: 100%;
+  height: 100%;
+  min-height: 800px;
+}
+
+.integration-iframe {
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 </style>

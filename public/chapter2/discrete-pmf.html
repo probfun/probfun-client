@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>离散随机变量可视化</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7f9;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding-top: 140px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .control-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .chart-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 450px;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eaeaea;
+            text-align: center;
+        }
+
+        .slider-container {
+            margin: 15px 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 8px;
+            background: #2563eb;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        /* Chrome, Safari, Opera滑块样式 */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: #ffffff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px #2563eb;
+            transition: all 0.3s ease;
+        }
+
+        /* Firefox滑块样式 */
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #ddd;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* 滑块轨道悬停效果 */
+        input[type="range"]:hover {
+            background: #2563eb;
+        }
+
+        .value-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 14px;
+            color: #2563eb;
+            padding: 0 2px;
+        }
+
+        .value-display span {
+            width: 25px;
+            text-align: center;
+        }
+
+        .probability-display {
+            font-weight: bold;
+            color: #2563eb;
+            font-size: 16px;
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        .warning {
+            color: #e74c3c;
+            font-weight: 500;
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #ffecf0;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+            margin-top: 15px;
+            flex-grow: 1;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="main-content">
+            <div class="control-panel">
+                <h2>概率调整</h2>
+                <div class="slider-container">
+                    <label for="prob1">P(X=1):</label>
+                    <input type="range" id="prob1" min="0" max="1" step="0.01" value="0.3">
+                    <div class="value-display">
+                        <span>0</span>
+                        <span>0.5</span>
+                        <span>1</span>
+                    </div>
+                    <div class="probability-display" id="prob1-value">0.30</div>
+                </div>
+
+                <div class="slider-container">
+                    <label for="prob2">P(X=2):</label>
+                    <input type="range" id="prob2" min="0" max="1" step="0.01" value="0.5">
+                    <div class="value-display">
+                        <span>0</span>
+                        <span>0.5</span>
+                        <span>1</span>
+                    </div>
+                    <div class="probability-display" id="prob2-value">0.50</div>
+                </div>
+
+                <div class="slider-container">
+                    <label for="prob3">P(X=3):</label>
+                    <input type="range" id="prob3" min="0" max="1" step="0.01" value="0.2">
+                    <div class="value-display">
+                        <span>0</span>
+                        <span>0.5</span>
+                        <span>1</span>
+                    </div>
+                    <div class="probability-display" id="prob3-value">0.20</div>
+                </div>
+
+                <div class="warning" id="warning-message">
+                    概率总和必须等于1！请调整其他概率值。
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h2>概率质量函数 (PMF)</h2>
+                <div class="chart-wrapper">
+                    <canvas id="pmf-chart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h2>累积分布函数 (CDF)</h2>
+                <div class="chart-wrapper">
+                    <canvas id="cdf-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化图表
+        let pmfChart, cdfChart;
+        const values = [1, 2, 3];
+        let probabilities = [0.3, 0.5, 0.2];
+
+        // 初始化函数
+        function init() {
+            initCharts();
+            setupEventListeners();
+            updateAllDisplays();
+        }
+
+        // 初始化图表
+        function initCharts() {
+            const ctxPMF = document.getElementById('pmf-chart').getContext('2d');
+            const ctxCDF = document.getElementById('cdf-chart').getContext('2d');
+
+            // PMF图表
+            pmfChart = new Chart(ctxPMF, {
+                type: 'bar',
+                data: {
+                    labels: values,
+                    datasets: [{
+                        label: 'P(X = x)',
+                        data: probabilities,
+                        backgroundColor: [
+                            'rgba(231, 76, 60, 0.7)',
+                            'rgba(37, 99, 235, 0.7)',
+                            'rgba(46, 204, 113, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(231, 76, 60, 1)',
+                            'rgba(37, 99, 235, 1)',
+                            'rgba(46, 204, 113, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: '概率'
+                            },
+                            max: 1.0
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: '随机变量取值'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // CDF图表
+            const cdfData = calculateCDF(probabilities);
+            const stepData = createStepData(values, cdfData);
+
+            cdfChart = new Chart(ctxCDF, {
+                type: 'line',
+                data: {
+                    labels: stepData.values,
+                    datasets: [{
+                        label: 'F(x) = P(X ≤ x)',
+                        data: stepData.cdf,
+                        backgroundColor: 'rgba(155, 89, 182, 0.2)',
+                        borderColor: 'rgba(155, 89, 182, 1)',
+                        borderWidth: 3,
+                        fill: true,
+                        stepped: 'before',
+                        tension: 0,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: '累积概率'
+                            },
+                            max: 1.05
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: '随机变量取值'
+                            },
+                            min: 0,
+                            max: 4
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            document.getElementById('prob1').addEventListener('input', function () {
+                updateProbability(0, parseFloat(this.value));
+            });
+
+            document.getElementById('prob2').addEventListener('input', function () {
+                updateProbability(1, parseFloat(this.value));
+            });
+
+            document.getElementById('prob3').addEventListener('input', function () {
+                updateProbability(2, parseFloat(this.value));
+            });
+        }
+
+        // 更新概率
+        function updateProbability(index, newValue) {
+            // 计算当前总和（不包括正在调整的值）
+            let currentSum = 0;
+            for (let i = 0; i < probabilities.length; i++) {
+                if (i !== index) {
+                    currentSum += probabilities[i];
+                }
+            }
+
+            // 检查新值是否有效
+            if (currentSum + newValue > 1) {
+                // 显示警告
+                document.getElementById('warning-message').style.display = 'block';
+
+                // 限制最大值
+                newValue = 1 - currentSum;
+                document.getElementById(`prob${index + 1}`).value = newValue;
+            } else {
+                // 隐藏警告
+                document.getElementById('warning-message').style.display = 'none';
+            }
+
+            // 更新概率
+            probabilities[index] = newValue;
+
+            // 更新所有显示
+            updateAllDisplays();
+        }
+
+        // 更新所有显示
+        function updateAllDisplays() {
+            // 更新滑块值显示
+            document.getElementById('prob1-value').textContent = probabilities[0].toFixed(2);
+            document.getElementById('prob2-value').textContent = probabilities[1].toFixed(2);
+            document.getElementById('prob3-value').textContent = probabilities[2].toFixed(2);
+
+            // 更新图表
+            updateCharts();
+        }
+
+        // 计算CDF
+        function calculateCDF(probs) {
+            const cdf = [];
+            let cumulative = 0;
+
+            for (let i = 0; i < probs.length; i++) {
+                cumulative += probs[i];
+                cdf.push(cumulative);
+            }
+
+            return cdf;
+        }
+
+        // 创建CDF的阶跃数据 - 修正版本
+        function createStepData(vals, cdf) {
+            const stepValues = [0]; // 从0开始
+            const stepCDF = [0];   // 从0开始
+
+            // 为每个值添加阶跃
+            for (let i = 0; i < vals.length; i++) {
+                // 添加阶跃前的水平线
+                if (i > 0) {
+                    stepValues.push(vals[i] - 0.0001);
+                    stepCDF.push(cdf[i - 1]);
+                }
+
+                // 添加阶跃点
+                stepValues.push(vals[i]);
+                stepCDF.push(cdf[i]);
+            }
+
+            // 添加最后一个水平线段（延伸到x=4）
+            stepValues.push(4);
+            stepCDF.push(1);
+
+            return { values: stepValues, cdf: stepCDF };
+        }
+
+        // 更新图表
+        function updateCharts() {
+            // 更新PMF图表
+            pmfChart.data.datasets[0].data = probabilities;
+            pmfChart.update();
+
+            // 更新CDF图表
+            const cdfData = calculateCDF(probabilities);
+            const stepData = createStepData(values, cdfData);
+
+            cdfChart.data.labels = stepData.values;
+            cdfChart.data.datasets[0].data = stepData.cdf;
+            cdfChart.update();
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+
+</html>

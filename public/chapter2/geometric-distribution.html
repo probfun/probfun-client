@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>几何分布交互可视化</title>
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist@2.29.0/plotly.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .slider-container {
+            margin-bottom: 20px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 8px;
+            background: #2563eb;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        /* Chrome, Safari, Opera滑块样式 */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: #ffffff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px #2563eb;
+            transition: all 0.3s ease;
+        }
+
+        /* Firefox滑块样式 */
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #ddd;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* 滑块轨道悬停效果 */
+        input[type="range"]:hover {
+            background: #2563eb;
+        }
+
+        .value-display {
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .plot-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .plot {
+            flex: 1;
+            min-width: 300px;
+            height: 400px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(37, 99, 235, 0.1);
+            border-radius: 6px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .instructions {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f0f7ff;
+            border-left: 4px solid #2563eb;
+            border-radius: 4px;
+        }
+
+        .comparison {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #fff7f0;
+            border-left: 4px solid #e67e22;
+            border-radius: 4px;
+        }
+
+        .memoryless-demo {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(37, 99, 235, 0.1);
+            border-left: 4px solid rgba(37, 99, 235, 1.0);
+            border-radius: 4px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="slider-container">
+            <div class="slider-label">
+                <span>成功概率 (p):</span>
+                <span class="value-display" id="p-value">0.3</span>
+            </div>
+            <input type="range" id="p-slider" min="0.05" max="0.95" value="0.3" step="0.01">
+        </div>
+
+        <div class="plot-container">
+            <div id="until-success-plot" class="plot"></div>
+            <div id="before-success-plot" class="plot"></div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div>均值 (直到成功)</div>
+                <div class="stat-value" id="mean-until-value">3.33</div>
+            </div>
+            <div class="stat-item">
+                <div>均值 (成功前失败次数)</div>
+                <div class="stat-value" id="mean-before-value">2.33</div>
+            </div>
+            <div class="stat-item">
+                <div>方差</div>
+                <div class="stat-value" id="variance-value">7.78</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container memoryless-demo">
+        <h2>几何分布的无记忆性演示</h2>
+        <p>几何分布具有无记忆性：已知前m次试验失败，则从第m+1次开始直到成功的试验次数仍然服从相同的几何分布。</p>
+
+        <div class="control-group">
+            <div class="slider-label">
+                <span>已知失败次数 (m):</span>
+                <span class="value-display" id="m-value">3</span>
+            </div>
+            <input type="range" id="m-slider" min="0" max="10" value="3" step="1">
+        </div>
+
+        <div id="memoryless-plot" class="plot" style="width: 100%; height: 400px;"></div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div>条件概率 P(X > m+n | X > m)</div>
+                <div class="stat-value" id="conditional-prob-value">0.34</div>
+            </div>
+            <div class="stat-item">
+                <div>无条件概率 P(X > n)</div>
+                <div class="stat-value" id="unconditional-prob-value">0.34</div>
+            </div>
+            <div class="stat-item">
+                <div>是否相等</div>
+                <div class="stat-value" id="equality-value">是</div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        // 获取DOM元素
+        const pSlider = document.getElementById('p-slider');
+        const mSlider = document.getElementById('m-slider');
+        const pValue = document.getElementById('p-value');
+        const mValue = document.getElementById('m-value');
+        const meanUntilValue = document.getElementById('mean-until-value');
+        const meanBeforeValue = document.getElementById('mean-before-value');
+        const varianceValue = document.getElementById('variance-value');
+        const conditionalProbValue = document.getElementById('conditional-prob-value');
+        const unconditionalProbValue = document.getElementById('unconditional-prob-value');
+        const equalityValue = document.getElementById('equality-value');
+
+        // 初始化参数
+        let p = parseFloat(pSlider.value);
+        let m = parseInt(mSlider.value);
+
+        // 更新显示的值
+        function updateDisplayValues() {
+            pValue.textContent = p.toFixed(2);
+            mValue.textContent = m;
+
+            // 计算并显示统计信息
+            const meanUntil = 1 / p;
+            const meanBefore = (1 - p) / p;
+            const variance = (1 - p) / (p * p);
+
+            meanUntilValue.textContent = meanUntil.toFixed(2);
+            meanBeforeValue.textContent = meanBefore.toFixed(2);
+            varianceValue.textContent = variance.toFixed(2);
+
+            // 计算无记忆性相关概率
+            const n = 2; // 固定n值用于演示
+            const conditionalProb = Math.pow(1 - p, n);
+            const unconditionalProb = Math.pow(1 - p, n);
+
+            conditionalProbValue.textContent = conditionalProb.toFixed(2);
+            unconditionalProbValue.textContent = unconditionalProb.toFixed(2);
+            equalityValue.textContent = conditionalProb.toFixed(2) === unconditionalProb.toFixed(2) ? "是" : "否";
+        }
+
+        // 计算几何分布概率 (直到第一次成功)
+        function geometricPMFUntilSuccess(k, p) {
+            return Math.pow(1 - p, k - 1) * p;
+        }
+
+        // 计算几何分布概率 (第一次成功前的失败次数)
+        function geometricPMFBeforeSuccess(k, p) {
+            return Math.pow(1 - p, k) * p;
+        }
+
+        // 生成几何分布数据 (直到第一次成功)
+        function generateGeometricDataUntilSuccess(p) {
+            const xValues = [];
+            const yValues = [];
+
+            // 计算适当的x轴范围
+            const maxK = Math.min(30, Math.ceil(10 / p));
+
+            for (let k = 1; k <= maxK; k++) {
+                xValues.push(k);
+                yValues.push(geometricPMFUntilSuccess(k, p));
+            }
+
+            return { x: xValues, y: yValues };
+        }
+
+        // 生成几何分布数据 (第一次成功前的失败次数)
+        function generateGeometricDataBeforeSuccess(p) {
+            const xValues = [];
+            const yValues = [];
+
+            // 计算适当的x轴范围
+            const maxK = Math.min(30, Math.ceil(10 / p));
+
+            for (let k = 0; k <= maxK; k++) {
+                xValues.push(k);
+                yValues.push(geometricPMFBeforeSuccess(k, p));
+            }
+
+            return { x: xValues, y: yValues };
+        }
+
+        // 生成无记忆性演示数据
+        function generateMemorylessData(p, m) {
+            const xValues = [];
+            const yValuesOriginal = [];
+            const yValuesConditional = [];
+
+            // 计算适当的x轴范围
+            const maxK = Math.min(30, Math.ceil(10 / p));
+
+            for (let k = 1; k <= maxK; k++) {
+                xValues.push(k);
+                yValuesOriginal.push(geometricPMFUntilSuccess(k, p));
+
+                // 条件概率: 已知前m次失败，第m+k次成功的概率
+                if (k > m) {
+                    yValuesConditional.push(geometricPMFUntilSuccess(k - m, p));
+                } else {
+                    yValuesConditional.push(null);
+                }
+            }
+
+            return {
+                x: xValues,
+                yOriginal: yValuesOriginal,
+                yConditional: yValuesConditional
+            };
+        }
+
+        // 更新图表 - 直到第一次成功
+        function updateUntilSuccessChart() {
+            const data = generateGeometricDataUntilSuccess(p);
+
+            const trace = {
+                x: data.x,
+                y: data.y,
+                type: 'bar',
+                name: `几何分布 (p=${p.toFixed(2)})`,
+                marker: {
+                    color: 'rgba(37, 99, 235, 1.0)',
+                    line: {
+                        color: 'rgba(37, 99, 235, 1.0)',
+                        width: 1
+                    }
+                }
+            };
+
+            const layout = {
+                title: `直到第一次成功的试验次数`,
+                xaxis: {
+                    title: '试验次数 (k)',
+                    tickmode: 'linear',
+                    dtick: 1,
+                    tickangle: -45  // 添加这一行，使刻度标签垂直显示
+                },
+                yaxis: {
+                    title: '概率 P(X=k)',
+                    rangemode: 'nonnegative'
+                },
+                hovermode: 'closest'
+            };
+
+            Plotly.react('until-success-plot', [trace], layout);
+        }
+
+        // 更新图表 - 第一次成功前的失败次数
+        function updateBeforeSuccessChart() {
+            const data = generateGeometricDataBeforeSuccess(p);
+
+            const trace = {
+                x: data.x,
+                y: data.y,
+                type: 'bar',
+                name: `几何分布 (p=${p.toFixed(2)})`,
+                marker: {
+                    color: 'rgba(46, 204, 113, 1.0)',
+                    line: {
+                        color: 'rgba(46, 204, 113, 1.0)',
+                        width: 1
+                    }
+                }
+            };
+
+            const layout = {
+                title: `第一次成功前的失败次数`,
+                xaxis: {
+                    title: '失败次数 (k)',
+                    tickmode: 'linear',
+                    dtick: 1,
+                    tickangle: -45  // 添加这一行，使刻度标签垂直显示
+                },
+                yaxis: {
+                    title: '概率 P(Y=k)',
+                    rangemode: 'nonnegative'
+                },
+                hovermode: 'closest'
+            };
+
+            Plotly.react('before-success-plot', [trace], layout);
+        }
+
+        // 更新图表 - 无记忆性演示
+        function updateMemorylessChart() {
+            const data = generateMemorylessData(p, m);
+
+            const trace1 = {
+                x: data.x,
+                y: data.yOriginal,
+                type: 'bar',
+                name: `原始分布 (p=${p.toFixed(2)})`,
+                marker: {
+                    color: 'rgba(37, 99, 235, 1.0)',
+                    line: {
+                        color: 'rgba(37, 99, 235, 1.0)',
+                        width: 1
+                    }
+                }
+            };
+
+            const trace2 = {
+                x: data.x,
+                y: data.yConditional,
+                type: 'bar',
+                name: `条件分布 (已知前${m}次失败)`,
+                marker: {
+                    color: 'rgba(46, 204, 113, 1.0)',
+                    line: {
+                        color: 'rgba(46, 204, 113, 1.0)',
+                        width: 1
+                    }
+                }
+            };
+
+            const layout = {
+                title: `无记忆性演示: 已知前${m}次失败后的条件分布`,
+                xaxis: {
+                    title: '试验次数 (k)',
+                    tickmode: 'linear',
+                    dtick: 1
+                },
+                yaxis: {
+                    title: '概率',
+                    rangemode: 'nonnegative'
+                },
+                hovermode: 'closest',
+                barmode: 'group'
+            };
+
+            Plotly.react('memoryless-plot', [trace1, trace2], layout);
+        }
+
+        // 处理滑块变化
+        pSlider.addEventListener('input', function () {
+            p = parseFloat(this.value);
+            updateDisplayValues();
+            updateUntilSuccessChart();
+            updateBeforeSuccessChart();
+            updateMemorylessChart();
+        });
+
+        mSlider.addEventListener('input', function () {
+            m = parseInt(this.value);
+            updateDisplayValues();
+            updateMemorylessChart();
+        });
+
+        // 初始化
+        updateDisplayValues();
+        updateUntilSuccessChart();
+        updateBeforeSuccessChart();
+        updateMemorylessChart();
+    </script>
+</body>
+
+</html>

@@ -12,6 +12,7 @@ const experimentItems = ref<DrawerItem[]>([
     title: '第一章 概率论的基本概念',
     icon: 'lucide:folder',
     children: [
+      { title: '事件的关系与运算', icon: 'lucide:flask-conical', route: '/dashboard/experiment/event-relationship' },
       { title: '生日问题', icon: 'lucide:flask-conical', route: '/dashboard/experiment/birthday-problem' },
       { title: '蒲丰投针', icon: 'lucide:flask-conical', route: '/dashboard/experiment/buffon' },
       { title: '贝特朗悖论', icon: 'lucide:flask-conical', route: '/dashboard/experiment/bertrand' },
@@ -23,6 +24,8 @@ const experimentItems = ref<DrawerItem[]>([
     title: '第二章 一维随机变量',
     icon: 'lucide:folder',
     children: [
+      { title: '离散型随机变量的PMF', icon: 'lucide:flask-conical', route: '/dashboard/experiment/discrete-pmf' },
+      { title: '概率密度函数与分布函数', icon: 'lucide:flask-conical', route: '/dashboard/experiment/pdf-cdf' },
       { title: '二项分布', icon: 'lucide:flask-conical', route: '/dashboard/experiment/binomial-distribution' },
       { title: '泊松分布', icon: 'lucide:flask-conical', route: '/dashboard/experiment/poisson-distribution' },
       { title: '几何分布', icon: 'lucide:flask-conical', route: '/dashboard/experiment/geometric-distribution' },
@@ -191,7 +194,7 @@ const questionItems = ref<DrawerItem[]>([
     icon: 'lucide:folder',
     children: [
       { title: 'Prob9思维导图', icon: 'lucide:network' },
-      { title: '9.1马氏链', icon: 'lucide:book' },
+      { title: '9.1马氏链', icon: 'lucide:book', route: '/dashboard/question/9.1%20马氏链' },
       { title: '9.2转移概率', icon: 'lucide:book', route: '/dashboard/question/9.2%20转移概率' },
       { title: '9.3马氏链的有限维分布', icon: 'lucide:book', route: '/dashboard/question/9.3%20马氏链的有限维分布' },
       { title: '9.4马氏链的状态分类', icon: 'lucide:book', route: '/dashboard/question/9.4%20马氏链的状态分类' },
