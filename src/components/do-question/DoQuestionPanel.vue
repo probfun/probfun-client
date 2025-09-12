@@ -1,14 +1,9 @@
 <script setup lang="ts">
 import type { Question } from '@/api/do-question/doQuestion.ts';
+import { Icon } from '@iconify/vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import {
-  answerQuestionApi,
-  chatWithAiAPi,
-  draftQuestionApi,
-  fetchQuestionChatsApi,
-  fetchQuestionListApi,
-} from '@/api/do-question/doQuestion.ts';
+import { answerQuestionApi, chatWithAiAPi, clearQuestionChatApi, draftQuestionApi, fetchQuestionChatsApi, fetchQuestionListApi } from '@/api/do-question/doQuestion.ts';
 
 import MarkdownDiv from '@/components/markdown-div/MarkdownDiv.vue';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -159,6 +154,18 @@ async function quickAsk(content: string) {
   catch (error) {
     aiState.value = 'error';
     console.error('Error quickAsk:', error);
+  }
+}
+
+async function clearChat() {
+  if (currentQuestion.value === null || currentQuestion.value.chats === null)
+    return;
+  try {
+    await clearQuestionChatApi(currentQuestion.value.id);
+    currentQuestion.value.chats = [];
+  }
+  catch (error) {
+    console.error('Error clearChat:', error);
   }
 }
 </script>
@@ -376,6 +383,18 @@ async function quickAsk(content: string) {
                 }"
               >
                 {{ aiState === 'thinking' ? "思考中…" : "发送" }}
+              </Button>
+
+              <Button
+                :disabled="currentQuestion.chats?.length === 0 || aiState === 'thinking'"
+                class="text-red-500 hover:text-red-600 size-9 p-0"
+                variant="outline"
+                @click="clearChat"
+              >
+                <Icon
+                  class="w-4 h-4"
+                  icon="lucide:trash-2"
+                />
               </Button>
             </div>
           </div>

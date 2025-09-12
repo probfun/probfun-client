@@ -1,4 +1,4 @@
-import { get, post } from '@/api/request.ts';
+import { del, get, post } from '@/api/request.ts';
 
 interface Subject {
   id: string;
@@ -117,6 +117,11 @@ async function draftQuestionApi(questionId: string, selectedOptionIds: string[])
   return result.data;
 }
 
+async function clearQuestionChatApi(questionId: string) {
+  const result = await del<null>(`/assessment/question/chat/${questionId}/`);
+  return result.data;
+}
+
 async function chatWithAiAPi(questionId: string, content: string) {
   // return new Promise<{
   //   chats: Chat[];
@@ -142,6 +147,8 @@ async function chatWithAiAPi(questionId: string, content: string) {
   }>(`/assessment/question/chat/`, {
     questionId,
     content,
+  }, {
+    timeout: 50000,
   });
   return result.data;
 }
@@ -151,6 +158,7 @@ export type { Chapter, Choice, Question, Subject };
 export {
   answerQuestionApi,
   chatWithAiAPi,
+  clearQuestionChatApi,
   draftQuestionApi,
   fetchChapterListApi,
   fetchQuestionChatsApi,
