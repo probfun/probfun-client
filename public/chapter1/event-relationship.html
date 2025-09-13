@@ -94,7 +94,7 @@
             position: relative;
             width: 100%;
             height: 450px;
-            background: rgba(240, 240, 240, 0.8);
+            background: rgba(255, 255, 255, 0.8);
             border-radius: 10px;
             overflow: hidden;
             border: 1px solid rgba(37, 99, 235, 0.1);
@@ -164,19 +164,15 @@
         }
 
         .event-a {
-            background: rgba(231, 76, 60, 0.6)
+            background: rgba(231, 76, 60, 1.0)
         }
 
         .event-b {
-            background: rgba(46, 204, 113, 0.4)
-        }
-
-        .intersection {
-            background: rgba(155, 89, 182, 0.7)
+            background: rgba(46, 204, 113, 1.0)
         }
 
         .operation {
-            background: rgba(37, 99, 235, 0.7)
+            background: rgba(37, 99, 235, 1.0)
         }
 
         .relation-description {
@@ -249,9 +245,6 @@
                         <div class="legend-color event-b"></div><span>事件 B</span>
                     </div>
                     <div class="legend-item">
-                        <div class="legend-color intersection"></div><span>交集</span>
-                    </div>
-                    <div class="legend-item">
                         <div class="legend-color operation"></div><span>运算结果</span>
                     </div>
                 </div>
@@ -264,8 +257,8 @@
             const c = document.getElementById('eventCanvas'), ctx = c.getContext('2d');
             const rt = document.getElementById('relationTitle'), rd = document.getElementById('relationDesc');
             const E = {
-                A: { x: 300, y: 225, r: 60, color: 'rgba(231,76,60,0.6)', drag: false },
-                B: { x: 300, y: 225, r: 100, color: 'rgba(46,204,113,0.4)', drag: false },
+                A: { x: 300, y: 225, r: 60, color: 'rgba(231,76,60,1.0)', drag: false },
+                B: { x: 300, y: 225, r: 100, color: 'rgba(46,204,113,1.0)', drag: false },
                 rel: 'subset', op: null
             };
             const desc = {
@@ -300,7 +293,7 @@
 
                 if (E.rel === 'complementary') {
                     // 绘制整个样本空间作为事件B
-                    ctx.fillStyle = 'rgba(46,204,113,0.2)';
+                    ctx.fillStyle = 'rgba(46,204,113,1.0)';
                     ctx.fillRect(0, 0, c.width, c.height);
 
                     // 绘制事件A
@@ -310,7 +303,7 @@
                     ctx.fill();
 
                     // 绘制事件B的边界（整个画布）
-                    ctx.strokeStyle = 'rgba(46,204,113,0.6)';
+                    ctx.strokeStyle = 'rgba(46,204,113,1.0)';
                     ctx.lineWidth = 2;
                     ctx.strokeRect(0, 0, c.width, c.height);
 
@@ -352,7 +345,7 @@
 
             function highlight() {
                 // 使用统一的运算结果颜色 - 改为蓝色
-                const opColor = 'rgba(37, 99, 235, 0.7)';
+                const opColor = 'rgba(37, 99, 235, 1.0)';
 
                 ctx.globalCompositeOperation = 'source-over';
 
@@ -440,6 +433,7 @@
                 this.classList.add('active');
                 E.rel = this.dataset.relation;
                 E.op = null;
+                document.querySelectorAll('.op-btn').forEach(x => x.classList.remove('active'));
                 draw();
             }));
 

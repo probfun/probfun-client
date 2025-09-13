@@ -339,7 +339,7 @@
                     pointRadius: 0,
                     tension: 0
                 }, {
-                    label: 'F(a)',
+                    label: 'F(a)，F(b)',
                     data: [],
                     borderColor: 'rgba(231, 76, 60, 1)',
                     backgroundColor: 'rgba(231, 76, 60, 0.8)',
@@ -348,21 +348,12 @@
                     pointHoverRadius: 8,
                     showLine: false
                 }, {
-                    label: 'F(b)',
-                    data: [],
-                    borderColor: 'rgba(46, 204, 113, 1.0)',
-                    backgroundColor: 'rgba(46, 204, 113, 0.8)',
-                    borderWidth: 0,
-                    pointRadius: 6,
-                    pointHoverRadius: 8,
-                    showLine: false
-                }, {
                     label: 'P(a ≤ X ≤ b) = F(b) - F(a)',
                     data: [],
-                    borderColor: 'rgb(153, 102, 255)',
-                    backgroundColor: 'rgba(0, 0, 0, 0)', // 透明背景，移除填充
+                    borderColor: 'rgba(46, 204, 113, 1.0)',
+                    backgroundColor: 'rgba(0, 0, 0, 0)',
                     borderWidth: 2,
-                    fill: false, // 不填充
+                    fill: false,
                     pointRadius: 0,
                     tension: 0
                 }]
@@ -487,22 +478,21 @@
 
         // 更新CDF高亮区域 - 保留紫色落差线，但移除填充
         function updateCDFHighlight(a, b) {
-            const fAData = [];
-            const fBData = [];
+            const pointsData = [];
             const probData = [];
 
             // 对于单点概率，不显示高亮区域
             if (Math.abs(a - b) < 1e-10) {
-                return { fAData, fBData, probData };
+                return { pointsData, probData };
             }
 
             // 添加F(a)点
             const fA = piecewiseCDF(a);
-            fAData.push({ x: a, y: fA });
+            pointsData.push({ x: a, y: fA });
 
             // 添加F(b)点
             const fB = piecewiseCDF(b);
-            fBData.push({ x: b, y: fB });
+            pointsData.push({ x: b, y: fB });
 
             // 添加概率区域 - 只绘制线条，不填充
             probData.push({ x: a, y: fA });
@@ -510,7 +500,7 @@
             probData.push({ x: b, y: fA });
             probData.push({ x: b, y: fB });
 
-            return { fAData, fBData, probData };
+            return { pointsData, probData };
         }
 
         // 更新PDF高亮区域 - 确保边界线垂直
@@ -605,11 +595,10 @@
             pdfChart.data.datasets[1].data = updatePDFHighlight(a, b);
             pdfChart.update();
 
-            // 更新CDF高亮区域 - 保留紫色落差线，但移除填充
+            // 更新CDF高亮区域 - 合并到一个数据集
             const highlightData = updateCDFHighlight(a, b);
-            cdfChart.data.datasets[1].data = highlightData.fAData;
-            cdfChart.data.datasets[2].data = highlightData.fBData;
-            cdfChart.data.datasets[3].data = highlightData.probData;
+            cdfChart.data.datasets[1].data = highlightData.pointsData;
+            cdfChart.data.datasets[2].data = highlightData.probData;
             cdfChart.update();
         }
 
