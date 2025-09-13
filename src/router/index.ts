@@ -352,6 +352,10 @@ const router = createRouter({
           component: Chatper4Diagram,
         },
         {
+          path: '/dashboard/team',
+          component: () => import('@/pages/team/Team.vue'),
+        },
+        {
           path: '/dashboard/question/:pathMatch(.*)*',
           component: DoQuestionPanel,
         },

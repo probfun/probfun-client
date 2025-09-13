@@ -201,6 +201,12 @@ function updateExperiment() {
     tags.value = [];
     return;
   }
+  // /dashboard/team 显示“加入我们”
+  if (route.path === '/dashboard/team') {
+    title.value = '加入我们';
+    tags.value = [];
+    return;
+  }
   // 原有 updateExperiment 逻辑
   const path = route.path.split('/').pop();
   if (path === 'buffon') {

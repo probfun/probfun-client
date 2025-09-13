@@ -115,6 +115,11 @@ const sideBarItem = ref<SideBarItem[]>([
 
 const sideBarBottomItem = computed<SideBarItem[]>(() => [
   {
+    label: '开发团队',
+    icon: User,
+    route: '/dashboard/team',
+  },
+  {
     label: '切换主题',
     icon: config.theme === 'dark' ? Moon : Sun,
     command: async () => {
@@ -423,7 +428,7 @@ const questionItemsComputed = computed<DrawerItem[]>(() => {
       </div>
       <div class="mt-auto space-y-2">
         <div v-for="(item, index) in sideBarBottomItem" :key="index">
-          <TooltipProvider v-if="!isVisitor() || item.label === '切换主题'" :delay-duration="0">
+          <TooltipProvider v-if="!isVisitor() || item.label === '切换主题' || item.label === '开发团队'" :delay-duration="0">
             <Tooltip>
               <TooltipTrigger>
                 <Button
