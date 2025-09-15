@@ -7,6 +7,7 @@ import { answerQuestionApi, chatWithAiAPi, clearQuestionChatApi, draftQuestionAp
 
 import MarkdownDiv from '@/components/markdown-div/MarkdownDiv.vue';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { useUserStore } from '@/store';
 
 const route = useRoute();
 const router = useRouter();
@@ -18,16 +19,24 @@ const aiState = ref('idle');
 const aiContent = ref('');
 const quickQuestions = ref([
   {
-    title: '常见疑问',
-    content: '我不确定该用哪个公式',
+    title: '理解题意',
+    content: '我不太明白题目的意思',
   },
   {
-    title: '第一步提示',
-    content: '请给出第一步提示',
+    title: '方法指导',
+    content: '我不知道该用什么公式/定理',
   },
   {
-    title: '定位错误',
-    content: '我哪里算错了?',
+    title: '思路确认',
+    content: '我有几个思路，但不确定对不对',
+  },
+  {
+    title: '结果检查',
+    content: '我觉得我做对了，但结果不对',
+  },
+  {
+    title: '计算帮助',
+    content: '我计算到某一步卡住了',
   },
 ]);
 const currentQuestion = computed(() => {
@@ -329,7 +338,7 @@ async function clearChat() {
             </div>
             <div v-for="(chat, index) in currentQuestion.chats" v-else :key="index">
               <div class="text-xs ml-1 mb-1 opacity-60">
-                {{ chat.role === 'user' ? '你' : '邮小率' }}
+                {{ chat.role === 'user' ? useUserStore().user?.username : '邮小率' }}
               </div>
               <div
                 class="inline-block px-3 py-2 rounded-sm border text-sm" :class="{

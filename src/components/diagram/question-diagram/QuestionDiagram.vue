@@ -7,7 +7,6 @@ import { useRoute, useRouter } from 'vue-router';
 
 import { fetchDiagramApi } from '@/api/do-question/doQuestion.ts';
 import MindmapFlow from '@/components/diagram/question-diagram/MindmapFlow.vue';
-import './nodeStyles.css';
 
 const route = useRoute();
 const router = useRouter();

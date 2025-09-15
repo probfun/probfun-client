@@ -30,7 +30,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils.ts';
 import { useUserStore } from '@/store';
 import { isVisitor, logout } from '@/utils/auth.ts';
 
@@ -60,8 +59,8 @@ function toggleQuestionDrawer() {
   openExperimentDrawer.value = false;
 }
 
-function isActiveRoute(itemRoute: string) {
-  return route.path === itemRoute;
+function isActiveRoute(itemRoute: string, restrict = false): boolean {
+  return route.path === itemRoute || (!restrict && route.path.startsWith(`${itemRoute}/`));
 }
 
 const router = useRouter();
@@ -272,11 +271,13 @@ function goHome() {
               <TooltipTrigger>
                 <Button
                   size="icon" variant="ghost"
-                  :class="cn('size-11 rounded-lg text-muted-foreground', isActiveRoute(item.route ?? '') && '!bg-muted !text-primary')"
+                  class="size-11 rounded-lg text-muted-foreground"
+                  :class="(isActiveRoute(item.route ?? '', true) || (item.label === '实验目录' && isActiveRoute('/dashboard/experiment')) || (item.label === '做题目录' && (isActiveRoute('/dashboard/question') || isActiveRoute('/dashboard/mindmap')))) && '!bg-muted !text-primary'"
                   @click="() => {
                     if (item.command) item.command();
                     else if (item.route) router.push(item.route);
                     if (item.label !== '实验目录') openExperimentDrawer = false;
+                    if (item.label !== '做题目录') openQuestionDrawer = false;
                   }"
                 >
                   <component :is="item.icon" class="size-6" :stroke-width="2" />

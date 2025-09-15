@@ -1,4 +1,4 @@
-import type { Chat, ChatBlock, ChatMessage, Tool } from '@/api/ai/aiType';
+import type { Chat, ChatBlock, ChatMessage } from '@/api/ai/aiType';
 import { v4 as uuidv4 } from 'uuid';
 import { useAiStore } from '@/store';
 import { error, success } from '@/utils/toast';
@@ -44,12 +44,12 @@ export function getChatMessages() {
         });
       }
       else if (data.type === 'tool') {
-        const args = JSON.stringify((data.tool as Tool).args);
-        chatMessages.push({
-          role: 'function',
-          name: (data.tool as Tool).name,
-          content: args,
-        });
+        // const args = JSON.stringify((data.tool as Tool).args);
+        // chatMessages.push({
+        //   role: 'tool',
+        //   name: (data.tool as Tool).name,
+        //   content: args,
+        // });
       }
     }
   }

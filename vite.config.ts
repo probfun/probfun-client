@@ -26,16 +26,12 @@ export default defineConfig({
     open: true,
     proxy: {
       '/backend-api/ai': {
-        target: 'wss://fun.prob-mind.online', // 本地调试 本地用这个
-        // target: 'ws://127.0.0.1:8000', // 线上部署
+        target: 'wss://fun.prob-mind.online',
         ws: true,
         changeOrigin: true,
-        rewrite: path => path.replace(/^\/backend-api/, ''),
       },
       '/backend-api': {
-        // target: 'http://127.0.0.1:8000',
         target: 'https://fun.prob-mind.online',
-        // target: 'http://127.0.0.1:4523/m1/4811506-4465979-default',
         changeOrigin: true,
       },
       '/uploads': {

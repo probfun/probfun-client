@@ -8,7 +8,6 @@ defineProps<{
 function processText(text: string): string {
   text = text.replace(/\\\[(.+?)\\\]/gs, '\n$$$$\n$1\n$$$$\n');
   text = text.replace(/\\\((.+?)\\\)/gs, '$$$1$');
-  console.log(text);
   return text;
 }
 </script>

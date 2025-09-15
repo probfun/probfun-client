@@ -3,16 +3,13 @@ import type { Edge, Node } from '@vue-flow/core';
 import { layout as dagreLayout, graphlib } from '@dagrejs/dagre';
 import { Background } from '@vue-flow/background';
 import { Controls } from '@vue-flow/controls';
-import {
-  MarkerType,
-  Position,
-  useVueFlow,
-  VueFlow,
-} from '@vue-flow/core';
+import { Handle, MarkerType, Position, useVueFlow, VueFlow } from '@vue-flow/core';
+
 import { MiniMap } from '@vue-flow/minimap';
 import { computed, nextTick, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import { cn } from '@/lib/utils.ts';
 
-// === 类型定义 ===
 type Level = 1 | 2 | 3;
 export interface MindNodeData {
   label: string;
@@ -20,20 +17,19 @@ export interface MindNodeData {
   [k: string]: any;
 }
 
-// Props：把你已有的 ref/数组直接传进来
 const props = defineProps<{
   nodes: Node<MindNodeData>[];
   edges: Edge<any>[];
 }>();
 
-// 布局方向：左右(LR) / 上下(TB)
+const router = useRouter();
 const orientation = ref<'LR' | 'TB'>('LR');
+const openId = ref<string | null>(null);
 
-// level 对应 Tailwind 颜色
 const levelClasses: Record<Level, string> = {
-  1: 'bg-emerald-50 border-emerald-400 text-emerald-900',
-  2: 'bg-sky-50 border-sky-400 text-sky-900',
-  3: 'bg-amber-50 border-amber-400 text-amber-900',
+  1: 'bg-emerald-50 border-emerald-400 text-emerald-900 text-lg',
+  2: 'bg-sky-50 border-sky-400 text-sky-900 text-base',
+  3: 'bg-amber-50 border-amber-400 text-amber-900 text-sm',
 };
 
 // dagre 自动排版
@@ -65,20 +61,16 @@ function layoutGraph(nodes: Node<MindNodeData>[], edges: Edge<any>[]) {
   const srcPos = orientation.value === 'LR' ? Position.Right : Position.Bottom;
   const tgtPos = orientation.value === 'LR' ? Position.Left : Position.Top;
 
-  const baseNodeClass = 'rounded-2xl border shadow-sm px-4 py-3 select-none transition hover:shadow-md hover:-translate-y-0.5';
-
   return nodes.map((n) => {
     const pos = g.node(n.id);
     const width = pos?.width ?? defaultSize.width;
     const height = pos?.height ?? defaultSize.height;
-    const level = (n as Node<MindNodeData>).data?.level ?? 1;
 
     return {
       ...n,
-      type: n.type ?? 'default',
+      type: 'mind',
       sourcePosition: srcPos,
       targetPosition: tgtPos,
-      class: [baseNodeClass, levelClasses[level as Level]].join(' '),
       position: pos
         ? { x: pos.x - width / 2, y: pos.y - height / 2 }
         : n.position ?? { x: 0, y: 0 },
@@ -86,10 +78,23 @@ function layoutGraph(nodes: Node<MindNodeData>[], edges: Edge<any>[]) {
   });
 }
 
-const layoutedNodes = computed(() => layoutGraph(props.nodes, props.edges));
+const { fitView, updateNode } = useVueFlow();
 
-// 视口自适应
-const { fitView } = useVueFlow();
+function openPanel(id: string) {
+  if (openId.value && openId.value !== id) {
+    updateNode(openId.value, (n: any) => ({ ...n, zIndex: undefined }));
+  }
+  openId.value = id;
+  updateNode(id, (n: any) => ({ ...n, zIndex: 2000 }));
+}
+
+function closePanel(id: string) {
+  if (openId.value === id)
+    openId.value = null;
+  updateNode(id, (n: any) => ({ ...n, zIndex: undefined }));
+}
+
+const layoutedNodes = computed(() => layoutGraph(props.nodes, props.edges));
 
 watch(
   () => orientation.value,
@@ -102,7 +107,6 @@ watch(
 watch(
   () => [props.nodes, props.edges],
   async () => {
-    // wait 100 ms
     await new Promise(resolve => setTimeout(resolve, 100));
     await fitView({ padding: 0.1, duration: 500 });
   },
@@ -133,7 +137,6 @@ watch(
       </div>
     </div>
 
-    <!-- 画布区 -->
     <div class="flex-1">
       <VueFlow
         :nodes="layoutedNodes"
@@ -142,6 +145,69 @@ watch(
         :fit-view-on-init="true"
         :nodes-draggable="false"
       >
+        <template #node-mind="{ id, data, targetPosition, sourcePosition }">
+          <div
+            class="select-none"
+            @mouseenter="openPanel(id)"
+            @mouseleave="closePanel(id)"
+          >
+            <div
+              class="transition-all group relative rounded-2xl border shadow-sm px-4 py-3 min-w-[200px] hover:shadow-md hover:-translate-y-0.5 pointer-events-auto"
+              :class="cn(levelClasses[(data?.level ?? 1) as 1 | 2 | 3], (orientation === 'TB' && 'max-w-60'))"
+            >
+              <Handle id="t" type="target" :position="targetPosition ?? (orientation === 'LR' ? Position.Left : Position.Top)" />
+              <Handle id="s" type="source" :position="sourcePosition ?? (orientation === 'LR' ? Position.Right : Position.Bottom)" />
+
+              <div class="flex items-center gap-2">
+                <div
+                  class="rounded-full bg-current"
+                  :class="{
+                    'size-2': (data?.level ?? 1) === 1,
+                    'size-1.5': (data?.level ?? 1) === 2,
+                    'size-1': (data?.level ?? 1) === 3,
+                  }"
+                />
+                <span class="font-medium">{{ data?.label ?? '未命名' }}</span>
+              </div>
+
+              <p v-if="data?.description" class="mt-2 text-xs/5 opacity-70">
+                {{ data.description }}
+              </p>
+            </div>
+
+            <div
+              class="mt-1 rounded-xl border bg-white shadow-lg z-[3000] transition-all p-2 flex gap-2"
+              :class="openId === id ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto' : 'opacity-0 -translate-y-1 scale-95 pointer-events-none'"
+            >
+              <Button
+                v-if="data.level === 2"
+                class="w-full text-left px-3 py-2 "
+                @mousedown.stop.prevent
+                @click.stop="() => {
+                  router.push({
+                    name: 'DoQuestion',
+                    params: { chapterId: id },
+                  })
+                }"
+              >
+                跳转到相关试题
+              </Button>
+              <Button
+                class="w-full text-left px-3 py-2"
+                variant="outline"
+                @mousedown.stop.prevent
+                @click.stop="() => {
+                  router.push({
+                    path: '/dashboard/ai',
+                    query: { query: `我在学习“${data.label}”这个知识点时遇到了一些问题，能帮我解答吗？` },
+                  })
+                }"
+              >
+                对该知识点有疑问
+              </Button>
+            </div>
+          </div>
+        </template>
         <Background pattern-color="#e5e7eb" :gap="16" />
         <MiniMap />
         <Controls position="bottom-right" />

@@ -10,6 +10,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { aiApi, generateTitleApi } from '@/api/ai/aiApi';
 import AiSidebar from '@/components/ai/AiSidebar.vue';
 import Tool from '@/components/ai/tool/Tool.vue';
+import MarkdownDiv from '@/components/markdown-div/MarkdownDiv.vue';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,7 +36,6 @@ import {
   START_BLOCK,
 } from '@/utils/ai';
 import { isVisitor } from '@/utils/auth.ts';
-import { toMarkdown } from '@/utils/markdown';
 
 const message = ref('');
 const aiStore = useAiStore();
@@ -156,11 +156,7 @@ function receiveMessage(data: ReceiveData) {
   }
   const chat = aiStore.currentChat;
   if (data?.message) {
-    const message = data.message.replace(/\\\[/g, '$$$')
-      .replace(/\\\]/g, '$$$')
-      .replace(/\\\(/g, '$')
-      .replace(/\\\)/g, '$')
-      .replace(/\$\$/g, '\n$$$\n');
+    const message = data.message;
 
     const chatData: ChatData = {
       type: 'text',
@@ -356,7 +352,7 @@ function handleCompositionEnd() {
                       </div>
                       <div v-else class="flex flex-col gap-4 overflow-x-auto">
                         <div v-for="(data, index_) in block.data" :key="index_">
-                          <div v-if="data.type === 'text'" class="prose max-w-none" v-html="toMarkdown(data.text!)" />
+                          <MarkdownDiv v-if="data.type === 'text'" :text="data.text ?? ''" />
                           <Tool v-else-if="data.type === 'tool'" :name="data.tool!.name" :args="data.tool!.args" />
                         </div>
                       </div>
