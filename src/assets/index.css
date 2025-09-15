@@ -10,12 +10,14 @@
         --card-foreground: 222.2 84% 4.9%;
         --popover: 0 0% 100%;
         --popover-foreground: 222.2 84% 4.9%;
-        --primary: 221.2 83.2% 53.3%;
-        --primary-foreground: 210 40% 98%;
-        --secondary: 210 40% 96.1%;
-        --secondary-foreground: 222.2 47.4% 11.2%;
-        --muted: 210 40% 96.1%;
-        --muted-foreground: 215.4 16.3% 46.9%;
+
+        --primary: 240 5.9% 10%;
+        --primary-foreground: 0 0% 98%;
+        --secondary: 240 4.8% 95.9%;
+        --secondary-foreground: 240 5.9% 10%;
+        --muted: 240 4.8% 95.9%;
+        --muted-foreground: 240 3.8% 46.1%;
+
         --accent: 210 40% 96.1%;
         --accent-foreground: 222.2 47.4% 11.2%;
         --destructive: 0 84.2% 60.2%;
@@ -31,50 +33,73 @@
         --chart-5: 27 87% 67%;
 
         --success: 120 80% 30%;
-        --success-foreground: 210 40% 98%;   /* 成功的前景色 */
-
-        --warning: 45 100% 40%;    /* 黄色，表示警告 */
-        --warning-foreground: 222.2 47.4% 11.2%;   /* 警告的前景色 */
-
-        --info: 210 90% 35%;      /* 蓝色，表示信息 */
-        --info-foreground: 210 40% 98%;   /* 信息的前景色 */
+        --success-foreground: 210 40% 98%;
+        --warning: 45 100% 40%;
+        --warning-foreground: 222.2 47.4% 11.2%;
+        --info: 210 90% 35%;
+        --info-foreground: 210 40% 98%;
     }
 
-    .dark {
-        --background: 222.2 84% 4.9%;
-        --foreground: 210 40% 98%;
-        --card: 222.2 84% 4.9%;
-        --card-foreground: 210 40% 98%;
-        --popover: 222.2 84% 4.9%;
-        --popover-foreground: 210 40% 98%;
-        --primary: 217.2 91.2% 59.8%;
-        --primary-foreground: 222.2 47.4% 11.2%;
-        --secondary: 217.2 32.6% 17.5%;
-        --secondary-foreground: 210 40% 98%;
-        --muted: 217.2 32.6% 17.5%;
-        --muted-foreground: 215 20.2% 65.1%;
-        --accent: 217.2 32.6% 17.5%;
-        --accent-foreground: 210 40% 98%;
-        --destructive: 0 62.8% 30.6%;
-        --destructive-foreground: 210 40% 98%;
-        --border: 217.2 32.6% 17.5%;
-        --input: 217.2 32.6% 17.5%;
-        --ring: 224.3 76.3% 48%;
-        --chart-1: 220 70% 50%;
-        --chart-2: 160 60% 45%;
-        --chart-3: 30 80% 55%;
-        --chart-4: 280 65% 60%;
-        --chart-5: 340 75% 55%;
-
-        --success: 120 65% 40%;   /* 绿色，表示成功 */
-        --success-foreground: 210 40% 98%;   /* 成功的前景色 */
-
-        --warning: 39 90% 55%;    /* 黄色，表示警告 */
-        --warning-foreground: 210 40% 98%;   /* 警告的前景色 */
-
-        --info: 200 90% 50%;      /* 蓝色，表示信息 */
-        --info-foreground: 210 40% 98%;   /* 信息的前景色 */
+    .theme-probability {
+        --primary: 221.2 83.2% 53.3%;
+        --primary-foreground: 210 40% 98%;
+        --secondary: 210 40% 96.1%;
+        --secondary-foreground: 222.2 47.4% 11.2%;
+        --muted: 210 40% 96.1%;
+        --muted-foreground: 215.4 16.3% 46.9%;
     }
+
+    .theme-linear-algebra {
+        --primary: 262.1 83.3% 57.8%;
+        --primary-foreground: 210 20% 98%;
+        --secondary: 220 14.3% 95.9%;
+        --secondary-foreground: 220.9 39.3% 11%;
+        --muted: 220 14.3% 95.9%;
+        --muted-foreground: 220 8.9% 46.1%;
+    }
+
+    .theme-advanced-math {
+        --primary: 142.1 76.2% 36.3%;
+        --primary-foreground: 355.7 100% 97.3%;
+        --secondary: 240 4.8% 95.9%;
+        --secondary-foreground: 240 5.9% 10%;
+        --muted: 240 4.8% 95.9%;
+        --muted-foreground: 240 3.8% 46.1%;
+    }
+
+    /*.dark {*/
+    /*    --background: 222.2 84% 4.9%;*/
+    /*    --foreground: 210 40% 98%;*/
+    /*    --card: 222.2 84% 4.9%;*/
+    /*    --card-foreground: 210 40% 98%;*/
+    /*    --popover: 222.2 84% 4.9%;*/
+    /*    --popover-foreground: 210 40% 98%;*/
+    /*    --primary: 217.2 91.2% 59.8%;*/
+    /*    --primary-foreground: 222.2 47.4% 11.2%;*/
+    /*    --secondary: 217.2 32.6% 17.5%;*/
+    /*    --secondary-foreground: 210 40% 98%;*/
+    /*    --muted: 217.2 32.6% 17.5%;*/
+    /*    --muted-foreground: 215 20.2% 65.1%;*/
+    /*    --accent: 217.2 32.6% 17.5%;*/
+    /*    --accent-foreground: 210 40% 98%;*/
+    /*    --destructive: 0 62.8% 30.6%;*/
+    /*    --destructive-foreground: 210 40% 98%;*/
+    /*    --border: 217.2 32.6% 17.5%;*/
+    /*    --input: 217.2 32.6% 17.5%;*/
+    /*    --ring: 224.3 76.3% 48%;*/
+    /*    --chart-1: 220 70% 50%;*/
+    /*    --chart-2: 160 60% 45%;*/
+    /*    --chart-3: 30 80% 55%;*/
+    /*    --chart-4: 280 65% 60%;*/
+    /*    --chart-5: 340 75% 55%;*/
+
+    /*    --success: 120 65% 40%;*/
+    /*    --success-foreground: 210 40% 98%;*/
+    /*    --warning: 39 90% 55%;*/
+    /*    --warning-foreground: 210 40% 98%;*/
+    /*    --info: 200 90% 50%;*/
+    /*    --info-foreground: 210 40% 98%;*/
+    /*}*/
 }
 
 * {
@@ -106,22 +131,4 @@ html {
     font-weight: 100 900; /* 支持的权重范围 */
     font-style: normal;
     font-display: swap;
-}
-
-
-.markdown-format {
-    @apply h-full w-full !max-w-full text-black prose;
-    @apply prose-p:leading-6 prose-p:text-sm prose-p:mb-2 prose-p:m-0;
-    @apply prose-h1:text-2xl prose-h1:font-bold prose-h1:mb-4;
-    @apply prose-h2:text-xl prose-h2:font-semibold prose-h2:mb-3;
-    @apply prose-h3:text-lg prose-h3:font-medium prose-h3:mb-2;
-    @apply prose-a:text-blue-600 prose-a:underline hover:prose-a:text-blue-800;
-    @apply prose-img:rounded-xl prose-img:mx-auto prose-img:my-4;
-    @apply prose-code:bg-gray-100 prose-code:px-2 prose-code:py-1 prose-code:rounded-md prose-code:font-mono;
-    @apply prose-pre:rounded-lg prose-pre:bg-gray-100 prose-pre:dark:bg-gray-800 prose-pre:px-4 prose-pre:py-3 prose-pre:overflow-x-auto prose-pre:transition-colors prose-pre:w-full;
-    @apply prose-ol:list-decimal prose-ol:pl-6 prose-ol:my-0;
-    @apply prose-ul:list-disc prose-ul:pl-6 prose-ul:mb-2 prose-ul:mt-1;
-    @apply prose-li:mb-1;
-    @apply prose-blockquote:border-l-4 prose-blockquote:border-gray-300 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-600;
-    @apply prose-hr:border-t prose-hr:border-gray-300 prose-hr:my-6;
 }

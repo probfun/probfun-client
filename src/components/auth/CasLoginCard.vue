@@ -7,7 +7,7 @@ import { useRouter } from 'vue-router';
 import { visitorApi } from '@/api/track/trackApi.ts';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { useUserStore } from '@/store';
+import { useConfigStore, useUserStore } from '@/store';
 
 const isLoading = ref(false);
 
@@ -49,49 +49,63 @@ async function visitorLogin() {
   }
   router.push('/dashboard');
 }
+
+const configStore = useConfigStore();
 </script>
 
 <template>
-  <div v-auto-animate class="rounded-lg w-full max-w-sm items-center">
-    <h1 class="text-center text-3xl font-bold mb-12 select-none">
-      嗨！别来无恙啊
+  <div
+    v-auto-animate
+    class="rounded-2xl w-full max-w-md items-center p-8 space-y-8"
+  >
+    <h1
+      v-auto-animate
+      class="text-center text-3xl font-bold select-none tracking-wide"
+    >
+      欢迎进入
+      <span v-if="configStore.currentSubject === 'advanced-math'" class="text-primary">邮趣高数</span>
+      <span v-else-if="configStore.currentSubject === 'probability'" class="text-primary">邮趣概率</span>
+      <span v-else-if="configStore.currentSubject === 'linear-algebra'" class="text-primary">邮趣线代</span>
+      ！
     </h1>
 
-    <div class="text-center flex flex-col mb-6">
+    <div class="flex flex-col gap-4">
       <Button
         :disabled="isLoading"
-        class="w-full mb-4"
+        :aria-busy="isLoading"
+        class="w-full h-11 text-[15px] font-medium shadow-sm hover:shadow-md transition-all duration-200"
         @click="casLogin"
       >
         北邮统一认证
       </Button>
 
+      <div class="flex items-center gap-3 px-2 select-none text-xs text-neutral-500 dark:text-neutral-400">
+        <span class="flex-1 h-px bg-gradient-to-r from-transparent via-neutral-300/70 dark:via-neutral-600/70 to-transparent" />
+        或
+        <span class="flex-1 h-px bg-gradient-to-r from-transparent via-neutral-300/70 dark:via-neutral-600/70 to-transparent" />
+      </div>
+
       <Button
         variant="outline"
         :disabled="isLoading"
-        class="w-full mb-3"
+        :aria-busy="isLoading"
+        class="w-full h-11 text-[15px] font-medium hover:border-blue-500/60 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
         @click="visitorLogin"
       >
         游客模式登录
       </Button>
     </div>
 
-    <!-- <Label class="w-full flex justify-center mt-5">
-      还没有账号？点击此处<router-link to="/register" class="underline underline-offset-4 hover:text-primary transition-all font-medium px-1"> 注册 </router-link>
-    </Label> -->
-    <Label class="w-full flex justify-center mt-3">
-      点击查看
-      <a
-        href="https://ecnyphosrl4i.feishu.cn/wiki/VpHuwRJ53iDKIUkhfFVcqX9fnVe?from=from_copylink"
-        target="_blank"
-        class="underline underline-offset-4 px-1 cursor-pointer text-black-600 hover:text-blue-800"
+    <Label
+      class="w-full flex flex-col items-center text-center gap-1 text-[13px] leading-relaxed text-neutral-600 dark:text-neutral-400"
+    >
+      <span>登录遇到问题？请添加 QQ 群</span>
+      <span
+        class="underline underline-offset-4 font-medium tracking-wide text-neutral-800 dark:text-neutral-200 cursor-text"
       >
-        用户手册
-      </a>
-    </Label>
-
-    <Label class="w-full flex justify-center mt-3">
-      登录遇到问题？请添加QQ群<div class="underline underline-offset-4 px-1 cursor-text">111293253</div>以联系管理员。
+        111293253
+      </span>
+      <span class="text-[11px] opacity-70">验证通过后联系管理员协助处理</span>
     </Label>
   </div>
 </template>

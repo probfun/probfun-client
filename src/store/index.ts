@@ -36,11 +36,28 @@ export const useAiStore = defineStore('aiStore', () => {
 export const useConfigStore = defineStore('configStore', () => {
   const darkMode = ref<boolean>(false);
   const targetNodeId = ref<string | null>(null);
+  const currentSubject = ref<'probability' | 'advanced-math' | 'linear-algebra'>('probability');
   const isMoving = ref(false);
+
+  function setSubject(subject: 'probability' | 'advanced-math' | 'linear-algebra') {
+    currentSubject.value = subject;
+    const el = document.documentElement;
+    el.classList.remove('theme-probability', 'theme-advanced-math', 'theme-linear-algebra');
+    if (subject === 'probability')
+      el.classList.add('theme-probability');
+    else if (subject === 'advanced-math')
+      el.classList.add('theme-advanced-math');
+    else if (subject === 'linear-algebra')
+      el.classList.add('theme-linear-algebra');
+    localStorage.setItem('subject', subject);
+  }
+
   return {
     darkMode,
     targetNodeId,
     isMoving,
+    currentSubject,
+    setSubject,
   };
 }, {
   persist: true,
