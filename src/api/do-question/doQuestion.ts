@@ -1,3 +1,7 @@
+import type {
+  Edge,
+  Node,
+} from '@vue-flow/core';
 import { del, get, post } from '@/api/request.ts';
 
 interface Subject {
@@ -153,6 +157,14 @@ async function chatWithAiAPi(questionId: string, content: string) {
   return result.data;
 }
 
+async function fetchDiagramApi(chapterId: string) {
+  const result = await get<{
+    edges: Edge[];
+    nodes: Node[];
+  }>(`/assessment/chapter/knowledge-graph/`, { chapterId });
+  return result.data;
+}
+
 export type { Chapter, Choice, Question, Subject };
 
 export {
@@ -161,6 +173,7 @@ export {
   clearQuestionChatApi,
   draftQuestionApi,
   fetchChapterListApi,
+  fetchDiagramApi,
   fetchQuestionChatsApi,
   fetchQuestionListApi,
   fetchSubjectListApi,

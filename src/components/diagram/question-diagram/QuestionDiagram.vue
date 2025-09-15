@@ -1,9 +1,19 @@
 <script setup lang="ts">
-import { onMounted, watch } from 'vue';
+import type { Edge, Node } from '@vue-flow/core';
+
+import { onMounted, ref, watch } from 'vue';
+
 import { useRoute, useRouter } from 'vue-router';
+
+import { fetchDiagramApi } from '@/api/do-question/doQuestion.ts';
+import MindmapFlow from '@/components/diagram/question-diagram/MindmapFlow.vue';
+import './nodeStyles.css';
 
 const route = useRoute();
 const router = useRouter();
+
+const initialEdges = ref<Edge[]>([]);
+const initialNodes = ref<Node[]>([]);
 
 async function loadDiagramData() {
   const chapterId = route.params.chapterId as string | undefined;
@@ -12,8 +22,9 @@ async function loadDiagramData() {
       router.go(-1);
       return;
     }
-    // TODO: Implement data loading logic
-    console.log('loadDiagramData');
+    const response = await fetchDiagramApi(chapterId);
+    initialEdges.value = response.edges;
+    initialNodes.value = response.nodes;
   }
   catch (error) {
     console.error('Error loading diagram data:', error);
@@ -31,11 +42,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
-    <!-- Diagram rendering logic goes here -->
+  <div class="rounded-lg border shadow">
+    <MindmapFlow v-model:nodes="initialNodes" v-model:edges="initialEdges" initial-rankdir="LR" />
   </div>
 </template>
-
-<style scoped>
-
-</style>

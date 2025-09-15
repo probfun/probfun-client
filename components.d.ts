@@ -150,6 +150,8 @@ declare module 'vue' {
     LagrangeMVT: typeof import('./src/components/experiment/calculus/LagrangeMVT.vue')['default']
     LoginCard: typeof import('./src/components/auth/LoginCard.vue')['default']
     MarkdownDiv: typeof import('./src/components/markdown-div/MarkdownDiv.vue')['default']
+    MindmapFlow: typeof import('./src/components/diagram/question-diagram/MindmapFlow.vue')['default']
+    MindmapNode: typeof import('./src/components/diagram/question-diagram/MindmapNode.vue')['default']
     MonteCarlo: typeof import('./src/components/experiment/chapter7/MonteCarlo.vue')['default']
     NavBar: typeof import('./src/components/NavBar.vue')['default']
     NetworkTrafficCharacteristics: typeof import('./src/components/experiment/chapter4/NetworkTrafficCharacteristics.vue')['default']
