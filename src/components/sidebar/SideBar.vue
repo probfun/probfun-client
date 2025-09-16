@@ -5,7 +5,7 @@ import type { Feedback } from '@/api/feedback/feedbackType';
 import type { DrawerItem } from '@/components/sidebar/DrawerItem.ts';
 import vAutoAnimate from '@formkit/auto-animate';
 import { Icon } from '@iconify/vue';
-import { Book, Bot, CircleHelp, Dices, FlaskConical, Home, LogOut, Star, Sun, User } from 'lucide-vue-next';
+import { Book, Bot, CircleHelp, Dices, FlaskConical, Home, LogOut, Star, User } from 'lucide-vue-next';
 import { useToast } from 'primevue/usetoast';
 import { TreeItem, TreeRoot } from 'radix-vue';
 import { onMounted, ref } from 'vue';
@@ -104,25 +104,25 @@ const sideBarItem = ref<SideBarItem[]>([
 ]);
 
 const sideBarBottomItem = ref<SideBarItem[]>([
-  {
-    label: '切换主题',
-    icon: Sun,
-    command: async () => {
-      try {
-        await clickApi('CLICK', 'sideBar', '切换主题', window.location.href);
-        console.log('切换主题');
-      }
-      catch (error) {
-        console.error('Error tracking button click:', error);
-      }
-      if (document.documentElement.classList.contains('dark')) {
-        document.documentElement.classList.remove('dark');
-      }
-      else {
-        document.documentElement.classList.toggle('dark');
-      }
-    },
-  },
+  // {
+  //   label: '切换主题',
+  //   icon: Sun,
+  //   command: async () => {
+  //     try {
+  //       await clickApi('CLICK', 'sideBar', '切换主题', window.location.href);
+  //       console.log('切换主题');
+  //     }
+  //     catch (error) {
+  //       console.error('Error tracking button click:', error);
+  //     }
+  //     if (document.documentElement.classList.contains('dark')) {
+  //       document.documentElement.classList.remove('dark');
+  //     }
+  //     else {
+  //       document.documentElement.classList.toggle('dark');
+  //     }
+  //   },
+  // },
   {
     label: '问题反馈',
     icon: CircleHelp,
@@ -435,29 +435,10 @@ function goHome() {
             </button>
           </DialogTitle>
           <DialogDescription v-if="seeFeedback === false">
-            <!--            感谢您对邮趣概率的支持！我们非常重视您的意见和建议，以便不断改进我们的服务。欢迎您分享以下内容：<br> -->
-            <!--            1. <strong>功能建议：</strong>您希望我们增加哪些新功能或改进现有功能？<br> -->
-            <!--            2. <strong>遇到的错误：</strong>在使用过程中，您是否遇到了任何技术或内容错误？<br> -->
-            <!--            3. <strong>其他建议：</strong>任何其他您觉得有价值的意见和建议，我们都欢迎您告诉我们！ -->
-            <!--            感谢您对概率论学习和本软件的支持！<br> -->
             如果您在学习概率论时遇到了任何问题，或者有任何希望改进本软件的建议，请随时告诉我们。
             课堂上您提出的学习问题会由老师统一答复，而关于软件的反馈，我们的开发团队会及时调整和优化，确保更好地满足您的需求！期待您的宝贵意见！
           </DialogDescription>
         </DialogHeader>
-        <!--        <div class="flex flex-wrap gap-4 mt-5"> -->
-        <!--          <div class="flex items-center"> -->
-        <!--            <RadioButton v-model="feedback" input-id="feedback1" value="improvement" /> -->
-        <!--            <label for="feedback1" class="ml-2">功能建议</label> -->
-        <!--          </div> -->
-        <!--          <div class="flex items-center"> -->
-        <!--            <RadioButton v-model="feedback" input-id="feedback2" value="bug" /> -->
-        <!--            <label for="feedback2" class="ml-2">遇到的错误</label> -->
-        <!--          </div> -->
-        <!--          <div class="flex items-center"> -->
-        <!--            <RadioButton v-model="feedback" input-id="feedback3" value="other" /> -->
-        <!--            <label for="feedback3" class="ml-2">其他建议</label> -->
-        <!--          </div> -->
-        <!--        </div> -->
         <FloatLabel v-if="seeFeedback === false">
           <Textarea v-model="content" class="resize-none" :rows="15" placeholder="请在这里输入您的问题反馈！" />
         </FloatLabel>

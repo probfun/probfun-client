@@ -433,76 +433,90 @@ function openFeishuDoc() {
               </Badge>
             </Button>
           </PopoverTrigger>
-          <PopoverContent>
-            <div class="flex">
+          <PopoverContent class="w-96 p-0">
+            <div class="flex items-center px-4 py-3">
               <Label class="font-bold text-base"> 我的消息 </Label>
-              <button class="flex text-blue-600 ml-auto" @click="readMessage()">
+              <button
+                class="ml-auto text-xs text-blue-600 hover:underline disabled:opacity-50"
+                :disabled="!messageList.length || messageNumber === 0"
+                @click="readMessage()"
+              >
                 全部已读
               </button>
             </div>
-            <Separator class="my-2" />
-            <div class="flex ml-auto" />
-            <div class="flex flex-col">
-              <div v-for="item in messageList" :key="item.messageId" class="flex mb-3">
-                <Avatar class="mr-2">
-                  <div v-if="item.type === 'post'">
-                    <AvatarImage :src="item.postData?.post.user.avatarUrl || ''" alt="@radix-vue" />
-                    <AvatarFallback>{{ item.postData?.post.user.nickname }}</AvatarFallback>
-                  </div>
-                  <div v-if="item.type === 'pin'">
-                    <AvatarImage :src="item.pinData?.user.avatarUrl || ''" alt="@radix-vue" />
-                    <AvatarFallback>{{ item.pinData?.user.nickname }}</AvatarFallback>
-                  </div>
-                  <div v-if="item.type === 'reply'">
-                    <AvatarImage :src="item.replyData?.reply.user.avatarUrl || ''" alt="@radix-vue" />
-                    <AvatarFallback>{{ item.replyData?.reply.user.nickname }}</AvatarFallback>
-                  </div>
-                  <div v-if="item.type === 'like'">
-                    <AvatarImage :src="item.likeData?.user.avatarUrl || ''" alt="@radix-vue" />
-                    <AvatarFallback>{{ item.likeData?.user.nickname }}</AvatarFallback>
-                  </div>
-                  <div v-if="item.type === 'delete'">
-                    <AvatarImage :src="item.likeData?.user.avatarUrl || ''" alt="@radix-vue" />
-                    <AvatarFallback>管理员</AvatarFallback>
-                  </div>
-                </Avatar>
-                <div class="flex flex-col">
-                  <span v-if="item.type === 'post'">{{ item.postData?.post.user.nickname }}</span>
-                  <span
-                    v-if="item.type === 'pin'"
-                    @click="router.push(`/dashboard/experiment/${item.pinData?.comment.expId}`)"
-                  >{{
-                    item.pinData?.user.nickname }}</span>
-                  <span
-                    v-if="item.type === 'reply'"
-                    @click="router.push(`/dashboard/experiment/${item.replyData?.comment.expId}`)"
-                  >{{
-                    item.replyData?.reply.user.nickname }}</span>
-                  <span
-                    v-if="item.type === 'like'"
-                    @click="router.push(`/dashboard/experiment/${item.likeData?.comment.expId}`)"
-                  >{{
-                    item.likeData?.user.nickname }}</span>
-                  <span v-if="item.type === 'delete'">管理员</span>
+            <Separator />
+            <div
+              class="max-h-96 overflow-y-auto custom-scrollbar px-2 py-2 flex flex-col gap-1"
+              :class="{ 'items-center justify-center': !messageList.length }"
+            >
+              <div
+                v-if="!messageList.length"
+                class="text-sm text-muted-foreground py-10 select-none"
+              >
+                暂无消息
+              </div>
 
-                  <span v-if="item.type === 'post'" class="content text-sm text-gray-600">老师发布了新的班级公告</span>
+              <div
+                v-for="item in messageList"
+                :key="item.messageId"
+                class="group flex gap-3 rounded-md px-3 py-2 relative hover:bg-muted cursor-pointer transition"
+                :class="{ 'opacity-70': item.read }"
+                @click="
+                  item.type === 'pin'
+                    ? router.push(`/dashboard/experiment/${item.pinData?.comment.expId}`)
+                    : item.type === 'reply'
+                      ? router.push(`/dashboard/experiment/${item.replyData?.comment.expId}`)
+                      : item.type === 'like'
+                        ? router.push(`/dashboard/experiment/${item.likeData?.comment.expId}`)
+                        : null
+                "
+              >
+                <Avatar class="shrink-0 mt-0.5">
+                  <template v-if="item.type === 'post'">
+                    <AvatarImage :src="item.postData?.post.user.avatarUrl || ''" />
+                    <AvatarFallback>{{ item.postData?.post.user.nickname }}</AvatarFallback>
+                  </template>
+                  <template v-else-if="item.type === 'pin'">
+                    <AvatarImage :src="item.pinData?.user.avatarUrl || ''" />
+                    <AvatarFallback>{{ item.pinData?.user.nickname }}</AvatarFallback>
+                  </template>
+                  <template v-else-if="item.type === 'reply'">
+                    <AvatarImage :src="item.replyData?.reply.user.avatarUrl || ''" />
+                    <AvatarFallback>{{ item.replyData?.reply.user.nickname }}</AvatarFallback>
+                  </template>
+                  <template v-else-if="item.type === 'like'">
+                    <AvatarImage :src="item.likeData?.user.avatarUrl || ''" />
+                    <AvatarFallback>{{ item.likeData?.user.nickname }}</AvatarFallback>
+                  </template>
+                  <template v-else-if="item.type === 'delete'">
+                    <AvatarImage :src="item.likeData?.user?.avatarUrl || ''" />
+                    <AvatarFallback>管理员</AvatarFallback>
+                  </template>
+                </Avatar>
+
+                <div class="flex flex-col min-w-0">
+                  <span class="text-sm font-medium truncate">
+                    <template v-if="item.type === 'post'">{{ item.postData?.post.user.nickname }}</template>
+                    <template v-else-if="item.type === 'pin'">{{ item.pinData?.user.nickname }}</template>
+                    <template v-else-if="item.type === 'reply'">{{ item.replyData?.reply.user.nickname }}</template>
+                    <template v-else-if="item.type === 'like'">{{ item.likeData?.user.nickname }}</template>
+                    <template v-else-if="item.type === 'delete'">管理员</template>
+                  </span>
                   <span
-                    v-if="item.type === 'pin'" class="content text-sm text-gray-600"
-                    @click="router.push(`/dashboard/experiment/${item.pinData?.comment.expId}`)"
-                  >老师置顶了你的评论</span>
-                  <span
-                    v-if="item.type === 'reply'" class="content text-sm text-gray-600"
-                    @click="router.push(`/dashboard/experiment/${item.replyData?.comment.expId}`)"
-                  >回复了你的评论</span>
-                  <span
-                    v-if="item.type === 'like'" class="content text-sm text-gray-600"
-                    @click="router.push(`/dashboard/experiment/${item.likeData?.comment.expId}`)"
-                  >赞了你的评论</span>
-                  <span v-if="item.type === 'delete'" class="content text-sm text-gray-600">管理员删除了你的评论</span>
+                    class="text-xs text-muted-foreground leading-snug mt-0.5 line-clamp-2"
+                  >
+                    <template v-if="item.type === 'post'">老师发布了新的班级公告</template>
+                    <template v-else-if="item.type === 'pin'">老师置顶了你的评论</template>
+                    <template v-else-if="item.type === 'reply'">回复了你的评论</template>
+                    <template v-else-if="item.type === 'like'">赞了你的评论</template>
+                    <template v-else-if="item.type === 'delete'">管理员删除了你的评论</template>
+                  </span>
                 </div>
-                <div v-if="!item.read" class="ml-auto">
-                  <span class="inline-block w-2 h-2 bg-red-600 rounded-full" />
-                </div>
+
+                <span
+                  v-if="!item.read"
+                  class="absolute right-2 top-2 inline-block w-2 h-2 rounded-full bg-red-500"
+                />
               </div>
             </div>
           </PopoverContent>

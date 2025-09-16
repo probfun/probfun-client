@@ -63,9 +63,9 @@ const configStore = useConfigStore();
       class="text-center text-3xl font-bold select-none tracking-wide"
     >
       欢迎进入
-      <span v-if="configStore.currentSubject === 'advanced-math'" class="text-primary">邮趣高数</span>
-      <span v-else-if="configStore.currentSubject === 'probability'" class="text-primary">邮趣概率</span>
-      <span v-else-if="configStore.currentSubject === 'linear-algebra'" class="text-primary">邮趣线代</span>
+      <span v-if="configStore.currentSubject === 'advanced-math'" class="text-primary transition-colors">邮趣高数</span>
+      <span v-else-if="configStore.currentSubject === 'probability'" class="text-primary transition-colors">邮趣概率</span>
+      <span v-else-if="configStore.currentSubject === 'linear-algebra'" class="text-primary transition-colors">邮趣线代</span>
       ！
     </h1>
 

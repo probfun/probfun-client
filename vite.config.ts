@@ -34,6 +34,10 @@ export default defineConfig({
         target: 'https://fun.prob-mind.online',
         changeOrigin: true,
       },
+      '/media': {
+        target: 'https://fun.prob-mind.online',
+        changeOrigin: true,
+      },
       '/uploads': {
         target: 'http://192.144.199.178',
         changeOrigin: true,
