@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import type { Subject as SubjectType } from '@/store';
-import { ChartCandlestick, Dice3, Infinity as Infty, MoveUpRight, Percent } from 'lucide-vue-next';
-import { onMounted, ref } from 'vue';
-import { useConfigStore } from '@/store';
+import type { Subject } from '@/store';
+import { computed, onMounted, ref } from 'vue';
+import { subjectInfo, useConfigStore } from '@/store';
 
 type FaceType = 'front' | 'back' | 'right' | 'left' | 'top' | 'bottom';
 
-interface Subject {
-  name: string;
-  description: string;
-  color: string;
-  icon: any;
-  subject: SubjectType;
-}
+const props = withDefaults(defineProps<{
+  immediate?: boolean;
+  hintColor?: string;
+}>(), {
+  immediate: true,
+  hintColor: 'text-primary-foreground',
+});
 
 const BASE_X = -25;
 const BASE_Y = -25;
@@ -28,46 +27,39 @@ const skipTransition = ref(false);
 const isAnimating = ref(false);
 const configStore = useConfigStore();
 
-// 学科数据
-const subjectInfo: Subject[] = [
-  { name: '邮趣线代', description: '空间与向量的语言，适合喜欢抽象思维和结构分析的你', color: 'rgba(124,58,237,0.85)', icon: MoveUpRight, subject: 'linear-algebra' },
-  { name: '邮趣高数（上）', description: '微积分，函数与极限的艺术，适合喜欢挑战和推理的你', color: 'rgba(22,163,74,0.85)', icon: Infty, subject: 'advanced-math-1' },
-  { name: '邮趣高数（下）', description: '微积分，函数与极限的艺术，适合喜欢挑战和推理的你', color: 'rgba(22,163,74,0.85)', icon: Infty, subject: 'advanced-math-2' },
-  { name: '邮趣概率', description: '探索不确定世界的规律，适合喜欢逻辑和建模的你', color: 'rgba(36,96,226,0.85)', icon: Dice3, subject: 'probability' },
-  { name: '邮趣数论', description: '整数的奥秘与应用，适合喜欢逻辑和证明的你', color: 'rgba(243,156,18,0.85)', icon: Percent, subject: 'number-theory' },
-  { name: '邮趣统计', description: '数据分析与推断，适合喜欢实用和应用的你', color: 'rgba(225,29,72,0.85)', icon: ChartCandlestick, subject: 'statistics' },
-];
-
 const currentIndex = ref(0);
 
-const frontItem = ref<Subject | null>(subjectInfo[0]);
+const subjectInfoList = Object.values(subjectInfo);
+const frontItem = ref<Subject | null>(subjectInfoList[0]);
 const leftItem = ref<Subject | null>(null);
-const rightItem = ref<Subject | null>(subjectInfo[1] ?? null);
+const rightItem = ref<Subject | null>(subjectInfoList[1] ?? null);
 
 const TBA_COLOR = 'rgba(189,195,199,0.95)';
+const currentSubject = computed(() => subjectInfoList[currentIndex.value] ?? null);
 
 function setFaceSlots(i: number) {
-  frontItem.value = subjectInfo[i] ?? null;
-  leftItem.value = i - 1 >= 0 ? subjectInfo[i - 1] : null;
-  rightItem.value = i + 1 < subjectInfo.length ? subjectInfo[i + 1] : null;
+  frontItem.value = subjectInfoList[i] ?? null;
+  leftItem.value = i - 1 >= 0 ? subjectInfoList[i - 1] : null;
+  rightItem.value = i + 1 < subjectInfoList.length ? subjectInfoList[i + 1] : null;
 }
 
 function updateConfigSubject() {
-  const cur = subjectInfo[currentIndex.value];
-  if (cur)
-    configStore.setSubject(cur.subject);
+  if (currentSubject.value)
+    configStore.currentSubjectId = currentSubject.value.id;
 }
 
 onMounted(() => {
   const savedIndex = localStorage.getItem('cube-current-index');
   if (savedIndex !== null) {
     const i = Number(savedIndex);
-    if (!Number.isNaN(i) && i >= 0 && i < subjectInfo.length) {
+    if (!Number.isNaN(i) && i >= 0 && i < subjectInfoList.length) {
       currentIndex.value = i;
       setFaceSlots(i);
     }
   }
-  updateConfigSubject();
+  if (props.immediate) {
+    updateConfigSubject();
+  }
 });
 
 function normalizeAngle(angle: number): number {
@@ -97,22 +89,21 @@ function animateSwipe(step: -1 | 1) {
     return;
 
   const atLeftEdge = currentIndex.value === 0 && step === -1;
-  const atRightEdge = currentIndex.value === subjectInfo.length - 1 && step === 1;
+  const atRightEdge = currentIndex.value === subjectInfoList.length - 1 && step === 1;
   if (atLeftEdge || atRightEdge)
-    return; // 两端不越界
+    return;
 
   isAnimating.value = true;
-  // 先转动 90°
   const degree = step === 1 ? -90 : 90;
   rotateY.value += degree;
 
-  // 结束后“进位”，并把角度瞬回，外观保持一致，避免颜色闪烁
-  window.setTimeout(() => {
+  setTimeout(() => {
     currentIndex.value += step;
     localStorage.setItem('cube-current-index', String(currentIndex.value));
-    updateConfigSubject();
+    if (props.immediate) {
+      updateConfigSubject();
+    }
     setFaceSlots(currentIndex.value);
-
     skipTransition.value = true;
     rotateX.value = BASE_X;
     rotateY.value = BASE_Y;
@@ -120,7 +111,7 @@ function animateSwipe(step: -1 | 1) {
       skipTransition.value = false;
       isAnimating.value = false;
     });
-  }, 150);
+  }, 135);
 }
 
 function handleMouseUp(e: MouseEvent) {
@@ -175,7 +166,7 @@ function handleFaceClick(face: FaceType) {
 
   const step = face === 'left' ? -1 : face === 'right' ? 1 : 0;
   const canGoLeft = currentIndex.value > 0;
-  const canGoRight = currentIndex.value < subjectInfo.length - 1;
+  const canGoRight = currentIndex.value < subjectInfoList.length - 1;
   const allow = (step === -1 && canGoLeft) || (step === 1 && canGoRight);
 
   const targetAngle = faceToAngle[face];
@@ -188,7 +179,9 @@ function handleFaceClick(face: FaceType) {
     if (allow) {
       currentIndex.value += step as 1 | -1;
       localStorage.setItem('cube-current-index', String(currentIndex.value));
-      updateConfigSubject();
+      if (props.immediate) {
+        updateConfigSubject();
+      }
       setFaceSlots(currentIndex.value);
     }
     skipTransition.value = true;
@@ -203,11 +196,13 @@ function handleFaceClick(face: FaceType) {
 
 // 展开态：显示所有学科的网格，点击即可切换并收起
 function selectFromGrid(i: number) {
-  if (i < 0 || i >= subjectInfo.length)
+  if (i < 0 || i >= subjectInfoList.length)
     return;
   currentIndex.value = i;
   localStorage.setItem('cube-current-index', String(currentIndex.value));
-  updateConfigSubject();
+  if (props.immediate) {
+    updateConfigSubject();
+  }
   setFaceSlots(currentIndex.value);
   handleClose();
 }
@@ -215,6 +210,11 @@ function selectFromGrid(i: number) {
 function faceBg(item: Subject | null, fallback = TBA_COLOR) {
   return item?.color ?? fallback;
 }
+
+defineExpose({
+  currentSubject,
+  updateConfigSubject,
+});
 </script>
 
 <template>
@@ -227,7 +227,7 @@ function faceBg(item: Subject | null, fallback = TBA_COLOR) {
     <div
       class="relative [transform-style:preserve-3d] origin-center transition-all ease-[cubic-bezier(0.4,0,0.2,1)]"
       :class="[
-        isExpanded ? 'w-full max-w-2xl h-[500px]' : 'w-[300px] h-[400px]',
+        isExpanded ? 'w-full max-w-2xl h-[500px]' : 'w-[300px] h-[400px] mt-16',
         skipTransition ? '!transition-none' : '',
       ]"
       :style="{
@@ -238,8 +238,8 @@ function faceBg(item: Subject | null, fallback = TBA_COLOR) {
       <div v-if="isExpanded" class="absolute inset-0 z-10 p-4 overflow-auto">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <button
-            v-for="(item, i) in subjectInfo"
-            :key="item.subject + i"
+            v-for="(item, i) in subjectInfoList"
+            :key="item.id"
             class="rounded-xl border-[7px] border-white/80 shadow-[0_0_10px_rgba(255,255,255,0.3)] p-4 text-left text-white hover:ring-4 ring-muted/50 transition"
             :style="{ background: item.color }"
             @click="selectFromGrid(i)"
@@ -328,7 +328,7 @@ function faceBg(item: Subject | null, fallback = TBA_COLOR) {
       />
     </div>
 
-    <div v-if="!isExpanded" class="mt-4 text-primary-foreground text-2xl hint-fade select-none">
+    <div v-if="!isExpanded" class="mt-4 text-2xl font-semibold hint-fade select-none" :class="hintColor">
       - 左右滑动旋转，双击展开 -
     </div>
   </div>
@@ -341,7 +341,7 @@ function faceBg(item: Subject | null, fallback = TBA_COLOR) {
 }
 
 .hint-fade {
-  animation: hintPulse 3s ease-in-out infinite;
+  animation: hintPulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 @keyframes hintPulse {
@@ -349,7 +349,7 @@ function faceBg(item: Subject | null, fallback = TBA_COLOR) {
     opacity: 0.2;
   }
   50% {
-    opacity: 1;
+    opacity: 0.8;
   }
 }
 </style>

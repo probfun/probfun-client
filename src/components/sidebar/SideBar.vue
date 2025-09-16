@@ -3,9 +3,10 @@ import type { Chapter } from '@/api/do-question/doQuestion.ts';
 
 import type { Feedback } from '@/api/feedback/feedbackType';
 import type { DrawerItem } from '@/components/sidebar/DrawerItem.ts';
+import type { SubjectId } from '@/store';
 import vAutoAnimate from '@formkit/auto-animate';
 import { Icon } from '@iconify/vue';
-import { Book, Bot, CircleHelp, Dices, FlaskConical, Home, LogOut, Star, User } from 'lucide-vue-next';
+import { Book, Bot, CircleHelp, FlaskConical, Home, LogOut, Star, User } from 'lucide-vue-next';
 import { useToast } from 'primevue/usetoast';
 import { TreeItem, TreeRoot } from 'radix-vue';
 import { onMounted, ref } from 'vue';
@@ -13,6 +14,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { fetchChapterListApi, fetchSubjectListApi } from '@/api/do-question/doQuestion.ts';
 import { fetchFeedbackApi, postFeedbackApi } from '@/api/feedback/feedbackApi.ts';
 import { clickApi } from '@/api/track/trackApi.ts';
+import BoxSelector from '@/components/selector/BoxSelector.vue';
 import { experimentItems, questionItems } from '@/components/sidebar/DrawerItem.ts';
 import { Button } from '@/components/ui/button';
 import {
@@ -30,7 +32,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { useUserStore } from '@/store';
+import { useConfigStore, useUserStore } from '@/store';
 import { isVisitor, logout } from '@/utils/auth.ts';
 
 const toast = useToast();
@@ -45,9 +47,11 @@ interface SideBarItem {
 
 const route = useRoute();
 const seeFeedback = ref(false);
-const isFeedback = ref(false);
+const openSubjectSelector = ref(false);
+const openFeedback = ref(false);
 const openExperimentDrawer = ref(false);
 const openQuestionDrawer = ref(false);
+const subjectSelector = ref<typeof BoxSelector | null>(null);
 
 function toggleExperimentDrawer() {
   openExperimentDrawer.value = !openExperimentDrawer.value;
@@ -127,7 +131,7 @@ const sideBarBottomItem = ref<SideBarItem[]>([
     label: '问题反馈',
     icon: CircleHelp,
     command: () => {
-      isFeedback.value = true;
+      openFeedback.value = true;
     },
   },
   {
@@ -202,7 +206,15 @@ function toItemTree(root: Chapter): DrawerItem {
 
 async function refreshQuestionList() {
   try {
-    const response = await fetchChapterListApi('5'); // 传subjectId
+    const subjectMapId: Record<SubjectId, string> = {
+      'advanced-math-1': '2',
+      'advanced-math-2': '3',
+      'probability': '5',
+      'linear-algebra': '7',
+      'number-theory': '8',
+      'statistics': '9',
+    };
+    const response = await fetchChapterListApi(subjectMapId[useConfigStore().currentSubjectId]);
     const chapterList = response.chapters;
     questionItems.value = chapterList.map(chapter => toItemTree(chapter));
   }
@@ -252,6 +264,11 @@ async function sendFeedback() {
 function goHome() {
   router.push('/dashboard');
 }
+
+function updateSubject() {
+  subjectSelector.value?.updateConfigSubject();
+  window.location.reload();
+}
 </script>
 
 <template>
@@ -262,7 +279,11 @@ function goHome() {
         class="group rounded-full bg-primary text-lg font-semibold text-primary-foreground size-10 md:text-base"
         @click="goHome()"
       >
-        <Dices class="size-6 group-hover:scale-110 transition-all" />
+        <component
+          :is="useConfigStore().currentSubject.icon" class="size-6 group-hover:scale-110 transition-all" @click="() => {
+            openSubjectSelector = true;
+          }"
+        />
       </Button>
       <div class="space-y-2 flex flex-col items-center">
         <div v-for="(item, index) in sideBarItem" :key="index">
@@ -416,7 +437,7 @@ function goHome() {
     </div>
     <div v-if="openQuestionDrawer" class="left-full top-0 h-full absolute w-screen z-40" @click="openQuestionDrawer = false" />
 
-    <Dialog v-model:open="isFeedback" class="overflow-y-auto h-2/3">
+    <Dialog v-model:open="openFeedback" class="overflow-y-auto h-2/3">
       <DialogContent class="overflow-y-auto h-2/3">
         <DialogHeader>
           <DialogTitle>
@@ -453,6 +474,77 @@ function goHome() {
           <DialogClose>
             <Button v-if="seeFeedback === false" @click="sendFeedback">
               提交
+            </Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+
+    <Dialog v-model:open="openSubjectSelector">
+      <DialogContent class="max-w-4xl p-0 overflow-hidden">
+        <DialogHeader class="px-6 pt-6">
+          <DialogTitle>选择科目</DialogTitle>
+          <DialogDescription>请选择您想要学习的科目。</DialogDescription>
+        </DialogHeader>
+
+        <div class="grid grid-cols-[3fr_1fr] gap-6 p-6 pt-2">
+          <div class="space-y-3 md:pr-6 md:border-r">
+            <BoxSelector ref="subjectSelector" :immediate="false" hint-color="text-muted-foreground" />
+          </div>
+
+          <div class="flex flex-col items-center justify-center gap-4">
+            <div
+              v-auto-animate
+              class="w-full h-full rounded-xl border bg-muted/40 p-4 flex flex-col"
+            >
+              <div class="inline-flex items-center gap-2 text-sm text-muted-foreground">
+                <span class="px-2 py-0.5 rounded-full bg-muted">即将进入</span>
+              </div>
+
+              <div class="mt-4 flex flex-col items-center justify-center flex-1 gap-3">
+                <div
+                  class="size-16 rounded-full flex items-center justify-center ring-2"
+                  :style="{
+                    color: subjectSelector?.currentSubject.color || '#000000',
+                    boxShadow: `0 0 0 4px color-mix(in oklab, ${subjectSelector?.currentSubject.color || '#000000'} 20%, transparent)`,
+                  }"
+                >
+                  <component
+                    :is="subjectSelector?.currentSubject.icon"
+                    class="size-8"
+                  />
+                </div>
+
+                <div
+                  class="text-2xl font-bold tracking-wide"
+                  :style="{ color: subjectSelector?.currentSubject.color || '#000000' }"
+                >
+                  {{ subjectSelector?.currentSubject.name || '未选择科目' }}
+                </div>
+
+                <p class="text-sm text-muted-foreground">
+                  将为您切换到所选科目的学习空间与题库。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <DialogFooter class="px-6 pb-6">
+          <DialogClose>
+            <Button
+              class="mr-2"
+              :style="{
+                backgroundColor: subjectSelector?.currentSubject.color || 'hsl(var(--primary))',
+                borderColor: subjectSelector?.currentSubject.color || 'hsl(var(--primary))',
+                color: '#fff',
+              }"
+              @click="updateSubject"
+            >
+              确认
+            </Button>
+            <Button variant="outline">
+              取消
             </Button>
           </DialogClose>
         </DialogFooter>

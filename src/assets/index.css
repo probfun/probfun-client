@@ -84,10 +84,8 @@
     .theme-number-theory {
         --primary: 24.6 95% 53.1%;
         --primary-foreground: 60 9.1% 97.8%;
-
         --secondary: 60 4.8% 95.9%;
         --secondary-foreground: 24 9.8% 10%;
-
         --muted: 60 4.8% 95.9%;
         --muted-foreground: 25 5.3% 44.7%;
     }

@@ -63,12 +63,12 @@ const configStore = useConfigStore();
       class="text-center text-3xl font-bold select-none tracking-wide"
     >
       欢迎进入
-      <span v-if="configStore.currentSubject === 'advanced-math-1'" class="text-primary transition-colors">邮趣高数（上）</span>
-      <span v-else-if="configStore.currentSubject === 'advanced-math-2'" class="text-primary transition-colors">邮趣高数（下）</span>
-      <span v-else-if="configStore.currentSubject === 'probability'" class="text-primary transition-colors">邮趣概率</span>
-      <span v-else-if="configStore.currentSubject === 'linear-algebra'" class="text-primary transition-colors">邮趣线代</span>
-      <span v-else-if="configStore.currentSubject === 'number-theory'" class="text-primary transition-colors">邮趣数论</span>
-      <span v-else-if="configStore.currentSubject === 'statistics'" class="text-primary transition-colors">邮趣统计</span>
+      <span v-if="configStore.currentSubjectId === 'advanced-math-1'" class="text-primary transition-colors">邮趣高数（上）</span>
+      <span v-else-if="configStore.currentSubjectId === 'advanced-math-2'" class="text-primary transition-colors">邮趣高数（下）</span>
+      <span v-else-if="configStore.currentSubjectId === 'probability'" class="text-primary transition-colors">邮趣概率</span>
+      <span v-else-if="configStore.currentSubjectId === 'linear-algebra'" class="text-primary transition-colors">邮趣线代</span>
+      <span v-else-if="configStore.currentSubjectId === 'number-theory'" class="text-primary transition-colors">邮趣数论</span>
+      <span v-else-if="configStore.currentSubjectId === 'statistics'" class="text-primary transition-colors">邮趣统计</span>
       ！
     </h1>
 

@@ -73,7 +73,9 @@ interface Answer {
 }
 
 async function fetchSubjectListApi() {
-  const result = await get(`/assessment/subject/list/`);
+  const result = await get<{
+    subjects: Subject[];
+  }>(`/assessment/subject/list/`);
   return result.data;
 }
 

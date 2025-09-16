@@ -38,7 +38,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
-import { useUserStore } from '@/store';
+import { useConfigStore, useUserStore } from '@/store';
 import { isVisitor } from '@/utils/auth.ts';
 import { error, success, warning } from '@/utils/toast';
 
@@ -304,7 +304,7 @@ function updateExperiment() {
     tags.value = ['卡方分布'];
   }
   else {
-    title.value = '邮趣概率';
+    title.value = useConfigStore().currentSubject.name;
     tags.value = [];
   }
   if (!isVisitor()) {
@@ -390,6 +390,10 @@ async function toggleFavorite() {
 function openFeishuDoc() {
   window.open('https://ecnyphosrl4i.feishu.cn/wiki/VpHuwRJ53iDKIUkhfFVcqX9fnVe?from=from_copylink', '_blank');
 }
+
+function isInExperimentPage() {
+  return route.path.startsWith('/dashboard/experiment/');
+}
 </script>
 
 <template>
@@ -404,7 +408,7 @@ function openFeishuDoc() {
         </Badge>
       </div>
       <Button
-        v-if="title !== '邮趣概率' && !isVisitor()" size="icon" variant="ghost" class="p-1 size-auto"
+        v-if="isInExperimentPage() && !isVisitor()" size="icon" variant="ghost" class="p-1 size-auto"
         @click="toggleFavorite"
       >
         <Star
