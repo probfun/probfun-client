@@ -340,6 +340,7 @@ function updateSubject() {
     <!-- experiment drawer -->
     <div class="absolute left-full ml-2 top-[4rem] z-50 transition-all bottom-0 rounded-xl overflow-y-auto border w-96 bg-background shadow-xl" :class="!openExperimentDrawer && 'opacity-0 pointer-events-none'">
       <TreeRoot
+        v-if="experimentItems && experimentItems.length"
         v-slot="{ flattenItems }"
         v-auto-animate
         class="list-none select-none w-full rounded-lg px-3 py-2 text-base font-medium"
@@ -383,12 +384,20 @@ function updateSubject() {
           </div>
         </TreeItem>
       </TreeRoot>
+
+      <div v-else class="px-4 py-3 text-sm text-muted-foreground h-full flex justify-center items-center">
+        <div class="flex items-center gap-2">
+          <Icon icon="lucide:info" class="h-4 w-4" />
+          <span>本课程的实验还在开发中哦</span>
+        </div>
+      </div>
     </div>
     <div v-if="openExperimentDrawer" class="left-full top-0 h-full absolute w-screen z-40" @click="openExperimentDrawer = false" />
 
     <!-- question drawer -->
     <div class="absolute left-full ml-2 top-[4rem] z-50 transition-all bottom-0 rounded-xl overflow-y-auto border w-96 bg-background shadow-xl" :class="!openQuestionDrawer && 'opacity-0 pointer-events-none'">
       <TreeRoot
+        v-if="questionItems && questionItems.length"
         v-slot="{ flattenItems }"
         v-auto-animate
         class="list-none select-none w-full rounded-lg px-3 py-2 text-base font-medium"
@@ -435,6 +444,12 @@ function updateSubject() {
           </div>
         </TreeItem>
       </TreeRoot>
+      <div v-else class="px-4 py-3 text-sm text-muted-foreground h-full flex justify-center items-center">
+        <div class="flex items-center gap-2">
+          <Icon icon="lucide:info" class="h-4 w-4" />
+          <span>本课程暂时还没有题目哦</span>
+        </div>
+      </div>
     </div>
     <div v-if="openQuestionDrawer" class="left-full top-0 h-full absolute w-screen z-40" @click="openQuestionDrawer = false" />
 

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Icon } from '@iconify/vue';
 import { FlaskConical, SearchCheck } from 'lucide-vue-next';
 import { homeConfigs } from '@/components/subject/configs.ts';
 import {
@@ -63,7 +64,10 @@ const mindMaps = homeConfigs[configStore.currentSubjectId].mindMaps;
         v-else
         class="flex items-center justify-center rounded-md border border-dashed border-primary/30 bg-muted/20 h-60 text-muted-foreground"
       >
-        本课程的实验还在开发中哦
+        <div class="flex items-center gap-2">
+          <Icon icon="lucide:info" class="h-4 w-4" />
+          <span>本课程的实验还在开发中哦</span>
+        </div>
       </div>
     </section>
 
@@ -113,7 +117,10 @@ const mindMaps = homeConfigs[configStore.currentSubjectId].mindMaps;
         v-else
         class="flex items-center justify-center rounded-md border border-dashed border-primary/30 bg-muted/20 h-60 text-muted-foreground"
       >
-        本课程的思维导图还在开发中哦
+        <div class="flex items-center gap-2">
+          <Icon icon="lucide:info" class="h-4 w-4" />
+          <span>本课程的思维导图还在开发中哦</span>
+        </div>
       </div>
     </section>
   </div>

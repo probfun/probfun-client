@@ -192,7 +192,11 @@ async function clearChat() {
           <div class="font-semibold mb-4">
             题目列表
           </div>
-          <div class="grid grid-cols-10 gap-2">
+          <div v-if="questionList.length === 0" class="text-sm text-muted-foreground flex items-center gap-2">
+            <Icon class="w-4 h-4" icon="lucide:info" />
+            本章节暂时还没有题目哦
+          </div>
+          <div v-else class="grid grid-cols-10 gap-2">
             <Button
               v-for="(item, index) in questionList"
               :key="item.id"
