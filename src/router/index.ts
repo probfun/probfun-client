@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import About from '@/components/about/About.vue';
 import AiPanel from '@/components/ai/AiPanel.vue';
 import Callback from '@/components/auth/Callback.vue';
 import CasLoginCard from '@/components/auth/CasLoginCard.vue';
@@ -15,12 +16,12 @@ import BuffonNeedle from '@/components/experiment/chapter1/buffon-needle/BuffonN
 import PositiveTest from '@/components/experiment/chapter1/PositiveTest.vue';
 import ThreeDoors from '@/components/experiment/chapter1/three-doors/ThreeDoors.vue';
 import threeNormalDistribution from '@/components/experiment/chapter3/normal-distribution/threeNormalDistribution.vue';
-import GeometricDistribution from '@/components/experiment/distribution/geometric-distribution/GeometricDistribution.vue';
 
+import GeometricDistribution from '@/components/experiment/distribution/geometric-distribution/GeometricDistribution.vue';
 import NormalDistribution from '@/components/experiment/distribution/normal-distribution/NormalDistribution.vue';
 import PoissonDistribution from '@/components/experiment/distribution/poisson-distribution/PoissonDistribution.vue';
-import UniformDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
 
+import UniformDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
 import FavoritePanel from '@/components/favorite/FavoritePanel.vue';
 import HomePage from '@/components/home/HomePage.vue';
 import StudentPanel from '@/components/user/StudentPanel.vue';
@@ -296,6 +297,10 @@ const router = createRouter({
         {
           path: '/dashboard/mindmap/chapter-4',
           component: Chatper4Diagram,
+        },
+        {
+          path: '/dashboard/about',
+          component: About,
         },
         {
           path: '/dashboard/question/:chapterId',

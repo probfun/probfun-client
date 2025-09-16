@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    About: typeof import('./src/components/about/About.vue')['default']
     Accordion: typeof import('./src/components/ui/accordion/Accordion.vue')['default']
     AccordionContent: typeof import('./src/components/ui/accordion/AccordionContent.vue')['default']
     AccordionItem: typeof import('./src/components/ui/accordion/AccordionItem.vue')['default']

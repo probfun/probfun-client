@@ -4,7 +4,7 @@ import type { Chapter } from '@/api/do-question/doQuestion.ts';
 import type { Feedback } from '@/api/feedback/feedbackType';
 import type { DrawerItem, SubjectId } from '@/components/subject/configs.ts';
 import { Icon } from '@iconify/vue';
-import { Book, Bot, CircleHelp, FlaskConical, Home, LogOut, Star, User } from 'lucide-vue-next';
+import { Book, Bot, CircleHelp, FlaskConical, Home, LogOut, Star, User, UsersRound } from 'lucide-vue-next';
 import { useToast } from 'primevue/usetoast';
 import { TreeItem, TreeRoot } from 'radix-vue';
 import { onMounted, ref } from 'vue';
@@ -125,6 +125,11 @@ const sideBarBottomItem = ref<SideBarItem[]>([
   //     }
   //   },
   // },
+  {
+    label: '关于我们',
+    icon: UsersRound,
+    route: '/dashboard/about',
+  },
   {
     label: '问题反馈',
     icon: CircleHelp,
