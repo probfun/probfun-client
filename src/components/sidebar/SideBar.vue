@@ -2,9 +2,7 @@
 import type { Chapter } from '@/api/do-question/doQuestion.ts';
 
 import type { Feedback } from '@/api/feedback/feedbackType';
-import type { DrawerItem } from '@/components/sidebar/DrawerItem.ts';
-import type { SubjectId } from '@/store';
-import vAutoAnimate from '@formkit/auto-animate';
+import type { DrawerItem, SubjectId } from '@/components/subject/configs.ts';
 import { Icon } from '@iconify/vue';
 import { Book, Bot, CircleHelp, FlaskConical, Home, LogOut, Star, User } from 'lucide-vue-next';
 import { useToast } from 'primevue/usetoast';
@@ -15,7 +13,7 @@ import { fetchChapterListApi, fetchSubjectListApi } from '@/api/do-question/doQu
 import { fetchFeedbackApi, postFeedbackApi } from '@/api/feedback/feedbackApi.ts';
 import { clickApi } from '@/api/track/trackApi.ts';
 import BoxSelector from '@/components/selector/BoxSelector.vue';
-import { experimentItems, questionItems } from '@/components/sidebar/DrawerItem.ts';
+import { experimentConfigs } from '@/components/subject/configs.ts';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -150,6 +148,9 @@ const sideBarBottomItem = ref<SideBarItem[]>([
     },
   },
 ]);
+
+const experimentItems = experimentConfigs[useConfigStore().currentSubjectId].experiments;
+const questionItems = ref<DrawerItem[]>([]);
 
 const feedback = ref('improvement');
 const content = ref('');

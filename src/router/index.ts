@@ -62,6 +62,7 @@ const router = createRouter({
           path: '/dashboard',
           component: HomePage,
         },
+        //   probability
         {
           path: '/dashboard/experiment/buffon',
           component: BuffonNeedle,
@@ -225,6 +226,48 @@ const router = createRouter({
         {
           path: '/dashboard/experiment/EstimationOfPai',
           component: () => import('@/components/experiment/chapter5/EstimationOfPai.vue'),
+        },
+        //   advanced-math-1
+        {
+          path: '/dashboard/experiment/sequence-limit',
+          component: () => import('@/components/experiment/calculusA/SequenceLimit.vue'),
+        },
+        {
+          path: '/dashboard/experiment/function-limit',
+          component: () => import('@/components/experiment/calculusA/FunctionLimit.vue'),
+        },
+        {
+          path: '/dashboard/experiment/derivative-geometry',
+          component: () => import('@/components/experiment/calculusA/DerivativeGeometry.vue'),
+        },
+        {
+          path: '/dashboard/experiment/taylor-expansion',
+          component: () => import('@/components/experiment/calculusA/TaylorExpansion.vue'),
+        },
+        {
+          path: '/dashboard/experiment/integrability-conditions',
+          component: () => import('@/components/experiment/calculusA/IntegrabilityConditions.vue'),
+        },
+        {
+          path: '/dashboard//experiment/lagrange-mvt',
+          component: () => import('@/components/experiment/calculusA/LagrangeMVT.vue'),
+        },
+        {
+          path: '/dashboard/experiment/gabriel-horn',
+          component: () => import('@/components/experiment/calculusA/GabrielHorn.vue'),
+        },
+        //   advanced-math-2
+        {
+          path: '/dashboard/experiment/partial-derivative',
+          component: () => import('@/components/experiment/calculusB/PartialDerivative.vue'),
+        },
+        {
+          path: '/dashboard/experiment/total-derivative',
+          component: () => import('@/components/experiment/calculusB/TotalDerivative.vue'),
+        },
+        {
+          path: '/dashboard/experiment/neighborhood',
+          component: () => import('@/components/experiment/calculusB/Neighborhood.vue'),
         },
         {
           path: '/dashboard/info0',

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { Subject } from '@/store';
+import type { Subject } from '@/components/subject/configs.ts';
 import { computed, onMounted, ref } from 'vue';
-import { subjectInfo, useConfigStore } from '@/store';
+import { subjectConfig } from '@/components/subject/configs.ts';
+import { useConfigStore } from '@/store';
 
 type FaceType = 'front' | 'back' | 'right' | 'left' | 'top' | 'bottom';
 
@@ -29,18 +30,18 @@ const configStore = useConfigStore();
 
 const currentIndex = ref(0);
 
-const subjectInfoList = Object.values(subjectInfo);
-const frontItem = ref<Subject | null>(subjectInfoList[0]);
+const subjectList = Object.values(subjectConfig);
+const frontItem = ref<Subject | null>(subjectList[0]);
 const leftItem = ref<Subject | null>(null);
-const rightItem = ref<Subject | null>(subjectInfoList[1] ?? null);
+const rightItem = ref<Subject | null>(subjectList[1] ?? null);
 
 const TBA_COLOR = 'rgba(189,195,199,0.95)';
-const currentSubject = computed(() => subjectInfoList[currentIndex.value] ?? null);
+const currentSubject = computed(() => subjectList[currentIndex.value] ?? null);
 
 function setFaceSlots(i: number) {
-  frontItem.value = subjectInfoList[i] ?? null;
-  leftItem.value = i - 1 >= 0 ? subjectInfoList[i - 1] : null;
-  rightItem.value = i + 1 < subjectInfoList.length ? subjectInfoList[i + 1] : null;
+  frontItem.value = subjectList[i] ?? null;
+  leftItem.value = i - 1 >= 0 ? subjectList[i - 1] : null;
+  rightItem.value = i + 1 < subjectList.length ? subjectList[i + 1] : null;
 }
 
 function updateConfigSubject() {
@@ -52,7 +53,7 @@ onMounted(() => {
   const savedIndex = localStorage.getItem('cube-current-index');
   if (savedIndex !== null) {
     const i = Number(savedIndex);
-    if (!Number.isNaN(i) && i >= 0 && i < subjectInfoList.length) {
+    if (!Number.isNaN(i) && i >= 0 && i < subjectList.length) {
       currentIndex.value = i;
       setFaceSlots(i);
     }
@@ -89,7 +90,7 @@ function animateSwipe(step: -1 | 1) {
     return;
 
   const atLeftEdge = currentIndex.value === 0 && step === -1;
-  const atRightEdge = currentIndex.value === subjectInfoList.length - 1 && step === 1;
+  const atRightEdge = currentIndex.value === subjectList.length - 1 && step === 1;
   if (atLeftEdge || atRightEdge)
     return;
 
@@ -166,7 +167,7 @@ function handleFaceClick(face: FaceType) {
 
   const step = face === 'left' ? -1 : face === 'right' ? 1 : 0;
   const canGoLeft = currentIndex.value > 0;
-  const canGoRight = currentIndex.value < subjectInfoList.length - 1;
+  const canGoRight = currentIndex.value < subjectList.length - 1;
   const allow = (step === -1 && canGoLeft) || (step === 1 && canGoRight);
 
   const targetAngle = faceToAngle[face];
@@ -196,7 +197,7 @@ function handleFaceClick(face: FaceType) {
 
 // 展开态：显示所有学科的网格，点击即可切换并收起
 function selectFromGrid(i: number) {
-  if (i < 0 || i >= subjectInfoList.length)
+  if (i < 0 || i >= subjectList.length)
     return;
   currentIndex.value = i;
   localStorage.setItem('cube-current-index', String(currentIndex.value));
@@ -238,7 +239,7 @@ defineExpose({
       <div v-if="isExpanded" class="absolute inset-0 z-10 p-4 overflow-auto">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <button
-            v-for="(item, i) in subjectInfoList"
+            v-for="(item, i) in subjectList"
             :key="item.id"
             class="rounded-xl border-[7px] border-white/80 shadow-[0_0_10px_rgba(255,255,255,0.3)] p-4 text-left text-white hover:ring-4 ring-muted/50 transition"
             :style="{ background: item.color }"
