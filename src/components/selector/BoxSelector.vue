@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Subject as SubjectType } from '@/store';
-import { Dice3, Infinity as Infty, MoveUpRight } from 'lucide-vue-next';
+import { ChartCandlestick, Dice3, Infinity as Infty, MoveUpRight, Percent } from 'lucide-vue-next';
 import { onMounted, ref } from 'vue';
 import { useConfigStore } from '@/store';
 
@@ -30,12 +30,12 @@ const configStore = useConfigStore();
 
 // 学科数据
 const subjectInfo: Subject[] = [
-  { name: '邮趣线代', description: '空间与向量的语言，适合喜欢抽象思维和结构分析的你', color: 'rgba(124,58,237,0.95)', icon: MoveUpRight, subject: 'linear-algebra' },
-  { name: '邮趣高数（上）', description: '微积分，函数与极限的艺术，适合喜欢挑战和推理的你', color: 'rgba(22,163,74,0.95)', icon: Infty, subject: 'advanced-math-1' },
-  { name: '邮趣高数（下）', description: '微积分，函数与极限的艺术，适合喜欢挑战和推理的你', color: 'rgba(22,163,74,0.95)', icon: Infty, subject: 'advanced-math-2' },
-  { name: '邮趣概率', description: '探索不确定世界的规律，适合喜欢逻辑和建模的你', color: 'rgba(36,96,226,0.95)', icon: Dice3, subject: 'probability' },
-  { name: '邮趣数论', description: '整数的奥秘与应用，适合喜欢逻辑和证明的你', color: 'rgba(243,156,18,0.95)', icon: Dice3, subject: 'number-theory' },
-  { name: '邮趣统计', description: '数据分析与推断，适合喜欢实用和应用的你', color: 'rgba(189,195,199,0.95)', icon: Dice3, subject: 'statistics' },
+  { name: '邮趣线代', description: '空间与向量的语言，适合喜欢抽象思维和结构分析的你', color: 'rgba(124,58,237,0.85)', icon: MoveUpRight, subject: 'linear-algebra' },
+  { name: '邮趣高数（上）', description: '微积分，函数与极限的艺术，适合喜欢挑战和推理的你', color: 'rgba(22,163,74,0.85)', icon: Infty, subject: 'advanced-math-1' },
+  { name: '邮趣高数（下）', description: '微积分，函数与极限的艺术，适合喜欢挑战和推理的你', color: 'rgba(22,163,74,0.85)', icon: Infty, subject: 'advanced-math-2' },
+  { name: '邮趣概率', description: '探索不确定世界的规律，适合喜欢逻辑和建模的你', color: 'rgba(36,96,226,0.85)', icon: Dice3, subject: 'probability' },
+  { name: '邮趣数论', description: '整数的奥秘与应用，适合喜欢逻辑和证明的你', color: 'rgba(243,156,18,0.85)', icon: Percent, subject: 'number-theory' },
+  { name: '邮趣统计', description: '数据分析与推断，适合喜欢实用和应用的你', color: 'rgba(225,29,72,0.85)', icon: ChartCandlestick, subject: 'statistics' },
 ];
 
 const currentIndex = ref(0);

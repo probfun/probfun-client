@@ -40,7 +40,8 @@
         --info-foreground: 210 40% 98%;
     }
 
-    :root.theme-probability {
+    /*blue*/
+    .theme-probability {
         --primary: 221.2 83.2% 53.3%;
         --primary-foreground: 210 40% 98%;
         --secondary: 210 40% 96.1%;
@@ -49,7 +50,8 @@
         --muted-foreground: 215.4 16.3% 46.9%;
     }
 
-    :root.theme-linear-algebra {
+    /*purple*/
+    .theme-linear-algebra {
         --primary: 262.1 83.3% 57.8%;
         --primary-foreground: 210 20% 98%;
         --secondary: 220 14.3% 95.9%;
@@ -58,7 +60,8 @@
         --muted-foreground: 220 8.9% 46.1%;
     }
 
-    :root.theme-advanced-math-1 {
+    /*green*/
+    .theme-advanced-math-1 {
         --primary: 142.1 76.2% 36.3%;
         --primary-foreground: 355.7 100% 97.3%;
         --secondary: 240 4.8% 95.9%;
@@ -67,7 +70,8 @@
         --muted-foreground: 240 3.8% 46.1%;
     }
 
-    :root.theme-advanced-math-2 {
+    /*green*/
+    .theme-advanced-math-2 {
         --primary: 142.1 76.2% 36.3%;
         --primary-foreground: 355.7 100% 97.3%;
         --secondary: 240 4.8% 95.9%;
@@ -76,17 +80,21 @@
         --muted-foreground: 240 3.8% 46.1%;
     }
 
-    :root.theme-number-theory {
-        --primary: 142.1 76.2% 36.3%;
-        --primary-foreground: 355.7 100% 97.3%;
-        --secondary: 240 4.8% 95.9%;
-        --secondary-foreground: 240 5.9% 10%;
-        --muted: 240 4.8% 95.9%;
-        --muted-foreground: 240 3.8% 46.1%;
+    /*orange*/
+    .theme-number-theory {
+        --primary: 24.6 95% 53.1%;
+        --primary-foreground: 60 9.1% 97.8%;
+
+        --secondary: 60 4.8% 95.9%;
+        --secondary-foreground: 24 9.8% 10%;
+
+        --muted: 60 4.8% 95.9%;
+        --muted-foreground: 25 5.3% 44.7%;
     }
 
-    :root.theme-statistics {
-        --primary: 142.1 76.2% 36.3%;
+    /*rose*/
+    .theme-statistics {
+        --primary: 346.8 77.2% 49.8%;
         --primary-foreground: 355.7 100% 97.3%;
         --secondary: 240 4.8% 95.9%;
         --secondary-foreground: 240 5.9% 10%;
