@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { visitorApi } from '@/api/track/trackApi.ts';
-import { loginApi } from '@/api/user/userApi';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { useUserStore, useThemeStore } from '@/store';
-import { setLocalToken } from '@/utils/auth';
-import { error, success, warning } from '@/utils/toast';
 import { vAutoAnimate } from '@formkit/auto-animate';
 import Cookies from 'js-cookie';
 import { v4 as uuidv4 } from 'uuid';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { visitorApi } from '@/api/track/trackApi.ts';
+import { loginApi } from '@/api/user/userApi';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useThemeStore, useUserStore } from '@/store';
+import { setLocalToken } from '@/utils/auth';
+import { error, success, warning } from '@/utils/toast';
 
 const isLoading = ref(false);
 const studentId = ref('');
@@ -29,14 +29,15 @@ async function login() {
   try {
     const data = await loginApi(studentId.value, password.value);
     success('登录成功');
-    const { token, ...user } = data.user;
+    const { token, user } = data;
 
     setLocalToken(token);
     userStore.user = user;
     let target = '/dashboard-prob';
     if (themeStore.currentColor === 'rgb(34, 168, 109)') {
       target = '/dashboard-advmath';
-    } else if (themeStore.currentColor === 'rgb(142, 68, 173)') {
+    }
+    else if (themeStore.currentColor === 'rgb(142, 68, 173)') {
       target = '/dashboard-linalg';
     }
     await router.push(target);
@@ -107,7 +108,7 @@ async function visitorLogin() {
     <div class="text-center flex flex-col mb-6">
       <Button
         type="submit"
-        :disabled="isLoading" 
+        :disabled="isLoading"
         class="w-full mb-4 transition-colors duration-800"
         :style="{ backgroundColor: themeStore.currentColor }"
       >
@@ -153,9 +154,3 @@ async function visitorLogin() {
     </Label>
   </form>
 </template>
-
-<style scoped>
-:deep(.button) {
-  transition: background-color 0.8s ease;
-}
-</style>

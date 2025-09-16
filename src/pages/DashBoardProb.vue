@@ -1,13 +1,13 @@
 <script setup lang="ts">
+import { vAutoAnimate } from '@formkit/auto-animate'
+import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { fetchFavoriteExperimentsApi } from '@/api/experiment/experimentApi.ts';
 import { fetchUserApi } from '@/api/user/userApi';
 import NavBar from '@/components/NavBar.vue';
 import SideBar from '@/components/SideBar.vue';
 import { useUserStore } from '@/store';
 import { isVisitor } from '@/utils/auth.ts';
-import { vAutoAnimate } from '@formkit/auto-animate'
-import { onMounted } from 'vue';
-import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -24,7 +24,7 @@ onMounted(async () => {
   }
   catch (error) {
     console.error('Error during fetching user:', error);
-    await router.push('/login');
+    await router.push('/login-test');
   }
   try {
     const response = await fetchFavoriteExperimentsApi();

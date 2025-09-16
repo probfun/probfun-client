@@ -23,8 +23,8 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': {
-        target: 'http://192.144.199.178',
+      '/backend-api': {
+        target: 'https://fun.prob-mind.online',
         // target: 'http://127.0.0.1:4523/m1/4811506-4465979-default',
         changeOrigin: true,
       },
