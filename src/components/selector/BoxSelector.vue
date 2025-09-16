@@ -1,14 +1,24 @@
 <script setup lang="ts">
+import type { Subject as SubjectType } from '@/store';
 import { Dice3, Infinity as Infty, MoveUpRight } from 'lucide-vue-next';
-import { computed, ref, watch } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useConfigStore } from '@/store';
-// import { useThemeStore } from '@/store';
 
 type FaceType = 'front' | 'back' | 'right' | 'left' | 'top' | 'bottom';
 
-// const themeStore = useThemeStore();
-const rotateX = ref(-25);
-const rotateY = ref(-25);
+interface Subject {
+  name: string;
+  description: string;
+  color: string;
+  icon: any;
+  subject: SubjectType;
+}
+
+const BASE_X = -25;
+const BASE_Y = -25;
+
+const rotateX = ref(BASE_X);
+const rotateY = ref(BASE_Y);
 const isDragging = ref(false);
 const startX = ref(0);
 const startY = ref(0);
@@ -18,48 +28,99 @@ const skipTransition = ref(false);
 const isAnimating = ref(false);
 const configStore = useConfigStore();
 
+// 学科数据
+const subjectInfo: Subject[] = [
+  { name: '邮趣线代', description: '空间与向量的语言，适合喜欢抽象思维和结构分析的你', color: 'rgba(124,58,237,0.95)', icon: MoveUpRight, subject: 'linear-algebra' },
+  { name: '邮趣高数（上）', description: '微积分，函数与极限的艺术，适合喜欢挑战和推理的你', color: 'rgba(22,163,74,0.95)', icon: Infty, subject: 'advanced-math-1' },
+  { name: '邮趣高数（下）', description: '微积分，函数与极限的艺术，适合喜欢挑战和推理的你', color: 'rgba(22,163,74,0.95)', icon: Infty, subject: 'advanced-math-2' },
+  { name: '邮趣概率', description: '探索不确定世界的规律，适合喜欢逻辑和建模的你', color: 'rgba(36,96,226,0.95)', icon: Dice3, subject: 'probability' },
+  { name: '邮趣数论', description: '整数的奥秘与应用，适合喜欢逻辑和证明的你', color: 'rgba(243,156,18,0.95)', icon: Dice3, subject: 'number-theory' },
+  { name: '邮趣统计', description: '数据分析与推断，适合喜欢实用和应用的你', color: 'rgba(189,195,199,0.95)', icon: Dice3, subject: 'statistics' },
+];
+
+const currentIndex = ref(0);
+
+const frontItem = ref<Subject | null>(subjectInfo[0]);
+const leftItem = ref<Subject | null>(null);
+const rightItem = ref<Subject | null>(subjectInfo[1] ?? null);
+
+const TBA_COLOR = 'rgba(189,195,199,0.95)';
+
+function setFaceSlots(i: number) {
+  frontItem.value = subjectInfo[i] ?? null;
+  leftItem.value = i - 1 >= 0 ? subjectInfo[i - 1] : null;
+  rightItem.value = i + 1 < subjectInfo.length ? subjectInfo[i + 1] : null;
+}
+
+function updateConfigSubject() {
+  const cur = subjectInfo[currentIndex.value];
+  if (cur)
+    configStore.setSubject(cur.subject);
+}
+
+onMounted(() => {
+  const savedIndex = localStorage.getItem('cube-current-index');
+  if (savedIndex !== null) {
+    const i = Number(savedIndex);
+    if (!Number.isNaN(i) && i >= 0 && i < subjectInfo.length) {
+      currentIndex.value = i;
+      setFaceSlots(i);
+    }
+  }
+  updateConfigSubject();
+});
+
 function normalizeAngle(angle: number): number {
-  angle = angle % 360;
-  return angle > 180 ? angle - 360 : angle < -180 ? angle + 360 : angle;
+  angle = angle % 3600;
+  return angle > 1800 ? angle - 3600 : angle < -1800 ? angle + 3600 : angle;
 }
 
 const faceToAngle: Record<FaceType, { x: number; y: number }> = {
-  front: { x: -25, y: -25 },
-  left: { x: -25, y: 65 },
-  back: { x: -25, y: 155 },
-  right: { x: -25, y: -115 },
-  top: { x: -115, y: -25 },
-  bottom: { x: 65, y: -25 },
+  front: { x: BASE_X, y: BASE_Y },
+  left: { x: BASE_X, y: 65 },
+  back: { x: BASE_X, y: 155 },
+  right: { x: BASE_X, y: -115 },
+  top: { x: -115, y: BASE_Y },
+  bottom: { x: 65, y: BASE_Y },
 };
 
-const currentFace = computed<FaceType>(() => {
-  const y = normalizeAngle(rotateY.value);
-  for (const [face, angle] of Object.entries(faceToAngle)) {
-    if (y === angle.y)
-      return face as FaceType;
-  }
-  return 'top';
-});
-
-// 监听当前面的变化并发出颜色改变事件
-watch(currentFace, () => {
-  if (currentFace.value === 'left') {
-    configStore.setSubject('linear-algebra');
-  }
-  else if (currentFace.value === 'right') {
-    configStore.setSubject('advanced-math');
-  }
-  else if (currentFace.value === 'front') {
-    configStore.setSubject('probability');
-  }
-});
-
 function handleMouseDown(e: MouseEvent) {
-  if (isDragging.value)
+  if (isDragging.value || isAnimating.value || isExpanded.value)
     return;
   isDragging.value = true;
   startX.value = e.clientX;
   startY.value = e.clientY;
+}
+
+function animateSwipe(step: -1 | 1) {
+  if (isAnimating.value || isExpanded.value)
+    return;
+
+  const atLeftEdge = currentIndex.value === 0 && step === -1;
+  const atRightEdge = currentIndex.value === subjectInfo.length - 1 && step === 1;
+  if (atLeftEdge || atRightEdge)
+    return; // 两端不越界
+
+  isAnimating.value = true;
+  // 先转动 90°
+  const degree = step === 1 ? -90 : 90;
+  rotateY.value += degree;
+
+  // 结束后“进位”，并把角度瞬回，外观保持一致，避免颜色闪烁
+  window.setTimeout(() => {
+    currentIndex.value += step;
+    localStorage.setItem('cube-current-index', String(currentIndex.value));
+    updateConfigSubject();
+    setFaceSlots(currentIndex.value);
+
+    skipTransition.value = true;
+    rotateX.value = BASE_X;
+    rotateY.value = BASE_Y;
+    requestAnimationFrame(() => {
+      skipTransition.value = false;
+      isAnimating.value = false;
+    });
+  }, 150);
 }
 
 function handleMouseUp(e: MouseEvent) {
@@ -68,18 +129,15 @@ function handleMouseUp(e: MouseEvent) {
   const deltaX = e.clientX - startX.value;
   const deltaY = e.clientY - startY.value;
   const threshold = 50;
-  if (Math.abs(deltaX) > threshold || Math.abs(deltaY) > threshold) {
-    if (Math.abs(deltaX) > Math.abs(deltaY)) {
-      const degree = deltaX > 0 ? 90 : -90;
-      if (rotateY.value + degree !== 155 && rotateY.value + degree !== -205) {
-        rotateY.value += degree;
-      }
-    }
-    isDragging.value = false;
+  if (Math.abs(deltaX) > threshold && Math.abs(deltaX) > Math.abs(deltaY)) {
+    if (deltaX > 0)
+      animateSwipe(-1); // 右滑 => 上一
+    else animateSwipe(1); // 左滑 => 下一
   }
+  isDragging.value = false;
 }
 
-// 双击用于展开、收起立方体
+// 双击展开/收起
 function handleDoubleClick() {
   if (isAnimating.value)
     return;
@@ -91,7 +149,6 @@ function handleDoubleClick() {
     }, 300);
   }
   else {
-    // 展开
     skipTransition.value = true;
     rotateX.value = normalizeAngle(rotateX.value);
     rotateY.value = normalizeAngle(rotateY.value);
@@ -112,41 +169,57 @@ function handleClose() {
   expandTransition.value = false;
 }
 
-// 处理展开状态下的点击
 function handleFaceClick(face: FaceType) {
   if (!isExpanded.value || isAnimating.value)
     return;
-  // 开始收缩动画
-  isAnimating.value = true;
+
+  const step = face === 'left' ? -1 : face === 'right' ? 1 : 0;
+  const canGoLeft = currentIndex.value > 0;
+  const canGoRight = currentIndex.value < subjectInfo.length - 1;
+  const allow = (step === -1 && canGoLeft) || (step === 1 && canGoRight);
+
   const targetAngle = faceToAngle[face];
+  isAnimating.value = true;
   rotateX.value = targetAngle.x;
   rotateY.value = targetAngle.y;
   handleClose();
-  // themeStore.setColor(faceColors[face]);
 
   setTimeout(() => {
-    isAnimating.value = false;
+    if (allow) {
+      currentIndex.value += step as 1 | -1;
+      localStorage.setItem('cube-current-index', String(currentIndex.value));
+      updateConfigSubject();
+      setFaceSlots(currentIndex.value);
+    }
+    skipTransition.value = true;
+    rotateX.value = BASE_X;
+    rotateY.value = BASE_Y;
+    requestAnimationFrame(() => {
+      skipTransition.value = false;
+      isAnimating.value = false;
+    });
   }, 300);
 }
 
-// 初始化时恢复旋转角度
-const savedX = localStorage.getItem('cube-rotate-x');
-const savedY = localStorage.getItem('cube-rotate-y');
-if (savedX !== null && savedY !== null) {
-  rotateX.value = Number(savedX);
-  rotateY.value = Number(savedY);
+// 展开态：显示所有学科的网格，点击即可切换并收起
+function selectFromGrid(i: number) {
+  if (i < 0 || i >= subjectInfo.length)
+    return;
+  currentIndex.value = i;
+  localStorage.setItem('cube-current-index', String(currentIndex.value));
+  updateConfigSubject();
+  setFaceSlots(currentIndex.value);
+  handleClose();
 }
 
-// 拖动或旋转后保存
-watch([rotateX, rotateY], ([x, y]) => {
-  localStorage.setItem('cube-rotate-x', String(x));
-  localStorage.setItem('cube-rotate-y', String(y));
-});
+function faceBg(item: Subject | null, fallback = TBA_COLOR) {
+  return item?.color ?? fallback;
+}
 </script>
 
 <template>
   <div
-    class="w-full relative flex flex-col justify-start  items-center cursor-grab active:cursor-grabbing"
+    class="w-full relative flex flex-col justify-start items-center cursor-grab active:cursor-grabbing"
     @mousedown="handleMouseDown"
     @mouseup="handleMouseUp"
     @dblclick="handleDoubleClick"
@@ -154,156 +227,107 @@ watch([rotateX, rotateY], ([x, y]) => {
     <div
       class="relative [transform-style:preserve-3d] origin-center transition-all ease-[cubic-bezier(0.4,0,0.2,1)]"
       :class="[
-        isExpanded ? 'w-full max-w-2xl h-[650px]' : 'w-[300px] h-[400px]',
+        isExpanded ? 'w-full max-w-2xl h-[500px]' : 'w-[300px] h-[400px]',
+        skipTransition ? '!transition-none' : '',
       ]"
       :style="{
-        transform: isExpanded
-          ? 'rotateX(0deg) rotateY(0deg)'
-          : `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
+        transform: isExpanded ? 'rotateX(0deg) rotateY(0deg)' : `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
       }"
     >
+      <!-- 展开态：覆盖一层网格展示所有学科 -->
+      <div v-if="isExpanded" class="absolute inset-0 z-10 p-4 overflow-auto">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <button
+            v-for="(item, i) in subjectInfo"
+            :key="item.subject + i"
+            class="rounded-xl border-[7px] border-white/80 shadow-[0_0_10px_rgba(255,255,255,0.3)] p-4 text-left text-white hover:ring-4 ring-muted/50 transition"
+            :style="{ background: item.color }"
+            @click="selectFromGrid(i)"
+          >
+            <div class="flex items-center gap-3 mb-2">
+              <component :is="item.icon" class="size-8" />
+              <h3 class="text-2xl font-bold drop-shadow">
+                {{ item.name }}
+              </h3>
+            </div>
+            <p class="text-[1.05em] drop-shadow">
+              {{ item.description }}
+            </p>
+          </button>
+        </div>
+      </div>
+
       <!-- front -->
       <div
         class="absolute flex flex-col items-center justify-center text-white select-none p-5 box-border transition-all ease-[cubic-bezier(0.4,0,0.2,1)] border-[7px] border-white/80 shadow-[0_0_10px_rgba(255,255,255,0.3)] cursor-pointer"
         :class="isExpanded ? 'size-[300px] top-0 left-0 rounded-xl hover:ring-4 ring-muted/50' : 'size-[300px]'"
-        :style="isExpanded
-          ? { background: 'rgba(36,96,226,0.85)', opacity: '1' }
-          : { transform: 'translateZ(150px)', background: 'rgba(36,96,226,0.85)' }"
+        :style="isExpanded ? { opacity: '0', pointerEvents: 'none' } : { transform: 'translateZ(150px)', background: faceBg(frontItem) }"
         @click="handleFaceClick('front')"
       >
-        <span
-          class="flex flex-col items-center justify-center gap-2 text-2xl font-bold transition-opacity text-shadow"
-          :class="isExpanded ? 'opacity-0 pointer-events-none' : 'opacity-100'"
-        >
-          <Dice3 class="size-20" />
-          <span class="text-5xl">邮趣概率</span>
+        <span class="flex flex-col items-center justify-center gap-2 text-2xl font-bold transition-opacity text-shadow" :class="isExpanded ? 'opacity-0 pointer-events-none' : 'opacity-100'">
+          <component :is="frontItem.icon" v-if="frontItem" class="size-20" />
+          <span class="text-4xl">{{ frontItem ? frontItem.name : '敬请期待...' }}</span>
         </span>
-        <div
-          v-if="isExpanded"
-          class="absolute inset-0 flex flex-col items-center justify-center text-center p-5"
-        >
-          <div class="flex items-center mb-3 gap-2">
-            <Dice3 class="size-12" />
-            <h3 class="text-4xl font-bold drop-shadow">
-              邮趣概率
-            </h3>
-          </div>
-          <p class="text-[1.2em] my-2 drop-shadow">
-            探索不确定世界的规律
-          </p>
-          <p class="text-[1.2em] my-2 drop-shadow">
-            适合喜欢逻辑和建模的你
-          </p>
-        </div>
       </div>
 
       <!-- right -->
       <div
         class="absolute flex flex-col items-center justify-center text-white select-none p-5 box-border transition-all ease-[cubic-bezier(0.4,0,0.2,1)] border-[7px] border-white/80 shadow-[0_0_10px_rgba(255,255,255,0.3)] cursor-pointer"
         :class="isExpanded ? 'size-[300px] top-0 right-0 rounded-xl hover:ring-4 ring-muted/50' : 'size-[300px]'"
-        :style="isExpanded
-          ? { background: 'rgba(22,163,74,0.85)', opacity: '1' }
-          : { transform: 'translateX(150px) rotateY(90deg)', background: 'rgba(22,163,74,0.85)' }"
+        :style="isExpanded ? { opacity: '0', pointerEvents: 'none' } : { transform: 'translateX(150px) rotateY(90deg)', background: faceBg(rightItem) }"
         @click="handleFaceClick('right')"
       >
-        <span
-          class="flex flex-col items-center justify-center gap-2 text-2xl font-bold transition-opacity"
-          :class="isExpanded ? 'opacity-0 pointer-events-none' : 'opacity-100'"
-        >
-          <Infty class="size-20" />
-          <span class="text-5xl">邮趣高数</span>
+        <span class="flex flex-col items-center justify-center gap-2 text-2xl font-bold transition-opacity" :class="isExpanded ? 'opacity-0 pointer-events-none' : 'opacity-100'">
+          <component :is="rightItem.icon" v-if="rightItem" class="size-20" />
+          <span class="text-4xl">{{ rightItem ? rightItem.name : '敬请期待...' }}</span>
         </span>
-        <div
-          v-if="isExpanded"
-          class="absolute inset-0 flex flex-col items-center justify-center text-center p-5"
-        >
-          <div class="flex items-center mb-3 gap-2">
-            <Infty class="size-12" />
-            <h3 class="text-4xl font-bold drop-shadow">
-              邮趣高数
-            </h3>
-          </div>
-          <p class="text-[1.2em] my-2 drop-shadow">
-            微积分，函数与极限的艺术
-          </p>
-          <p class="text-[1.2em] my-2 drop-shadow">
-            适合喜欢挑战和推理的你
-          </p>
-        </div>
       </div>
 
       <!-- left -->
       <div
         class="absolute flex flex-col items-center justify-center text-white select-none p-5 box-border transition-all ease-[cubic-bezier(0.4,0,0.2,1)] border-[7px] border-white/80 shadow-[0_0_10px_rgba(255,255,255,0.3)] cursor-pointer"
-        :class="isExpanded ? 'size-[300px] bottom-0 left-1/2 -translate-x-1/2  rounded-xl hover:ring-4 ring-muted/50' : 'size-[300px]'"
-        :style="isExpanded
-          ? { background: 'rgba(124,58,237,0.85)', opacity: '1' }
-          : { transform: 'translateX(-150px) rotateY(-90deg)', background: 'rgba(124,58,237,0.85)' }"
+        :class="isExpanded ? '' : 'size-[300px]'"
+        :style="isExpanded ? { opacity: '0', pointerEvents: 'none' } : { transform: 'translateX(-150px) rotateY(-90deg)', background: faceBg(leftItem) }"
         @click="handleFaceClick('left')"
       >
-        <span
-          class="flex flex-col items-center justify-center gap-2 text-2xl font-bold transition-opacity"
-          :class="isExpanded ? 'opacity-0 pointer-events-none' : 'opacity-100'"
-        >
-          <MoveUpRight class="size-20" />
-          <span class="text-5xl">邮趣线代</span>
+        <span class="flex flex-col items-center justify-center gap-2 text-2xl font-bold transition-opacity" :class="isExpanded ? 'opacity-0 pointer-events-none' : 'opacity-100'">
+          <component :is="leftItem.icon" v-if="leftItem" class="size-20" />
+          <span class="text-4xl">{{ leftItem ? leftItem.name : '敬请期待...' }}</span>
         </span>
-        <div
-          v-if="isExpanded"
-          class="absolute inset-0 flex flex-col items-center justify-center text-center p-5"
-        >
-          <div class="flex items-center mb-3 gap-2">
-            <MoveUpRight class="size-12" />
-            <h3 class="text-4xl font-bold drop-shadow">
-              邮趣线代
-            </h3>
-          </div>
-          <p class="text-[1.2em] my-2 drop-shadow">
-            空间与向量的语言
-          </p>
-          <p class="text-[1.2em] my-2 drop-shadow">
-            适合喜欢抽象思维和结构分析的你
-          </p>
-        </div>
       </div>
 
       <!-- top -->
       <div
         class="absolute size-[300px] flex items-center justify-center text-white select-none p-5 box-border border-[7px] border-white/80 shadow-[0_0_10px_rgba(255,255,255,0.3)] transition-all ease-[cubic-bezier(0.4,0,0.2,1)]"
         :style="isExpanded
-          ? { transform: 'translateY(-150px) rotateX(90deg) scale(0.5)', background: 'rgba(189,195,199,0.85)', opacity: '0', pointerEvents: 'none' }
-          : { transform: 'translateY(-150px) rotateX(90deg)', background: 'rgba(189,195,199,0.85)' }"
+          ? { opacity: '0', pointerEvents: 'none' }
+          : { transform: 'translateY(-150px) rotateX(90deg)', background: 'rgba(189,195,199,0.95)' }"
         @click="handleFaceClick('top')"
       >
-        <span
-          class="text-2xl font-bold transition-opacity"
-          :class="isExpanded ? 'opacity-0' : 'opacity-100'"
-        />
+        <span class="text-2xl font-bold transition-opacity" :class="isExpanded ? 'opacity-0' : 'opacity-100'" />
       </div>
 
       <!-- back -->
       <div
         class="absolute size-[300px] flex items-center justify-center text-white select-none p-5 box-border border-[7px] border-white/80 shadow-[0_0_10px_rgba(255,255,255,0.3)] transition-all ease-[cubic-bezier(0.4,0,0.2,1)]"
         :style="isExpanded
-          ? { transform: 'translateZ(-150px) rotateY(180deg) scale(0.5)', background: 'rgba(243,156,18,0.85)', opacity: '0', pointerEvents: 'none' }
-          : { transform: 'translateZ(-150px) rotateY(180deg)', background: 'rgba(243,156,18,0.85)' }"
+          ? { opacity: '0', pointerEvents: 'none' }
+          : { transform: 'translateZ(-150px) rotateY(180deg)', background: TBA_COLOR }"
         @click="handleFaceClick('back')"
       >
-        <span
-          class="text-5xl font-bold transition-opacity"
-          :class="isExpanded ? 'opacity-0' : 'opacity-100'"
-        >敬请期待...</span>
+        <span class="text-4xl font-bold transition-opacity" :class="isExpanded ? 'opacity-0' : 'opacity-100'">敬请期待...</span>
       </div>
 
       <!-- bottom -->
       <div
         class="absolute size-[300px] flex items-center justify-center text-white select-none p-5 box-border border-[7px] border-white/80 shadow-[0_0_10px_rgba(255,255,255,0.3)] transition-all ease-[cubic-bezier(0.4,0,0.2,1)]"
         :style="isExpanded
-          ? { transform: 'translateY(150px) rotateX(-90deg) scale(0.5)', background: 'rgba(44,62,80,0.85)', opacity: '0', pointerEvents: 'none' }
-          : { transform: 'translateY(150px) rotateX(-90deg)', background: 'rgba(44,62,80,0.85)' }"
+          ? { opacity: '0', pointerEvents: 'none' }
+          : { transform: 'translateY(150px) rotateX(-90deg)', background: 'rgba(44,62,80,0.95)' }"
         @click="handleFaceClick('bottom')"
       />
     </div>
+
     <div v-if="!isExpanded" class="mt-4 text-primary-foreground text-2xl hint-fade select-none">
       - 左右滑动旋转，双击展开 -
     </div>

@@ -33,23 +33,41 @@ export const useAiStore = defineStore('aiStore', () => {
   persist: true,
 });
 
+export const SUBJECTS = [
+  'probability',
+  'advanced-math-1',
+  'advanced-math-2',
+  'linear-algebra',
+  'number-theory',
+  'statistics',
+] as const;
+
+export type Subject = typeof SUBJECTS[number];
+
 export const useConfigStore = defineStore('configStore', () => {
   const darkMode = ref<boolean>(false);
   const targetNodeId = ref<string | null>(null);
-  const currentSubject = ref<'probability' | 'advanced-math' | 'linear-algebra'>('probability');
+  const currentSubject = ref<Subject>('probability');
   const isMoving = ref(false);
 
-  function setSubject(subject: 'probability' | 'advanced-math' | 'linear-algebra') {
+  function setSubject(subject: Subject) {
     currentSubject.value = subject;
     const el = document.documentElement;
-    el.classList.remove('theme-probability', 'theme-advanced-math', 'theme-linear-algebra');
+    for (const subject of SUBJECTS) {
+      el.classList.remove(`theme-${subject}`);
+    }
     if (subject === 'probability')
       el.classList.add('theme-probability');
-    else if (subject === 'advanced-math')
-      el.classList.add('theme-advanced-math');
+    else if (subject === 'advanced-math-1')
+      el.classList.add('theme-advanced-math-1');
+    else if (subject === 'advanced-math-2')
+      el.classList.add('theme-advanced-math-2');
     else if (subject === 'linear-algebra')
       el.classList.add('theme-linear-algebra');
-    localStorage.setItem('subject', subject);
+    else if (subject === 'statistics')
+      el.classList.add('theme-statistics');
+    else if (subject === 'number-theory')
+      el.classList.add('theme-number-theory');
   }
 
   return {
