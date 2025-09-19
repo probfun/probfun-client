@@ -1,129 +1,8 @@
 <script setup lang="ts">
-import katex from 'katex';
-import { computed, onMounted, ref, watch } from 'vue';
+import { onMounted } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
-import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Slider } from '@/components/ui/slider';
-import { renderLatex, toMarkdown } from '@/utils/markdown';
-import GeometricDiagram from './GeometricDiagram.vue';
-import 'katex/dist/katex.min.css';
-
-const probability = ref([0.5]); // Probability of success (p)
-const fixedN = ref([3]); // 固定的试验次数 n
-const numberk = ref([1]); // Number of success (k)
-
-const isChart1 = ref(true);
-const isChart2 = ref(false);
-const isChart3 = ref(false);
-
-function toggleChart1() {
-  isChart1.value = true;
-  isChart2.value = false;
-  isChart3.value = false;
-}
-function toggleChart2() {
-  isChart1.value = false;
-  isChart2.value = true;
-  isChart3.value = false;
-}
-function toggleChart3() {
-  isChart1.value = false;
-  isChart2.value = false;
-  isChart3.value = true;
-}
-
-const save = ref(false);
-
-function saveImg() {
-  save.value = true;
-}
-function back() {
-  save.value = false;
-}
-
-const finalResultOne = computed(() => {
-  const p = probability.value[0];
-  const k = numberk.value[0];
-  return (1 - p) ** (k - 1) * p;
-});
-
-const oneFormula = computed(() => {
-  const absValue = Math.abs(finalResultOne.value);
-  const exponent = Math.floor(Math.log10(absValue)); // 获取指数
-  const mantissa = (finalResultOne.value / 10 ** exponent).toFixed(3); // 计算尾数并保留5位小数
-  const resultOne = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
-
-  return `P(X = k) = (1 - p)^{k-1} \\cdot p = (1 - ${probability.value[0]})^{${numberk.value[0] - 1}} \\cdot ${probability.value[0]} = ${resultOne}`;
-});
-const oneContainer = ref<HTMLElement | null>(null);
-
-const finalResultTwo = computed(() => {
-  const p = probability.value[0];
-  const k = numberk.value[0];
-  return (1 - p) ** k * p;
-});
-
-const twoFormula = computed(() => {
-  const absValue = Math.abs(finalResultTwo.value);
-  const exponent = Math.floor(Math.log10(absValue)); // 获取指数
-  const mantissa = (finalResultTwo.value / 10 ** exponent).toFixed(3); // 计算尾数并保留5位小数
-  const resultTwo = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
-
-  return `P(X = k) = (1 - p)^{k} \\cdot p  = (1 - ${probability.value[0]})^{${numberk.value}} \\cdot ${probability.value[0]} = ${resultTwo}`;
-});
-const twoContainer = ref<HTMLElement | null>(null);
-
-const finalResultThree = computed(() => {
-  const p = probability.value[0];
-  const k = numberk.value[0];
-  return (1 - p) ** k;
-});
-
-const threeFormula = computed(() => {
-  const absValue = Math.abs(finalResultThree.value);
-  const exponent = Math.floor(Math.log10(absValue)); // 获取指数
-  const mantissa = (finalResultThree.value / 10 ** exponent).toFixed(3); // 计算尾数并保留5位小数
-  const resultThree = `${mantissa} \\times 10^{${exponent}}`; // 形成最终的结果字符串
-
-  return `
-  \\begin{aligned}
-  P(X > ${fixedN.value[0]} + k \\mid X > ${fixedN.value[0]}) 
-  = P(X > k) =(1 - p)^{k}= (1 - ${probability.value[0]})^{${numberk.value}}
-  = ${resultThree}
-  \\end{aligned}`;
-});
-const threeContainer = ref<HTMLElement | null>(null);
-
-function renderFormula() {
-  if (oneContainer.value) {
-    katex.render(oneFormula.value, oneContainer.value, {
-      throwOnError: false,
-    });
-  }
-  if (twoContainer.value) {
-    katex.render(twoFormula.value, twoContainer.value, {
-      throwOnError: false,
-    });
-  }
-  if (threeContainer.value) {
-    katex.render(threeFormula.value, threeContainer.value, {
-      throwOnError: false,
-    });
-  }
-}
-
-onMounted(() => {
-  renderFormula();
-});
-
-// 监听 probability 的变化以动态更新图像
-watch([probability, fixedN, numberk], () => {
-  renderFormula();
-});
+import { toMarkdown } from '@/utils/markdown';
 
 const content = `
 ## **概述**
@@ -179,115 +58,54 @@ $$
    
 **2. 离散分布**：几何分布是一种定义在非负整数上的离散概率分布。
 `;
+
+function onHtmlLoad() {
+  console.log('几何分布HTML页面加载完成');
+}
+
+onMounted(() => {
+  console.log('几何分布实验组件已挂载');
+});
 </script>
 
 <template>
-  <ExperimentBoard :panel-size="55">
+  <ExperimentBoard title="几何分布" :tags="[]" :panel-size="90" :show-parameter-panel="false">
     <template #experiment>
-      <GeometricDiagram
-        :p="probability[0]" :n="fixedN[0]" :is-chart1="isChart1" :is-chart2="isChart2"
-        :is-chart3="isChart3" :save="save"
-      />
-    </template>
-    <template #parameter>
-      <div class="w-full h-full flex flex-col items-center justify-center gap-3 p-3">
-        <Card class="w-full">
-          <CardHeader>
-            <CardTitle>几何分布公式</CardTitle>
-          </CardHeader>
-          <CardContent class="flex w-full justify-center">
-            <div v-show="isChart1" ref="oneContainer" class="text-base" />
-            <div v-show="isChart2" ref="twoContainer" class="text-base" />
-            <div v-show="isChart3" ref="threeContainer" class="text-base" />
-          </CardContent>
-        </Card>
-        <Card class="w-full flex-1 flex flex-col">
-          <CardContent class="flex-1  flex flex-col justify-center items-center gap-3 p-4">
-            <RadioGroup
-              default-value="option-one" orientation="horizontal" class="w-full flex flex-row justify-center gap-6 py-3" @update:model-value="(value) => {
-                if (value === 'option-one') {
-                  toggleChart1();
-                }
-                else if (value === 'option-two') {
-                  toggleChart2();
-                }
-                else {
-                  toggleChart3();
-                }
-              }"
-            >
-              <div class="flex items-center space-x-2">
-                <RadioGroupItem id="option-one" value="option-one" />
-                <Label for="option-one" class="text-base font-bold ">直到第一次成功的次数</Label>
-              </div>
-              <div class="flex items-center space-x-2">
-                <RadioGroupItem id="option-two" value="option-two" />
-                <Label for="option-two" class="text-base font-bold ">第一次成功前的失败次数</Label>
-              </div>
-              <div class="flex items-center space-x-2">
-                <RadioGroupItem id="option-three" value="option-three" />
-                <Label for="option-three" class="text-base font-bold ">几何分布的无记忆性</Label>
-              </div>
-            </RadioGroup>
-
-            <div class="grid grid-cols-3">
-              <div class="flex flex-1 items-center justify-center font-bold">
-                <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4" v-html="toMarkdown('成功概率 $p$ =')" />
-                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model="probability[0]" type="number" placeholder="0~1" />
-                    <Slider v-model="probability" :min="0" :max="0.95" :step="0.05" />
-                  </div>
-                </div>
-              </div>
-
-              <div class="flex flex-1 items-center justify-center font-bold">
-                <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4 whitespace-nowrap" v-html="toMarkdown('成功前的尝试次数 $k$ =')" />
-                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model="numberk[0]" type="number" placeholder="1~60" />
-                    <Slider v-model="numberk" :min="1" :max="60" :step="1" />
-                  </div>
-                </div>
-              </div>
-
-              <div v-if="isChart3" class="flex flex-col flex-1 items-center justify-center space-y-5">
-                <div class="flex flex-1 items-center justify-center font-bold">
-                  <div class="mr-4" v-html="renderLatex('固定实验次数 = ')" />
-                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model="fixedN[0]" type="number" placeholder="0~9" />
-                    <Slider v-model="fixedN" :min="0" :max="9" :step="1" />
-                  </div>
-                </div>
-              </div>
-              <div v-if="isChart1" class="flex gap-2 items-center justify-center">
-                <Checkbox
-                  id="terms" @update:checked="(checked: boolean) => {
-                    if (checked) {
-                      saveImg();
-                    }
-                    else {
-                      back();
-                    }
-                    console.log(checked)
-                  }"
-                />
-                <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      <div class="html-experiment-container">
+        <iframe
+          src="/chapter2/geometric-distribution.html"
+          width="100%"
+          height="800px"
+          frameborder="0"
+          class="integration-iframe"
+          @load="onHtmlLoad"
+        />
       </div>
     </template>
+
     <template #conclusion>
       <div class="w-full h-full p-5">
-        <div class="prose-sm max-w-none" v-html="toMarkdown(content)" />
+        <div class="markdown-body prose prose-sm max-w-none space-y-4">
+          <div v-html="toMarkdown(content)" />
+        </div>
       </div>
     </template>
+
     <template #comment>
       <CommentPanel exp-id="geometric-distribution" />
     </template>
   </ExperimentBoard>
 </template>
 
-<style scoped></style>
+<style scoped>
+.html-experiment-container {
+  width: 100%;
+  height: 100%;
+  min-height: 800px;
+}
+
+.integration-iframe {
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+</style>

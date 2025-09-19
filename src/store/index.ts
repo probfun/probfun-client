@@ -2,10 +2,12 @@ import type { Chat } from '@/api/ai/aiType';
 import type { NodeOptions } from '@/api/distribution/distributionType';
 import type { Experiment } from '@/api/experiment/experimentType';
 import type { User } from '@/api/user/userType';
+import type { SubjectId } from '@/components/subject/configs.ts';
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { computed, ref, watch } from 'vue';
+import { subjectConfig } from '@/components/subject/configs.ts';
 
-export const useUserStore = defineStore('userStore', () => {
+const useUserStore = defineStore('userStore', () => {
   const user = ref<User | null>(null);
   const visitorId = ref<string | null>(null);
   const favoriteExperiments = ref<Experiment[]>([]);
@@ -22,7 +24,7 @@ export const useUserStore = defineStore('userStore', () => {
   persist: true,
 });
 
-export const useAiStore = defineStore('aiStore', () => {
+const useAiStore = defineStore('aiStore', () => {
   const currentChat = ref<Chat | null>(null);
   const chatList = ref<Chat[]>([]);
   return {
@@ -33,20 +35,48 @@ export const useAiStore = defineStore('aiStore', () => {
   persist: true,
 });
 
-export const useConfigStore = defineStore('configStore', () => {
+const useConfigStore = defineStore('configStore', () => {
   const darkMode = ref<boolean>(false);
   const targetNodeId = ref<string | null>(null);
+  const currentSubjectId = ref<SubjectId>('probability');
+  const currentSubject = computed(() => subjectConfig[currentSubjectId.value]);
   const isMoving = ref(false);
+
+  function updateTheme(subjectId: SubjectId) {
+    const el = document.documentElement;
+    for (const subject of Object.keys(subjectConfig)) {
+      el.classList.remove(`theme-${subject}`);
+    }
+    if (subjectId === 'probability')
+      el.classList.add('theme-probability');
+    else if (subjectId === 'advanced-math-1')
+      el.classList.add('theme-advanced-math-1');
+    else if (subjectId === 'advanced-math-2')
+      el.classList.add('theme-advanced-math-2');
+    else if (subjectId === 'linear-algebra')
+      el.classList.add('theme-linear-algebra');
+    else if (subjectId === 'statistics')
+      el.classList.add('theme-statistics');
+    else if (subjectId === 'number-theory')
+      el.classList.add('theme-number-theory');
+  }
+
+  watch(currentSubjectId, () => {
+    updateTheme(currentSubjectId.value);
+  }, { immediate: true });
+
   return {
     darkMode,
     targetNodeId,
     isMoving,
+    currentSubject,
+    currentSubjectId,
   };
 }, {
   persist: true,
 });
 
-export const useDistributionStore = defineStore('distributionStore', () => {
+const useDistributionStore = defineStore('distributionStore', () => {
   const nodeData = ref<NodeOptions[]>([
     {
       label: 'Zipf(α,n)',
@@ -623,3 +653,14 @@ export const useDistributionStore = defineStore('distributionStore', () => {
     },
   },
 });
+
+export type {
+  SubjectId,
+};
+
+export {
+  useAiStore,
+  useConfigStore,
+  useDistributionStore,
+  useUserStore,
+};

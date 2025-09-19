@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,7 +19,7 @@
             --warning: #f39c12;
             --info: #1abc9c;
         }
-        
+
         body {
             font-family: 'Segoe UI', 'Noto Sans TC', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
@@ -28,21 +29,22 @@
             padding: 20px;
             min-height: 100vh;
         }
-        
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: 2.2fr 1.8fr; /* 增加图表区域宽度 */
+            grid-template-columns: 2.2fr 1.8fr;
+            /* 增加图表区域宽度 */
             gap: 25px;
         }
-        
+
         @media (max-width: 1100px) {
             .container {
                 grid-template-columns: 1fr;
             }
         }
-        
+
         header {
             grid-column: 1 / -1;
             text-align: center;
@@ -50,18 +52,18 @@
             padding: 25px;
             background: linear-gradient(135deg, #2c3e50 0%, #4a6582 100%);
             border-radius: 12px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
             color: white;
         }
-        
+
         h1 {
             color: white;
             margin-bottom: 10px;
             font-size: 2.4rem;
             font-weight: 700;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
-        
+
         .subtitle {
             color: #cce0ff;
             font-size: 1.25rem;
@@ -69,17 +71,17 @@
             margin: 0 auto;
             font-weight: 300;
         }
-        
+
         .card {
             background: white;
             border-radius: 12px;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
             padding: 28px;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
             overflow: hidden;
         }
-        
+
         .card::before {
             content: '';
             position: absolute;
@@ -89,12 +91,12 @@
             height: 4px;
             background: var(--secondary);
         }
-        
+
         .card:hover {
             transform: translateY(-7px);
-            box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
         }
-        
+
         .card-title {
             color: var(--primary);
             margin-top: 0;
@@ -105,19 +107,19 @@
             align-items: center;
             gap: 10px;
         }
-        
+
         .card-title i {
             color: var(--secondary);
             font-size: 1.4rem;
         }
-        
+
         .controls {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 25px;
             margin-bottom: 25px;
         }
-        
+
         .control-group {
             display: flex;
             flex-direction: column;
@@ -126,7 +128,7 @@
             border-radius: 10px;
             border: 1px solid #e1e8f0;
         }
-        
+
         label {
             margin-bottom: 10px;
             font-weight: 600;
@@ -135,7 +137,7 @@
             align-items: center;
             gap: 8px;
         }
-        
+
         input[type="range"] {
             width: 100%;
             margin-top: 8px;
@@ -144,8 +146,9 @@
             background: #dde4ec;
             outline: none;
             -webkit-appearance: none;
+            appearance: none;
         }
-        
+
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 20px;
@@ -153,9 +156,9 @@
             border-radius: 50%;
             background: var(--secondary);
             cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
-        
+
         .value-display {
             display: flex;
             justify-content: space-between;
@@ -163,29 +166,29 @@
             color: #6c7a89;
             margin-top: 8px;
         }
-        
+
         .input-group {
             display: flex;
             align-items: center;
             margin-top: 15px;
         }
-        
+
         .input-group input {
             flex: 1;
             padding: 12px 16px;
             border: 1px solid #d1dbe5;
             border-radius: 8px;
             font-size: 1rem;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
             transition: border-color 0.3s;
         }
-        
+
         .input-group input:focus {
             border-color: var(--secondary);
             outline: none;
             box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
         }
-        
+
         .input-group button {
             background: var(--secondary);
             color: white;
@@ -198,17 +201,17 @@
             transition: all 0.3s;
             box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
         }
-        
+
         .input-group button:hover {
             background: #2980b9;
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(52, 152, 219, 0.4);
         }
-        
+
         .input-group button:active {
             transform: translateY(0);
         }
-        
+
         .critical-value {
             background: linear-gradient(135deg, #f8f9fc 0%, #eef5ff 100%);
             padding: 18px;
@@ -218,9 +221,9 @@
             font-size: 1.3rem;
             font-weight: 700;
             border: 1px solid #e1e8f0;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
-        
+
         .critical-value span {
             color: var(--accent);
             font-size: 1.6rem;
@@ -228,9 +231,9 @@
             padding: 5px 15px;
             border-radius: 8px;
             margin: 0 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        
+
         #chart {
             height: 520px;
             width: 100%;
@@ -238,31 +241,35 @@
             border-radius: 10px;
             overflow: hidden;
             background: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
-        
+
         .table-container {
             overflow-x: auto;
-            max-height: 700px; /* 限制表格高度 */
+            max-height: 700px;
+            /* 限制表格高度 */
             overflow-y: auto;
             border-radius: 10px;
             border: 1px solid #e1e8f0;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
-        
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 0;
-            font-size: 0.92rem; /* 减小表格字体大小 */
+            font-size: 0.92rem;
+            /* 减小表格字体大小 */
         }
-        
-        th, td {
-            padding: 10px 12px; /* 减小单元格内边距 */
+
+        th,
+        td {
+            padding: 10px 12px;
+            /* 减小单元格内边距 */
             text-align: center;
             border: 1px solid #e1e8f0;
         }
-        
+
         th {
             background-color: var(--primary);
             color: white;
@@ -271,22 +278,22 @@
             top: 0;
             z-index: 10;
         }
-        
+
         tr:nth-child(even) {
             background-color: #f8fafd;
         }
-        
+
         tr:hover {
             background-color: #e9f2ff;
         }
-        
+
         .highlight {
             background-color: #fff9c4 !important;
             font-weight: bold;
             color: var(--accent);
             box-shadow: 0 0 0 2px var(--warning);
         }
-        
+
         .info-section {
             background: #f0f8ff;
             padding: 22px;
@@ -294,7 +301,7 @@
             margin-top: 25px;
             border: 1px solid #d1e7ff;
         }
-        
+
         .info-section h3 {
             color: var(--primary);
             margin-top: 0;
@@ -302,7 +309,7 @@
             align-items: center;
             gap: 10px;
         }
-        
+
         .formula {
             text-align: center;
             font-size: 1.3rem;
@@ -315,35 +322,35 @@
             color: var(--primary);
             border: 2px dashed #d1e7ff;
         }
-        
+
         .stats-summary {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
             margin-top: 20px;
         }
-        
+
         .stat-card {
             background: white;
             border-radius: 10px;
             padding: 15px;
             text-align: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
             border: 1px solid #e1e8f0;
         }
-        
+
         .stat-card .value {
             font-size: 1.8rem;
             font-weight: 700;
             color: var(--secondary);
             margin: 10px 0;
         }
-        
+
         .stat-card .label {
             font-size: 0.9rem;
             color: #6c7a89;
         }
-        
+
         footer {
             grid-column: 1 / -1;
             text-align: center;
@@ -353,22 +360,22 @@
             font-size: 0.95rem;
             background: white;
             border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
-        
+
         .feature-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
             margin-top: 25px;
         }
-        
+
         .feature {
             display: flex;
             gap: 15px;
             align-items: flex-start;
         }
-        
+
         .feature i {
             font-size: 1.8rem;
             color: var(--secondary);
@@ -378,17 +385,17 @@
             min-width: 50px;
             text-align: center;
         }
-        
+
         .feature div h4 {
             margin: 0 0 8px 0;
             color: var(--primary);
         }
-        
+
         .feature div p {
             margin: 0;
             color: #5a6878;
         }
-        
+
         .legend {
             display: flex;
             justify-content: center;
@@ -396,33 +403,34 @@
             margin-top: 15px;
             flex-wrap: wrap;
         }
-        
+
         .legend-item {
             display: flex;
             align-items: center;
             gap: 8px;
             font-size: 0.9rem;
         }
-        
+
         .legend-color {
             width: 20px;
             height: 8px;
             border-radius: 4px;
         }
-        
+
         .distribution-color {
             background: #3498db;
         }
-        
+
         .critical-color {
             background: #e74c3c;
         }
-        
+
         .rejection-color {
             background: rgba(231, 76, 60, 0.2);
         }
     </style>
 </head>
+
 <body>
     <div class="container">
 
@@ -430,7 +438,8 @@
             <h2 class="card-title"><i class="fas fa-chart-line"></i> 卡方分布图</h2>
             <div class="controls">
                 <div class="control-group">
-                    <label for="df-slider"><i class="fas fa-sliders-h"></i> 自由度 (df): <span id="df-value">4</span></label>
+                    <label for="df-slider"><i class="fas fa-sliders-h"></i> 自由度 (df): <span
+                            id="df-value">4</span></label>
                     <input type="range" id="df-slider" min="1" max="30" value="4">
                     <div class="value-display">
                         <span>1</span>
@@ -438,7 +447,8 @@
                     </div>
                 </div>
                 <div class="control-group">
-                    <label for="alpha-slider"><i class="fas fa-percentage"></i> 上分位点 (α): <span id="alpha-value">0.05</span></label>
+                    <label for="alpha-slider"><i class="fas fa-percentage"></i> 上分位点 (α): <span
+                            id="alpha-value">0.05</span></label>
                     <input type="range" id="alpha-slider" min="0.01" max="0.995" step="0.01" value="0.05">
                     <div class="value-display">
                         <span>0.01</span>
@@ -446,16 +456,17 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="input-group">
                 <input type="text" id="chi-input" placeholder="输入卡方值 (例如: 9.49)">
                 <button id="calculate-p"><i class="fas fa-calculator"></i> 计算P值</button>
             </div>
-            
+
             <div class="critical-value">
-                临界值 χ²(<span id="current-alpha">0.05</span>, <span id="current-df">4</span>) = <span id="critical-value">9.4877</span>
+                临界值 χ²(<span id="current-alpha">0.05</span>, <span id="current-df">4</span>) = <span
+                    id="critical-value">9.4877</span>
             </div>
-            
+
             <div class="legend">
                 <div class="legend-item">
                     <div class="legend-color distribution-color"></div>
@@ -466,23 +477,23 @@
                     <span>临界值线</span>
                 </div>
             </div>
-            
+
             <div id="chart"></div>
- 
+
         </div>
-        
+
         <div class="card">
             <h2 class="card-title"><i class="fas fa-table"></i> 卡方分布表</h2>
             <p>查找不同自由度和显著性水平下的卡方临界值（右尾概率）</p>
-            
+
             <div class="table-container">
                 <table id="chi-table">
                     <thead>
                         <tr>
                             <th>df</th>
                             <th>0.005</th>
-                            <th>0.01</th> 
-                            <th>0.025</th>     
+                            <th>0.01</th>
+                            <th>0.025</th>
                             <th>0.05</th>
                             <th>0.1</th>
                             <th>0.25</th>
@@ -492,7 +503,7 @@
                             <th>0.95</th>
                             <th>0.975</th>
                             <th>0.99</th>
-                            <th>0.995</th>           
+                            <th>0.995</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
@@ -500,8 +511,8 @@
                     </tbody>
                 </table>
             </div>
-           
-          </div>
+
+        </div>
     </div>
 
     <script>
@@ -519,19 +530,19 @@
         const meanValue = document.getElementById('mean-value');
         const varianceValue = document.getElementById('variance-value');
         const skewnessValue = document.getElementById('skewness-value');
-        
+
         // 初始值
         let df = 4;
         let alpha = 0.05;
         let criticalValue = jStat.chisquare.inv(1 - alpha, df);
-        
+
         // 更新统计信息
         function updateStats() {
             meanValue.textContent = df.toFixed(2);
             varianceValue.textContent = (2 * df).toFixed(2);
             skewnessValue.textContent = Math.sqrt(8 / df).toFixed(2);
         }
-        
+
         // 更新显示值
         function updateDisplayValues() {
             dfValue.textContent = df;
@@ -541,28 +552,28 @@
             criticalValueElement.textContent = criticalValue.toFixed(4);
             updateStats();
         }
-        
+
         // 生成卡方分布数据
         function generateChiSquareData(df) {
             const step = 0.1;
             const maxX = Math.min(50, Math.max(20, df * 3));
             const data = [];
-            
+
             for (let x = 0; x <= maxX; x += step) {
                 const y = jStat.chisquare.pdf(x, df);
-                data.push({x, y});
+                data.push({ x, y });
             }
-            
+
             return data;
         }
-        
+
         // 绘制图表
         function plotChart() {
             const data = generateChiSquareData(df);
-            
+
             // 计算临界值
             criticalValue = jStat.chisquare.inv(1 - alpha, df);
-            
+
             // 创建分布曲线
             const trace = {
                 x: data.map(d => d.x),
@@ -570,9 +581,9 @@
                 type: 'scatter',
                 mode: 'lines',
                 name: `df = ${df}`,
-                line: {color: '#3498db', width: 3}
+                line: { color: '#3498db', width: 3 }
             };
-            
+
             // 创建临界值线
             const criticalLine = {
                 x: [criticalValue, criticalValue],
@@ -580,9 +591,9 @@
                 type: 'scatter',
                 mode: 'lines',
                 name: `临界值 (${alpha.toFixed(3)})`,
-                line: {color: '#e74c3c', width: 2, dash: 'dash'}
+                line: { color: '#e74c3c', width: 2, dash: 'dash' }
             };
-            
+
             // 创建拒绝域填充
             const rejectionRegion = {
                 x: data.filter(d => d.x >= criticalValue).map(d => d.x),
@@ -591,10 +602,10 @@
                 mode: 'lines',
                 fill: 'tozeroy',
                 name: `拒绝域 (α = ${alpha.toFixed(3)})`,
-                line: {color: 'rgba(231, 76, 60, 0.5)', width: 0},
+                line: { color: 'rgba(231, 76, 60, 0.5)', width: 0 },
                 fillcolor: 'rgba(231, 76, 60, 0.2)'
             };
-            
+
             // 布局设置
             const layout = {
                 title: `卡方分布 (df = ${df})`,
@@ -609,8 +620,8 @@
                 },
                 hovermode: 'closest',
                 showlegend: true,
-                legend: {x: 0.7, y: 0.95, bgcolor: 'rgba(255,255,255,0.8)'},
-                margin: {l: 60, r: 30, t: 60, b: 60},
+                legend: { x: 0.7, y: 0.95, bgcolor: 'rgba(255,255,255,0.8)' },
+                margin: { l: 60, r: 30, t: 60, b: 60 },
                 plot_bgcolor: 'white',
                 paper_bgcolor: 'white',
                 annotations: [{
@@ -626,7 +637,7 @@
                     bgcolor: 'rgba(255,255,255,0.9)',
                     bordercolor: '#e74c3c',
                     borderwidth: 1,
-                    font: {size: 14}
+                    font: { size: 14 }
                 }],
                 shapes: [{
                     type: 'line',
@@ -641,50 +652,50 @@
                     }
                 }]
             };
-            
+
             // 绘制图表
             Plotly.newPlot('chart', [trace, criticalLine, rejectionRegion], layout);
-            
+
             // 更新显示值
             updateDisplayValues();
             highlightTable();
         }
-        
+
         // 生成分布表
         function generateDistributionTable() {
             const alphas = [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95, 0.975, 0.99, 0.995];
             let html = '';
-            
+
             for (let df = 1; df <= 30; df++) {
                 html += `<tr><td>${df}</td>`;
-                
+
                 for (let alpha of alphas) {
                     const value = jStat.chisquare.inv(1 - alpha, df);
                     html += `<td class="${df === 4 && Math.abs(alpha - 0.05) < 0.001 ? 'highlight' : ''}">${value.toFixed(3)}</td>`;
                 }
-                
+
                 html += '</tr>';
             }
-            
+
             tableBody.innerHTML = html;
         }
-        
+
         // 高亮当前选中的表格单元格
         function highlightTable() {
             // 移除所有高亮
             const cells = document.querySelectorAll('#table-body td');
             cells.forEach(cell => cell.classList.remove('highlight'));
-            
+
             // 找到当前df所在的行
             const rows = tableBody.querySelectorAll('tr');
             const rowIndex = df - 1;
-            
+
             if (rows[rowIndex]) {
                 // 找到最接近当前alpha的列
                 const alphas = [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95, 0.975, 0.99, 0.995];
                 let closestIndex = 0;
                 let minDiff = Math.abs(alphas[0] - alpha);
-                
+
                 for (let i = 1; i < alphas.length; i++) {
                     const diff = Math.abs(alphas[i] - alpha);
                     if (diff < minDiff) {
@@ -692,36 +703,36 @@
                         closestIndex = i;
                     }
                 }
-                
+
                 // 高亮单元格（+1是因为第一列是df）
                 const cell = rows[rowIndex].querySelector(`td:nth-child(${closestIndex + 2})`);
                 if (cell) {
                     cell.classList.add('highlight');
-                    
+
                     // 滚动到可见位置
-                    cell.scrollIntoView({behavior: 'smooth', block: 'center', inline: 'center'});
+                    cell.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
                 }
             }
         }
-        
+
         // 事件监听器
-        dfSlider.addEventListener('input', function() {
+        dfSlider.addEventListener('input', function () {
             df = parseInt(this.value);
             plotChart();
         });
-        
-        alphaSlider.addEventListener('input', function() {
+
+        alphaSlider.addEventListener('input', function () {
             alpha = parseFloat(this.value);
             plotChart();
         });
-        
-        calculatePButton.addEventListener('click', function() {
+
+        calculatePButton.addEventListener('click', function () {
             const chiValue = parseFloat(chiInput.value);
-            
+
             if (!isNaN(chiValue) && chiValue >= 0) {
                 // 计算p值（右尾概率）
                 const pValue = 1 - jStat.chisquare.cdf(chiValue, df);
-                
+
                 // 在图表上添加标记
                 const annotation = {
                     x: chiValue,
@@ -734,11 +745,11 @@
                     bgcolor: 'rgba(255,255,255,0.9)',
                     bordercolor: '#27ae60',
                     borderwidth: 1,
-                    font: {size: 14}
+                    font: { size: 14 }
                 };
-                
-                Plotly.relayout('chart', {annotations: [annotation]});
-                
+
+                Plotly.relayout('chart', { annotations: [annotation] });
+
                 // 显示计算结果
                 alert(`计算结果：
 χ²值 = ${chiValue.toFixed(4)}
@@ -748,13 +759,13 @@ p值 = ${pValue.toFixed(4)}`);
                 alert('请输入有效的卡方值（正数）');
             }
         });
-        
+
         // 表格单元格点击事件
-        tableBody.addEventListener('click', function(e) {
+        tableBody.addEventListener('click', function (e) {
             if (e.target.tagName === 'TD') {
                 const row = e.target.parentElement;
                 const dfValue = parseInt(row.cells[0].textContent);
-                
+
                 if (!isNaN(dfValue)) {
                     df = dfValue;
                     dfSlider.value = df;
@@ -762,11 +773,12 @@ p值 = ${pValue.toFixed(4)}`);
                 }
             }
         });
-        
+
         // 初始化
         generateDistributionTable();
         plotChart();
         updateStats();
     </script>
 </body>
+
 </html>

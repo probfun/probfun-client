@@ -64,7 +64,7 @@ function handleCompositionEnd() {
 </script>
 
 <template>
-  <div class="sticky left-0 h-full w-72 grid grid-rows-[1fr_3fr] gap-2">
+  <div class="sticky left-0 h-full w-72 grid grid-rows-2 gap-2">
     <Card class="overflow-y-hidden flex flex-col hover:border-primary transition-all flex-shrink-0">
       <CardHeader class="px-4 py-2">
         <CardTitle class="flex items-center">
@@ -129,24 +129,12 @@ function handleCompositionEnd() {
         </div>
       </CardContent>
     </Card>
-    <div class="flex flex-col gap-2 min-h-0">
-      <Card class="hover:border-primary transition-all duration-300 flex-1 flex-shrink-0">
-        <CardHeader class="px-4 py-3">
-          <CardTitle class="flex items-center">
-            词云展示
-          </CardTitle>
-        </CardHeader>
-        <CardContent class="border-t p-0 flex flex-col justify-center gap-1 overflow-hidden">
-          <img class="rounded-xl" src="/word-clouds.png" alt="">
-        </CardContent>
-      </Card>
-      <AiQuestions
-        :disabled="disabled"
-        @send="(question) => {
-          emit('send', question);
-        }"
-      />
-    </div>
+    <AiQuestions
+      :disabled="disabled"
+      @send="(question) => {
+        emit('send', question);
+      }"
+    />
 
     <AlertDialog v-model:open="isOpen">
       <AlertDialogContent>

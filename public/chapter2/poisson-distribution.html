@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>泊松分布交互可视化</title>
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist@2.29.0/plotly.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .slider-container {
+            margin-bottom: 20px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 8px;
+            background: #2563eb;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        /* Chrome, Safari, Opera滑块样式 */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: #ffffff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px #2563eb;
+            transition: all 0.3s ease;
+        }
+
+        /* Firefox滑块样式 */
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #ddd;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* 滑块轨道悬停效果 */
+        input[type="range"]:hover {
+            background: #2563eb;
+        }
+
+        .value-display {
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        #poisson-plot {
+            width: 100%;
+            height: 500px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(37, 99, 235, 0.1);
+            border-radius: 6px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .instructions {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f0f7ff;
+            border-left: 4px solid #2563eb;
+            border-radius: 4px;
+        }
+
+        .comparison {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #fff7f0;
+            border-left: 4px solid #e67e22;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="slider-container">
+            <div class="slider-label">
+                <span>参数λ (平均值):</span>
+                <span class="value-display" id="lambda-value">5</span>
+            </div>
+            <input type="range" id="lambda-slider" min="0.1" max="50" value="5" step="0.1">
+        </div>
+
+        <div id="poisson-plot"></div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div>均值</div>
+                <div class="stat-value" id="mean-value">5.00</div>
+            </div>
+            <div class="stat-item">
+                <div>方差</div>
+                <div class="stat-value" id="variance-value">5.00</div>
+            </div>
+            <div class="stat-item">
+                <div>标准差</div>
+                <div class="stat-value" id="std-dev-value">2.24</div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        // 获取DOM元素
+        const lambdaSlider = document.getElementById('lambda-slider');
+        const lambdaValue = document.getElementById('lambda-value');
+        const meanValue = document.getElementById('mean-value');
+        const varianceValue = document.getElementById('variance-value');
+        const stdDevValue = document.getElementById('std-dev-value');
+
+        // 初始化参数
+        let lambda = parseFloat(lambdaSlider.value);
+
+        // 更新显示的值
+        function updateDisplayValues() {
+            lambdaValue.textContent = lambda.toFixed(1);
+
+            // 计算并显示统计信息
+            const mean = lambda;
+            const variance = lambda;
+            const stdDev = Math.sqrt(lambda);
+
+            meanValue.textContent = mean.toFixed(2);
+            varianceValue.textContent = variance.toFixed(2);
+            stdDevValue.textContent = stdDev.toFixed(2);
+        }
+
+        // 计算泊松分布概率
+        function poissonPMF(k, lambda) {
+            // 使用泊松分布公式计算概率
+            return (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k);
+        }
+
+        // 计算阶乘（使用缓存优化）
+        const factorialCache = [1, 1];
+        function factorial(n) {
+            if (n < 0) return NaN;
+            if (n in factorialCache) return factorialCache[n];
+
+            let result = 1;
+            for (let i = 2; i <= n; i++) {
+                result *= i;
+                factorialCache[i] = result;
+            }
+            return result;
+        }
+
+        // 生成泊松分布数据
+        function generatePoissonData(lambda) {
+            const xValues = [];
+            const yValues = [];
+
+            // 计算适当的x轴范围（覆盖99.9%的概率）
+            const maxK = Math.min(50, Math.ceil(lambda + 5 * Math.sqrt(lambda)));
+
+            for (let k = 0; k <= maxK; k++) {
+                xValues.push(k);
+                yValues.push(poissonPMF(k, lambda));
+            }
+
+            return { x: xValues, y: yValues };
+        }
+
+        // 更新图表
+        function updateChart() {
+            const data = generatePoissonData(lambda);
+
+            const trace = {
+                x: data.x,
+                y: data.y,
+                type: 'bar',
+                name: `泊松分布 (λ=${lambda.toFixed(1)})`,
+                marker: {
+                    color: '#2563eb',
+                    line: {
+                        color: '#2563eb',
+                        width: 1
+                    }
+                }
+            };
+
+            const layout = {
+                title: `泊松分布 Pois(${lambda.toFixed(1)})`,
+                xaxis: {
+                    title: '事件发生次数 (k)',
+                    tickmode: 'linear',
+                    dtick: Math.ceil(data.x.length / 50) || 1
+                },
+                yaxis: {
+                    title: '概率 P(X=k)',
+                    rangemode: 'nonnegative'
+                },
+                hovermode: 'closest'
+            };
+
+            Plotly.react('poisson-plot', [trace], layout);
+        }
+
+        // 处理滑块变化
+        lambdaSlider.addEventListener('input', function () {
+            lambda = parseFloat(this.value);
+            updateDisplayValues();
+            updateChart();
+        });
+
+        // 初始化
+        updateDisplayValues();
+        updateChart();
+    </script>
+</body>
+
+</html>

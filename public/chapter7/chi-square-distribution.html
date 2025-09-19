@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,254 +12,269 @@
             box-sizing: border-box;
             font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
         }
-        
+
         body {
-            background: linear-gradient(135deg, #1a237e, #311b92, #4a148c);
-            color: #fff;
+            background: #ffffff;
+            color: #333333;
             min-height: 100vh;
             padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
-        
+
         .container {
             max-width: 1200px;
             width: 95%;
             margin: 20px auto;
+            color: #333333;
         }
-        
+
         header {
             text-align: center;
             padding: 30px 20px;
             margin-bottom: 30px;
-            background: rgba(26, 35, 126, 0.7);
+            background: #f5f5f5;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
             backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid #e0e0e0;
         }
-        
+
         h1 {
             font-size: 2.8rem;
             margin-bottom: 15px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-            background: linear-gradient(to right, #4fc3f7, #e91e63);
+            text-shadow: none;
+            background: #2563eb;
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
             letter-spacing: 1px;
         }
-        
+
         .subtitle {
             font-size: 1.2rem;
             max-width: 800px;
             margin: 0 auto;
             line-height: 1.6;
-            color: #e0e0ff;
+            color: #666666;
             font-weight: 300;
         }
-        
+
         .content {
             display: flex;
             gap: 30px;
             flex-wrap: wrap;
         }
-        
+
         .chart-container {
             flex: 1 1 600px;
-            background: rgba(20, 25, 60, 0.85);
+            background: #ffffff;
             border-radius: 15px;
             padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             min-height: 500px;
             backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid #e0e0e0;
         }
-        
+
         .controls {
             flex: 0 0 300px;
-            background: rgba(20, 25, 60, 0.85);
+            background: #ffffff;
             border-radius: 15px;
             padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid #e0e0e0;
         }
-        
+
         .control-group {
             margin-bottom: 25px;
         }
-        
+
         h2 {
             font-size: 1.8rem;
             margin-bottom: 25px;
-            color: #4fc3f7;
+            color: #2563eb;
             padding-bottom: 10px;
-            border-bottom: 2px solid #4fc3f7;
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            border-bottom: 2px solid #2563eb;
+            text-shadow: none;
         }
-        
+
         h3 {
             font-size: 1.3rem;
             margin-bottom: 15px;
-            color: #90caf9;
+            color: #333333;
         }
-        
+
         .slider-container {
             margin-bottom: 25px;
         }
-        
+
         label {
             display: block;
             margin-bottom: 10px;
             font-size: 1.1rem;
-            color: #e0e0ff;
+            color: #2563eb;
         }
-        
+
         input[type="range"] {
             width: 100%;
             height: 10px;
-            background: linear-gradient(to right, #1a237e, #4a148c);
+            background: #2563eb;
             border-radius: 5px;
             outline: none;
+            appearance: none;
             -webkit-appearance: none;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
+
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             width: 22px;
             height: 22px;
-            background: #4fc3f7;
+            background: #ffffff;
             border-radius: 50%;
             cursor: pointer;
-            box-shadow: 0 0 10px rgba(79, 195, 247, 0.8);
+            box-shadow: 0 0 10px #2563eb;
             transition: all 0.3s ease;
         }
-        
+
         input[type="range"]::-webkit-slider-thumb:hover {
-            background: #29b6f6;
+            background: #ffffff;
             transform: scale(1.1);
         }
-        
+
         .value-display {
             display: flex;
             justify-content: space-between;
             font-size: 1.1rem;
             margin-top: 10px;
-            color: #90caf9;
+            color: #666666;
         }
-        
+
         .info-box {
-            background: rgba(30, 40, 100, 0.7);
-            border-left: 4px solid #4fc3f7;
+            background: #e0f2fe;
+            border-left: 4px solid #2563eb;
             padding: 20px;
             border-radius: 0 8px 8px 0;
             margin-top: 30px;
         }
-        
+
         .info-box h3 {
             margin-top: 0;
-            color: #4fc3f7;
+            color: #2563eb;
         }
-        
+
         .info-box p {
             line-height: 1.6;
             margin-bottom: 15px;
-            color: #e0e0ff;
+            color: #333333;
         }
-        
+
         canvas {
             width: 100%;
             height: 450px;
-            background: #0a0f29;
+            background: #ffffff;
             border-radius: 10px;
-            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, gif0.05);
+            border: 1px solid #e0e0e0;
         }
-        
+
         .dist-characteristics {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
             margin-top: 20px;
         }
-        
+
         .characteristic {
-            background: linear-gradient(135deg, #1a237e, #4a148c);
+            background: #f9fafb;
             padding: 15px;
             border-radius: 8px;
             text-align: center;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0e0e0;
         }
-        
+
         .characteristic:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-            background: linear-gradient(135deg, #283593, #5e35b1);
+            background: #2563eb;
         }
-        
+
+        .characteristic:hover .value {
+            color: #ffffff;
+        }
+
+        .characteristic:hover .label {
+            font-size: 0.9rem;
+            color: #ffffff;
+        }
+
         .characteristic .value {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #4fc3f7;
+            color: #2563eb;
             margin-top: 5px;
-            text-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
+            text-shadow: none;
         }
-        
+
         .characteristic .label {
             font-size: 0.9rem;
-            color: #90caf9;
+            color: #666666;
         }
-        
+
         @media (max-width: 900px) {
             .content {
                 flex-direction: column;
             }
-            
+
             .dist-characteristics {
                 grid-template-columns: 1fr;
             }
-            
+
             .controls {
                 flex: 1 1 auto;
                 width: 100%;
             }
-            
+
             h1 {
                 font-size: 2.2rem;
             }
         }
-        
+
         .highlight {
             font-weight: bold;
-            color: #4fc3f7;
-            text-shadow: 0 0 5px rgba(79, 195, 247, 0.5);
+            color: #2563eb;
+            text-shadow: none;
         }
-        
+
         .mode-display {
             margin-top: 20px;
             text-align: center;
             font-size: 1.1rem;
-            color: #90caf9;
+            color: #2563eb;
             padding: 10px;
-            background: rgba(30, 40, 100, 0.5);
+            background: #f0f9ff;
             border-radius: 8px;
         }
-        
+
         .footer {
             text-align: center;
             margin-top: 30px;
             padding: 15px;
-            color: #90caf9;
+            color: #666666;
             font-size: 0.9rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid #e0e0e0;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
-      
+
         <div class="content">
             <div class="chart-container">
                 <h2>概率密度函数</h2>
@@ -283,10 +299,10 @@
                 </div>
 
             </div>
-            
+
             <div class="controls">
                 <h2>参数控制</h2>
-                
+
                 <div class="control-group">
                     <h3>自由度 (df)</h3>
                     <div class="slider-container">
@@ -299,14 +315,15 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="info-box">
                     <h3>卡方分布特性</h3>
                     <p>卡方分布是<span class="highlight">df个独立标准正态随机变量</span>平方和的分布，df称为自由度。</p>
                     <p>• 当<span class="highlight">df=1</span>时，分布高度偏斜</p>
                     <p>• 当<span class="highlight">df增大</span>时，分布逐渐对称</p>
                     <p>• 当<span class="highlight">df→∞</span>时，卡方分布趋近于正态分布</p>
-                    <p>• 均值：<span class="highlight">df</span>，方差：<span class="highlight">2×df</span>，偏度：<span class="highlight">√(8/df)</span></p>
+                    <p>• 均值：<span class="highlight">df</span>，方差：<span class="highlight">2×df</span>，偏度：<span
+                            class="highlight">√(8/df)</span></p>
                     <p>• 当自由度超过30时，横坐标自动扩展到100</p>
                 </div>
             </div>
@@ -325,7 +342,7 @@
         const varianceValue = document.getElementById('varianceValue');
         const skewnessValue = document.getElementById('skewnessValue');
         const modeDisplay = document.getElementById('modeDisplay');
-        
+
         // 设置Canvas尺寸
         function resizeCanvas() {
             const container = canvas.parentElement;
@@ -333,19 +350,19 @@
             canvas.height = 450;
             drawChart();
         }
-        
+
         // 初始化
         window.addEventListener('load', () => {
             resizeCanvas();
             updateDF(parseInt(dfSlider.value));
         });
-        
+
         window.addEventListener('resize', resizeCanvas);
-        
+
         // 卡方分布PDF计算
         function chiSquarePDF(x, df) {
             if (x <= 0) return 0;
-            
+
             // Gamma函数计算
             function gamma(z) {
                 // 使用Lanczos近似
@@ -355,7 +372,7 @@
                     771.32342877765313, -176.61502916214059, 12.507343278686905,
                     -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7
                 ];
-                
+
                 if (z < 0.5) {
                     return Math.PI / (Math.sin(Math.PI * z) * gamma(1 - z));
                 } else {
@@ -368,44 +385,44 @@
                     return Math.sqrt(2 * Math.PI) * Math.pow(t, z + 0.5) * Math.exp(-t) * x;
                 }
             }
-            
-            const numerator = Math.pow(x, df/2 - 1) * Math.exp(-x/2);
-            const denominator = Math.pow(2, df/2) * gamma(df/2);
-            
+
+            const numerator = Math.pow(x, df / 2 - 1) * Math.exp(-x / 2);
+            const denominator = Math.pow(2, df / 2) * gamma(df / 2);
+
             return numerator / denominator;
         }
-        
+
         // 更新自由度显示和图表
-        dfSlider.addEventListener('input', function() {
+        dfSlider.addEventListener('input', function () {
             const df = parseInt(this.value);
             updateDF(df);
         });
-        
+
         function updateDF(df) {
             dfDisplay.textContent = df;
             dfValue.textContent = df;
-            
+
             // 更新分布特性
             meanValue.textContent = df.toFixed(2);
             varianceValue.textContent = (2 * df).toFixed(2);
-            skewnessValue.textContent = (Math.sqrt(8/df)).toFixed(2);
-            
+            skewnessValue.textContent = (Math.sqrt(8 / df)).toFixed(2);
+
             drawChart(df);
         }
-        
+
         // 绘制图表
         function drawChart(df = 5) {
             const width = canvas.width;
             const height = canvas.height;
             const padding = 50;
-            
+
             // 清除画布
             ctx.clearRect(0, 0, width, height);
-            
+
             // 绘制网格
             ctx.strokeStyle = 'rgba(100, 100, 150, 0.2)';
             ctx.lineWidth = 1;
-            
+
             // 水平网格线
             for (let y = padding; y < height - padding; y += 30) {
                 ctx.beginPath();
@@ -413,7 +430,7 @@
                 ctx.lineTo(width - padding, y);
                 ctx.stroke();
             }
-            
+
             // 垂直网格线
             for (let x = padding; x < width - padding; x += 30) {
                 ctx.beginPath();
@@ -421,42 +438,42 @@
                 ctx.lineTo(x, height - padding);
                 ctx.stroke();
             }
-            
+
             // 绘制坐标轴
-            ctx.strokeStyle = '#4fc3f7';
+            ctx.strokeStyle = '#2563eb';
             ctx.lineWidth = 2;
-            
+
             // X轴
             ctx.beginPath();
             ctx.moveTo(padding, height - padding);
             ctx.lineTo(width - padding, height - padding);
             ctx.stroke();
-            
+
             // Y轴
             ctx.beginPath();
             ctx.moveTo(padding, padding);
             ctx.lineTo(padding, height - padding);
             ctx.stroke();
-            
+
             // 坐标轴箭头
             drawArrow(width - padding, height - padding, width - padding - 10, height - padding - 5);
             drawArrow(width - padding, height - padding, width - padding - 10, height - padding + 5);
             drawArrow(padding, padding, padding - 5, padding + 10);
             drawArrow(padding, padding, padding + 5, padding + 10);
-            
+
             // 轴标签
-            ctx.fillStyle = '#90caf9';
+            ctx.fillStyle = '#2563eb';
             ctx.font = '16px Arial';
             ctx.textAlign = 'center';
             ctx.fillText('x', width - padding + 20, height - padding + 20);
             ctx.textAlign = 'right';
             ctx.fillText('f(x)', padding - 10, padding - 10);
-            
+
             // 刻度标签
-            ctx.fillStyle = '#90caf9';
+            ctx.fillStyle = '#2563eb';
             ctx.font = '12px Arial';
             ctx.textAlign = 'center';
-            
+
             // 根据df设置x轴范围
             let xMax;
             if (df <= 30) {
@@ -464,22 +481,22 @@
             } else {
                 xMax = 100;
             }
-            
-          
+
+
             // X轴刻度
             const xTicks = 10;
             for (let i = 0; i <= xTicks; i++) {
                 const x = padding + (i * (width - 2 * padding)) / xTicks;
                 const xValue = ((i * xMax) / xTicks).toFixed(1);
                 ctx.fillText(xValue, x, height - padding + 20);
-                
+
                 // 刻度线
                 ctx.beginPath();
                 ctx.moveTo(x, height - padding);
                 ctx.lineTo(x, height - padding + 5);
                 ctx.stroke();
             }
-            
+
             // Y轴刻度
             const maxPDF = getMaxPDF(df, xMax);
             for (let i = 0; i <= 5; i++) {
@@ -487,28 +504,28 @@
                 const yValue = (i * maxPDF / 5).toFixed(2);
                 ctx.textAlign = 'right';
                 ctx.fillText(yValue, padding - 10, y + 4);
-                
+
                 // 刻度线
                 ctx.beginPath();
                 ctx.moveTo(padding, y);
                 ctx.lineTo(padding - 5, y);
                 ctx.stroke();
             }
-            
+
             // 标题
             ctx.textAlign = 'center';
             ctx.font = 'bold 18px Arial';
-            ctx.fillStyle = '#4fc3f7';
+            ctx.fillStyle = '#2563eb';
             ctx.fillText(`卡方分布概率密度函数 (df = ${df})`, width / 2, padding / 2);
-            
+
             // 绘制多个分布曲线用于比较
             const colors = [
-                { color: '#4fc3f7', width: 3 }, 
-                { color: '#81c784', width: 1.5 }, 
-                { color: '#fff176', width: 1.5 }, 
+                { color: '#2563eb', width: 3 },
+                { color: '#81c784', width: 1.5 },
+                { color: '#ffc107', width: 1.5 },
                 { color: '#ff8a65', width: 1.5 }
             ];
-            
+
             // 根据df选择比较曲线
             let dfValues;
             if (df <= 5) {
@@ -518,28 +535,28 @@
             } else {
                 dfValues = [df, df - 5, df + 10, df + 20];
             }
-            
+
             // 确保最小df为1
             dfValues = dfValues.map(d => Math.max(1, d));
-            
+
             for (let idx = 0; idx < dfValues.length; idx++) {
                 const currentDf = dfValues[idx];
                 const style = colors[idx];
-                
+
                 // 绘制曲线
                 ctx.beginPath();
                 ctx.strokeStyle = style.color;
                 ctx.lineWidth = style.width;
                 ctx.lineJoin = 'round';
-                
+
                 for (let i = 0; i <= width - 2 * padding; i++) {
                     const x = i / (width - 2 * padding) * xMax;
                     const pdf = chiSquarePDF(x, currentDf);
-                    
+
                     if (pdf > 0) {
                         const plotX = padding + i;
                         const plotY = height - padding - (pdf / maxPDF) * (height - 2 * padding);
-                        
+
                         if (i === 0) {
                             ctx.moveTo(plotX, plotY);
                         } else {
@@ -547,52 +564,52 @@
                         }
                     }
                 }
-                
+
                 ctx.stroke();
             }
-            
+
             // 添加图例
             ctx.textAlign = 'left';
             ctx.fillStyle = '#fff';
             ctx.font = 'bold 14px Arial';
             ctx.fillText('图例:', width - padding - 150, padding + 20);
-            
+
             for (let idx = 0; idx < dfValues.length; idx++) {
                 const currentDf = dfValues[idx];
                 const style = colors[idx];
-                
+
                 ctx.beginPath();
                 ctx.strokeStyle = style.color;
                 ctx.lineWidth = style.width;
                 ctx.moveTo(width - padding - 150, padding + 40 + idx * 25);
                 ctx.lineTo(width - padding - 120, padding + 40 + idx * 25);
                 ctx.stroke();
-                
+
                 ctx.fillStyle = style.color;
                 ctx.font = (idx === 0) ? 'bold 14px Arial' : '14px Arial';
-                ctx.fillText(`df = ${currentDf} ${idx === 0 ? '(当前)' : ''}`, 
-                             width - padding - 110, padding + 44 + idx * 25);
+                ctx.fillText(`df = ${currentDf} ${idx === 0 ? '(当前)' : ''}`,
+                    width - padding - 110, padding + 44 + idx * 25);
             }
         }
-        
+
         // 获取最大PDF值用于缩放
         function getMaxPDF(df, xMax) {
             let maxPDF = 0;
             const step = xMax / 200;
-            
+
             for (let x = 0.1; x <= xMax; x += step) {
                 const pdf = chiSquarePDF(x, df);
                 if (pdf > maxPDF) maxPDF = pdf;
             }
-            
+
             return Math.min(1, maxPDF * 1.1); // 限制最大值，避免太高
         }
-        
+
         // 绘制箭头
         function drawArrow(fromX, fromY, toX, toY) {
             const headLength = 10;
             const angle = Math.atan2(toY - fromY, toX - fromX);
-            
+
             ctx.beginPath();
             ctx.moveTo(fromX, fromY);
             ctx.lineTo(toX, toY);
@@ -603,4 +620,5 @@
         }
     </script>
 </body>
+
 </html>

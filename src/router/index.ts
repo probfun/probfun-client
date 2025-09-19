@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import About from '@/components/about/About.vue';
 import AiPanel from '@/components/ai/AiPanel.vue';
-
 import Callback from '@/components/auth/Callback.vue';
 import CasLoginCard from '@/components/auth/CasLoginCard.vue';
 import LoginCard from '@/components/auth/LoginCard.vue';
@@ -8,6 +8,7 @@ import RegisterCard from '@/components/auth/RegisterCard.vue';
 import Chatper1Diagram from '@/components/diagram/chapter-1/Chapter1Diagram.vue';
 import Chatper4Diagram from '@/components/diagram/chapter-4/Chapter4Diagram.vue';
 import DistributionDiagram from '@/components/diagram/distribution-diagram/DistributionDiagram.vue';
+import QuestionDiagram from '@/components/diagram/question-diagram/QuestionDiagram.vue';
 import DoQuestionPanel from '@/components/do-question/DoQuestionPanel.vue';
 import BirthdayProblem from '@/components/experiment/chapter1/birthday-problem/BirthdayProblem.vue';
 import BirthdayAttack from '@/components/experiment/chapter1/BirthdayAttack.vue';
@@ -15,18 +16,16 @@ import BuffonNeedle from '@/components/experiment/chapter1/buffon-needle/BuffonN
 import PositiveTest from '@/components/experiment/chapter1/PositiveTest.vue';
 import ThreeDoors from '@/components/experiment/chapter1/three-doors/ThreeDoors.vue';
 import threeNormalDistribution from '@/components/experiment/chapter3/normal-distribution/threeNormalDistribution.vue';
+
 import GeometricDistribution from '@/components/experiment/distribution/geometric-distribution/GeometricDistribution.vue';
 import NormalDistribution from '@/components/experiment/distribution/normal-distribution/NormalDistribution.vue';
-
 import PoissonDistribution from '@/components/experiment/distribution/poisson-distribution/PoissonDistribution.vue';
-import UniformDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
 
+import UniformDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
 import FavoritePanel from '@/components/favorite/FavoritePanel.vue';
 import HomePage from '@/components/home/HomePage.vue';
-import StatisticsPanel from '@/components/statistics/StatisticsPanel.vue';
 import StudentPanel from '@/components/user/StudentPanel.vue';
 import TeacherPanel from '@/components/user/TeacherPanel.vue';
-
 import AuthPage from '@/pages/AuthPage.vue';
 import DashBoard from '@/pages/DashBoard.vue';
 import { isVisitor } from '@/utils/auth.ts';
@@ -64,6 +63,7 @@ const router = createRouter({
           path: '/dashboard',
           component: HomePage,
         },
+        //   probability
         {
           path: '/dashboard/experiment/buffon',
           component: BuffonNeedle,
@@ -87,6 +87,18 @@ const router = createRouter({
         {
           path: '/dashboard/experiment/normal-distribution',
           component: NormalDistribution,
+        },
+        {
+          path: '/dashboard/experiment/event-relationship',
+          component: () => import('@/components/experiment/chapter1/EventRelationship.vue'),
+        },
+        {
+          path: '/dashboard/experiment/discrete-pmf',
+          component: () => import('@/components/experiment/chapter2/DiscretePMF.vue'),
+        },
+        {
+          path: '/dashboard/experiment/pdf-cdf',
+          component: () => import('@/components/experiment/chapter2/PdfCdf.vue'),
         },
         {
           path: '/dashboard/experiment/binomial-distribution',
@@ -176,14 +188,14 @@ const router = createRouter({
         //   path: '/dashboard/experiment/obstacle-options',
         //   component: () => import('@/components/experiment/chapter7/ObstacleOptions.vue'),
         // },
-        {
-          path: '/dashboard/experiment/t-distribution',
-          component: () => import('@/components/experiment/chapter7/TDistribution.vue'),
-        },
-        {
-          path: '/dashboard/experiment/chi-square-distribution',
-          component: () => import('@/components/experiment/chapter7/ChiSquareDistribution.vue'),
-        },
+        // {
+        //   path: '/dashboard/experiment/t-distribution',
+        //   component: () => import('@/components/experiment/chapter7/TDistribution.vue'),
+        // },
+        // {
+        //   path: '/dashboard/experiment/chi-square-distribution',
+        //   component: () => import('@/components/experiment/chapter7/ChiSquareDistribution.vue'),
+        // },
         {
           path: '/dashboard/experiment/t-distribution-quantile',
           component: () => import('@/components/experiment/chapter7/TDistributionQuantile.vue'),
@@ -228,6 +240,48 @@ const router = createRouter({
           path: '/dashboard/experiment/EstimationOfPai',
           component: () => import('@/components/experiment/chapter5/EstimationOfPai.vue'),
         },
+        //   advanced-math-1
+        {
+          path: '/dashboard/experiment/sequence-limit',
+          component: () => import('@/components/experiment/calculusA/SequenceLimit.vue'),
+        },
+        {
+          path: '/dashboard/experiment/function-limit',
+          component: () => import('@/components/experiment/calculusA/FunctionLimit.vue'),
+        },
+        {
+          path: '/dashboard/experiment/derivative-geometry',
+          component: () => import('@/components/experiment/calculusA/DerivativeGeometry.vue'),
+        },
+        {
+          path: '/dashboard/experiment/taylor-expansion',
+          component: () => import('@/components/experiment/calculusA/TaylorExpansion.vue'),
+        },
+        {
+          path: '/dashboard/experiment/integrability-conditions',
+          component: () => import('@/components/experiment/calculusA/IntegrabilityConditions.vue'),
+        },
+        {
+          path: '/dashboard//experiment/lagrange-mvt',
+          component: () => import('@/components/experiment/calculusA/LagrangeMVT.vue'),
+        },
+        {
+          path: '/dashboard/experiment/gabriel-horn',
+          component: () => import('@/components/experiment/calculusA/GabrielHorn.vue'),
+        },
+        //   advanced-math-2
+        {
+          path: '/dashboard/experiment/partial-derivative',
+          component: () => import('@/components/experiment/calculusB/PartialDerivative.vue'),
+        },
+        {
+          path: '/dashboard/experiment/total-derivative',
+          component: () => import('@/components/experiment/calculusB/TotalDerivative.vue'),
+        },
+        {
+          path: '/dashboard/experiment/neighborhood',
+          component: () => import('@/components/experiment/calculusB/Neighborhood.vue'),
+        },
         {
           path: '/dashboard/info0',
           component: StudentPanel,
@@ -257,36 +311,18 @@ const router = createRouter({
           component: Chatper4Diagram,
         },
         {
-          path: '/dashboard/question/:pathMatch(.*)*',
+          path: '/dashboard/about',
+          component: About,
+        },
+        {
+          path: '/dashboard/question/:chapterId',
+          name: 'DoQuestion',
           component: DoQuestionPanel,
         },
         {
-          path: '/:pathMatch(.*)*',
-          redirect: '/dashboard',
-        },
-        {
-          path: '/dashboard/favorite',
-          component: FavoritePanel,
-        },
-        {
-          path: '/dashboard/mindmap/distribution',
-          component: DistributionDiagram,
-        },
-        {
-          path: '/dashboard/mindmap/chapter-1',
-          component: Chatper1Diagram,
-        },
-        {
-          path: '/dashboard/mindmap/chapter-4',
-          component: Chatper4Diagram,
-        },
-        {
-          path: '/dashboard/question/:pathMatch(.*)*',
-          component: DoQuestionPanel,
-        },
-        {
-          path: '/dashboard/statistics',
-          component: StatisticsPanel,
+          path: '/dashboard/mindmap/question/:chapterId',
+          name: 'QuestionDiagram',
+          component: QuestionDiagram,
         },
         {
           path: '/:pathMatch(.*)*',

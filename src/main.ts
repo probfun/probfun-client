@@ -1,3 +1,4 @@
+import { autoAnimatePlugin } from '@formkit/auto-animate/vue';
 import { definePreset } from '@primevue/themes';
 import Aura from '@primevue/themes/aura';
 import { createPinia } from 'pinia';
@@ -42,6 +43,7 @@ app.use(PrimeVue, {
     },
   },
 });
+app.use(autoAnimatePlugin);
 app.use(ToastService);
 app.use(pinia);
 app.use(router);

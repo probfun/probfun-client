@@ -1,72 +1,8 @@
 <script setup lang="ts">
-import katex from 'katex';
-import { computed, onMounted, ref, watch } from 'vue';
+import { onMounted } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
-import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Slider } from '@/components/ui/slider';
-import { renderLatex, toMarkdown } from '@/utils/markdown';
-import PoissonDiagram from './PoissonDiagram.vue';
-import 'katex/dist/katex.min.css';
-
-const lambda = ref([3]); // Poisson distribution-old mean (λ)
-const an = ref([1]);
-
-const save = ref(false);
-function saveImg() {
-  save.value = true;
-}
-
-// 计算阶乘
-function factorial(n: number) {
-  if (n === 0 || n === 1)
-    return 1;
-  let result = 1;
-  for (let i = 2; i <= n; i++) {
-    result *= i;
-  }
-  return result;
-}
-
-function back() {
-  save.value = false;
-}
-
-const result = computed(() => {
-  const probabilityOfK = (lambda.value[0] ** an.value[0] * Math.exp(-lambda.value[0])) / factorial(an.value[0]);
-
-  // 计算尾数和指数
-  const absValue = Math.abs(probabilityOfK);
-  const exponent = Math.floor(Math.log10(absValue)); // 获取指数
-  const mantissa = (probabilityOfK / 10 ** exponent).toFixed(3); // 计算尾数并保留5位小数
-
-  // 形成最终的结果字符串
-  return `${mantissa} \\times 10^{${exponent}}`;
-});
-
-const latexFormula = computed(() => `P(X = ${an.value}) =\\frac{{λ}^ke^{-λ}}{k!}= \\frac{${lambda.value}^${an.value} e^{-${lambda.value}}}{${an.value}!} = ${result.value}`);
-const katexContainer = ref<HTMLElement | null>(null);
-function renderFormula() {
-  if (katexContainer.value) {
-    katex.render(latexFormula.value, katexContainer.value, {
-      throwOnError: false,
-    });
-  }
-}
-
-onMounted(() => {
-  renderFormula();
-});
-
-// 监听 lambda 的变化以动态更新图像
-watch(lambda, () => {
-  renderFormula();
-});
-
-watch(an, () => {
-  renderFormula();
-});
+import { toMarkdown } from '@/utils/markdown';
 
 const content = `
 ## **概述**
@@ -97,73 +33,54 @@ $$
 - **2. 独立性**：事件发生的次数之间是独立的。
 - **3. 无上限**：理论上事件的发生次数可以是任意大的非负整数。
 `;
+
+function onHtmlLoad() {
+  console.log('泊松分布HTML页面加载完成');
+}
+
+onMounted(() => {
+  console.log('泊松分布实验组件已挂载');
+});
 </script>
 
 <template>
-  <ExperimentBoard :panel-size="60">
+  <ExperimentBoard title="泊松分布" :tags="[]" :panel-size="90" :show-parameter-panel="false">
     <template #experiment>
-      <PoissonDiagram :lambda="lambda[0]" :save="save" />
-    </template>
-    <template #parameter>
-      <div class="w-full h-full flex flex-col items-center justify-center p-3 gap-3">
-        <Card class="w-full">
-          <CardHeader>
-            <CardTitle>二项分布公式</CardTitle>
-          </CardHeader>
-          <CardContent class="flex w-full justify-center">
-            <div ref="katexContainer" class="text-base" />
-          </CardContent>
-        </Card>
-        <Card class="w-full flex-1 flex flex-col">
-          <CardContent class="flex-1 flex flex-col justify-center gap-5 p-4">
-            <div class="grid grid-cols-3">
-              <div class="flex flex-1 items-center justify-center font-bold">
-                <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4" v-html="renderLatex('均值 \\(λ\\) = ')" />
-                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model="lambda[0]" :min-fraction-digits="1" placeholder="0~30" />
-                    <Slider v-model="lambda" :min="0" :max="30" :step="0.1" />
-                  </div>
-                </div>
-              </div>
-
-              <div class="flex flex-1 items-center justify-center font-bold">
-                <div class="flex flex-1 items-center justify-center">
-                  <div class="mr-4 whitespace-nowrap" v-html="toMarkdown('事件发生的实际次数 $k$ = ')" />
-                  <div class="flex flex-col items-center justify-center w-1/2 space-y-3">
-                    <Input v-model="an[0]" :min-fraction-digits="1" placeholder="最大值为均值的4倍" />
-                    <Slider v-model="an" :min="0" :max="4 * lambda[0]" :step="1" />
-                  </div>
-                </div>
-              </div>
-              <div class="flex gap-2 items-center justify-center">
-                <Checkbox
-                  id="terms" @update:checked="(checked: boolean) => {
-                    if (checked) {
-                      saveImg();
-                    }
-                    else {
-                      back();
-                    }
-                    console.log(checked)
-                  }"
-                />
-                <label for="terms" class="text-sm select-none font-bold">开启历史图像模式</label>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      <div class="html-experiment-container">
+        <iframe
+          src="/chapter2/poisson-distribution.html"
+          width="100%"
+          height="800px"
+          frameborder="0"
+          class="integration-iframe"
+          @load="onHtmlLoad"
+        />
       </div>
     </template>
+
     <template #conclusion>
       <div class="w-full h-full p-5">
-        <div class="prose-sm max-w-none " v-html="toMarkdown(content)" />
+        <div class="markdown-body prose prose-sm max-w-none space-y-4">
+          <div v-html="toMarkdown(content)" />
+        </div>
       </div>
     </template>
+
     <template #comment>
       <CommentPanel exp-id="poisson-distribution" />
     </template>
   </ExperimentBoard>
 </template>
 
-<style scoped></style>
+<style scoped>
+.html-experiment-container {
+  width: 100%;
+  height: 100%;
+  min-height: 800px;
+}
+
+.integration-iframe {
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+</style>
