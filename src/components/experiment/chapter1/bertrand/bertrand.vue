@@ -251,54 +251,54 @@ const bertrandDisplay = ref<{
   simulateGame: () => void;
   stopSimulation: () => void;
 }>({
-  autoGameRound: [], // 默认模拟轮数为100
-  simulationInterval: null, // 用于存储定时器 ID
-  simulateGame() {
-    console.log('开始模拟！');
-    let round = 0;
-    this.simulationInterval = setInterval(() => {
-      if (round >= this.autoGameRound[0] || !autoGaming.value) {
+      autoGameRound: [], // 默认模拟轮数为100
+      simulationInterval: null, // 用于存储定时器 ID
+      simulateGame() {
+        console.log('开始模拟！');
+        let round = 0;
+        this.simulationInterval = setInterval(() => {
+          if (round >= this.autoGameRound[0] || !autoGaming.value) {
+            if (this.simulationInterval) {
+              clearInterval(this.simulationInterval);
+            }
+            this.simulationInterval = null;
+            return;
+          }
+          // 确保每次更新的数据是响应式的
+          generateRandomEndPoints();
+          generateRadialMidpoint();
+          generateRandomMidpoint();
+          round++;
+        }, 100) as unknown as number; // 强制类型转换
+      },
+      // 停止模拟并清除所有图像
+      stopSimulation() {
+        console.log('停止模拟！');
+        // 清空所有弦数据
+        chord1.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
+        chord2.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
+        chord3.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
+        chord1Color.value = 'blue';
+        chord2Color.value = 'blue';
+        chord3Color.value = 'blue';
+        totalChords.value = 0;
+        longChords.value = 0;
+        longChordRatio.value = 0;
+        totalChords2.value = 0;
+        longChords2.value = 0;
+        longChordRatio2.value = 0;
+        totalChords3.value = 0;
+        longChords3.value = 0;
+        longChordRatio3.value = 0;
+
+        // 停止模拟
+        autoGaming.value = false;
         if (this.simulationInterval) {
           clearInterval(this.simulationInterval);
+          this.simulationInterval = null;
         }
-        this.simulationInterval = null;
-        return;
-      }
-      // 确保每次更新的数据是响应式的
-      generateRandomEndPoints();
-      generateRadialMidpoint();
-      generateRandomMidpoint();
-      round++;
-    }, 100) as unknown as number; // 强制类型转换
-  },
-  // 停止模拟并清除所有图像
-  stopSimulation() {
-    console.log('停止模拟！');
-    // 清空所有弦数据
-    chord1.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
-    chord2.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
-    chord3.value = { x1: 0, y1: 0, x2: 0, y2: 0 };
-    chord1Color.value = 'blue';
-    chord2Color.value = 'blue';
-    chord3Color.value = 'blue';
-    totalChords.value = 0;
-    longChords.value = 0;
-    longChordRatio.value = 0;
-    totalChords2.value = 0;
-    longChords2.value = 0;
-    longChordRatio2.value = 0;
-    totalChords3.value = 0;
-    longChords3.value = 0;
-    longChordRatio3.value = 0;
-
-    // 停止模拟
-    autoGaming.value = false;
-    if (this.simulationInterval) {
-      clearInterval(this.simulationInterval);
-      this.simulationInterval = null;
-    }
-  },
-});
+      },
+    });
 
 // function limitInput(e: { target: { value: string } }) {
 //   const value = Number.parseInt(e.target.value);

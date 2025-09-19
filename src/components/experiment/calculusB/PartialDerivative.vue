@@ -29,7 +29,7 @@ const content = ref(`
       <div class="flex w-full h-full">
         <iframe
           src="https://www.geogebra.org/calculator/vts36shw?embed" width="1180" height="750" allowfullscreen
-          style="border: 1px solid #e4e4e4;border-radius: 4px;"
+          style="border: 1px solid #e4e4e4;border-radius: 4px;" frameborder="0"
         />
       </div>
     </template>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二项分布交互可视化</title>
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist@2.29.0/plotly.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .slider-container {
+            margin-bottom: 20px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 8px;
+            background: #2563eb;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        /* Chrome, Safari, Opera滑块样式 */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: #ffffff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px #2563eb;
+            transition: all 0.3s ease;
+        }
+
+        /* Firefox滑块样式 */
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #ddd;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* 滑块轨道悬停效果 */
+        input[type="range"]:hover {
+            background: #2563eb;
+        }
+
+        .value-display {
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        #binomial-plot {
+            width: 100%;
+            height: 500px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(37, 99, 235, 0.1);
+            border-radius: 6px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .instructions {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f0f7ff;
+            border-left: 4px solid #2563eb;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="slider-container">
+            <div class="slider-label">
+                <span>试验次数 (n):</span>
+                <span class="value-display" id="n-value">10</span>
+            </div>
+            <input type="range" id="n-slider" min="1" max="50" value="10" step="1">
+        </div>
+
+        <div class="slider-container">
+            <div class="slider-label">
+                <span>成功概率 (p):</span>
+                <span class="value-display" id="p-value">0.5</span>
+            </div>
+            <input type="range" id="p-slider" min="0" max="1" value="0.5" step="0.01">
+        </div>
+
+        <div id="binomial-plot"></div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div>均值</div>
+                <div class="stat-value" id="mean-value">5.00</div>
+            </div>
+            <div class="stat-item">
+                <div>方差</div>
+                <div class="stat-value" id="variance-value">2.50</div>
+            </div>
+            <div class="stat-item">
+                <div>标准差</div>
+                <div class="stat-value" id="std-dev-value">1.58</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const nSlider = document.getElementById('n-slider');
+        const pSlider = document.getElementById('p-slider');
+        const nValue = document.getElementById('n-value');
+        const pValue = document.getElementById('p-value');
+        const meanValue = document.getElementById('mean-value');
+        const varianceValue = document.getElementById('variance-value');
+        const stdDevValue = document.getElementById('std-dev-value');
+
+        // 初始化参数
+        let n = parseInt(nSlider.value);
+        let p = parseFloat(pSlider.value);
+
+        // 更新显示的值
+        function updateDisplayValues() {
+            nValue.textContent = n;
+            pValue.textContent = p.toFixed(2);
+
+            // 计算并显示统计信息
+            const mean = n * p;
+            const variance = n * p * (1 - p);
+            const stdDev = Math.sqrt(variance);
+
+            meanValue.textContent = mean.toFixed(2);
+            varianceValue.textContent = variance.toFixed(2);
+            stdDevValue.textContent = stdDev.toFixed(2);
+        }
+
+        // 计算二项分布概率
+        function binomialPMF(k, n, p) {
+            // 使用组合数公式计算概率
+            const coefficient = factorial(n) / (factorial(k) * factorial(n - k));
+            return coefficient * Math.pow(p, k) * Math.pow(1 - p, n - k);
+        }
+
+        // 计算阶乘（使用缓存优化）
+        const factorialCache = [1, 1];
+        function factorial(n) {
+            if (n < 0) return NaN;
+            if (n in factorialCache) return factorialCache[n];
+
+            let result = 1;
+            for (let i = 2; i <= n; i++) {
+                result *= i;
+                factorialCache[i] = result;
+            }
+            return result;
+        }
+
+        // 生成二项分布数据
+        function generateBinomialData(n, p) {
+            const xValues = [];
+            const yValues = [];
+
+            for (let k = 0; k <= n; k++) {
+                xValues.push(k);
+                yValues.push(binomialPMF(k, n, p));
+            }
+
+            return { x: xValues, y: yValues };
+        }
+
+        // 更新图表
+        function updateChart() {
+            const data = generateBinomialData(n, p);
+
+            const trace = {
+                x: data.x,
+                y: data.y,
+                type: 'bar',
+                name: `二项分布 (n=${n}, p=${p.toFixed(2)})`,
+                marker: {
+                    color: '#2563eb',
+                    line: {
+                        color: '#2563eb',
+                        width: 1
+                    }
+                }
+            };
+
+            const layout = {
+                title: `二项分布 B(${n}, ${p.toFixed(2)})`,
+                xaxis: {
+                    title: '成功次数 (k)',
+                    tickmode: 'linear',
+                    dtick: n > 20 ? Math.ceil(n / 20) : 1
+                },
+                yaxis: {
+                    title: '概率 P(X=k)',
+                    rangemode: 'nonnegative'
+                },
+                hovermode: 'closest'
+            };
+
+            Plotly.react('binomial-plot', [trace], layout);
+        }
+
+        // 处理滑块变化
+        nSlider.addEventListener('input', function () {
+            n = parseInt(this.value);
+            updateDisplayValues();
+            updateChart();
+        });
+
+        pSlider.addEventListener('input', function () {
+            p = parseFloat(this.value);
+            updateDisplayValues();
+            updateChart();
+        });
+
+        // 初始化
+        updateDisplayValues();
+        updateChart();
+    </script>
+</body>
+
+</html>

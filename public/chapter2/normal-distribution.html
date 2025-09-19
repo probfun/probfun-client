@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>正态分布教学可视化工具</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #2563eb;
+            --accent-color: #2563eb;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: rgba(37, 99, 235, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 300px 1fr 300px;
+            gap: 20px;
+        }
+
+        header {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.2rem;
+        }
+
+        .description {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .control-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: var(--light-color);
+            border-radius: 8px;
+        }
+
+        .control-group h3 {
+            margin-top: 0;
+            color: rgba(37, 99, 235, 1.0);
+            border-bottom: 2px solid rgba(37, 99, 235, 1.0);
+            padding-bottom: 5px;
+        }
+
+        .slider-container {
+            margin-bottom: 12px;
+        }
+
+        .slider-container label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .slider-value {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 8px;
+            background: #2563eb;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        /* Chrome, Safari, Opera滑块样式 */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: #ffffff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px #2563eb;
+            transition: all 0.3s ease;
+        }
+
+        /* Firefox滑块样式 */
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #ddd;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* 滑块轨道悬停效果 */
+        input[type="range"]:hover {
+            background: #2563eb;
+        }
+
+        .value-display {
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .visualization-panel {
+            display: grid;
+            grid-template-rows: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 280px;
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .properties-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .property-card {
+            background: var(--light-color);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .property-card h4 {
+            margin-top: 0;
+            color: var(--accent-color);
+        }
+
+        .formula {
+            text-align: center;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            background-color: rgba(37, 99, 235, 0.5);
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="panel control-panel">
+            <div class="control-group">
+                <h3>分布参数</h3>
+                <div class="slider-container">
+                    <label>
+                        均值 (μ)
+                        <span class="slider-value" id="mean-value">0</span>
+                    </label>
+                    <input type="range" id="mean-slider" min="-5" max="5" step="0.1" value="0">
+                </div>
+
+                <div class="slider-container">
+                    <label>
+                        标准差 (σ)
+                        <span class="slider-value" id="std-value">1</span>
+                    </label>
+                    <input type="range" id="std-slider" min="0.1" max="5" step="0.1" value="1">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>线性变换</h3>
+                <div class="slider-container">
+                    <label>
+                        缩放因子 (a)
+                        <span class="slider-value" id="scale-value">1</span>
+                    </label>
+                    <input type="range" id="scale-slider" min="0.5" max="5" step="0.1" value="1">
+                </div>
+
+                <div class="slider-container">
+                    <label>
+                        平移因子 (b)
+                        <span class="slider-value" id="shift-value">0</span>
+                    </label>
+                    <input type="range" id="shift-slider" min="-3" max="3" step="0.1" value="0">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>显示选项</h3>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="show-transformed" checked>
+                    <label for="show-transformed">显示变换后的分布</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="show-probability" checked>
+                    <label for="show-probability">显示概率区域</label>
+                </div>
+            </div>
+
+            <button id="reset-button">重置参数</button>
+        </div>
+
+        <div class="panel visualization-panel">
+            <div class="chart-container">
+                <h3>概率密度函数 (PDF)</h3>
+                <canvas id="pdf-chart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>累积分布函数 (CDF)</h3>
+                <canvas id="cdf-chart"></canvas>
+            </div>
+        </div>
+
+        <div class="panel properties-panel">
+            <div class="property-card">
+                <h4>正态分布性质</h4>
+                <p>正态分布 \(X \sim \mathcal{N}(\mu, \sigma^2)\) 的概率密度函数：</p>
+                <div class="formula">
+                    \(f(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^2}\)
+                </div>
+            </div>
+
+            <div class="property-card">
+                <h4>线性不变性</h4>
+                <p>如果 \(X \sim \mathcal{N}(\mu, \sigma^2)\)，那么对于线性变换 \(Y = aX + b\)：</p>
+                <div class="formula">
+                    \(Y \sim \mathcal{N}(a\mu + b, a^2\sigma^2)\)
+                </div>
+                <p id="transformation-result">当前: Y = 1·X + 0 → Y ~ N(0, 1)</p>
+            </div>
+
+            <div class="property-card">
+                <h4>概率计算</h4>
+                <div class="slider-container">
+                    <label>
+                        区间下限
+                        <span class="slider-value" id="lower-bound-value">-1</span>
+                    </label>
+                    <input type="range" id="lower-bound-slider" min="-5" max="5" step="0.1" value="-1">
+                </div>
+
+                <div class="slider-container">
+                    <label>
+                        区间上限
+                        <span class="slider-value" id="upper-bound-value">1</span>
+                    </label>
+                    <input type="range" id="upper-bound-slider" min="-5" max="5" step="0.1" value="1">
+                </div>
+
+                <p id="probability-result">P(-1 ≤ X ≤ 1) = 0.6827 (68.27%)</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化变量和图表
+        let pdfChart, cdfChart;
+        let mean = 0, std = 1, a = 1, b = 0;
+        let lowerBound = -1, upperBound = 1;
+
+        // 初始化函数
+        function init() {
+            setupEventListeners();
+            createCharts();
+            updateCharts();
+        }
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            document.getElementById('mean-slider').addEventListener('input', function () {
+                mean = parseFloat(this.value);
+                document.getElementById('mean-value').textContent = mean;
+                updateCharts();
+            });
+
+            document.getElementById('std-slider').addEventListener('input', function () {
+                std = parseFloat(this.value);
+                document.getElementById('std-value').textContent = std;
+                updateCharts();
+            });
+
+            document.getElementById('scale-slider').addEventListener('input', function () {
+                a = parseFloat(this.value);
+                document.getElementById('scale-value').textContent = a;
+                updateCharts();
+            });
+
+            document.getElementById('shift-slider').addEventListener('input', function () {
+                b = parseFloat(this.value);
+                document.getElementById('shift-value').textContent = b;
+                updateCharts();
+            });
+
+            document.getElementById('lower-bound-slider').addEventListener('input', function () {
+                lowerBound = parseFloat(this.value);
+                document.getElementById('lower-bound-value').textContent = lowerBound;
+                updateCharts();
+            });
+
+            document.getElementById('upper-bound-slider').addEventListener('input', function () {
+                upperBound = parseFloat(this.value);
+                document.getElementById('upper-bound-value').textContent = upperBound;
+                updateCharts();
+            });
+
+            document.getElementById('show-transformed').addEventListener('change', updateCharts);
+            document.getElementById('show-probability').addEventListener('change', updateCharts);
+
+            document.getElementById('reset-button').addEventListener('click', function () {
+                mean = 0;
+                std = 1;
+                a = 1;
+                b = 0;
+                lowerBound = -1;
+                upperBound = 1;
+
+                document.getElementById('mean-slider').value = mean;
+                document.getElementById('std-slider').value = std;
+                document.getElementById('scale-slider').value = a;
+                document.getElementById('shift-slider').value = b;
+                document.getElementById('lower-bound-slider').value = lowerBound;
+                document.getElementById('upper-bound-slider').value = upperBound;
+
+                document.getElementById('mean-value').textContent = mean;
+                document.getElementById('std-value').textContent = std;
+                document.getElementById('scale-value').textContent = a;
+                document.getElementById('shift-value').textContent = b;
+                document.getElementById('lower-bound-value').textContent = lowerBound;
+                document.getElementById('upper-bound-value').textContent = upperBound;
+
+                updateCharts();
+            });
+        }
+
+        // 创建图表
+        function createCharts() {
+            const pdfCtx = document.getElementById('pdf-chart').getContext('2d');
+            const cdfCtx = document.getElementById('cdf-chart').getContext('2d');
+
+            // PDF 图表
+            pdfChart = new Chart(pdfCtx, {
+                type: 'line',
+                data: {
+                    datasets: []
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            min: -10,
+                            max: 10,
+                            title: {
+                                display: true,
+                                text: 'x'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        y: {
+                            min: 0,
+                            max: 0.5,
+                            title: {
+                                display: true,
+                                text: '密度'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    }
+                }
+            });
+
+            // CDF 图表
+            cdfChart = new Chart(cdfCtx, {
+                type: 'line',
+                data: {
+                    datasets: []
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            min: -10,
+                            max: 10,
+                            title: {
+                                display: true,
+                                text: 'x'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        y: {
+                            min: 0,
+                            max: 1,
+                            title: {
+                                display: true,
+                                text: '概率'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // 更新图表
+        function updateCharts() {
+            // 生成数据点
+            const xValues = [];
+            const step = 0.2;
+            for (let x = -10; x <= 10; x += step) {
+                xValues.push(x);
+            }
+
+            // 计算原始分布
+            const originalPdf = xValues.map(x => normalPDF(x, mean, std));
+            const originalCdf = xValues.map(x => normalCDF(x, mean, std));
+
+            // 计算变换后的分布
+            const transformedMean = a * mean + b;
+            const transformedStd = Math.abs(a) * std;
+            const transformedPdf = xValues.map(x => normalPDF(x, transformedMean, transformedStd));
+            const transformedCdf = xValues.map(x => normalCDF(x, transformedMean, transformedStd));
+
+            // 更新PDF图表
+            pdfChart.data.datasets = [{
+                label: `原始分布 N(${mean}, ${std.toFixed(2)}²)`,
+                data: xValues.map((x, i) => ({ x, y: originalPdf[i] })),
+                borderColor: '#4361ee',
+                backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                borderWidth: 3,
+                pointRadius: 0,
+                fill: false
+            }];
+
+            if (document.getElementById('show-transformed').checked && (a !== 1 || b !== 0)) {
+                pdfChart.data.datasets.push({
+                    label: `变换后分布 N(${transformedMean.toFixed(2)}, ${transformedStd.toFixed(2)}²)`,
+                    data: xValues.map((x, i) => ({ x, y: transformedPdf[i] })),
+                    borderColor: '#7209b7',
+                    backgroundColor: 'transparent',
+                    borderWidth: 3,
+                    borderDash: [5, 5],
+                    pointRadius: 0,
+                    fill: false
+                });
+            }
+
+            // 添加概率区域
+            if (document.getElementById('show-probability').checked) {
+                const probabilityData = xValues.map(x => {
+                    return (x >= lowerBound && x <= upperBound) ? normalPDF(x, mean, std) : NaN;
+                });
+
+                pdfChart.data.datasets.push({
+                    label: `P(${lowerBound} ≤ X ≤ ${upperBound})`,
+                    data: xValues.map((x, i) => ({ x, y: probabilityData[i] })),
+                    borderColor: 'transparent',
+                    backgroundColor: 'rgba(76, 201, 240, 0.5)',
+                    pointRadius: 0,
+                    fill: true
+                });
+            }
+
+            pdfChart.update();
+
+            // 更新CDF图表
+            cdfChart.data.datasets = [{
+                label: `原始分布 N(${mean}, ${std.toFixed(2)}²)`,
+                data: xValues.map((x, i) => ({ x, y: originalCdf[i] })),
+                borderColor: '#4361ee',
+                backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                borderWidth: 3,
+                pointRadius: 0,
+                fill: false
+            }];
+
+            if (document.getElementById('show-transformed').checked && (a !== 1 || b !== 0)) {
+                cdfChart.data.datasets.push({
+                    label: `变换后分布 N(${transformedMean.toFixed(2)}, ${transformedStd.toFixed(2)}²)`,
+                    data: xValues.map((x, i) => ({ x, y: transformedCdf[i] })),
+                    borderColor: '#7209b7',
+                    backgroundColor: 'transparent',
+                    borderWidth: 3,
+                    borderDash: [5, 5],
+                    pointRadius: 0,
+                    fill: false
+                });
+            }
+
+            cdfChart.update();
+
+            // 更新概率计算结果
+            const probability = normalCDF(upperBound, mean, std) - normalCDF(lowerBound, mean, std);
+            document.getElementById('probability-result').textContent =
+                `P(${lowerBound} ≤ X ≤ ${upperBound}) = ${probability.toFixed(4)} (${(probability * 100).toFixed(2)}%)`;
+
+            // 更新线性变换结果
+            document.getElementById('transformation-result').textContent =
+                `当前: Y = ${a}·X + ${b} → Y ~ N(${transformedMean.toFixed(2)}, ${transformedStd.toFixed(2)}²)`;
+        }
+
+        // 正态分布概率密度函数
+        function normalPDF(x, mean, std) {
+            const variance = std * std;
+            return (1 / Math.sqrt(2 * Math.PI * variance)) *
+                Math.exp(-0.5 * Math.pow(x - mean, 2) / variance);
+        }
+
+        // 正态分布累积分布函数（近似计算）
+        function normalCDF(x, mean, std) {
+            // 使用误差函数近似计算
+            return 0.5 * (1 + erf((x - mean) / (std * Math.sqrt(2))));
+        }
+
+        // 误差函数近似
+        function erf(x) {
+            // 最大误差: 1.5×10−7
+            const a1 = 0.254829592;
+            const a2 = -0.284496736;
+            const a3 = 1.421413741;
+            const a4 = -1.453152027;
+            const a5 = 1.061405429;
+            const p = 0.3275911;
+
+            const sign = (x >= 0) ? 1 : -1;
+            x = Math.abs(x);
+
+            const t = 1.0 / (1.0 + p * x);
+            const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+
+            return sign * y;
+        }
+
+        // 初始化应用
+        window.onload = init;
+    </script>
+</body>
+
+</html>

@@ -89,6 +89,18 @@ const router = createRouter({
           component: NormalDistribution,
         },
         {
+          path: '/dashboard/experiment/event-relationship',
+          component: () => import('@/components/experiment/chapter1/EventRelationship.vue'),
+        },
+        {
+          path: '/dashboard/experiment/discrete-pmf',
+          component: () => import('@/components/experiment/chapter2/DiscretePMF.vue'),
+        },
+        {
+          path: '/dashboard/experiment/pdf-cdf',
+          component: () => import('@/components/experiment/chapter2/PdfCdf.vue'),
+        },
+        {
           path: '/dashboard/experiment/binomial-distribution',
           component: () => import('@/components/experiment/distribution/BinomialDistribution.vue'),
         },

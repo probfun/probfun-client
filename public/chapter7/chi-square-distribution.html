@@ -45,7 +45,7 @@
             font-size: 2.8rem;
             margin-bottom: 15px;
             text-shadow: none;
-            background: #3b82f6;
+            background: #2563eb;
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -95,9 +95,9 @@
         h2 {
             font-size: 1.8rem;
             margin-bottom: 25px;
-            color: #3b82f6;
+            color: #2563eb;
             padding-bottom: 10px;
-            border-bottom: 2px solid #3b82f6;
+            border-bottom: 2px solid #2563eb;
             text-shadow: none;
         }
 
@@ -115,13 +115,13 @@
             display: block;
             margin-bottom: 10px;
             font-size: 1.1rem;
-            color: #3b82f6;
+            color: #2563eb;
         }
 
         input[type="range"] {
             width: 100%;
             height: 10px;
-            background: #3b82f6;
+            background: #2563eb;
             border-radius: 5px;
             outline: none;
             appearance: none;
@@ -136,7 +136,7 @@
             background: #ffffff;
             border-radius: 50%;
             cursor: pointer;
-            box-shadow: 0 0 10px #3b82f6;
+            box-shadow: 0 0 10px #2563eb;
             transition: all 0.3s ease;
         }
 
@@ -149,21 +149,21 @@
             display: flex;
             justify-content: space-between;
             font-size: 1.1rem;
-            margin-top: gif10px;
+            margin-top: 10px;
             color: #666666;
         }
 
         .info-box {
             background: #e0f2fe;
-            border-left: 4px solid #3b82f6;
+            border-left: 4px solid #2563eb;
             padding: 20px;
             border-radius: 0 8px 8px 0;
-            margin-top: gif30px;
+            margin-top: 30px;
         }
 
         .info-box h3 {
             margin-top: 0;
-            color: #3b82f6;
+            color: #2563eb;
         }
 
         .info-box p {
@@ -191,24 +191,33 @@
         .characteristic {
             background: #f9fafb;
             padding: 15px;
-            border-radius: gif8px;
+            border-radius: 8px;
             text-align: center;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, gif0, 0.05);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
             border: 1px solid #e0e0e0;
         }
 
         .characteristic:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-            background: #3b82f6;
+            background: #2563eb;
+        }
+
+        .characteristic:hover .value {
+            color: #ffffff;
+        }
+
+        .characteristic:hover .label {
+            font-size: 0.9rem;
+            color: #ffffff;
         }
 
         .characteristic .value {
-            font-size: gif1.5rem;
+            font-size: 1.5rem;
             font-weight: bold;
-            color: #3b82f6;
-            margin-top: gif5px;
+            color: #2563eb;
+            margin-top: 5px;
             text-shadow: none;
         }
 
@@ -238,18 +247,18 @@
 
         .highlight {
             font-weight: bold;
-            color: #3b82f6;
+            color: #2563eb;
             text-shadow: none;
         }
 
         .mode-display {
-            margin-top: gif20px;
+            margin-top: 20px;
             text-align: center;
             font-size: 1.1rem;
-            color: #3b82f6;
+            color: #2563eb;
             padding: 10px;
             background: #f0f9ff;
-            border-radius: gif8px;
+            border-radius: 8px;
         }
 
         .footer {
@@ -258,7 +267,7 @@
             padding: 15px;
             color: #666666;
             font-size: 0.9rem;
-            border-top: git1px solid #e0e0e0;
+            border-top: 1px solid #e0e0e0;
         }
     </style>
 </head>
@@ -431,7 +440,7 @@
             }
 
             // 绘制坐标轴
-            ctx.strokeStyle = '#3b82f6';
+            ctx.strokeStyle = '#2563eb';
             ctx.lineWidth = 2;
 
             // X轴
@@ -453,7 +462,7 @@
             drawArrow(padding, padding, padding + 5, padding + 10);
 
             // 轴标签
-            ctx.fillStyle = '#3b82f6';
+            ctx.fillStyle = '#2563eb';
             ctx.font = '16px Arial';
             ctx.textAlign = 'center';
             ctx.fillText('x', width - padding + 20, height - padding + 20);
@@ -461,7 +470,7 @@
             ctx.fillText('f(x)', padding - 10, padding - 10);
 
             // 刻度标签
-            ctx.fillStyle = '#3b82f6';
+            ctx.fillStyle = '#2563eb';
             ctx.font = '12px Arial';
             ctx.textAlign = 'center';
 
@@ -506,12 +515,12 @@
             // 标题
             ctx.textAlign = 'center';
             ctx.font = 'bold 18px Arial';
-            ctx.fillStyle = '#3b82f6';
+            ctx.fillStyle = '#2563eb';
             ctx.fillText(`卡方分布概率密度函数 (df = ${df})`, width / 2, padding / 2);
 
             // 绘制多个分布曲线用于比较
             const colors = [
-                { color: '#3b82f6', width: 3 },
+                { color: '#2563eb', width: 3 },
                 { color: '#81c784', width: 1.5 },
                 { color: '#ffc107', width: 1.5 },
                 { color: '#ff8a65', width: 1.5 }
