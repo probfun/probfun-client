@@ -1,5 +1,6 @@
 FROM node:18-slim as builder
 
+ENV NODE_OPTIONS=--max-old-space-size=16384
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
