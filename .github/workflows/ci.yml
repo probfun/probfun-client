@@ -53,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      NODE_OPTIONS: --max-old-space-size=6144
+      NODE_OPTIONS: --max-old-space-size=16384
       NEXT_DISABLE_SOURCEMAPS: '1'
       GENERATE_SOURCEMAP: 'false'
 
@@ -96,3 +96,8 @@ jobs:
       - name: Push Docker image
         run: |
           docker push ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/${{ env.IMAGE_NAME }}:${TAG}
+
+      - name: Invoke deployment hook
+        uses: distributhor/workflow-webhook@v3
+        with:
+          webhook_url: ${{ secrets.WEBHOOK_URL }}
