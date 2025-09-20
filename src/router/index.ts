@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import About from '@/components/about/About.vue';
 import AiPanel from '@/components/ai/AiPanel.vue';
+import AnalysisPanel from '@/components/analysis/AnalysisPanel.vue';
 import Callback from '@/components/auth/Callback.vue';
 import CasLoginCard from '@/components/auth/CasLoginCard.vue';
 import LoginCard from '@/components/auth/LoginCard.vue';
@@ -15,17 +16,15 @@ import BirthdayAttack from '@/components/experiment/chapter1/BirthdayAttack.vue'
 import BuffonNeedle from '@/components/experiment/chapter1/buffon-needle/BuffonNeedle.vue';
 import PositiveTest from '@/components/experiment/chapter1/PositiveTest.vue';
 import ThreeDoors from '@/components/experiment/chapter1/three-doors/ThreeDoors.vue';
-import threeNormalDistribution from '@/components/experiment/chapter3/normal-distribution/threeNormalDistribution.vue';
 
+import threeNormalDistribution from '@/components/experiment/chapter3/normal-distribution/threeNormalDistribution.vue';
 import GeometricDistribution from '@/components/experiment/distribution/geometric-distribution/GeometricDistribution.vue';
 import NormalDistribution from '@/components/experiment/distribution/normal-distribution/NormalDistribution.vue';
-import PoissonDistribution from '@/components/experiment/distribution/poisson-distribution/PoissonDistribution.vue';
 
+import PoissonDistribution from '@/components/experiment/distribution/poisson-distribution/PoissonDistribution.vue';
 import UniformDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
 import FavoritePanel from '@/components/favorite/FavoritePanel.vue';
 import HomePage from '@/components/home/HomePage.vue';
-import StudentPanel from '@/components/user/StudentPanel.vue';
-import TeacherPanel from '@/components/user/TeacherPanel.vue';
 import AuthPage from '@/pages/AuthPage.vue';
 import DashBoard from '@/pages/DashBoard.vue';
 import { isVisitor } from '@/utils/auth.ts';
@@ -283,12 +282,8 @@ const router = createRouter({
           component: () => import('@/components/experiment/calculusB/Neighborhood.vue'),
         },
         {
-          path: '/dashboard/info0',
-          component: StudentPanel,
-        },
-        {
-          path: '/dashboard/info1',
-          component: TeacherPanel,
+          path: '/dashboard/analysis',
+          component: AnalysisPanel,
         },
         {
           path: '/dashboard/ai',

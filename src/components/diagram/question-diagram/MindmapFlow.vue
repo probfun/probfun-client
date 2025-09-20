@@ -46,7 +46,7 @@ function layoutGraph(nodes: Node<MindNodeData>[], edges: Edge<any>[]) {
   g.setDefaultEdgeLabel(() => ({}));
 
   // 预估节点尺寸；如有自定义宽高可放在 node.style.width/height
-  const defaultSize = { width: 220, height: 72 };
+  const defaultSize = { width: 220, height: 36 };
 
   nodes.forEach((n) => {
     const w = (n as any).style?.width ?? defaultSize.width;
@@ -175,36 +175,38 @@ watch(
               </p>
             </div>
 
-            <div
-              class="mt-1 rounded-xl border bg-white shadow-lg z-[3000] transition-all p-2 flex gap-2"
-              :class="openId === id ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto' : 'opacity-0 -translate-y-1 scale-95 pointer-events-none'"
-            >
-              <Button
-                v-if="data.level === 2"
-                class="w-full text-left px-3 py-2 "
-                @mousedown.stop.prevent
-                @click.stop="() => {
-                  router.push({
-                    name: 'DoQuestion',
-                    params: { chapterId: id },
-                  })
-                }"
+            <div class="pt-1 absolute top-full ">
+              <div
+                class="rounded-xl border bg-white shadow-lg z-[3000] transition-all p-2 flex gap-2"
+                :class="openId === id ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto' : 'opacity-0 -translate-y-1 scale-95 pointer-events-none'"
               >
-                跳转到相关试题
-              </Button>
-              <Button
-                class="w-full text-left px-3 py-2"
-                variant="outline"
-                @mousedown.stop.prevent
-                @click.stop="() => {
-                  router.push({
-                    path: '/dashboard/ai',
-                    query: { query: `我在学习“${data.label}”这个知识点时遇到了一些问题，能帮我解答吗？` },
-                  })
-                }"
-              >
-                对该知识点有疑问
-              </Button>
+                <Button
+                  v-if="data.level === 2"
+                  class="w-full text-left px-3 py-2 "
+                  @mousedown.stop.prevent
+                  @click.stop="() => {
+                    router.push({
+                      name: 'DoQuestion',
+                      params: { chapterId: id },
+                    })
+                  }"
+                >
+                  跳转到相关试题
+                </Button>
+                <Button
+                  class="w-full text-left px-3 py-2"
+                  variant="outline"
+                  @mousedown.stop.prevent
+                  @click.stop="() => {
+                    router.push({
+                      path: '/dashboard/ai',
+                      query: { query: `我在学习“${data.label}”这个知识点时遇到了一些问题，能帮我解答吗？` },
+                    })
+                  }"
+                >
+                  对该知识点有疑问
+                </Button>
+              </div>
             </div>
           </div>
         </template>

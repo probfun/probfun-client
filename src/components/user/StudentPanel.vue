@@ -49,7 +49,7 @@ async function getMydata() {
     }
   }
   catch (error) {
-    console.error('Error during fetching personal data:', error);
+    console.error('Error during fetching analysis data:', error);
   }
 }
 
