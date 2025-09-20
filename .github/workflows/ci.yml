@@ -51,6 +51,12 @@ jobs:
 
   build-and-push:
     runs-on: ubuntu-latest
+
+    env:
+      NODE_OPTIONS: --max-old-space-size=6144
+      NEXT_DISABLE_SOURCEMAPS: '1'
+      GENERATE_SOURCEMAP: 'false'
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

@@ -31,7 +31,6 @@ import { Bar, Radar } from 'vue-chartjs';
 import { Badge } from '@/components/ui/badge';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart } from '@/components/ui/chart-bar';
 import { Separator } from '@/components/ui/separator';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -106,16 +105,16 @@ const barOptions = {
     legend: { display: false, labels: { color: '#000', font: { size: 14 } } },
     tooltip: {
       intersect: false,
-      titleFont: { size: 14 },
-      bodyFont: { size: 14 },
-      footerFont: { size: 14 },
+      titleFont: { size: 16 },
+      bodyFont: { size: 16 },
+      footerFont: { size: 16 },
       callbacks: { label: (ctx: any) => `${ctx.dataset.label || ''} ${Number(ctx.parsed.y.toFixed(2))}%` },
     },
     datalabels: commonDatalabels, // ← 若希望全部柱都生效
   },
   scales: {
     x: {
-      ticks: { color: '#000', font: { size: 14 } },
+      ticks: { color: '#000', font: { size: 16 } },
       grid: { color: 'rgba(0,0,0,0.1)' },
     },
     y: {
@@ -123,7 +122,7 @@ const barOptions = {
       max: 100,
       ticks: {
         color: '#000',
-        font: { size: 14 },
+        font: { size: 16 },
         stepSize: 20,
         callback: (v: any) => `${Number(v.toFixed(2))}%`,
       },
@@ -136,12 +135,12 @@ const radarOptions = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
-    legend: { labels: { color: '#000', font: { size: 14 } } },
+    legend: { labels: { color: '#000', font: { size: 16 } } },
     tooltip: {
       titleColor: '#000',
       bodyColor: '#000',
-      titleFont: { size: 14 },
-      bodyFont: { size: 14 },
+      titleFont: { size: 16 },
+      bodyFont: { size: 16 },
       callbacks: { label: (ctx: any) => `${ctx.dataset.label || ''} ${Number(ctx.parsed.r.toFixed(2))}%` },
     },
   },
@@ -162,32 +161,19 @@ const radarOptions = {
   },
 };
 
-const objectiveBarData = computed(() => {
-  return props.data.objective_analysis.metrics.map((d) => {
-    return {
-      'name': d.name,
-      '能力值(%)': d.value * 100,
-    };
-  });
-});
-
-// const objectiveBarData = computed(() => ({
-//   return props.data.objective_analysis.metrics.map(d => return {
-//     name: d.name;
-//         total: d.value * 100
-//   });
-//   labels: props.data.objective_analysis.metrics.map(d => d.name),
-//   datasets: [
-//     {
-//       label: '能力值(%)',
-//       data: props.data.objective_analysis.metrics.map(d => d.value * 100),
-//       backgroundColor: 'rgba(59,130,246,0.6)',
-//       borderColor: 'rgba(30,64,175,1)',
-//       borderWidth: 1,
-//       borderRadius: 4,
-//     },
-//   ],
-// }));
+const objectiveBarData = computed(() => ({
+  labels: props.data.objective_analysis.metrics.map(d => d.name),
+  datasets: [
+    {
+      label: '能力值',
+      data: props.data.objective_analysis.metrics.map(d => d.value * 100),
+      backgroundColor: 'rgba(59,130,246,0.6)',
+      borderColor: 'rgba(30,64,175,1)',
+      borderWidth: 1,
+      borderRadius: 4,
+    },
+  ],
+}));
 
 const dialogueBarData = computed(() => ({
   labels: props.data.dialogue_analysis.metrics.map(d => d.name),
@@ -292,15 +278,7 @@ const radarChartData = computed(() => ({
               <Separator />
               <CardContent class="pt-6">
                 <div class="relative h-[300px]">
-                  <!--                  <Bar :data="objectiveBarData" :options="barOptions" /> -->
-                  <BarChart
-                    :data="objectiveBarData"
-                    index="name"
-                    :categories="['能力值(%)']"
-                    :y-formatter="(tick, i) => {
-                      return typeof tick === 'number' ? `${Number(tick.toFixed(2))}%` : '';
-                    }"
-                  />
+                  <Bar :data="objectiveBarData" :options="barOptions" />
                 </div>
               </CardContent>
             </Card>
