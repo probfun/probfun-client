@@ -1,6 +1,8 @@
 ARG SENTRY_AUTH_TOKEN
 FROM node:18-slim as builder
 
+RUN echo ${SENTRY_AUTH_TOKEN}
+
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
