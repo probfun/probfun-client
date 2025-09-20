@@ -6,8 +6,6 @@ import vue from '@vitejs/plugin-vue';
 import Components from 'unplugin-vue-components/vite';
 import { defineConfig } from 'vite';
 
-console.log(process.env);
-
 export default defineConfig({
   optimizeDeps: {
     exclude: ['js-big-decimal', ''],
