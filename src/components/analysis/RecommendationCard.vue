@@ -5,9 +5,9 @@ import { Badge } from '@/components/ui/badge';
 interface Recommendation {
   title: string;
   description: string;
-  action_type: string;
-  target_knowledge: string;
-  trigger_reason: string;
+  actionType: string;
+  targetKnowledge: string;
+  triggerReason: string;
 }
 
 interface Props {
@@ -27,7 +27,7 @@ defineProps<Props>();
         <Badge
           class="rounded-full"
         >
-          {{ recommendation.action_type }}
+          {{ recommendation.actionType }}
         </Badge>
         <TargetIcon class="w-5 h-5 text-primary" />
       </div>
@@ -39,12 +39,12 @@ defineProps<Props>();
       <div class="flex items-center gap-2 text-sm">
         <BookOpenIcon class="w-4 h-4 text-blue-500" />
         <span class="text-gray-600 whitespace-nowrap">目标知识点：</span>
-        <span class="text-gray-900 font-medium">{{ recommendation.target_knowledge }}</span>
+        <span class="text-gray-900 font-medium">{{ recommendation.targetKnowledge }}</span>
       </div>
       <div class="flex items-center gap-2 text-sm">
         <LightbulbIcon class="w-4 h-4 text-yellow-500" />
         <span class="text-gray-600 whitespace-nowrap">触发原因：</span>
-        <span class="text-gray-700">{{ recommendation.trigger_reason }}</span>
+        <span class="text-gray-700">{{ recommendation.triggerReason }}</span>
       </div>
     </div>
   </div>

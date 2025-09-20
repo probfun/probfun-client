@@ -15,6 +15,7 @@ import { homeConfig as statisticsHomeConfig } from '@/components/subject/statist
 
 interface Subject {
   id: SubjectId;
+  id_: string;
   name: string;
   description: string;
   color: string;
@@ -26,6 +27,7 @@ type SubjectId = 'probability' | 'advanced-math-1' | 'advanced-math-2' | 'linear
 const subjectConfig: Record<SubjectId, Subject> = {
   'linear-algebra': {
     id: 'linear-algebra',
+    id_: '7',
     name: '邮趣线代',
     description: '空间与向量的语言，适合喜欢抽象思维和结构分析的你',
     color: 'rgba(124,58,237,0.85)',
@@ -33,6 +35,7 @@ const subjectConfig: Record<SubjectId, Subject> = {
   },
   'advanced-math-1': {
     id: 'advanced-math-1',
+    id_: '2',
     name: '邮趣高数（上）',
     description: '微积分，函数与极限的艺术，适合喜欢挑战和推理的你',
     color: 'rgba(22,163,74,0.85)',
@@ -40,6 +43,7 @@ const subjectConfig: Record<SubjectId, Subject> = {
   },
   'advanced-math-2': {
     id: 'advanced-math-2',
+    id_: '3',
     name: '邮趣高数（下）',
     description: '微积分，函数与极限的艺术，适合喜欢挑战和推理的你',
     color: 'rgba(22,163,74,0.85)',
@@ -47,6 +51,7 @@ const subjectConfig: Record<SubjectId, Subject> = {
   },
   'probability': {
     id: 'probability',
+    id_: '5',
     name: '邮趣概率',
     description: '探索不确定世界的规律，适合喜欢逻辑和建模的你',
     color: 'rgba(36,96,226,0.85)',
@@ -54,6 +59,7 @@ const subjectConfig: Record<SubjectId, Subject> = {
   },
   'number-theory': {
     id: 'number-theory',
+    id_: '8',
     name: '邮趣数论',
     description: '整数的奥秘与应用，适合喜欢逻辑和证明的你',
     color: 'rgba(249,115,22,0.85)',
@@ -61,6 +67,7 @@ const subjectConfig: Record<SubjectId, Subject> = {
   },
   'statistics': {
     id: 'statistics',
+    id_: '9',
     name: '邮趣统计',
     description: '数据分析与推断，适合喜欢实用和应用的你',
     color: 'rgba(225,29,72,0.85)',

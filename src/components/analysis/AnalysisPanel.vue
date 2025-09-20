@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import type { Analysis } from '@/api/do-question/doQuestion.ts';
+import { DotLottieVue } from '@lottiefiles/dotlottie-vue';
 
-import { onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { analysisApi } from '@/api/do-question/doQuestion.ts';
 import TestPanel from '@/components/analysis/TestPanel.vue';
+import { useConfigStore } from '@/store';
 
 const data = ref<Analysis>({
-  objective_analysis: {
+  objectiveAnalysis: {
     metrics: [
       {
         name: 'accuracy',
@@ -92,7 +95,7 @@ const data = ref<Analysis>({
       '在“1.2 事件的概率”保持100%正确（1题1对，样本量小）',
     ],
   },
-  dialogue_analysis: {
+  dialogueAnalysis: {
     metrics: [
       {
         name: '提问深度（depth）',
@@ -170,14 +173,14 @@ const data = ref<Analysis>({
         ],
       },
     ],
-    representative_dialogues: [
+    representativeDialogues: [
       'Q271 AI答疑｜泊松过程\n学生：我不确定该用哪个公式\n助教：这道题用泊松过程的“定长区间内到达数服从泊松分布”。……代入 λ=10, t=2，P= e^{-20}\n学生：我哪里算错了?\n助教：你大概率是把“区间长度”或“k 的取值”弄混了。……列出常见错误并对照排查',
       'Question 466 Chat｜三项分布思路拆解\n学生：这道题选什么\n助教：先别急着选……将 (X,Y) 视作三项分布，枚举 (0,0),(1,0),(0,1),(1,1) 并给出通式与计算提示，建议先算 P(1,1) 作为下界再汇总',
       'Q458 AI答疑｜二维分布函数判定\n学生：我不太明白题目的意思\n助教：先把题意捋清楚……回顾二维分布函数定义、基本性质（单调性、右连续、矩形增量非负等），并让学生先指出不清楚的点再制定判断思路',
     ],
   },
-  learning_analysis: {
-    profile_label: '理解导向反思型',
+  learningAnalysis: {
+    profileLabel: '理解导向反思型',
     metrics: [
       {
         name: 'resilience',
@@ -270,7 +273,7 @@ const data = ref<Analysis>({
         ],
       },
     ],
-    sample_paths: [
+    samplePaths: [
       [
         '查看题目',
         '请求第一步提示',
@@ -303,8 +306,8 @@ const data = ref<Analysis>({
       ],
     ],
   },
-  cognitive_analysis: {
-    thinking_styles: [
+  cognitiveAnalysis: {
+    thinkingStyles: [
       '提问驱动型',
       '跳跃型',
       '系统试错型',
@@ -397,7 +400,7 @@ const data = ref<Analysis>({
       },
     ],
   },
-  study_plan: {
+  studyPlan: {
     weaknesses: [
       '概率论核心短板：随机变量及其分布函数、边缘分布、泊松过程等价定义理解不足',
       '微积分基础薄弱：不定积分概念与方法选择（换元/分部）不稳',
@@ -407,108 +410,246 @@ const data = ref<Analysis>({
       '提问方式低信息量：缺少题干要点、已尝试步骤与所需帮助类型；过程回传不足',
       '迁移与抽象内化不足：跨题型迁移和定义-性质的连接松散',
     ],
-    style_adaptation: '学习风格为“理解导向反思型”，偏好第一步提示。任务设计采用：- 分步提示+中间结果回传，满足提示偏好并强制过程化思考；- 小步快跑+即时纠偏，降低跳跃型思维的漏检风险；- 三要素结构化提问模板，提高交互效率；- 引入检查清单（变量域、界限、独立性、单位），弥补逻辑链断点；- 系统试错配合错因标签库，促进可迁移的纠错记忆。',
-    personalized_recommendations: [
+    styleAdaptation: '学习风格为“理解导向反思型”，偏好第一步提示。任务设计采用：- 分步提示+中间结果回传，满足提示偏好并强制过程化思考；- 小步快跑+即时纠偏，降低跳跃型思维的漏检风险；- 三要素结构化提问模板，提高交互效率；- 引入检查清单（变量域、界限、独立性、单位），弥补逻辑链断点；- 系统试错配合错因标签库，促进可迁移的纠错记忆。',
+    personalizedRecommendations: [
       {
         title: '概念校准微课：随机变量与分布函数一次到位',
         description: '用20-30分钟系统梳理：连续/离散随机变量、分布函数F(x)的性质（单调、右连续、极限）、密度与分布函数关系、离散型的概率质量函数、常见反例（不满足右连续/非单调）。建议边看边做2-3个“判断是否为分布函数”的快题，记录判断依据。最后自测5题小测并标注错因。',
-        action_type: '微课学习',
-        target_knowledge: '2.1 随机变量及其分布函数（定义、性质、判定）',
-        trigger_reason: '该板块正确率0.167，属主要短板；思维链常断，需以性质清单建立判定框架。',
+        actionType: '微课学习',
+        targetKnowledge: '2.1 随机变量及其分布函数（定义、性质、判定）',
+        triggerReason: '该板块正确率0.167，属主要短板；思维链常断，需以性质清单建立判定框架。',
       },
       {
         title: '边缘分布分步攻克：三类型例题拆解',
         description: '围绕二维分布函数与联合分布→边缘分布转换，精讲3类题：1) 给F_{X,Y}(x,y)求边缘分布；2) 给联合密度求边缘并判断独立性；3) 给表格型联合分布求边缘与条件分布。每题按‘第一步提示’切入：先画变量区间示意图→写积分/求和界限→计算→检验（非负、归一）。你需在每步后回传中间结果。',
-        action_type: '例题精讲',
-        target_knowledge: '3.2 边缘分布；联合/边缘/条件的关系与独立性判定',
-        trigger_reason: '边缘分布0/2命中，界限设定与独立性判断易错；与你的“第一步提示”偏好匹配，适合分步协作。',
+        actionType: '例题精讲',
+        targetKnowledge: '3.2 边缘分布；联合/边缘/条件的关系与独立性判定',
+        triggerReason: '边缘分布0/2命中，界限设定与独立性判断易错；与你的“第一步提示”偏好匹配，适合分步协作。',
       },
       {
         title: '一页纸“概率模型选择树”与打靶练习',
         description: '构建“模型选择树”：伯努利/二项/泊松/几何/负二项/三项/超几何/指数/正态。为每一类写上触发条件（是否放回、样本量大、稀有事件、到达过程、区间长度t、类别≥3等）、参数含义与典型陷阱。用5道小题进行“给场景选模型”的快速打靶练习。',
-        action_type: '方法总结',
-        target_knowledge: '概率模型识别与参数映射；泊松过程等价定义的适用场景',
-        trigger_reason: '多次出现“我不确定该用哪个公式”，模型识别与参数映射不清阻塞后续步骤。',
+        actionType: '方法总结',
+        targetKnowledge: '概率模型识别与参数映射；泊松过程等价定义的适用场景',
+        triggerReason: '多次出现“我不确定该用哪个公式”，模型识别与参数映射不清阻塞后续步骤。',
       },
       {
         title: '不定积分方法选择与执行清单训练',
         description: '不定积分基础修复：1) 基础型：基本积分表熟悉与常见替换（x→ax+b、指数/对数/反三角）；2) 技巧型：换元与分部积分的识别题，提供“何时分部、何时换元”的决策清单；3) 组合型：分段函数、参数法。采用“先判定方法—再执行—再检验”的三步法。',
-        action_type: '分层练习',
-        target_knowledge: '不定积分的概念与方法选择（换元、分部、分解）',
-        trigger_reason: '章节4.1不定积分概念正确率0.25，方法选取与执行存在系统性短板。',
+        actionType: '分层练习',
+        targetKnowledge: '不定积分的概念与方法选择（换元、分部、分解）',
+        triggerReason: '章节4.1不定积分概念正确率0.25，方法选取与执行存在系统性短板。',
       },
       {
         title: '错因标签化复盘与72小时重做',
         description: '建立错因标签库：A 边界/区间设定错；B 独立性误判；C 模型选错；D 代入/计算细节错；E 定义性质遗忘；F 条件概率与全概率混淆。每次训练后挑2-3题为代表，填写‘三要素提问’模板并标注标签，48-72小时后重做。',
-        action_type: '错题复盘',
-        target_knowledge: '元认知与纠错体系；联合-边缘-条件与独立性的常见错因',
-        trigger_reason: '稳定性0.3、提问深度0.35，缺少结构化复盘与过程反馈；需构建可迭代纠错机制。',
+        actionType: '错题复盘',
+        targetKnowledge: '元认知与纠错体系；联合-边缘-条件与独立性的常见错因',
+        triggerReason: '稳定性0.3、提问深度0.35，缺少结构化复盘与过程反馈；需构建可迭代纠错机制。',
       },
       {
         title: '大样本日稳定性拉练（周更）',
         description: '每周1次“大样本日”：40-60题混合（难度1≈60%、难度2≈35%、难度3≈5%），目标是在较长时间窗内保持节奏与质量；训练中执行‘做一小步—回传—纠偏’策略，记录命中率与体感难点，形成周报（3条做对原因、3条错因）。',
-        action_type: '限时训练',
-        target_knowledge: '难度适应与稳定性；跨题型迁移',
-        trigger_reason: '近期波动明显、样本量偏小，需稳定性与迁移的系统拉练。',
+        actionType: '限时训练',
+        targetKnowledge: '难度适应与稳定性；跨题型迁移',
+        triggerReason: '近期波动明显、样本量偏小，需稳定性与迁移的系统拉练。',
       },
       {
         title: '“第一步提示+回传中间结果”的协作协议',
         description: '为每次与助教互动固定协议：- 先发“三要素”：题干要点/卡点/所需帮助类型；- 接收第一步提示后，完成一小步并回传中间量（如界限、选定模型、代入表达式）；- 若分歧出现，优先核对单位、变量域、独立性与条件事件。持续3次以上形成肌肉记忆。',
-        action_type: '协作解题',
-        target_knowledge: '高质量提问与过程性反馈；联合-边缘计算中的关键中间量',
-        trigger_reason: '偏好‘第一步提示’但上下文不足、过程反馈缺失，影响助教定位与你的内化。',
+        actionType: '协作解题',
+        targetKnowledge: '高质量提问与过程性反馈；联合-边缘计算中的关键中间量',
+        triggerReason: '偏好‘第一步提示’但上下文不足、过程反馈缺失，影响助教定位与你的内化。',
       },
       {
         title: '高错点对症集训（小步快跑版）',
         description: '专题小集：1) 三项分布与联合分布的联系，枚举(0,0),(1,0),(0,1),(1,1)等案例；2) 泊松过程：定长区间到达数、独立增量、平稳增量三种等价定义的应用；3) 条件概率与全概率，先画事件图再计算。每题限定先写“模型选择理由”。',
-        action_type: '练习题',
-        target_knowledge: '多元分布与三项分布；泊松过程性质；条件概率与全概率',
-        trigger_reason: '代表性对话与证据显示在三项分布与泊松过程中存在模型与参数混淆。',
+        actionType: '练习题',
+        targetKnowledge: '多元分布与三项分布；泊松过程性质；条件概率与全概率',
+        triggerReason: '代表性对话与证据显示在三项分布与泊松过程中存在模型与参数混淆。',
       },
       {
         title: '优势带动拔高：期望板块进阶',
         description: '期望与方差的巩固与拔高：全期望公式与全方差公式、离散/连续统一表述、函数变换E[g(X)]（离散求和/连续积分）、切比雪夫不等式的判定边界。配套5题中阶练习，要求写出“使用该公式的前提”。',
-        action_type: '微课学习',
-        target_knowledge: '期望与方差；全期望/全方差；不等式应用',
-        trigger_reason: '期望板块正确率较高（≈2/3），适合作为牵引点带动联合分布与函数变换类题目。',
+        actionType: '微课学习',
+        targetKnowledge: '期望与方差；全期望/全方差；不等式应用',
+        triggerReason: '期望板块正确率较高（≈2/3），适合作为牵引点带动联合分布与函数变换类题目。',
       },
       {
         title: '六点检查清单：避免跳步与漏检',
         description: '构建检查清单：- 变量与取值域；- 条件事件与已知信息；- 模型/分布假设；- 积分/求和界限；- 单位与量纲；- 最终归一/非负检查。每题先过清单再动手，减少跳跃带来的漏项。',
-        action_type: '方法总结',
-        target_knowledge: '解题流程规范化与逻辑链完整性',
-        trigger_reason: '思维跳跃易断链、逻辑性0.45，需通过仪式化清单保障完整性。',
+        actionType: '方法总结',
+        targetKnowledge: '解题流程规范化与逻辑链完整性',
+        triggerReason: '思维跳跃易断链、逻辑性0.45，需通过仪式化清单保障完整性。',
       },
       {
         title: '阶段评估与策略微调（第2周末/第4周末）',
         description: '两套阶段测：A 概念判定（分布函数、独立性、条件概率）；B 计算执行（边缘分布、不定积分方法选择、期望/方差）。完成后与首周数据对比，给出三项量化改进（准确率、用时、错因分布）。',
-        action_type: '诊断测验',
-        target_knowledge: '阶段性掌握评估与策略校正',
-        trigger_reason: '需要量化监测提升与校正学习路径；进步速度与稳定性偏低需要闭环度量。',
+        actionType: '诊断测验',
+        targetKnowledge: '阶段性掌握评估与策略校正',
+        triggerReason: '需要量化监测提升与校正学习路径；进步速度与稳定性偏低需要闭环度量。',
       },
     ],
-    overall_strategy: '总体路线（3-4周）：以“概率基础修复 + 微积分打底 + 分步协作解题”三线并行。第1周集中校准随机变量/分布函数/边缘分布等核心概念，配合小体量分步练习和错因标注；第2周加入不定积分基础与常见模型识别（伯努利/二项/泊松/三项/指数/正态），进行中等题的迁移训练；第3-4周做混合题与变式题，采用“做一小步—回传—纠偏”的协作节奏，逐步提升难度与稳定性。纪律与度量：每周1次“大样本日”（≥40题）评估稳定性，日常4-5天维持5-12题“保手感”小样本；每次练习后10分钟结构化复盘（错因标注、公式选择树定位、边界/独立性检查）。目标：3周内将总体正确率提升至0.55-0.60，稳定性≥0.5，随机变量与分布、边缘分布章节正确率提升至≥0.5，不定积分概念正确率≥0.6；形成“三要素提问+过程回传”的稳定习惯。',
+    overallStrategy: '总体路线（3-4周）：以“概率基础修复 + 微积分打底 + 分步协作解题”三线并行。第1周集中校准随机变量/分布函数/边缘分布等核心概念，配合小体量分步练习和错因标注；第2周加入不定积分基础与常见模型识别（伯努利/二项/泊松/三项/指数/正态），进行中等题的迁移训练；第3-4周做混合题与变式题，采用“做一小步—回传—纠偏”的协作节奏，逐步提升难度与稳定性。纪律与度量：每周1次“大样本日”（≥40题）评估稳定性，日常4-5天维持5-12题“保手感”小样本；每次练习后10分钟结构化复盘（错因标注、公式选择树定位、边界/独立性检查）。目标：3周内将总体正确率提升至0.55-0.60，稳定性≥0.5，随机变量与分布、边缘分布章节正确率提升至≥0.5，不定积分概念正确率≥0.6；形成“三要素提问+过程回传”的稳定习惯。',
   },
+  chapterSummary: [],
 }); // dummy data
 
-async function loadAnalysisData() {
+const router = useRouter();
+const isOpen = ref(true);
+const isGenerating = ref(false);
+const configStore = useConfigStore();
+const agreed = ref(false);
+const poller = ref<number | null>(null);
+
+async function fetchAnalysisData() {
   try {
-    const response = await analysisApi();
-    data.value = response;
-    console.log(response);
+    const response = await analysisApi(useConfigStore().currentSubject.id_);
+    if (response.analysis) {
+      response.analysis.objectiveAnalysis.metrics = response.analysis.objectiveAnalysis.metrics.slice(0, 4);
+      response.analysis.chapterSummary = response.analysis.chapterSummary.sort((a, b) => Number.parseFloat(a.chapter.name.split(' ')[0]) - Number.parseFloat(b.chapter.name.split(' ')[0]));
+      data.value = response.analysis;
+      isGenerating.value = false;
+      isOpen.value = false;
+      if (poller.value !== null) {
+        clearInterval(poller.value);
+        poller.value = null;
+      }
+    }
+    else {
+      if (!isGenerating.value) {
+        startGeneration();
+      }
+    }
   }
   catch (error) {
     console.error('Error during analysis analysis:', error);
   }
 }
 
+function startGeneration() {
+  if (isGenerating.value)
+    return;
+  isOpen.value = true;
+  isGenerating.value = true;
+  fetchAnalysisData();
+  poller.value = window.setInterval(() => {
+    fetchAnalysisData();
+  }, 10000);
+}
+
 onMounted(() => {
-  loadAnalysisData();
+  if (configStore.confirmedAiPolicy) {
+    isOpen.value = false;
+    fetchAnalysisData();
+  }
+});
+
+onBeforeUnmount(() => {
+  if (poller.value !== null) {
+    clearInterval(poller.value);
+    poller.value = null;
+  }
 });
 </script>
 
 <template>
-  <div class="">
-    <TestPanel v-if="data" :data="data" />
+  <div class="relative overflow-y-hidden">
+    <div :class="isOpen ? 'blur pointer-events-none select-none' : 'overflow-y-auto h-full'">
+      <TestPanel v-if="data" :data="data" />
+    </div>
+
+    <transition name="fade" appear>
+      <div
+        v-if="isOpen"
+        class="z-50"
+        aria-hidden="true"
+      />
+    </transition>
+
+    <transition name="zoom">
+      <div
+        v-if="isOpen"
+        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 flex items-center justify-center p-4"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="consent-title"
+        aria-describedby="consent-desc"
+      >
+        <div
+          v-auto-animate
+          tabindex="-1"
+          class="w-full max-w-lg rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 outline-none transition-all"
+        >
+          <div v-if="!configStore.confirmedAiPolicy" class="p-6">
+            <h2 id="consent-title" class="text-xl font-semibold">
+              确认并同意
+            </h2>
+            <p id="consent-desc" class="mt-2 text-sm text-neutral-600 dark:text-neutral-300">
+              在生成 AI 个人学情报告前，请阅读并勾选同意。
+            </p>
+
+            <div class="mt-4 flex items-start gap-2">
+              <Checkbox id="agree" v-model:checked="agreed" class="mt-1 rounded-[30%]" />
+              <label for="agree" class="text-sm leading-6">
+                我已阅读并同意
+                <a href="#" class="underline underline-offset-4 hover:no-underline" @click.prevent>
+                  《AI 生成使用声明》
+                </a>
+                ，并知悉生成内容可能包含不准确或敏感信息。
+              </label>
+            </div>
+
+            <div class="mt-6 flex justify-end gap-3">
+              <Button variant="outline" @click="router.go(-1)">
+                取消
+              </Button>
+              <Button :disabled="!agreed" class="transition-all" @click="configStore.confirmedAiPolicy = true">
+                同意并继续
+              </Button>
+            </div>
+          </div>
+          <div v-else v-auto-animate class="p-8 text-center">
+            <div class="space-y-3">
+              <h3 class="text-xl font-semibold text-gray-900">
+                AI 个人学情报告
+              </h3>
+              <p class="mx-auto max-w-md text-sm text-gray-600 leading-relaxed">
+                基于您的学习数据智能生成个性化分析报告，预计需要 1-3 分钟
+              </p>
+            </div>
+
+            <div v-if="isGenerating" class="flex flex-col items-center">
+              <DotLottieVue style="height: 250px; width: 250px" autoplay loop src="https://lottie.host/ee66b931-c9e5-423e-8ddc-138351b19489/4p5yNwGj6g.json" />
+              <div class="space-y-2">
+                <p class="text-sm font-medium text-gray-700">
+                  正在分析您的学习数据...
+                </p>
+                <p class="text-xs text-gray-500">
+                  您可以切换到其他页面，完成后将自动显示
+                </p>
+              </div>
+            </div>
+
+            <Button
+              :disabled="isGenerating"
+              size="lg"
+              class="h-10 w-30 mt-8"
+              @click="startGeneration"
+            >
+              {{ isGenerating ? '生成中...' : '开始生成' }}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
+
+<style scoped>
+.fade-enter-active, .fade-leave-active { transition: opacity .18s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+
+.zoom-enter-active, .zoom-leave-active { transition: opacity .18s ease, transform .18s ease; }
+.zoom-enter-from, .zoom-leave-to { opacity: 0; transform: scale(0.98); }
+</style>

@@ -41,6 +41,7 @@ const useConfigStore = defineStore('configStore', () => {
   const currentSubjectId = ref<SubjectId>('probability');
   const currentSubject = computed(() => subjectConfig[currentSubjectId.value]);
   const isMoving = ref(false);
+  const confirmedAiPolicy = ref(false);
 
   function updateTheme(subjectId: SubjectId) {
     const el = document.documentElement;
@@ -66,6 +67,7 @@ const useConfigStore = defineStore('configStore', () => {
   }, { immediate: true });
 
   return {
+    confirmedAiPolicy,
     darkMode,
     targetNodeId,
     isMoving,

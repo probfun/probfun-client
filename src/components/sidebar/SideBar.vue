@@ -2,7 +2,7 @@
 import type { Chapter } from '@/api/do-question/doQuestion.ts';
 
 import type { Feedback } from '@/api/feedback/feedbackType';
-import type { DrawerItem, SubjectId } from '@/components/subject/configs.ts';
+import type { DrawerItem } from '@/components/subject/configs.ts';
 import { Icon } from '@iconify/vue';
 import { Book, Bot, CircleHelp, FlaskConical, Home, LogOut, Star, User, UsersRound } from 'lucide-vue-next';
 import { useToast } from 'primevue/usetoast';
@@ -212,15 +212,7 @@ function toItemTree(root: Chapter): DrawerItem {
 
 async function refreshQuestionList() {
   try {
-    const subjectMapId: Record<SubjectId, string> = {
-      'advanced-math-1': '2',
-      'advanced-math-2': '3',
-      'probability': '5',
-      'linear-algebra': '7',
-      'number-theory': '8',
-      'statistics': '9',
-    };
-    const response = await fetchChapterListApi(subjectMapId[useConfigStore().currentSubjectId]);
+    const response = await fetchChapterListApi(useConfigStore().currentSubject.id_);
     const chapterList = response.chapters;
     questionItems.value = chapterList.map(chapter => toItemTree(chapter));
   }

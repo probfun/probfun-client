@@ -1,5 +1,5 @@
-<!-- LearningAnalyticsDashboard.vue (shadcn-vue 版) -->
 <script setup lang="ts">
+import type { ChartOptions } from 'chart.js';
 import type { Analysis } from '@/api/do-question/doQuestion.ts';
 import {
   BarElement,
@@ -64,10 +64,10 @@ const tabs = [
   { id: 'plan', label: '学习计划', icon: TargetIcon },
 ];
 
-const objectiveMetrics = computed(() => props.data?.objective_analysis?.metrics || []);
-const dialogueMetrics = computed(() => props.data?.dialogue_analysis?.metrics || []);
-const learningMetrics = computed(() => props.data?.learning_analysis?.metrics || []);
-const cognitiveMetrics = computed(() => props.data?.cognitive_analysis?.metrics || []);
+const objectiveMetrics = computed(() => props.data?.objectiveAnalysis?.metrics || []);
+const dialogueMetrics = computed(() => props.data?.dialogueAnalysis?.metrics || []);
+const learningMetrics = computed(() => props.data?.learningAnalysis?.metrics || []);
+const cognitiveMetrics = computed(() => props.data?.cognitiveAnalysis?.metrics || []);
 
 function getMetricTitle(name: string) {
   return name;
@@ -93,16 +93,18 @@ function getMetricColor(index: number) {
 }
 
 const commonDatalabels = {
-  color: '#000',
-  font: { size: 14 }, // 比默认更大
+  font: { size: 16 },
+  align: 'end',
+  anchor: 'end',
+  offset: 5,
   formatter: (v: number) => `${Number(v.toFixed(2))}%`,
 };
 
-const barOptions = {
+const barOptions: ChartOptions<'bar'> = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
-    legend: { display: false, labels: { color: '#000', font: { size: 14 } } },
+    legend: { display: false, labels: { font: { size: 14 } } },
     tooltip: {
       intersect: false,
       titleFont: { size: 16 },
@@ -110,18 +112,17 @@ const barOptions = {
       footerFont: { size: 16 },
       callbacks: { label: (ctx: any) => `${ctx.dataset.label || ''} ${Number(ctx.parsed.y.toFixed(2))}%` },
     },
-    datalabels: commonDatalabels, // ← 若希望全部柱都生效
+    datalabels: commonDatalabels as any,
   },
   scales: {
     x: {
-      ticks: { color: '#000', font: { size: 16 } },
+      ticks: { font: { size: 16 } },
       grid: { color: 'rgba(0,0,0,0.1)' },
     },
     y: {
       beginAtZero: true,
       max: 100,
       ticks: {
-        color: '#000',
         font: { size: 16 },
         stepSize: 20,
         callback: (v: any) => `${Number(v.toFixed(2))}%`,
@@ -131,42 +132,100 @@ const barOptions = {
   },
 };
 
-const radarOptions = {
+const chapterBarOptions: ChartOptions<'bar'> = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
-    legend: { labels: { color: '#000', font: { size: 16 } } },
+    legend: { display: true, labels: { color: '#000', font: { size: 14 } } },
     tooltip: {
-      titleColor: '#000',
-      bodyColor: '#000',
+      intersect: false,
+      titleFont: { size: 16 },
+      bodyFont: { size: 16 },
+      footerFont: { size: 16 },
+      callbacks: { label: (ctx: any) => `${ctx.dataset.label || ''} ${Number(ctx.parsed.y.toFixed(2))}%` },
+    },
+    datalabels: commonDatalabels as any,
+  },
+  scales: {
+    x: {
+      ticks: { font: { size: 16 } },
+      grid: { color: 'rgba(0,0,0,0.1)' },
+    },
+    y: {
+      beginAtZero: true,
+      max: 100,
+      ticks: {
+        font: { size: 16 },
+        stepSize: 20,
+        callback: (v: any) => `${Number(v.toFixed(2))}%`,
+      },
+      grid: { color: 'rgba(0,0,0,0.1)' },
+    },
+  },
+};
+
+const radarOptions: ChartOptions<'radar'> = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { labels: { font: { size: 16 } } },
+    tooltip: {
+      // titleColor: '#000',
+      // bodyColor: '#000',
       titleFont: { size: 16 },
       bodyFont: { size: 16 },
       callbacks: { label: (ctx: any) => `${ctx.dataset.label || ''} ${Number(ctx.parsed.r.toFixed(2))}%` },
     },
+    datalabels: commonDatalabels as any,
   },
   scales: {
     r: {
       angleLines: { color: 'rgba(0,0,0,0.1)' },
       grid: { color: 'rgba(0,0,0,0.1)' },
-      pointLabels: { color: '#000', font: { size: 14 } }, // 维度名称
+      pointLabels: {
+        font: { size: 16 },
+      }, // 维度名称
+      max: 100,
       ticks: {
-        color: '#000',
+        display: false,
+        // color: '#000',
         backdropColor: 'transparent',
-        font: { size: 12 },
+        font: { size: 16 },
         stepSize: 20,
-        max: 100,
         callback: (v: any) => `${Number(v.toFixed(2))}%`,
       },
     },
   },
 };
 
+const chapterBarData = computed(() => ({
+  labels: props.data.chapterSummary.map(d => d.chapter.name),
+  datasets: [
+    {
+      label: '完成率',
+      data: props.data.chapterSummary.map(d => d.questionCompletionRate * 100),
+      backgroundColor: 'rgba(251,146,60,0.6)',
+      borderColor: 'rgba(194,65,12,1)',
+      borderWidth: 1,
+      borderRadius: 4,
+    },
+    {
+      label: '正确率',
+      data: props.data.chapterSummary.map(d => d.accuracy * 100),
+      backgroundColor: 'rgba(34,197,94,0.4)',
+      borderColor: 'rgba(21,128,61,0.8)',
+      borderWidth: 1,
+      borderRadius: 4,
+    },
+  ],
+}));
+
 const objectiveBarData = computed(() => ({
-  labels: props.data.objective_analysis.metrics.map(d => d.name),
+  labels: props.data.objectiveAnalysis.metrics.map(d => d.name),
   datasets: [
     {
       label: '能力值',
-      data: props.data.objective_analysis.metrics.map(d => d.value * 100),
+      data: props.data.objectiveAnalysis.metrics.map(d => d.value * 100),
       backgroundColor: 'rgba(59,130,246,0.6)',
       borderColor: 'rgba(30,64,175,1)',
       borderWidth: 1,
@@ -176,25 +235,37 @@ const objectiveBarData = computed(() => ({
 }));
 
 const dialogueBarData = computed(() => ({
-  labels: props.data.dialogue_analysis.metrics.map(d => d.name),
+  labels: dialogueMetrics.value.map(d => d.name),
   datasets: [
-    { data: props.data.dialogue_analysis.metrics.map(d => d.value * 100), backgroundColor: 'rgba(16,185,129,0.6)', borderColor: 'rgba(4,120,87,1)', borderWidth: 1, borderRadius: 4 },
+    {
+      data: dialogueMetrics.value.map(d => d.value * 100),
+      backgroundColor: 'rgba(16,185,129,0.6)',
+      borderColor: 'rgba(4,120,87,1)',
+      borderWidth: 1,
+      borderRadius: 4,
+    },
   ],
 }));
 
 const cognitiveBarData = computed(() => ({
-  labels: props.data.cognitive_analysis.metrics.map(d => d.name),
+  labels: cognitiveMetrics.value.map(d => d.name),
   datasets: [
-    { data: props.data.cognitive_analysis.metrics.map(d => d.value * 100), backgroundColor: 'rgba(99,102,241,0.6)', borderColor: 'rgba(67,56,202,1)', borderWidth: 1, borderRadius: 4 },
+    {
+      data: cognitiveMetrics.value.map(d => d.value * 100),
+      backgroundColor: 'rgba(99,102,241,0.6)',
+      borderColor: 'rgba(67,56,202,1)',
+      borderWidth: 1,
+      borderRadius: 4,
+    },
   ],
 }));
 
 const radarChartData = computed(() => ({
-  labels: props.data.learning_analysis.metrics.map(d => d.name),
+  labels: learningMetrics.value.map(d => d.name),
   datasets: [
     {
       label: '能力值',
-      data: props.data.learning_analysis.metrics.map(d => d.value),
+      data: learningMetrics.value.map(d => d.value * 100),
       borderColor: 'rgba(136,132,216,1)',
       backgroundColor: 'rgba(136,132,216,0.3)',
       borderWidth: 2,
@@ -206,7 +277,7 @@ const radarChartData = computed(() => ({
 </script>
 
 <template>
-  <div class="h-full p-8 pt-4">
+  <div class="p-8 pt-4">
     <div class="mx-auto w-full max-w-7xl">
       <CardHeader class="text-center space-y-2">
         <div class="text-4xl font-bold tracking-tight">
@@ -245,8 +316,7 @@ const radarChartData = computed(() => ({
             >
               <CardHeader>
                 <CardTitle
-                  class="text-bas
-                </CardTitle>e"
+                  class="text-base"
                 >
                   暂无指标
                   <CardDescription>等待数据加载或请检查数据源。</CardDescription>
@@ -268,6 +338,20 @@ const radarChartData = computed(() => ({
           </section>
 
           <!-- 图表区 -->
+          <Card class="overflow-hidden group hover:border-primary/30 cursor-pointer transition-all">
+            <CardHeader>
+              <CardTitle class="text-lg group-hover:text-primary transition-all">
+                章节完成情况
+              </CardTitle>
+            </CardHeader>
+            <Separator />
+            <CardContent class="pt-6">
+              <div class="relative h-[300px]">
+                <Bar :data="chapterBarData" :options="chapterBarOptions" />
+              </div>
+            </CardContent>
+          </Card>
+
           <section class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             <Card class="overflow-hidden group hover:border-primary/30 cursor-pointer transition-all">
               <CardHeader>
@@ -306,12 +390,12 @@ const radarChartData = computed(() => ({
                 关键洞察
               </h2>
               <Badge variant="secondary" class="rounded-full">
-                {{ (props.data?.objective_analysis?.insights || []).length }}
+                {{ (props.data?.objectiveAnalysis?.insights || []).length }}
               </Badge>
             </div>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               <InsightCard
-                v-for="(insight, index) in props.data?.objective_analysis?.insights || []"
+                v-for="(insight, index) in props.data?.objectiveAnalysis?.insights || []"
                 :key="index"
                 :insight="insight"
               />
@@ -329,14 +413,14 @@ const radarChartData = computed(() => ({
                   </CardTitle>
                 </div>
                 <Badge variant="outline" class="rounded-full">
-                  {{ (props.data?.objective_analysis?.milestones || []).length }}
+                  {{ (props.data?.objectiveAnalysis?.milestones || []).length }}
                 </Badge>
               </CardHeader>
               <Separator />
               <CardContent class="pt-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div
-                    v-for="(milestone, index) in props.data?.objective_analysis?.milestones || []"
+                    v-for="(milestone, index) in props.data?.objectiveAnalysis?.milestones || []"
                     :key="index"
                     class="flex items-center gap-3 p-3 rounded-xl border bg-muted/30"
                   >
@@ -387,7 +471,7 @@ const radarChartData = computed(() => ({
             </h2>
             <div class="grid grid-cols-1 gap-4 sm:gap-6">
               <InsightCard
-                v-for="(insight, index) in props.data?.dialogue_analysis?.insights || []"
+                v-for="(insight, index) in props.data?.dialogueAnalysis?.insights || []"
                 :key="index"
                 :insight="insight"
               />
@@ -406,7 +490,7 @@ const radarChartData = computed(() => ({
               <CardContent class="pt-6">
                 <div class="space-y-6">
                   <div
-                    v-for="(dialogue, index) in props.data?.dialogue_analysis?.representative_dialogues || []"
+                    v-for="(dialogue, index) in props.data?.dialogueAnalysis?.representativeDialogues || []"
                     :key="index"
                     class="p-4 rounded-xl bg-muted/30 border"
                   >
@@ -430,7 +514,7 @@ const radarChartData = computed(() => ({
               </CardHeader>
               <CardContent>
                 <Badge class="text-2xl px-4 py-2 rounded-full" variant="default">
-                  {{ props.data?.learning_analysis?.profile_label }}
+                  {{ props.data?.learningAnalysis?.profileLabel }}
                 </Badge>
               </CardContent>
             </Card>
@@ -454,7 +538,7 @@ const radarChartData = computed(() => ({
             </h2>
             <div class="grid grid-cols-1 gap-4 sm:gap-6">
               <InsightCard
-                v-for="(insight, index) in props.data?.learning_analysis?.insights || []"
+                v-for="(insight, index) in props.data?.learningAnalysis?.insights || []"
                 :key="index"
                 :insight="insight"
               />
@@ -472,7 +556,7 @@ const radarChartData = computed(() => ({
               <CardContent class="pt-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div
-                    v-for="(path, index) in props.data?.learning_analysis?.sample_paths || []"
+                    v-for="(path, index) in props.data?.learningAnalysis?.samplePaths || []"
                     :key="index"
                     class="p-4 rounded-xl border bg-primary/5"
                   >
@@ -511,7 +595,7 @@ const radarChartData = computed(() => ({
               <CardContent class="pt-6">
                 <div class="flex flex-wrap gap-2 sm:gap-3">
                   <Badge
-                    v-for="(style, index) in props.data?.cognitive_analysis?.thinking_styles || []"
+                    v-for="(style, index) in props.data?.cognitiveAnalysis?.thinkingStyles || []"
                     :key="index"
                     class="rounded-full text-base"
                   >
@@ -556,7 +640,7 @@ const radarChartData = computed(() => ({
             </h2>
             <div class="grid grid-cols-1 gap-4 sm:gap-6">
               <InsightCard
-                v-for="(insight, index) in props.data?.cognitive_analysis?.insights || []"
+                v-for="(insight, index) in props.data?.cognitiveAnalysis?.insights || []"
                 :key="index"
                 :insight="insight"
               />
@@ -576,7 +660,7 @@ const radarChartData = computed(() => ({
               <Separator />
               <CardContent class="pt-6">
                 <p class="leading-relaxed text-muted-foreground">
-                  {{ props.data?.study_plan?.overall_strategy }}
+                  {{ props.data?.studyPlan?.overallStrategy }}
                 </p>
               </CardContent>
             </Card>
@@ -594,12 +678,12 @@ const radarChartData = computed(() => ({
               <CardContent class="pt-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div
-                    v-for="(weakness, index) in props.data?.study_plan?.weaknesses || []"
+                    v-for="(weakness, index) in props.data?.studyPlan?.weaknesses || []"
                     :key="index"
                     class="flex items-start gap-3 p-3 rounded-xl border bg-destructive/5"
                   >
                     <AlertCircleIcon class="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
-                    <span class="text-sm text-destructive">{{ weakness }}</span>
+                    <span class="text-sm">{{ weakness }}</span>
                   </div>
                 </div>
               </CardContent>
@@ -616,7 +700,7 @@ const radarChartData = computed(() => ({
               <Separator />
               <CardContent class="pt-6">
                 <p class="leading-relaxed text-muted-foreground">
-                  {{ props.data?.study_plan?.style_adaptation }}
+                  {{ props.data?.studyPlan?.styleAdaptation }}
                 </p>
               </CardContent>
             </Card>
@@ -628,7 +712,7 @@ const radarChartData = computed(() => ({
             </h2>
             <div class="grid grid-cols-1 gap-4 sm:gap-6">
               <RecommendationCard
-                v-for="(recommendation, index) in props.data?.study_plan?.personalized_recommendations || []"
+                v-for="(recommendation, index) in props.data?.studyPlan?.personalizedRecommendations || []"
                 :key="index"
                 :recommendation="recommendation"
               />
