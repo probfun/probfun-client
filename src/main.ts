@@ -1,6 +1,7 @@
 import { autoAnimatePlugin } from '@formkit/auto-animate/vue';
 import { definePreset } from '@primevue/themes';
 import Aura from '@primevue/themes/aura';
+import * as Sentry from '@sentry/vue';
 import { createPinia } from 'pinia';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import PrimeVue from 'primevue/config';
@@ -14,6 +15,21 @@ const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
 
 const app = createApp(App);
+
+Sentry.init({
+  app,
+  dsn: 'https://c6ea61722ebb8f94213cd0f5ec0a3763@sentry.umaster.top/3',
+  // Setting this option to true will send default PII data to Sentry.
+  // For example, automatic IP address collection on events
+  sendDefaultPii: true,
+  integrations: [
+    Sentry.replayIntegration(),
+  ],
+  // Session Replay
+  replaysSessionSampleRate: 1.0, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
+  replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
+});
+
 const MyPreset = definePreset(Aura, {
   semantic: {
     primary: {
