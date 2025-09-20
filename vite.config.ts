@@ -1,3 +1,4 @@
+import process from 'node:process';
 import { fileURLToPath, URL } from 'node:url';
 import { PrimeVueResolver } from '@primevue/auto-import-resolver';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
@@ -20,6 +21,7 @@ export default defineConfig({
     org: 'umaster',
     project: 'umath-fe',
     url: 'https://sentry.umaster.top/',
+    authToken: process.env.SENTRY_AUTH_TOKEN,
   })],
 
   resolve: {

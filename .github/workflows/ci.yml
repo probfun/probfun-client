@@ -54,8 +54,6 @@ jobs:
 
     env:
       NODE_OPTIONS: --max-old-space-size=16384
-      NEXT_DISABLE_SOURCEMAPS: '1'
-      GENERATE_SOURCEMAP: 'false'
 
     steps:
       - name: Checkout code
@@ -91,7 +89,9 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build . -t ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/${{ env.IMAGE_NAME }}:${TAG}
+          docker build . \
+            --build-arg SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} \
+            -t ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/${{ env.IMAGE_NAME }}:${TAG}
 
       - name: Push Docker image
         run: |
