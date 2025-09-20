@@ -7,6 +7,9 @@ RUN corepack enable
 ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
 ENV NODE_OPTIONS=--max-old-space-size=16384
 
+RUN apt-get update
+RUN apt-get install ca-certificates
+
 WORKDIR /app
 COPY . .
 RUN pnpm install --frozen-lockfile
