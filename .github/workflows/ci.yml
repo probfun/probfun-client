@@ -10,7 +10,6 @@ env:
   REGISTRY: registry.cn-hangzhou.aliyuncs.com
   NAMESPACE: probfun
   IMAGE_NAME: probfun-fe
-  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
 jobs:
   test:
@@ -91,7 +90,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build . \
-            --build-arg SENTRY_AUTH_TOKEN=${{ env.SENTRY_AUTH_TOKEN }} \
+            --build-arg SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} \
             -t ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/${{ env.IMAGE_NAME }}:${TAG}
 
       - name: Push Docker image

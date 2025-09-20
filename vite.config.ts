@@ -6,6 +6,8 @@ import vue from '@vitejs/plugin-vue';
 import Components from 'unplugin-vue-components/vite';
 import { defineConfig } from 'vite';
 
+console.log(process.env);
+
 export default defineConfig({
   optimizeDeps: {
     exclude: ['js-big-decimal', ''],
@@ -20,7 +22,7 @@ export default defineConfig({
   }), sentryVitePlugin({
     org: 'umaster',
     project: 'umath-fe',
-    url: 'https://sentry.umaster.top/',
+    url: 'https://sentry.umaster.top',
     authToken: process.env.SENTRY_AUTH_TOKEN,
   })],
 
