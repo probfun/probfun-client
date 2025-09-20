@@ -1,5 +1,6 @@
 import { fileURLToPath, URL } from 'node:url';
 import { PrimeVueResolver } from '@primevue/auto-import-resolver';
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 import vue from '@vitejs/plugin-vue';
 import Components from 'unplugin-vue-components/vite';
 import { defineConfig } from 'vite';
@@ -8,20 +9,25 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['js-big-decimal', ''],
   },
+
   base: '/',
-  plugins: [
-    vue(),
-    Components({
-      resolvers: [
-        PrimeVueResolver(),
-      ],
-    }),
-  ],
+
+  plugins: [vue(), Components({
+    resolvers: [
+      PrimeVueResolver(),
+    ],
+  }), sentryVitePlugin({
+    org: 'umaster',
+    project: 'umath-fe',
+    url: 'https://sentry.umaster.top/',
+  })],
+
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+
   server: {
     open: true,
     proxy: {
@@ -44,5 +50,9 @@ export default defineConfig({
         secure: false,
       },
     },
+  },
+
+  build: {
+    sourcemap: true,
   },
 });
