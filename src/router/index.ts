@@ -187,14 +187,14 @@ const router = createRouter({
         //   path: '/dashboard/experiment/obstacle-options',
         //   component: () => import('@/components/experiment/chapter7/ObstacleOptions.vue'),
         // },
-        // {
-        //   path: '/dashboard/experiment/t-distribution',
-        //   component: () => import('@/components/experiment/chapter7/TDistribution.vue'),
-        // },
-        // {
-        //   path: '/dashboard/experiment/chi-square-distribution',
-        //   component: () => import('@/components/experiment/chapter7/ChiSquareDistribution.vue'),
-        // },
+        {
+          path: '/dashboard/experiment/t-distribution',
+          component: () => import('@/components/experiment/chapter7/new experiment/TDistribution.vue'),
+        },
+        {
+          path: '/dashboard/experiment/chi-square-distribution',
+          component: () => import('@/components/experiment/chapter7/new experiment/ChiSquareDistribution.vue'),
+        },
         {
           path: '/dashboard/experiment/t-distribution-quantile',
           component: () => import('@/components/experiment/chapter7/TDistributionQuantile.vue'),
@@ -280,6 +280,22 @@ const router = createRouter({
         {
           path: '/dashboard/experiment/neighborhood',
           component: () => import('@/components/experiment/calculusB/Neighborhood.vue'),
+        },
+        {
+          path: '/dashboard/experiment/linear-equation',
+          component: () => import('@/components/experiment/linearAlgebra/LinearEquation.vue'),
+        },
+        {
+          path: '/dashboard/experiment/linear-equation-3',
+          component: () => import('@/components/experiment/linearAlgebra/LinearEquation3.vue'),
+        },
+        {
+          path: '/dashboard/experiment/false-positive',
+          component: () => import('@/components/experiment/chapter1/FalsePositive.vue'),
+        },
+        {
+          path: '/dashboard/experiment/mutually-exclusive-and-independent',
+          component: () => import('@/components/experiment/chapter1/MutuallyExclusiveAndIndependent.vue'),
         },
         {
           path: '/dashboard/analysis',

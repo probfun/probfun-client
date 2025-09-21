@@ -6,11 +6,13 @@ const experiments: DrawerItem[] = [
     icon: 'lucide:folder',
     children: [
       { title: '事件的关系与运算', icon: 'lucide:flask-conical', route: '/dashboard/experiment/event-relationship' },
+      { title: '互斥与独立', icon: 'lucide:flask-conical', route: '/dashboard/experiment/mutually-exclusive-and-independent' },
       { title: '生日问题', icon: 'lucide:flask-conical', route: '/dashboard/experiment/birthday-problem' },
       { title: '蒲丰投针', icon: 'lucide:flask-conical', route: '/dashboard/experiment/buffon' },
       { title: '贝特朗悖论', icon: 'lucide:flask-conical', route: '/dashboard/experiment/bertrand' },
       { title: '阳性检测', icon: 'lucide:flask-conical', route: '/dashboard/experiment/positive-test' },
       { title: '三门问题', icon: 'lucide:flask-conical', route: '/dashboard/experiment/three-doors' },
+      { title: '假阳性问题', icon: 'lucide:flask-conical', route: '/dashboard/experiment/false-positive' },
     ],
   },
   {

@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>均匀分布及线性变换可视化（LaTeX公式）</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 992px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-wrapper {
+            position: relative;
+        }
+
+        .chart-container {
+            height: 350px;
+        }
+
+        .chart-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .function-def {
+            text-align: center;
+            margin: 15px 0;
+            color: #555;
+            line-height: 1.6;
+            font-size: 1.1em;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #2563eb;
+            display: inline-block;
+        }
+
+        .slider-container {
+            margin-bottom: 15px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 8px;
+            background: #2563eb;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: #ffffff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px #2563eb;
+            transition: all 0.3s ease;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #ddd;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        .probability-display {
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2563eb;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .transformation-formula {
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #d35400;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #fff3cd;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="charts-grid">
+            <div class="chart-wrapper">
+                <div class="chart-title">原始分布 - 概率密度函数 (PDF)</div>
+                <div class="function-def">
+                    \[
+                    f_X(x) =
+                    \begin{cases}
+                    0 & \text{若 } x < a \text{ 或 } x> b \\
+                        \dfrac{1}{b-a} & \text{若 } a \leq x \leq b
+                        \end{cases}
+                        \]
+                </div>
+                <div class="chart-container">
+                    <canvas id="original-pdf-chart"></canvas>
+                </div>
+                <div class="probability-display">
+                    P(<span id="a-value-original">1.0</span> ＜ X ＜ <span id="b-value-original">3.0</span>) =
+                    <span id="probability-original">0.500</span>
+                </div>
+            </div>
+
+            <!-- 原始分布 - 分布函数（CDF） -->
+            <div class="chart-wrapper">
+                <div class="chart-title">原始分布 - 分布函数 (CDF)</div>
+                <div class="function-def">
+                    \[
+                    F_X(x) =
+                    \begin{cases}
+                    0 & \text{若 } x < a \\ \dfrac{x-a}{b-a} & \text{若 } a \leq x \leq b \\ 1 & \text{若 } x> b
+                        \end{cases}
+                        \]
+                </div>
+                <div class="chart-container">
+                    <canvas id="original-cdf-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- 变换后分布 - 概率密度函数（PDF） -->
+            <div class="chart-wrapper">
+                <div class="chart-title">变换后分布 - 概率密度函数 (PDF)</div>
+                <div class="function-def">
+                    \[
+                    f_Y(y) =
+                    \begin{cases}
+                    0 & \text{若 } y < c \cdot a + d \text{ 或 } y> c \cdot b + d \\
+                        \dfrac{1}{|c| \cdot (b-a)} & \text{若 } c \cdot a + d \leq y \leq c \cdot b + d
+                        \end{cases}
+                        \]
+                </div>
+                <div class="chart-container">
+                    <canvas id="transformed-pdf-chart"></canvas>
+                </div>
+                <div class="probability-display">
+                    P(<span id="a-value-transformed">1.0</span> ＜ Y ＜ <span id="b-value-transformed">3.0</span>)
+                    = <span id="probability-transformed">0.500</span>
+                </div>
+            </div>
+
+            <!-- 变换后分布 - 分布函数（CDF） -->
+            <div class="chart-wrapper">
+                <div class="chart-title">变换后分布 - 分布函数 (CDF)</div>
+                <div class="function-def">
+                    \[
+                    F_Y(y) =
+                    \begin{cases}
+                    0 & \text{若 } y < c \cdot a + d \\ \dfrac{y - c \cdot a - d}{|c| \cdot (b-a)} & \text{若 } c \cdot a
+                        + d \leq y \leq c \cdot b + d \\ 1 & \text{若 } y> c \cdot b + d
+                        \end{cases}
+                        \]
+                </div>
+                <div class="chart-container">
+                    <canvas id="transformed-cdf-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 参数控制滑块 -->
+        <div class="controls">
+            <div class="control-group">
+                <h3>原始分布参数</h3>
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>区间下限 a:</span>
+                        <span id="a-display">1.00</span>
+                    </div>
+                    <input type="range" id="a-slider" min="0" max="4" step="0.01" value="1.0">
+                </div>
+
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>区间上限 b:</span>
+                        <span id="b-display">3.00</span>
+                    </div>
+                    <input type="range" id="b-slider" min="0" max="4" step="0.01" value="3.0">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>线性变换参数 (\( Y = cX + d \))</h3>
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>缩放系数 c:</span>
+                        <span id="c-display">1.00</span>
+                    </div>
+                    <input type="range" id="c-slider" min="-3" max="3" step="0.1" value="1.0">
+                </div>
+
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>平移量 d:</span>
+                        <span id="d-display">0.00</span>
+                    </div>
+                    <input type="range" id="d-slider" min="-5" max="5" step="0.1" value="0.0">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 配置MathJax
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+
+        function originalPDF(x, a, b) {
+            if (a >= b) return 0;
+            return (x >= a && x <= b) ? 1 / (b - a) : 0;
+        }
+
+        function originalCDF(x, a, b) {
+            if (a >= b) return 0;
+            if (x < a) return 0;
+            if (x > b) return 1;
+            return (x - a) / (b - a);
+        }
+
+        function transformedPDF(y, a, b, c, d) {
+            if (a >= b || c === 0) return 0;
+
+            // 计算变换后的区间
+            const newA = c * a + d;
+            const newB = c * b + d;
+            const lower = Math.min(newA, newB);
+            const upper = Math.max(newA, newB);
+
+            return (y >= lower && y <= upper) ? 1 / (Math.abs(c) * (b - a)) : 0;
+        }
+
+        function transformedCDF(y, a, b, c, d) {
+            if (a >= b || c === 0) return 0;
+
+            // 计算变换后的区间
+            const newA = c * a + d;
+            const newB = c * b + d;
+            const lower = Math.min(newA, newB);
+            const upper = Math.max(newA, newB);
+
+            if (y < lower) return 0;
+            if (y > upper) return 1;
+            return (y - lower) / (upper - lower);
+        }
+
+        function calculateProbability(a_select, b_select, a_dist, b_dist) {
+            if (a_dist >= b_dist || a_select >= b_select) return 0;
+            const validA = Math.max(a_select, a_dist);
+            const validB = Math.min(b_select, b_dist);
+            return Math.round(((validB - validA) / (b_dist - a_dist)) * 1000) / 1000;
+        }
+
+        const originalPdfCtx = document.getElementById('original-pdf-chart').getContext('2d');
+        const originalPdfChart = new Chart(originalPdfCtx, {
+            type: 'line',
+            data: {
+                datasets: [
+                    {
+                        label: '原始概率密度 f1(x)',
+                        data: [],
+                        borderColor: 'rgb(37, 99, 235)',
+                        backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                        borderWidth: 2,
+                        fill: true,
+                        pointRadius: 0,
+                        tension: 0
+                    },
+                    {
+                        label: '选中区间概率',
+                        data: [],
+                        borderColor: 'rgba(37, 99, 235, 0.2)',
+                        backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                        borderWidth: 1,
+                        fill: true,
+                        pointRadius: 0,
+                        tension: 0
+                    }
+                ]
+            },
+            options: getChartOptions('x', 'f1(x)')
+        });
+
+        // 原始分布CDF图表
+        const originalCdfCtx = document.getElementById('original-cdf-chart').getContext('2d');
+        const originalCdfChart = new Chart(originalCdfCtx, {
+            type: 'line',
+            data: {
+                datasets: [
+                    {
+                        label: '原始分布函数 F1(x)',
+                        data: [],
+                        borderColor: 'rgb(37, 99, 235)',
+                        borderWidth: 3,
+                        fill: false,
+                        pointRadius: 0,
+                        tension: 0
+                    },
+                    {
+                        label: '区间端点累积概率',
+                        data: [],
+                        borderColor: 'rgba(231, 76, 60, 1)',
+                        backgroundColor: 'rgba(231, 76, 60, 0.9)',
+                        borderWidth: 0,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        showLine: false
+                    }
+                ]
+            },
+            options: getChartOptions('x', 'F2(x)', 1.1)
+        });
+
+        // 变换后分布PDF图表
+        const transformedPdfCtx = document.getElementById('transformed-pdf-chart').getContext('2d');
+        const transformedPdfChart = new Chart(transformedPdfCtx, {
+            type: 'line',
+            data: {
+                datasets: [
+                    {
+                        label: '变换后概率密度 f2(y)',
+                        data: [],
+                        borderColor: 'rgba(46, 204, 113, 1)',
+                        backgroundColor: 'rgba(46, 204, 113, 0.2)',
+                        borderWidth: 2,
+                        fill: true,
+                        pointRadius: 0,
+                        tension: 0
+                    },
+                    {
+                        label: '选中区间概率',
+                        data: [],
+                        borderColor: 'rgba(46, 204, 113, 1)',
+                        backgroundColor: 'rgba(46, 204, 113, 0.2)',
+                        borderWidth: 1,
+                        fill: true,
+                        pointRadius: 0,
+                        tension: 0
+                    }
+                ]
+            },
+            options: getChartOptions('y', 'f2(y)')
+        });
+
+        // 变换后分布CDF图表
+        const transformedCdfCtx = document.getElementById('transformed-cdf-chart').getContext('2d');
+        const transformedCdfChart = new Chart(transformedCdfCtx, {
+            type: 'line',
+            data: {
+                datasets: [
+                    {
+                        label: '变换后分布函数 F2(y)',
+                        data: [],
+                        borderColor: 'rgba(46, 204, 113, 1)',
+                        borderWidth: 3,
+                        fill: false,
+                        pointRadius: 0,
+                        tension: 0
+                    },
+                    {
+                        label: '区间端点累积概率',
+                        data: [],
+                        borderColor: 'rgba(231, 76, 60, 1)',
+                        backgroundColor: 'rgba(231, 76, 60, 0.9)',
+                        borderWidth: 0,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        showLine: false
+                    }
+                ]
+            },
+            options: getChartOptions('y', 'F_Y(y)', 1.1)
+        });
+
+        function getChartOptions(xLabel, yLabel, yMax = 1.2) {
+            return {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        title: { display: true, text: xLabel, font: { size: 14, weight: 'bold' } },
+                        min: -6,
+                        max: 10,
+                        grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                        ticks: { stepSize: 2 }
+                    },
+                    y: {
+                        type: 'linear',
+                        title: { display: true, text: yLabel, font: { size: 14, weight: 'bold' } },
+                        min: 0,
+                        max: yMax,
+                        grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                        ticks: { stepSize: 0.2 }
+                    }
+                },
+                plugins: {
+                    legend: { position: 'top', labels: { boxWidth: 12, padding: 15 } },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: (context) => `${context.dataset.label}: ${context.parsed.y.toFixed(3)}`
+                        }
+                    }
+                }
+            };
+        }
+
+        function generateOriginalPDFData(a, b) {
+            const data = [];
+            const density = a < b ? 1 / (b - a) : 0;
+
+            // 左空白区域
+            data.push({ x: -6, y: 0 });
+            data.push({ x: a, y: 0 });
+
+            // 左垂直边
+            data.push({ x: a, y: density });
+
+            // 矩形顶边
+            for (let x = a; x <= b; x += 0.05) {
+                data.push({ x: parseFloat(x.toFixed(2)), y: density });
+            }
+
+            // 右垂直边
+            data.push({ x: b, y: density });
+            data.push({ x: b, y: 0 });
+
+            // 右空白区域
+            data.push({ x: 10, y: 0 });
+
+            return data;
+        }
+
+        function generateOriginalCDFData(a, b) {
+            const data = [];
+
+            // 左水平段
+            data.push({ x: -6, y: 0 });
+            data.push({ x: a, y: 0 });
+
+            // 中间倾斜段
+            for (let x = a; x <= b; x += 0.05) {
+                const value = a < b ? (x - a) / (b - a) : 0;
+                data.push({ x: parseFloat(x.toFixed(2)), y: value });
+            }
+
+            // 右水平段
+            data.push({ x: b, y: 1 });
+            data.push({ x: 10, y: 1 });
+
+            return data;
+        }
+
+        function generateTransformedPDFData(a, b, c, d) {
+            if (a >= b || c === 0) return [];
+
+            // 计算变换后的区间
+            const newA = c * a + d;
+            const newB = c * b + d;
+            const lower = Math.min(newA, newB);
+            const upper = Math.max(newA, newB);
+            const density = 1 / (Math.abs(c) * (b - a));
+
+            const data = [];
+
+            // 左空白区域
+            data.push({ x: -6, y: 0 });
+            data.push({ x: lower, y: 0 });
+
+            // 左垂直边
+            data.push({ x: lower, y: density });
+
+            // 矩形顶边
+            const step = Math.abs(upper - lower) > 0.1 ? 0.05 : 0.01;
+            for (let x = lower; x <= upper; x += step) {
+                data.push({ x: parseFloat(x.toFixed(2)), y: density });
+            }
+
+            // 右垂直边
+            data.push({ x: upper, y: density });
+            data.push({ x: upper, y: 0 });
+
+            // 右空白区域
+            data.push({ x: 10, y: 0 });
+
+            return data;
+        }
+
+        function generateTransformedCDFData(a, b, c, d) {
+            if (a >= b || c === 0) return [];
+
+            // 计算变换后的区间
+            const newA = c * a + d;
+            const newB = c * b + d;
+            const lower = Math.min(newA, newB);
+            const upper = Math.max(newA, newB);
+
+            const data = [];
+
+            // 左水平段
+            data.push({ x: -6, y: 0 });
+            data.push({ x: lower, y: 0 });
+
+            // 中间倾斜段
+            const step = Math.abs(upper - lower) > 0.1 ? 0.05 : 0.01;
+            for (let x = lower; x <= upper; x += step) {
+                const value = (x - lower) / (upper - lower);
+                data.push({ x: parseFloat(x.toFixed(2)), y: value });
+            }
+
+            // 右水平段
+            data.push({ x: upper, y: 1 });
+            data.push({ x: 10, y: 1 });
+
+            return data;
+        }
+
+        function updatePDFHighlight(a_select, b_select, a_dist, b_dist, isTransformed = false, c = 1, d = 0) {
+            const highlightData = [];
+            if (a_dist >= b_dist || a_select >= b_select) return highlightData;
+
+            // 对于变换后的分布，计算对应的区间
+            let validA, validB, density;
+            if (isTransformed) {
+                const newA = c * a_dist + d;
+                const newB = c * b_dist + d;
+                const lower = Math.min(newA, newB);
+                const upper = Math.max(newA, newB);
+                validA = Math.max(a_select, lower);
+                validB = Math.min(b_select, upper);
+                density = 1 / (Math.abs(c) * (b_dist - a_dist));
+            } else {
+                validA = Math.max(a_select, a_dist);
+                validB = Math.min(b_select, b_dist);
+                density = 1 / (b_dist - a_dist);
+            }
+
+            // 构建高亮区域
+            highlightData.push({ x: validA, y: 0 });
+            highlightData.push({ x: validA, y: density });
+
+            const step = Math.abs(validB - validA) > 0.1 ? 0.05 : 0.01;
+            for (let x = validA; x <= validB; x += step) {
+                highlightData.push({ x: parseFloat(x.toFixed(2)), y: density });
+            }
+
+            highlightData.push({ x: validB, y: density });
+            highlightData.push({ x: validB, y: 0 });
+
+            return highlightData;
+        }
+
+        function updateCDFHighlight(a_select, b_select, a_dist, b_dist, isTransformed = false, c = 1, d = 0) {
+            const pointsData = [];
+            if (a_dist >= b_dist || a_select >= b_select) return pointsData;
+
+            // 对于变换后的分布，计算对应的点
+            let validA, validB, fA, fB;
+            if (isTransformed) {
+                const newA = c * a_dist + d;
+                const newB = c * b_dist + d;
+                const lower = Math.min(newA, newB);
+                const upper = Math.max(newA, newB);
+                validA = Math.max(a_select, lower);
+                validB = Math.min(b_select, upper);
+                fA = (validA - lower) / (upper - lower);
+                fB = (validB - lower) / (upper - lower);
+            } else {
+                validA = Math.max(a_select, a_dist);
+                validB = Math.min(b_select, b_dist);
+                fA = (validA - a_dist) / (b_dist - a_dist);
+                fB = (validB - a_dist) / (b_dist - a_dist);
+            }
+
+            pointsData.push({ x: validA, y: fA });
+            pointsData.push({ x: validB, y: fB });
+
+            return pointsData;
+        }
+
+        const aSlider = document.getElementById('a-slider');
+        const bSlider = document.getElementById('b-slider');
+        const cSlider = document.getElementById('c-slider');
+        const dSlider = document.getElementById('d-slider');
+        const aDisplay = document.getElementById('a-display');
+        const bDisplay = document.getElementById('b-display');
+        const cDisplay = document.getElementById('c-display');
+        const dDisplay = document.getElementById('d-display');
+
+        // 原始分布显示元素
+        const aValueOriginal = document.getElementById('a-value-original');
+        const bValueOriginal = document.getElementById('b-value-original');
+        const probabilityOriginal = document.getElementById('probability-original');
+
+        // 变换后分布显示元素
+        const aValueTransformed = document.getElementById('a-value-transformed');
+        const bValueTransformed = document.getElementById('b-value-transformed');
+        const probabilityTransformed = document.getElementById('probability-transformed');
+
+        function updateAll() {
+            // 获取当前参数值
+            let a = parseFloat(aSlider.value);
+            let b = parseFloat(bSlider.value);
+            let c = parseFloat(cSlider.value);
+            let d = parseFloat(dSlider.value);
+
+            // 确保a < b
+            if (a >= b) {
+                a = Math.min(a, b - 0.1);
+                aSlider.value = a;
+            }
+
+            // 避免c为0（会导致变换无意义）
+            if (c === 0) {
+                c = 0.1;
+                cSlider.value = c;
+            }
+
+            // 更新参数显示
+            aDisplay.textContent = a.toFixed(2);
+            bDisplay.textContent = b.toFixed(2);
+            cDisplay.textContent = c.toFixed(2);
+            dDisplay.textContent = d.toFixed(2);
+
+            // 计算变换后的区间
+            const newA = c * a + d;
+            const newB = c * b + d;
+            const transformedLower = Math.min(newA, newB);
+            const transformedUpper = Math.max(newA, newB);
+
+            // 更新原始分布显示值
+            aValueOriginal.textContent = a.toFixed(2);
+            bValueOriginal.textContent = b.toFixed(2);
+            probabilityOriginal.textContent = calculateProbability(a, b, a, b).toFixed(3);
+
+            // 更新变换后分布显示值
+            aValueTransformed.textContent = transformedLower.toFixed(2);
+            bValueTransformed.textContent = transformedUpper.toFixed(2);
+            probabilityTransformed.textContent = calculateProbability(transformedLower, transformedUpper, transformedLower, transformedUpper).toFixed(3);
+
+            // 更新原始PDF图表
+            originalPdfChart.data.datasets[0].data = generateOriginalPDFData(a, b);
+            originalPdfChart.data.datasets[1].data = updatePDFHighlight(a, b, a, b);
+            originalPdfChart.update();
+
+            // 更新原始CDF图表
+            originalCdfChart.data.datasets[0].data = generateOriginalCDFData(a, b);
+            originalCdfChart.data.datasets[1].data = updateCDFHighlight(a, b, a, b);
+            originalCdfChart.update();
+
+            // 更新变换后PDF图表
+            transformedPdfChart.data.datasets[0].data = generateTransformedPDFData(a, b, c, d);
+            transformedPdfChart.data.datasets[1].data = updatePDFHighlight(transformedLower, transformedUpper, a, b, true, c, d);
+            transformedPdfChart.update();
+
+            // 更新变换后CDF图表
+            transformedCdfChart.data.datasets[0].data = generateTransformedCDFData(a, b, c, d);
+            transformedCdfChart.data.datasets[1].data = updateCDFHighlight(transformedLower, transformedUpper, a, b, true, c, d);
+            transformedCdfChart.update();
+
+            // 重新渲染MathJax公式以确保动态内容正确显示
+            if (window.MathJax) {
+                MathJax.typeset();
+            }
+        }
+
+        // 添加事件监听
+        aSlider.addEventListener('input', updateAll);
+        bSlider.addEventListener('input', updateAll);
+        cSlider.addEventListener('input', updateAll);
+        dSlider.addEventListener('input', updateAll);
+
+        // 初始化页面
+        window.onload = function () {
+            updateAll();
+            // 初始渲染MathJax
+            if (window.MathJax) {
+                MathJax.typeset();
+            }
+        };
+    </script>
+</body>
+
+</html>
