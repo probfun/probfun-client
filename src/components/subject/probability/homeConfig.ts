@@ -32,19 +32,19 @@ const homeConfig: HomeConfig = {
       title: '第一章',
       description: '第一章主要涉及概率相关的实验。包含的知识点有：概率的基本概念、大数定律、条件概率、事件独立性等。',
       img: '/homePage/C1.png',
-      path: 'dashboard/mindmap/chapter-1',
+      path: '/dashboard/mindmap/chapter-1',
     },
     {
       title: '分布（第二章与第三章）',
       description: '第二章主要涉及各种一维分布相关的实验。包括6种基本分布：二项、泊松、几何、均匀、指数、 正态分布以及分布的对比：二项分布与泊松、正态分布的近似，泊松分布与指数、正态分布的近似。第三章主要涉及各种高维分布相关的实验。',
       img: '/homePage/distribution.png',
-      path: 'dashboard/mindmap/distribution',
+      path: '/dashboard/mindmap/distribution',
     },
     {
       title: '第四章',
       description: '期望检验是统计学中的重要方法，用于分析样本数据与理论预期值之间的差异。通过分组检测，我们可以判断不同组别数据的期望值是否存在显著差异，这在医学研究、质量控制和社会调查等领域有广泛应用。',
       img: '/homePage/group.png',
-      path: 'dashboard/mindmap/chapter-4',
+      path: '/dashboard/mindmap/chapter-4',
 
     },
   ],
