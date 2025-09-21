@@ -13,6 +13,8 @@ const experiments: DrawerItem[] = [
       { title: '阳性检测', icon: 'lucide:flask-conical', route: '/dashboard/experiment/positive-test' },
       { title: '三门问题', icon: 'lucide:flask-conical', route: '/dashboard/experiment/three-doors' },
       { title: '假阳性问题', icon: 'lucide:flask-conical', route: '/dashboard/experiment/false-positive' },
+      { title: '垃圾邮件过滤', icon: 'lucide:flask-conical', route: '/dashboard/experiment/spam-filtering',
+      },
     ],
   },
   {

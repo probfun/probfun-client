@@ -298,6 +298,10 @@ const router = createRouter({
           component: () => import('@/components/experiment/chapter1/MutuallyExclusiveAndIndependent.vue'),
         },
         {
+          path: '/dashboard/experiment/spam-filtering',
+          component: () => import('@/components/experiment/chapter1/SpamFiltering.vue'),
+        },
+        {
           path: '/dashboard/analysis',
           component: AnalysisPanel,
         },

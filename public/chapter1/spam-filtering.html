@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>垃圾邮件过滤器可视化</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7f9;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            margin-top: 20px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.8rem;
+        }
+
+        .subtitle {
+            font-size: 1.4rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .visual-container {
+            flex: 2;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .email-universe {
+            width: 100%;
+            height: 400px;
+            /* 增加高度以容纳更多信息 */
+            background: #f5f7f9;
+            border-radius: 10px;
+            display: flex;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            border: 1px solid #eaeaea;
+        }
+
+        .spam-section {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: rgba(52, 152, 219, 0.25);
+            /* 更柔和的蓝色 */
+            transition: width 0.5s ease;
+        }
+
+        .ham-section {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: rgba(46, 204, 113, 0.25);
+            /* 更柔和的绿色 */
+            transition: width 0.5s ease;
+        }
+
+        .word-in-spam {
+            background: rgba(52, 152, 219, 0.7);
+            /* 更深的蓝色 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: height 0.5s ease;
+            position: relative;
+        }
+
+        .spam-without-word {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0.7;
+        }
+
+        .word-in-ham {
+            background: rgba(46, 204, 113, 0.7);
+            /* 更深的绿色 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: height 0.5s ease;
+            position: relative;
+        }
+
+        .ham-without-word {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0.7;
+        }
+
+        .area-label {
+            font-weight: bold;
+            font-size: 1.1rem;
+            text-align: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 5px;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+
+        .area-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .posterior-display {
+            width: 100%;
+            padding: 25px;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            background: #e8f4fc;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .posterior-value {
+            font-size: 3rem;
+            font-weight: bold;
+            color: rgba(37, 99, 235, 1);
+            margin: 10px 0;
+        }
+
+        .posterior-label {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .controls {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .control-group {
+            width: 100%;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: rgba(37, 99, 235, 1);
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .probability-container {
+            margin-bottom: 20px;
+        }
+
+        .probability-title {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .slider-container {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 8px;
+            background: rgba(37, 99, 235, 1);
+            border-radius: 4px;
+            outline: none;
+            margin: 10px 0;
+        }
+
+        /* Chrome, Safari, Opera滑块样式 */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: #ffffff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(37, 99, 235, 1);
+            transition: all 0.3s ease;
+        }
+
+        /* Firefox滑块样式 */
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #ddd;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* 滑块轨道悬停效果 */
+        input[type="range"]:hover {
+            background: rgba(37, 99, 235, 1);
+        }
+
+        .value-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 14px;
+            color: rgba(37, 99, 235, 1);
+            padding: 0 2px;
+        }
+
+        .value-display span {
+            width: 40px;
+            text-align: center;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            background: #f5f7f9;
+            padding: 8px 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .explanation {
+            background: #f5f7f9;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        p {
+            line-height: 1.7;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .highlight {
+            color: rgba(231, 76, 60, 1);
+            font-weight: bold;
+        }
+
+        .formula-breakdown {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .formula-part {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 200px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .email-universe {
+                height: 300px;
+            }
+
+            .content {
+                flex-direction: column;
+            }
+
+            .area-value {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="content">
+            <div class="visual-container">
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: rgba(52, 152, 219, 0.25);"></div>
+                        <div>垃圾邮件 P(Spam)</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: rgba(52, 152, 219, 0.7);"></div>
+                        <div>P(Spam) × P(Word|Spam) = A</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: rgba(46, 204, 113, 0.25);"></div>
+                        <div>正常邮件 P(Ham)</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: rgba(46, 204, 113, 0.7);"></div>
+                        <div>P(Ham) × P(Word|Ham) = B</div>
+                    </div>
+                </div>
+
+                <div class="email-universe">
+                    <div class="spam-section" id="spamSection" style="width: 30%;">
+                        <div class="word-in-spam" id="wordInSpam" style="height: 40%;">
+                            <div class="area-label">A = </div>
+                            <div class="area-value" id="areaAValue">0.120</div>
+                        </div>
+                        <div class="spam-without-word">
+                            <div class="area-label">垃圾邮件中不含特定词</div>
+                        </div>
+                    </div>
+
+                    <div class="ham-section" id="hamSection" style="width: 70%;">
+                        <div class="word-in-ham" id="wordInHam" style="height: 10%;">
+                            <div class="area-label">B =</div>
+                            <div class="area-value" id="areaBValue">0.070</div>
+                        </div>
+                        <div class="ham-without-word">
+                            <div class="area-label">正常邮件中不含特定词</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="posterior-display" id="posteriorDisplay">
+                    <div class="posterior-label">后验概率 P(Spam|Word)</div>
+                    <div id="posteriorFormula">= A / (A + B) = (0.12 / (0.12 + 0.07))</div>
+                    <div class="posterior-value" id="posteriorValue">63.2%</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <h2>先验概率控制</h2>
+
+                    <div class="probability-container">
+                        <div class="probability-title">
+                            <span>垃圾邮件先验概率 P(Spam)</span>
+                            <span id="priorSpamValue">0.30</span>
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" id="priorSpam" min="0.01" max="0.99" step="0.01" value="0.30">
+                            <div class="value-display">
+                                <span>0%</span>
+                                <span>100%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h2>似然概率控制</h2>
+
+                    <div class="probability-container">
+                        <div class="probability-title">
+                            <span>垃圾邮件似然概率 P(Word|Spam)</span>
+                            <span id="likelihoodSpamValue">0.40</span>
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" id="likelihoodSpam" min="0.01" max="1" step="0.01" value="0.40">
+                            <div class="value-display">
+                                <span>0%</span>
+                                <span>100%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="probability-container">
+                        <div class="probability-title">
+                            <span>正常邮件似然概率 P(Word|Ham)</span>
+                            <span id="likelihoodHamValue">0.60</span>
+                        </div>
+                        <div class="slider-container">
+                            <input type="range" id="likelihoodHam" min="0.01" max="1" step="0.01" value="0.60">
+                            <div class="value-display">
+                                <span>0%</span>
+                                <span>100%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const priorSpamSlider = document.getElementById('priorSpam');
+        const likelihoodSpamSlider = document.getElementById('likelihoodSpam');
+        const likelihoodHamSlider = document.getElementById('likelihoodHam');
+
+        const priorSpamValue = document.getElementById('priorSpamValue');
+        const likelihoodSpamValue = document.getElementById('likelihoodSpamValue');
+        const likelihoodHamValue = document.getElementById('likelihoodHamValue');
+
+        const spamSection = document.getElementById('spamSection');
+        const hamSection = document.getElementById('hamSection');
+        const wordInSpam = document.getElementById('wordInSpam');
+        const wordInHam = document.getElementById('wordInHam');
+
+        const posteriorValue = document.getElementById('posteriorValue');
+        const posteriorFormula = document.getElementById('posteriorFormula');
+        const areaAValue = document.getElementById('areaAValue');
+        const areaBValue = document.getElementById('areaBValue');
+
+        // 初始化函数
+        function updateVisualization() {
+            // 获取当前滑块值
+            const priorSpam = parseFloat(priorSpamSlider.value);
+            const likelihoodSpam = parseFloat(likelihoodSpamSlider.value);
+            const likelihoodHam = parseFloat(likelihoodHamSlider.value);
+            const priorHam = 1 - priorSpam;
+
+            // 更新显示值
+            priorSpamValue.textContent = priorSpam.toFixed(2);
+            likelihoodSpamValue.textContent = likelihoodSpam.toFixed(2);
+            likelihoodHamValue.textContent = likelihoodHam.toFixed(2);
+
+            // 更新先验概率区域
+            spamSection.style.width = (priorSpam * 100) + '%';
+            hamSection.style.width = (priorHam * 100) + '%';
+
+            // 更新似然概率区域
+            wordInSpam.style.height = (likelihoodSpam * 100) + '%';
+            wordInHam.style.height = (likelihoodHam * 100) + '%';
+
+            // 计算面积A和B
+            const A = likelihoodSpam * priorSpam;
+            const B = likelihoodHam * priorHam;
+            const posterior = A / (A + B);
+
+            // 更新面积显示（直接显示在面积区域中）
+            areaAValue.textContent = A.toFixed(3);
+            areaBValue.textContent = B.toFixed(3);
+
+            // 更新后验概率显示
+            posteriorValue.textContent = (posterior * 100).toFixed(1) + '%';
+            posteriorFormula.textContent = `= A / (A + B) = (${A.toFixed(3)} / (${A.toFixed(3)} + ${B.toFixed(3)}))`;
+
+            // 更新后验区域的背景颜色
+            const red = Math.min(255, Math.floor(37 + 194 * posterior));
+            const green = Math.min(255, Math.floor(99 + 136 * (1 - posterior)));
+            const blue = Math.min(255, Math.floor(235));
+            document.getElementById('posteriorDisplay').style.background = `rgba(${red}, ${green}, ${blue}, 0.1)`;
+        }
+
+        // 添加事件监听器
+        priorSpamSlider.addEventListener('input', updateVisualization);
+        likelihoodSpamSlider.addEventListener('input', updateVisualization);
+        likelihoodHamSlider.addEventListener('input', updateVisualization);
+
+        // 初始化可视化
+        updateVisualization();
+    </script>
+</body>
+
+</html>

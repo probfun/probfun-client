@@ -224,6 +224,7 @@ declare module 'vue' {
     Skeleton: typeof import('./src/components/ui/skeleton/Skeleton.vue')['default']
     Slider: typeof import('./src/components/ui/slider/Slider.vue')['default']
     Sonner: typeof import('./src/components/ui/sonner/Sonner.vue')['default']
+    SpamFiltering: typeof import('./src/components/experiment/chapter1/SpamFiltering.vue')['default']
     StatisticsPanel: typeof import('./src/components/statistics/StatisticsPanel.vue')['default']
     StudentPanel: typeof import('./src/components/user/StudentPanel.vue')['default']
     Tabs: typeof import('./src/components/ui/tabs/Tabs.vue')['default']

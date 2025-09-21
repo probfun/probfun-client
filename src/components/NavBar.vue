@@ -206,6 +206,9 @@ function updateExperiment() {
   else if (path === 'false-positive') {
     title.value = '假阳性问题';
   }
+  else if (path === 'spam-filtering') {
+    title.value = '垃圾邮件过滤';
+  }
   else if (path === 'binomial-distribution') {
     title.value = '二项分布';
     tags.value = ['X~B(n,p)'];
