@@ -5,10 +5,10 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
-ENV NODE_OPTIONS=--max-old-space-size=16384
+ENV NODE_OPTIONS='--max-old-space-size=16384'
 
 RUN apt-get update
-RUN apt-get install ca-certificates
+RUN apt-get install -y ca-certificates
 
 WORKDIR /app
 COPY . .

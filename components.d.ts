@@ -7,7 +7,6 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    1: typeof import('./src/components/experiment/linearAlgebra/1.vue')['default']
     About: typeof import('./src/components/about/About.vue')['default']
     Accordion: typeof import('./src/components/ui/accordion/Accordion.vue')['default']
     AccordionContent: typeof import('./src/components/ui/accordion/AccordionContent.vue')['default']
@@ -151,7 +150,6 @@ declare module 'vue' {
     HoverCardTrigger: typeof import('./src/components/ui/hover-card/HoverCardTrigger.vue')['default']
     Icon: typeof import('./src/components/diagram/Icon.vue')['default']
     Input: typeof import('./src/components/ui/input/Input.vue')['default']
-    InputText: typeof import('primevue/inputtext')['default']
     InsightCard: typeof import('./src/components/analysis/InsightCard.vue')['default']
     IntegrabilityConditions: typeof import('./src/components/experiment/calculusA/IntegrabilityConditions.vue')['default']
     Label: typeof import('./src/components/ui/label/Label.vue')['default']
