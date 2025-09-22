@@ -2,6 +2,7 @@ import { autoAnimatePlugin } from '@formkit/auto-animate/vue';
 import { definePreset } from '@primevue/themes';
 import Aura from '@primevue/themes/aura';
 import * as Sentry from '@sentry/vue';
+import { createSentryPiniaPlugin } from '@sentry/vue';
 import { createPinia } from 'pinia';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import PrimeVue from 'primevue/config';
@@ -12,7 +13,7 @@ import router from '@/router';
 import '@/assets/index.css';
 
 const pinia = createPinia();
-pinia.use(piniaPluginPersistedstate);
+pinia.use(piniaPluginPersistedstate).use(createSentryPiniaPlugin());
 
 const app = createApp(App);
 
@@ -25,10 +26,12 @@ Sentry.init({
   sendDefaultPii: true,
   integrations: [
     Sentry.replayIntegration(),
+    Sentry.replayCanvasIntegration(),
   ],
   // Session Replay
   replaysSessionSampleRate: 1.0, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
   replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
+  normalizeDepth: 10,
 });
 
 const MyPreset = definePreset(Aura, {
