@@ -1,4 +1,4 @@
-import { ChartLine, Dice3, Infinity as InfinityIcon, MoveUpRight, Percent } from 'lucide-vue-next';
+import { ChartLine, Dices, Infinity as InfinityIcon, MoveUpRight, Percent } from 'lucide-vue-next';
 import { experimentConfig as advancedMath1ExperimentConfig } from '@/components/subject/advanced-math-1/experimentConfig.ts';
 import { homeConfig as advancedMath1HomeConfig } from '@/components/subject/advanced-math-1/homeConfig.ts';
 import { experimentConfig as advancedMath2ExperimentConfig } from '@/components/subject/advanced-math-2/experimentConfig.ts';
@@ -55,7 +55,7 @@ const subjectConfig: Record<SubjectId, Subject> = {
     name: '邮趣概率',
     description: '探索不确定世界的规律，适合喜欢逻辑和建模的你',
     color: 'rgba(36,96,226,0.85)',
-    icon: Dice3,
+    icon: Dices,
   },
   'number-theory': {
     id: 'number-theory',
