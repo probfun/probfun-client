@@ -175,6 +175,18 @@ function updateExperiment() {
     title.value = '蒲丰投针';
     tags.value = ['几何概率', '微积分与积分计算', '大数定律', '蒙特卡罗模拟'];
   }
+  else if (path === 'event-relationship') {
+    title.value = '事件的关系与运算';
+  }
+  else if (path === 'discrete-pmf') {
+    title.value = '离散型随机变量的PMF';
+  }
+  else if (path === 'pdf-cdf') {
+    title.value = '概率密度函数与分布函数';
+  }
+  else if (path === 'mutually-exclusive-and-independent') {
+    title.value = '互斥与独立';
+  }
   else if (path === 'three-doors') {
     title.value = '三门问题';
     tags.value = ['条件概率', '乘法公式', '全概率公式', '贝叶斯公式', '蒙特卡罗模拟', '最优策略'];
@@ -190,6 +202,12 @@ function updateExperiment() {
   else if (path === 'positive-test') {
     title.value = '阳性检测';
     tags.value = ['条件概率', '乘法公式', '全概率公式', '贝叶斯公式', '蒙特卡罗模拟'];
+  }
+  else if (path === 'false-positive') {
+    title.value = '假阳性问题';
+  }
+  else if (path === 'spam-filtering') {
+    title.value = '垃圾邮件过滤';
   }
   else if (path === 'binomial-distribution') {
     title.value = '二项分布';
@@ -302,6 +320,42 @@ function updateExperiment() {
   else if (path === 'chi-square-distribution-quantile') {
     title.value = '卡方分布上分位点';
     tags.value = ['卡方分布'];
+  }
+  else if (path === 'sequence-limit') {
+    title.value = '数列的极限';
+  }
+  else if (path === 'function-limit') {
+    title.value = '函数的极限';
+  }
+  else if (path === 'derivative-geometry') {
+    title.value = '导数的几何意义';
+  }
+  else if (path === 'lagrange-mvt') {
+    title.value = '拉格朗日中值定理';
+  }
+  else if (path === 'taylor-expansion') {
+    title.value = '泰勒展开';
+  }
+  else if (path === 'integrability-conditions') {
+    title.value = '可积条件';
+  }
+  else if (path === 'gabriel-horn') {
+    title.value = '加百利喇叭';
+  }
+  else if (path === 'neighborhood') {
+    title.value = '邻域';
+  }
+  else if (path === 'partial-derivative') {
+    title.value = '偏导数';
+  }
+  else if (path === 'total-derivative') {
+    title.value = '全微分';
+  }
+  else if (path === 'linear-equation') {
+    title.value = '二元一次方程组';
+  }
+  else if (path === 'linear-equation-3') {
+    title.value = '三元一次方程组';
   }
   else {
     title.value = useConfigStore().currentSubject.name;

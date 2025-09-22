@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>假阳性问题可视化分析</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7f9;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .controls {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .chart-container {
+            flex: 2;
+            min-width: 500px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: rgba(37, 99, 235, 1);
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eaeaea;
+            text-align: center;
+        }
+
+        .slider-container {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 8px;
+            background: rgba(37, 99, 235, 1);
+            border-radius: 4px;
+            outline: none;
+        }
+
+        /* Chrome, Safari, Opera滑块样式 */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: #ffffff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(37, 99, 235, 1);
+            transition: all 0.3s ease;
+        }
+
+        /* Firefox滑块样式 */
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #ddd;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* 滑块轨道悬停效果 */
+        input[type="range"]:hover {
+            background: rgba(37, 99, 235, 1);
+        }
+
+        .value-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 14px;
+            color: rgba(37, 99, 235, 1);
+            padding: 0 2px;
+        }
+
+        .value-display span {
+            width: 25px;
+            text-align: center;
+        }
+
+        .result-box {
+            background: #e8f4fc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: rgba(37, 99, 235, 1);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .probability-display {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: rgba(231, 76, 60, 1);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="controls">
+            <h2>参数调整</h2>
+
+            <div class="slider-container">
+                <label for="prevalence">疾病发病率: <span id="prevalence-value">0.1</span>%</label>
+                <input type="range" id="prevalence" min="0.01" max="10" step="0.01" value="0.1">
+                <div class="value-display">
+                    <span>0.01%</span>
+                    <span>10%</span>
+                </div>
+            </div>
+
+            <div class="slider-container">
+                <label for="sensitivity">检测灵敏度: <span id="sensitivity-value">99</span>%</label>
+                <input type="range" id="sensitivity" min="80" max="100" step="0.1" value="99">
+                <div class="value-display">
+                    <span>80%</span>
+                    <span>100%</span>
+                </div>
+            </div>
+
+            <div class="slider-container">
+                <label for="specificity">检测特异度: <span id="specificity-value">95</span>%</label>
+                <input type="range" id="specificity" min="80" max="100" step="0.1" value="95">
+                <div class="value-display">
+                    <span>80%</span>
+                    <span>100%</span>
+                </div>
+            </div>
+
+            <div class="slider-container">
+                <label for="iterations">检测迭代次数: <span id="iterations-value">4</span></label>
+                <input type="range" id="iterations" min="1" max="10" step="1" value="4">
+                <div class="value-display">
+                    <span>1</span>
+                    <span>10</span>
+                </div>
+            </div>
+
+            <div class="result-box">
+                <h3>当前参数下的结果</h3>
+                <p>一次检测后患病概率: <span id="result-one" class="probability-display">1.94%</span></p>
+                <p>所有检测均为阳性后的患病概率: <span id="result-all" class="probability-display">99.35%</span></p>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h2>检测迭代对患病概率的影响</h2>
+            <canvas id="probabilityChart"></canvas>
+
+            <h2>详细数据</h2>
+            <table id="results-table">
+                <thead>
+                    <tr>
+                        <th>检测次数</th>
+                        <th>阳性结果数</th>
+                        <th>患病概率</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 表格内容将通过JavaScript动态生成 -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const prevalenceSlider = document.getElementById('prevalence');
+        const sensitivitySlider = document.getElementById('sensitivity');
+        const specificitySlider = document.getElementById('specificity');
+        const iterationsSlider = document.getElementById('iterations');
+
+        const prevalenceValue = document.getElementById('prevalence-value');
+        const sensitivityValue = document.getElementById('sensitivity-value');
+        const specificityValue = document.getElementById('specificity-value');
+        const iterationsValue = document.getElementById('iterations-value');
+
+        const resultOne = document.getElementById('result-one');
+        const resultAll = document.getElementById('result-all');
+        const resultsTable = document.getElementById('results-table').querySelector('tbody');
+
+        // 初始化图表
+        const ctx = document.getElementById('probabilityChart').getContext('2d');
+        let probabilityChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: '患病概率',
+                    data: [],
+                    borderColor: 'rgba(37, 99, 235, 1)',
+                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function (value) {
+                                return value + '%';
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: '患病概率'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: '检测次数'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '连续检测阳性对患病概率的影响'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return `患病概率: ${context.parsed.y.toFixed(2)}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // 更新显示的值
+        function updateDisplayValues() {
+            prevalenceValue.textContent = prevalenceSlider.value;
+            sensitivityValue.textContent = sensitivitySlider.value;
+            specificityValue.textContent = specificitySlider.value;
+            iterationsValue.textContent = iterationsSlider.value;
+        }
+
+        // 计算患病概率
+        function calculateProbabilities() {
+            const prevalence = parseFloat(prevalenceSlider.value) / 100; // 转换为小数
+            const sensitivity = parseFloat(sensitivitySlider.value) / 100;
+            const specificity = parseFloat(specificitySlider.value) / 100;
+            const iterations = parseInt(iterationsSlider.value);
+
+            const falsePositiveRate = 1 - specificity;
+
+            // 计算一次检测后的概率
+            const numeratorOne = sensitivity * prevalence;
+            const denominatorOne = (sensitivity * prevalence) + (falsePositiveRate * (1 - prevalence));
+            const probabilityOne = (numeratorOne / denominatorOne) * 100;
+
+            // 计算多次检测后的概率
+            const probabilities = [];
+            const labels = [];
+            const tableData = [];
+
+            for (let i = 1; i <= iterations; i++) {
+                const numerator = Math.pow(sensitivity, i) * prevalence;
+                const denominator = numerator + (Math.pow(falsePositiveRate, i) * (1 - prevalence));
+                const probability = (numerator / denominator) * 100;
+
+                probabilities.push(probability);
+                labels.push(i);
+
+                tableData.push({
+                    tests: i,
+                    positives: i,
+                    probability: probability
+                });
+            }
+
+            // 更新结果显示
+            resultOne.textContent = probabilityOne.toFixed(2) + '%';
+            resultAll.textContent = probabilities[probabilities.length - 1].toFixed(2) + '%';
+
+            // 更新图表
+            probabilityChart.data.labels = labels;
+            probabilityChart.data.datasets[0].data = probabilities;
+            probabilityChart.update();
+
+            // 更新表格
+            updateTable(tableData);
+        }
+
+        // 更新表格数据
+        function updateTable(data) {
+            resultsTable.innerHTML = '';
+
+            data.forEach(item => {
+                const row = document.createElement('tr');
+
+                const testsCell = document.createElement('td');
+                testsCell.textContent = item.tests;
+
+                const positivesCell = document.createElement('td');
+                positivesCell.textContent = item.positives;
+
+                const probabilityCell = document.createElement('td');
+                probabilityCell.textContent = item.probability.toFixed(2) + '%';
+
+                row.appendChild(testsCell);
+                row.appendChild(positivesCell);
+                row.appendChild(probabilityCell);
+
+                resultsTable.appendChild(row);
+            });
+        }
+
+        // 添加事件监听器
+        prevalenceSlider.addEventListener('input', function () {
+            updateDisplayValues();
+            calculateProbabilities();
+        });
+
+        sensitivitySlider.addEventListener('input', function () {
+            updateDisplayValues();
+            calculateProbabilities();
+        });
+
+        specificitySlider.addEventListener('input', function () {
+            updateDisplayValues();
+            calculateProbabilities();
+        });
+
+        iterationsSlider.addEventListener('input', function () {
+            updateDisplayValues();
+            calculateProbabilities();
+        });
+
+        // 初始化
+        updateDisplayValues();
+        calculateProbabilities();
+    </script>
+</body>
+
+</html>
