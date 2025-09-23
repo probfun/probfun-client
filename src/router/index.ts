@@ -27,6 +27,8 @@ import FavoritePanel from '@/components/favorite/FavoritePanel.vue';
 import HomePage from '@/components/home/HomePage.vue';
 import AuthPage from '@/pages/AuthPage.vue';
 import DashBoard from '@/pages/DashBoard.vue';
+import MathematicianDetail from '@/pages/mathematician/MathematicianDetail.vue';
+import Mathematicians from '@/pages/mathematician/Mathematicians.vue';
 import { isVisitor } from '@/utils/auth.ts';
 
 const router = createRouter({
@@ -304,6 +306,14 @@ const router = createRouter({
         {
           path: '/dashboard/mindmap/chapter-4',
           component: Chatper4Diagram,
+        },
+        {
+          path: '/dashboard/mathematicians',
+          component: Mathematicians,
+        },
+        {
+          path: '/dashboard/mathematicians/:name',
+          component: MathematicianDetail,
         },
         {
           path: '/dashboard/about',

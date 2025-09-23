@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
 import { Lightbulb, SearchCheck, User } from 'lucide-vue-next';
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { homeConfigs } from '@/components/subject/configs.ts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
+import { mathematicians as mathematicianData } from '@/data/mathematicians';
 import { useConfigStore } from '@/store';
 
 const configStore = useConfigStore();
 const mindMaps = homeConfigs[configStore.currentSubjectId].mindMaps;
+const experiments = homeConfigs[configStore.currentSubjectId].experiments;
 
 // 每周一思（正式内容）
 const weeklyThoughts = ref([
@@ -20,220 +21,14 @@ const weeklyThoughts = ref([
       '2）概率是客观存在还是主观建构？',
     ],
   },
-  {
-    title: '第2周 每周一思',
-    description: [
-      '尽管特征独立性假设常被违背，但其计算效率成就了实用价值。这体现怀特海“错置具体性谬误”（Fallacy of Misplaced Concreteness）的智慧——以简化的模型逼近复杂现实，恰是科学进步的阶梯。',
-      '但是独立变量可能通过隐藏变量间接关联。例如，草原火灾与冰淇淋销量统计独立，但高温作为共同原因使其在条件化后显现依赖。这呼应休谟对“恒常联结”（constant conjunction）因果观的批判——独立性可能掩盖更深层的因果网。',
-      '也就是当 P(A∩B)=P(A)P(B) 在测度论层面成立时，是否可能隐藏着拓扑结构上的深层关联？感兴趣的同学可以查阅 Pearl 的《因果论:模型、推理和推断》。',
-    ],
-  },
 ]);
 
 // 数学家轮播（示例占位）
-interface Mathematician {
-  name: string;
-  enName?: string;
-  lifespan: string;
-  country: string;
-  field: string;
-  story: string;
-}
-const mathematicians = ref<Mathematician[]>([
-  {
-    name: '吉罗拉莫·卡尔达诺',
-    enName: 'Gerolamo Cardano',
-    lifespan: '1501-1576',
-    country: '意大利',
-    field: '概率论：早期概率思想、赌博问题研究。',
-    story: '医生、赌徒，著有《论赌博游戏》，一生充满戏剧性，曾因债务和儿子犯罪入狱。',
-  },
-  {
-    name: '布莱兹·帕斯卡',
-    enName: 'Blaise Pascal',
-    lifespan: '1623-1662',
-    country: '法国',
-    field: '概率论：与费马通信奠定概率论基础。',
-    story: '神学家、哲学家、数学家。18岁发明机械计算器，后因健康问题放弃数学投身神学，“帕斯卡赌注”闻名。',
-  },
-  {
-    name: '皮埃尔·德·费马',
-    enName: 'Pierre de Fermat',
-    lifespan: '1607-1665',
-    country: '法国',
-    field: '概率论：与帕斯卡通信解决“点数分配”问题，奠定概率论基础。',
-    story: '业余数学家之王，职业是律师。在数论（费马大定理）、微积分、光学上均有杰出贡献。',
-  },
-  {
-    name: '克里斯蒂安·惠更斯',
-    enName: 'Christiaan Huygens',
-    lifespan: '1629-1695',
-    country: '荷兰',
-    field: '概率论：1657年发表《论赌博中的计算》，最早的概率论著作。',
-    story: '物理学家、天文学家、数学家。发现土星光环，发明摆钟，研究光学。性格温和，长期从事科学工作。',
-  },
-  {
-    name: '雅各布·伯努利',
-    enName: 'Jacob Bernoulli',
-    lifespan: '1654-1705',
-    country: '瑞士',
-    field: '概率论：《猜度术》、大数定律、伯努利试验。',
-    story: '花费20年证明大数定律，要求在墓碑上刻对数螺线，但被刻错为阿基米德螺线。',
-  },
-  {
-    name: '亚伯拉罕·棣莫弗',
-    enName: 'Abraham de Moivre',
-    lifespan: '1667-1754',
-    country: '法国-英国',
-    field: '概率论：《机遇论》、正态分布曲线初步形式、棣莫弗公式、n!近似公式。',
-    story: '以担任家庭教师和保险顾问为生。传说中常用睡眠时间增加来计算自己的寿命。',
-  },
-  {
-    name: '托马斯·贝叶斯',
-    enName: 'Thomas Bayes',
-    lifespan: '1702-1761',
-    country: '英国',
-    field: '概率论/统计：贝叶斯定理、逆概率。',
-    story: '神职人员、英国皇家学会会员。其定理在其去世后由Richard Price整理发表，开创了贝叶斯统计学派。',
-  },
-  {
-    name: '皮埃尔-西蒙·拉普拉斯',
-    enName: 'Pierre-Simon Laplace',
-    lifespan: '1749-1827',
-    country: '法国',
-    field: '概率论/统计：《概率的分析理论》、拉普拉斯变换、中心极限定理的早期证明。',
-    story: '天体力学奠基人，被誉为“法兰西牛顿”。曾担任拿破仑的老师，但后来转向支持波旁王朝。',
-  },
-  {
-    name: '卡尔·弗里德里希·高斯',
-    enName: 'Carl Friedrich Gauss',
-    lifespan: '1777-1855',
-    country: '德国',
-    field: '概率论/统计：正态分布（高斯分布）、最小二乘法、误差理论。',
-    story: '数学王子，在数论、代数、几何、物理等多个领域有卓越贡献。童年时即展现出非凡的计算天赋。',
-  },
-  {
-    name: '西莫恩·德尼·泊松',
-    enName: 'Siméon-Denis Poisson',
-    lifespan: '1781-1840',
-    country: '法国',
-    field: '概率论：泊松分布、泊松过程、推广大数定律。',
-    story: '拉普拉斯的学生。名字“泊松”在法语中意为“鱼”。他曾说：“人生只有两件美好的事：发现数学和教授数学。”',
-  },
-  {
-    name: '帕夫努蒂·切比雪夫',
-    enName: 'Pafnuty Chebyshev',
-    lifespan: '1821-1894',
-    country: '俄国',
-    field: '概率论：切比雪夫不等式、随机变量序列的大数定律。',
-    story: '彼得堡数学学派奠基人。注重数学的实际应用，研究机械理论。学生包括马尔可夫和李雅普诺夫。',
-  },
-  {
-    name: '弗朗西斯·高尔顿',
-    enName: 'Francis Galton',
-    lifespan: '1822-1911',
-    country: '英国',
-    field: '统计：回归（Regression）、相关（Correlation）、优生学。',
-    story: '查尔斯·达尔文的表弟。探险家、科学家，痴迷于测量和计数一切事物（从祈祷效率到美女分布地图）。',
-  },
-  {
-    name: '安德雷·马尔可夫',
-    enName: 'Andrey Markov',
-    lifespan: '1856-1922',
-    country: '俄国',
-    field: '概率论/随机过程：马尔可夫链、马尔可夫过程。',
-    story: '切比雪夫的学生。性格倔强，曾为了证明独立性而研究普希金诗剧中元音字母的序列。',
-  },
-  {
-    name: '卡尔·皮尔逊',
-    enName: 'Karl Pearson',
-    lifespan: '1857-1936',
-    country: '英国',
-    field: '统计：卡方检验、拟合优度、矩估计法、将生物计量学数学化。',
-    story: '被称为“数理统计学之父”。原是应用数学家和中世纪德国历史学者，后受高尔顿影响转向统计。与费歇尔论战激烈。',
-  },
-  {
-    name: '威廉·戈塞',
-    enName: 'William Gosset',
-    lifespan: '1876-1937',
-    country: '英国',
-    field: '统计：t-分布、t-检验（小样本推断）。',
-    story: '任职于吉尼斯啤酒厂，因公司禁止员工公开发表研究成果，以“Student”为笔名发表论文，故称“学生氏t检验”。',
-  },
-  {
-    name: '罗纳德·费歇尔',
-    enName: 'Ronald Fisher',
-    lifespan: '1890-1962',
-    country: '英国',
-    field: '统计：方差分析（ANOVA）、最大似然估计、实验设计、费歇尔信息。',
-    story: '现代统计学之父之一。在农业实验站工作期间发展了众多统计方法。与皮尔逊和奈曼论战不休。',
-  },
-  {
-    name: '诺伯特·维纳',
-    enName: 'Norbert Wiener',
-    lifespan: '1894-1964',
-    country: '美国',
-    field: '随机过程：维纳过程（布朗运动的数学模型）。',
-    story: '神童，18岁获哈佛博士学位。创立控制论（Cybernetics）。性格古怪，健忘，是许多教授轶事的主角。',
-  },
-  {
-    name: '安德雷·柯尔莫戈罗夫',
-    enName: 'Andrey Kolmogorov',
-    lifespan: '1903-1987',
-    country: '苏联',
-    field: '概率论/随机过程：《概率论基础》（1933）、概率论公理化、现代概率论奠基人。',
-    story: '20世纪最杰出数学家之一，涉猎广泛。曾在历史学和数学间选择，因历史学需要“五个证明”而转投数学。',
-  },
-  {
-    name: '耶日·奈曼',
-    enName: 'Jerzy Neyman',
-    lifespan: '1894-1981',
-    country: '波兰-美国',
-    field: '统计：与皮尔逊之子Egon Pearson合作提出假设检验的严格数学理论（奈曼-皮尔逊引理）、置信区间。',
-    story: '因战争移居英国后赴美，在伯克利创立了世界一流的统计学系。与费歇尔进行了著名的论战。',
-  },
-  {
-    name: '保罗·莱维',
-    enName: 'Paul Lévy',
-    lifespan: '1886-1971',
-    country: '法国',
-    field: '概率论/随机过程：莱维过程、稳定分布，是随机过程理论的先驱之一。',
-    story: '法国概率学派的中心人物。其工作起初未被充分认识，后因伊藤清和柯尔莫哥罗夫的工作而显重要性。',
-  },
-  {
-    name: '伊藤清',
-    enName: 'Kiyosi Itô',
-    lifespan: '1915-2008',
-    country: '日本',
-    field: '随机过程：伊藤积分、伊藤引理，为随机分析（随机微积分）奠基。',
-    story: '其理论是现代金融数学（如布莱克-斯科尔斯期权定价模型）的核心基础。从一条简单而又深刻的思路出发，构建了庞大体系。',
-  },
-  {
-    name: '许宝騄',
-    lifespan: '1910-1970',
-    country: '中国',
-    field: '中国数理统计学和概率论研究的先驱和奠基人。在多元统计分析、假设检验理论（如似然比检验的优良性）、概率论极限理论等方面有奠基性贡献。发展了矩阵论在统计学中的应用。',
-    story: '出身杭州名门，生于北京。1936年赴伦敦大学学院师从统计学家J. Neyman，1940年获科学博士学位后毅然回国，在西南联大等校任教。文革期间身心遭受严重摧残，1970年病逝时床头仍散落未完成的手稿。毕生未婚，将一切奉献给科学和教育事业。其学术成就直至晚年才被国际统计学界重新广泛认识。',
-  },
-  {
-    name: '王梓坤',
-    lifespan: '1929-2024',
-    country: '中国',
-    field: '中国概率论研究的先驱和主要领导者之一，尤其在马尔可夫过程（生灭过程）方面成果卓著。首创了“随机过程轨道的极限过渡”构造法。也是“教师节”的首倡者。',
-    story: '出生于江西吉安农家，幼年丧父，家境贫寒。靠奖学金和亲友资助完成学业。1955年赴莫斯科大学深造，师从数学大师柯尔莫哥洛夫[A.N.Kolmogorov]。在苏联留学期间异常刻苦，甚至“终生不复鼓琴”以专心学术。1984年首次倡议设立“教师节”，并于同年出任北京师范大学校长。',
-  },
-  {
-    name: '陈希孺',
-    lifespan: '1934-2005',
-    country: '中国',
-    field: '数理统计学家。在线性模型、U统计量、非参数统计（特别是回归估计和判别）等领域有深刻研究和国际影响的成果。是中国线性回归大样本理论的开拓者之一。',
-    story: '出生于湖南望城农民家庭。1956年毕业于武汉大学。曾赴波兰科学院进修。“反右”和“文革”期间科研一度中断并受到不公正待遇。1980年参与创建中国概率统计学会并任首任理事长。治学严谨，著述等身，培养了大批优秀的统计学人才，包括中国首批18名博士中的3位。',
-  },
-]);
+type Mathematician = typeof mathematicianData[number];
+const mathematicians = ref<Mathematician[]>(mathematicianData);
 
 const currentMathematicianIndex = ref(0);
 const currentMathematician = computed(() => mathematicians.value[currentMathematicianIndex.value]);
-const showMathematician = ref(false);
 
 let timer: number | undefined;
 function startMathematicianTimer() {
@@ -256,14 +51,6 @@ onMounted(() => {
 onUnmounted(() => {
   stopMathematicianTimer();
 });
-watch(showMathematician, (open) => {
-  if (open) {
-    stopMathematicianTimer();
-  }
-  else {
-    startMathematicianTimer();
-  }
-});
 
 // 判断是否替换为“数学家”方块：匹配第四章思维导图
 function isMathBlock(map: any) {
@@ -278,30 +65,93 @@ function isMathBlock(map: any) {
 
 <template>
   <div class="!overflow-y-auto overflow-x-hidden flex flex-col gap-6 p-3">
-    <!-- 每周一思 -->
+    <!-- 热门实验 + 右侧每周一思（第1周） -->
     <section>
-      <div class="mb-2 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <span class="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20">
-            <Lightbulb class="h-4 w-4 text-primary" />
-          </span>
-          <span class="text-lg font-bold text-primary to-primary/60 bg-clip-text">每周一思</span>
-        </div>
-        <span class="ml-3 h-px flex-1 bg-gradient-to-r from-primary/40 to-transparent" />
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        <Card v-for="(q, idx) in weeklyThoughts" :key="idx" class="h-full flex flex-col">
-          <CardHeader class="p-4 pb-2">
-            <CardTitle class="text-base">
-              {{ q.title }}
-            </CardTitle>
-          </CardHeader>
-          <CardContent class="px-4 pb-4 pt-0 space-y-3">
-            <div v-for="(item, i) in q.description" :key="i">
-              <Label class="leading-relaxed font-normal text-muted-foreground">{{ item }}</Label>
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-3">
+        <!-- 左侧：热门实验 -->
+        <div class="lg:col-span-3">
+          <div class="mb-2 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20">
+                <Icon icon="lucide:flask-conical" class="h-4 w-4 text-primary" />
+              </span>
+              <span class="text-lg font-bold text-primary to-primary/60 bg-clip-text">热门实验</span>
             </div>
-          </CardContent>
-        </Card>
+            <span class="ml-3 h-px flex-1 bg-gradient-to-r from-primary/40 to-transparent" />
+          </div>
+          <div
+            v-if="experiments && experiments.length"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"
+          >
+            <router-link
+              v-for="(exp, i) in experiments.slice(0, 3)"
+              :key="i"
+              :to="exp.path"
+              class="group block h-full"
+            >
+              <Card class="h-full flex flex-col transition-all hover:shadow-md hover:border-primary">
+                <CardHeader class="p-4 pb-2">
+                  <CardTitle class="text-base">
+                    {{ exp.title }}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent class="px-4 pb-4 pt-0 space-y-3">
+                  <div class="w-full aspect-[16/9] overflow-hidden rounded-md border border-primary/40">
+                    <img
+                      class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                      :src="exp.img"
+                      :alt="exp.title"
+                      loading="lazy"
+                    >
+                  </div>
+                  <Label class="line-clamp-3 leading-relaxed font-normal text-muted-foreground">
+                    {{ exp.description }}
+                  </Label>
+                </CardContent>
+              </Card>
+            </router-link>
+          </div>
+          <div
+            v-else
+            class="flex items-center justify-center rounded-md border border-dashed border-primary/30 bg-muted/20 h-60 text-muted-foreground"
+          >
+            <div class="flex items-center gap-2">
+              <Icon icon="lucide:info" class="h-4 w-4" />
+              <span>本课程的实验还在开发中哦</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右侧：每周一思（仅第1周） -->
+        <div class="lg:col-span-1">
+          <div class="mb-2 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20">
+                <Lightbulb class="h-4 w-4 text-primary" />
+              </span>
+              <span class="text-lg font-bold text-primary to-primary/60 bg-clip-text">每周一思</span>
+            </div>
+            <span class="ml-3 h-px flex-1 bg-gradient-to-r from-primary/40 to-transparent" />
+          </div>
+          <Card v-if="weeklyThoughts && weeklyThoughts.length" class="h-full flex flex-col">
+            <CardHeader class="p-4 pb-2">
+              <CardTitle class="text-base">
+                {{ weeklyThoughts[0].title }}
+              </CardTitle>
+            </CardHeader>
+            <CardContent class="px-4 pb-4 pt-0 space-y-3">
+              <div v-for="(item, i) in weeklyThoughts[0].description" :key="i">
+                <Label class="leading-relaxed font-normal text-muted-foreground">{{ item }}</Label>
+              </div>
+            </CardContent>
+          </Card>
+          <div v-else class="flex items-center justify-center rounded-md border border-dashed border-primary/30 bg-muted/20 h-40 text-muted-foreground">
+            <div class="flex items-center gap-2">
+              <Icon icon="lucide:info" class="h-4 w-4" />
+              <span>本周还没有内容哦</span>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -321,7 +171,7 @@ function isMathBlock(map: any) {
       >
         <template v-for="(map, index) in mindMaps" :key="index">
           <!-- 数学家方块（替换第四章） -->
-          <div v-if="isMathBlock(map)" class="group block h-full cursor-pointer" @click="showMathematician = true">
+          <router-link v-if="isMathBlock(map)" class="group block h-full cursor-pointer" to="/dashboard/mathematicians">
             <Card class="h-full flex flex-col transition-all hover:shadow-md hover:border-primary">
               <CardHeader class="p-4 pb-2">
                 <CardTitle class="text-base">
@@ -329,33 +179,37 @@ function isMathBlock(map: any) {
                 </CardTitle>
               </CardHeader>
               <CardContent class="px-4 pb-4 pt-0 space-y-3">
-                <div class="w-full aspect-[16/9] overflow-hidden rounded-md border border-primary/40 flex items-center justify-center bg-muted/30">
-                  <div class="flex items-center gap-2 text-primary">
-                    <User class="h-5 w-5" />
-                    <span class="font-medium">{{ currentMathematician.name }}<span v-if="currentMathematician.enName"> ({{ currentMathematician.enName }})</span>（{{ currentMathematician.lifespan }}）</span>
+                <div class="w-full aspect-[16/9] overflow-hidden rounded-md border border-primary/40 flex">
+                  <!-- 左侧预留图片占位（约 1/3） -->
+                  <div class="w-1/3 bg-muted/30 border-r border-primary/20 flex items-center justify-center text-xs text-muted-foreground">
+                    待补图
                   </div>
-                </div>
-                <div class="space-y-1 text-sm text-muted-foreground">
-                  <div class="font-semibold">
-                    <span>{{ currentMathematician.name }}</span>
-                    <span v-if="currentMathematician.enName" class="ml-1 text-xs text-muted-foreground">({{ currentMathematician.enName }})</span>
-                  </div>
-                  <div>
-                    <span class="font-medium">生卒：</span>{{ currentMathematician.lifespan }}
-                  </div>
-                  <div>
-                    <span class="font-medium">国家：</span>{{ currentMathematician.country }}
-                  </div>
-                  <div>
-                    <span class="font-medium">领域：</span>{{ currentMathematician.field }}
-                  </div>
-                  <div class="pt-1 text-[13px] leading-relaxed">
-                    {{ currentMathematician.story }}
+                  <!-- 右侧基础信息（当前轮播中的数学家） -->
+                  <div class="flex-1 p-3">
+                    <div class="flex items-center gap-2 text-primary">
+                      <User class="h-5 w-5" />
+                      <span class="font-medium">{{ currentMathematician.name }}<span v-if="currentMathematician.enName"> ({{ currentMathematician.enName }})</span>（{{ currentMathematician.lifespan }}）</span>
+                    </div>
+                    <div class="mt-2 space-y-1 text-sm text-muted-foreground">
+                      <div class="font-semibold">
+                        <span>{{ currentMathematician.name }}</span>
+                        <span v-if="currentMathematician.enName" class="ml-1 text-xs text-muted-foreground">({{ currentMathematician.enName }})</span>
+                      </div>
+                      <div>
+                        <span class="font-medium">生卒：</span>{{ currentMathematician.lifespan }}
+                      </div>
+                      <div>
+                        <span class="font-medium">国家：</span>{{ currentMathematician.country }}
+                      </div>
+                      <div>
+                        <span class="font-medium">领域：</span>{{ currentMathematician.field }}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
-          </div>
+          </router-link>
 
           <!-- 常规思维导图卡片 -->
           <router-link v-else :to="map.path" class="group block h-full">
@@ -394,27 +248,5 @@ function isMathBlock(map: any) {
     </section>
   </div>
 
-  <!-- 数学家弹窗 -->
-  <Dialog v-model:open="showMathematician">
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>
-          <span class="font-bold text-lg">{{ currentMathematician.name }}</span>
-          <span v-if="currentMathematician.enName" class="ml-2 text-base text-muted-foreground">({{ currentMathematician.enName }})</span>
-        </DialogTitle>
-        <DialogDescription>
-          <div class="mb-1 flex flex-wrap gap-x-4 gap-y-1 text-sm">
-            <span><span class="font-medium">生卒：</span>{{ currentMathematician.lifespan }}</span>
-            <span><span class="font-medium">国家：</span>{{ currentMathematician.country }}</span>
-          </div>
-          <div class="mb-1 text-sm">
-            <span class="font-medium">领域：</span>{{ currentMathematician.field }}
-          </div>
-          <div class="mt-2 whitespace-pre-line leading-relaxed text-[15px]">
-            {{ currentMathematician.story }}
-          </div>
-        </DialogDescription>
-      </DialogHeader>
-    </DialogContent>
-  </Dialog>
+  <!-- 取消小窗弹窗，改为跳转列表页/详情页 -->
 </template>
