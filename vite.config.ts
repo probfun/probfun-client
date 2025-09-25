@@ -34,16 +34,16 @@ export default defineConfig({
     open: true,
     proxy: {
       '/backend-api/ai': {
-        target: 'wss://fun.prob-mind.online',
+        target: 'wss://umath.cc',
         ws: true,
         changeOrigin: true,
       },
       '/backend-api': {
-        target: 'https://fun.prob-mind.online',
+        target: 'https://umath.cc',
         changeOrigin: true,
       },
       '/media': {
-        target: 'https://fun.prob-mind.online',
+        target: 'https://umath.cc',
         changeOrigin: true,
       },
       '/uploads': {

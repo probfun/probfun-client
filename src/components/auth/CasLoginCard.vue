@@ -17,7 +17,7 @@ const userStore = useUserStore();
 function casLogin() {
   const CAS_SERVER = 'https://auth.bupt.edu.cn/authserver/login';
   // const SERVICE_URL = encodeURIComponent(`${window.location.origin}/callback`);
-  const SERVICE_URL = encodeURIComponent(`http://192.144.199.178/callback`);
+  const SERVICE_URL = encodeURIComponent(`https://umath.cc/callback`);
   window.location.href = `${CAS_SERVER}?service=${SERVICE_URL}`;
 }
 
