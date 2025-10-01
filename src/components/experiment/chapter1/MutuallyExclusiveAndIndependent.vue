@@ -134,7 +134,7 @@ onMounted(() => {
         <iframe
           src="/chapter1/mutually-exclusive-and-independent.html"
           width="100%"
-          height="800px"
+          height="100%"
           frameborder="0"
           class="integration-iframe"
           @load="onHtmlLoad"

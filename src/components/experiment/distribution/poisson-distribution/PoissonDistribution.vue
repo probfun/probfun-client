@@ -50,7 +50,7 @@ onMounted(() => {
         <iframe
           src="/chapter2/poisson-distribution.html"
           width="100%"
-          height="800px"
+          height="100%"
           frameborder="0"
           class="integration-iframe"
           @load="onHtmlLoad"

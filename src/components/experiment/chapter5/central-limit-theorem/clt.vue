@@ -83,7 +83,7 @@ onMounted(() => {
         <iframe
           src="/chapter5/clt.html"
           width="100%"
-          height="800px"
+          height="100%"
           frameborder="0"
           class="rounded-lg shadow-lg"
           @load="onHtmlLoad"

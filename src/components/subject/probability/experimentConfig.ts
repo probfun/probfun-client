@@ -10,7 +10,7 @@ const experiments: DrawerItem[] = [
       { title: '生日问题', icon: 'lucide:flask-conical', route: '/dashboard/experiment/birthday-problem' },
       { title: '蒲丰投针', icon: 'lucide:flask-conical', route: '/dashboard/experiment/buffon' },
       { title: '贝特朗悖论', icon: 'lucide:flask-conical', route: '/dashboard/experiment/bertrand' },
-      { title: '阳性检测', icon: 'lucide:flask-conical', route: '/dashboard/experiment/positive-test' },
+      // { title: '阳性检测', icon: 'lucide:flask-conical', route: '/dashboard/experiment/positive-test' },
       { title: '三门问题', icon: 'lucide:flask-conical', route: '/dashboard/experiment/three-doors' },
       { title: '假阳性问题', icon: 'lucide:flask-conical', route: '/dashboard/experiment/false-positive' },
       { title: '垃圾邮件过滤', icon: 'lucide:flask-conical', route: '/dashboard/experiment/spam-filtering',

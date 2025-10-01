@@ -69,6 +69,9 @@ const router = useRouter();
 const vistorAllowedItem = [
   '主页',
   '目录',
+  '实验目录',
+  '做题目录',
+  '收藏',
 ];
 const sideBarItem = ref<SideBarItem[]>([
   {

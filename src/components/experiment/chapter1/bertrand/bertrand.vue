@@ -86,7 +86,6 @@ function toggleMethod(methodName: MethodName) {
           </CardContent>
         </Card>
 
-        <!-- 右侧：完整嵌入的HTML文件 - 调整宽度 -->
         <div class="md:w-3/4 flex flex-col">
           <iframe
             src="/chapter1/bertrand.html"

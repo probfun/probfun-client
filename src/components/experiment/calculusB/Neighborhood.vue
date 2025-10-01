@@ -54,8 +54,8 @@ $$
       <div class="flex w-full h-full">
         <video
           src="/calculusB/neighborhood.mp4"
-          width="1180"
-          height="750"
+          width="100%"
+          height="100%"
           controls
           style="border: 1px solid #e4e4e4;border-radius: 4px;"
         >

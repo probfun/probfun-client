@@ -110,7 +110,7 @@ onMounted(() => {
         <iframe
           src="/chapter1/false-positive.html"
           width="100%"
-          height="800px"
+          height="100%"
           frameborder="0"
           class="integration-iframe"
           @load="onHtmlLoad"

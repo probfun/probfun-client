@@ -49,7 +49,7 @@ onMounted(() => {
     <template #experiment>
       <div style="width: 100%; height: calc(100% - 60px); padding: 10px;">
         <iframe
-          src="https://www.geogebra.org/calculator/qkt9vhhz?embed" width="1170" height="740" allowfullscreen
+          src="https://www.geogebra.org/calculator/qkt9vhhz?embed" width="100%" height="100%" allowfullscreen
           style="border: 1px solid #e4e4e4; border-radius: 4px;"
           frameborder="0"
         />

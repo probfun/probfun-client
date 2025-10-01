@@ -27,7 +27,7 @@ $$\\lim_{x \\to x_0} f(x) = A \\quad \\text{或} \\quad f(x) \\to A \\ (x \\to x
     <template #experiment>
       <div class="flex w-full h-full">
         <iframe
-          src="https://www.geogebra.org/classic/saqeyxpa?embed" width="1180" height="750" allowfullscreen
+          src="https://www.geogebra.org/classic/saqeyxpa?embed" width="100%" height="100%" allowfullscreen
           style="border: 1px solid #e4e4e4;border-radius: 4px;" frameborder="0"
         />
       </div>

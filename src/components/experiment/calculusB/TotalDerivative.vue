@@ -39,7 +39,7 @@ $$
     <template #experiment>
       <div class="flex w-full h-full">
         <iframe
-          src="https://www.geogebra.org/calculator/cdfabne2?embed" width="1180" height="750" allowfullscreen
+          src="https://www.geogebra.org/calculator/cdfabne2?embed" width="100%" height="100%" allowfullscreen
           style="border: 1px solid #e4e4e4;border-radius: 4px;" frameborder="0"
         />
       </div>
