@@ -25,6 +25,7 @@ import PoissonDistribution from '@/components/experiment/distribution/poisson-di
 import UniformDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
 import FavoritePanel from '@/components/favorite/FavoritePanel.vue';
 import HomePage from '@/components/home/HomePage.vue';
+import WeekThinking from '@/components/thinking/WeekThinking.vue';
 import AuthPage from '@/pages/AuthPage.vue';
 import DashBoard from '@/pages/DashBoard.vue';
 import MathematicianDetail from '@/pages/mathematician/MathematicianDetail.vue';
@@ -314,6 +315,10 @@ const router = createRouter({
         {
           path: '/dashboard/mathematicians/:name',
           component: MathematicianDetail,
+        },
+        {
+          path: '/dashboard/week-thinking',
+          component: WeekThinking,
         },
         {
           path: '/dashboard/about',

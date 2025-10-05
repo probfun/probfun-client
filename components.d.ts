@@ -230,6 +230,7 @@ declare module 'vue' {
     TeacherPanel: typeof import('./src/components/user/TeacherPanel.vue')['default']
     TestPanel: typeof import('./src/components/analysis/TestPanel.vue')['default']
     Textarea: typeof import('./src/components/ui/textarea/Textarea.vue')['default']
+    ThinkingBoard: typeof import('./src/components/thinking/ThinkingBoard.vue')['default']
     ThreeDoors: typeof import('./src/components/experiment/chapter1/ThreeDoors.vue')['default']
     ThreeDoorsDisplay: typeof import('./src/components/experiment/chapter1/three-doors/ThreeDoorsDisplay.vue')['default']
     ThreeNormalDiagram: typeof import('./src/components/experiment/chapter3/normal-distribution/threeNormalDiagram.vue')['default']
@@ -253,5 +254,6 @@ declare module 'vue' {
     UniformDiagram: typeof import('./src/components/experiment/distribution/UniformDiagram.vue')['default']
     UniformDistribution: typeof import('./src/components/experiment/distribution/UniformDistribution.vue')['default']
     Vector: typeof import('./src/components/experiment/chapter6/Vector.vue')['default']
+    WeekThinking: typeof import('./src/components/thinking/WeekThinking.vue')['default']
   }
 }

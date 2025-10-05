@@ -3,6 +3,7 @@ import { Icon } from '@iconify/vue';
 import { Lightbulb, SearchCheck, User } from 'lucide-vue-next';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { homeConfigs } from '@/components/subject/configs.ts';
+import { weeklyThoughts } from '@/components/thinking/thinkingConfig';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { mathematicians as mathematicianData } from '@/data/mathematicians';
@@ -11,17 +12,6 @@ import { useConfigStore } from '@/store';
 const configStore = useConfigStore();
 const mindMaps = homeConfigs[configStore.currentSubjectId].mindMaps;
 const experiments = homeConfigs[configStore.currentSubjectId].experiments;
-
-// 每周一思（正式内容）
-const weeklyThoughts = ref([
-  {
-    title: '第1周 每周一思',
-    description: [
-      '1）柯尔莫哥洛夫的公理化体系将概率定义为满足非负性、规范性和可列可加性的测度，现实中的不确定性是否都可以用这一框架描述？',
-      '2）概率是客观存在还是主观建构？',
-    ],
-  },
-]);
 
 // 数学家轮播（示例占位）
 type Mathematician = typeof mathematicianData[number];
@@ -133,24 +123,30 @@ function isMathBlock(map: any) {
             </div>
             <span class="ml-3 h-px flex-1 bg-gradient-to-r from-primary/40 to-transparent" />
           </div>
-          <Card v-if="weeklyThoughts && weeklyThoughts.length" class="h-full flex flex-col">
-            <CardHeader class="p-4 pb-2">
-              <CardTitle class="text-base">
-                {{ weeklyThoughts[0].title }}
-              </CardTitle>
-            </CardHeader>
-            <CardContent class="px-4 pb-4 pt-0 space-y-3">
-              <div v-for="(item, i) in weeklyThoughts[0].description" :key="i">
-                <Label class="leading-relaxed font-normal text-muted-foreground">{{ item }}</Label>
+          <template v-if="weeklyThoughts && weeklyThoughts.length">
+            <router-link to="/dashboard/week-thinking" class="block h-full">
+              <Card class="h-full flex flex-col cursor-pointer transition-all hover:shadow-md hover:border-primary">
+                <CardHeader class="p-4 pb-2">
+                  <CardTitle class="text-base">
+                    {{ weeklyThoughts[0].title }}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent class="px-4 pb-4 pt-0 space-y-3">
+                  <div v-for="(item, i) in weeklyThoughts[0].description" :key="i">
+                    <Label class="leading-relaxed font-normal text-muted-foreground">{{ item }}</Label>
+                  </div>
+                </CardContent>
+              </Card>
+            </router-link>
+          </template>
+          <template v-else>
+            <div class="flex items-center justify-center rounded-md border border-dashed border-primary/30 bg-muted/20 h-40 text-muted-foreground">
+              <div class="flex items-center gap-2">
+                <Icon icon="lucide:info" class="h-4 w-4" />
+                <span>本周还没有内容哦</span>
               </div>
-            </CardContent>
-          </Card>
-          <div v-else class="flex items-center justify-center rounded-md border border-dashed border-primary/30 bg-muted/20 h-40 text-muted-foreground">
-            <div class="flex items-center gap-2">
-              <Icon icon="lucide:info" class="h-4 w-4" />
-              <span>本周还没有内容哦</span>
             </div>
-          </div>
+          </template>
         </div>
       </div>
     </section>
