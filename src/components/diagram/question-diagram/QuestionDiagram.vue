@@ -41,7 +41,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="rounded-lg border shadow">
+  <div>
     <MindmapFlow v-model:nodes="initialNodes" v-model:edges="initialEdges" initial-rankdir="LR" />
   </div>
 </template>

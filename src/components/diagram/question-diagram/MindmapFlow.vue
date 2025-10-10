@@ -254,18 +254,14 @@ function openAiSidebar(knowledgePoint: string) {
   currentKnowledgePoint.value = knowledgePoint;
   showAiSidebar.value = true;
 
-  // 清空之前的对话，创建新对话
   aiMessages.value = [];
 
-  // 立即发送第一条消息，说明用户对这个知识点有疑问
-  const firstMessage = `我在学习"${knowledgePoint}"这个知识点时遇到了一些问题，能帮我解答吗？`;
-  // 直接添加到消息列表，避免重复添加知识点信息
+  const firstMessage = `请给我讲讲"${knowledgePoint}"这个知识点`;
   aiMessages.value.push({
     role: 'user',
     data: [{ type: 'text', text: firstMessage }],
   });
 
-  // 然后调用sendMessage处理AI回复，跳过添加用户消息
   sendMessage(firstMessage, true);
 }
 
@@ -293,20 +289,7 @@ function getDynamicLayoutParams() {
   return baseParams;
 }
 
-// 动态计算节点尺寸
-function getDynamicNodeSize(_level: number) {
-  const baseSize = { width: 220, height: 72 };
-
-  if (showAiSidebar.value) {
-    // 有侧边栏时减小节点尺寸
-    return {
-      width: Math.max(180, baseSize.width * 0.85),
-      height: Math.max(60, baseSize.height * 0.85),
-    };
-  }
-
-  return baseSize;
-}
+const baseSize = { width: 240, height: 36 };
 
 // dagre 自动排版
 function layoutGraph(nodes: Node<MindNodeData>[], edges: Edge<any>[]) {
@@ -320,10 +303,8 @@ function layoutGraph(nodes: Node<MindNodeData>[], edges: Edge<any>[]) {
   g.setDefaultEdgeLabel(() => ({}));
 
   nodes.forEach((n) => {
-    // 使用动态节点尺寸
-    const dynamicSize = getDynamicNodeSize(n.data?.level ?? 1);
-    const w = (n as any).style?.width ?? dynamicSize.width;
-    const h = (n as any).style?.height ?? dynamicSize.height;
+    const w = (n as any).style?.width ?? baseSize.width;
+    const h = (n as any).style?.height ?? baseSize.height;
     g.setNode(n.id, { width: Number(w), height: Number(h) });
   });
 
@@ -336,7 +317,7 @@ function layoutGraph(nodes: Node<MindNodeData>[], edges: Edge<any>[]) {
 
   return nodes.map((n) => {
     const pos = g.node(n.id);
-    const dynamicSize = getDynamicNodeSize(n.data?.level ?? 1);
+    const dynamicSize = baseSize;
     const width = pos?.width ?? dynamicSize.width;
     const height = pos?.height ?? dynamicSize.height;
 
@@ -396,17 +377,6 @@ watch(
       await nextTick();
       // 延迟一点时间让动画完成，然后重新布局
       setTimeout(async () => {
-        // // 智能布局方向选择：有侧边栏且当前是左右布局时，切换到上下布局
-        // if (newVal && orientation.value === 'LR') {
-        //   const containerWidth = window.innerWidth;
-        //   // 如果屏幕宽度小于1400px，自动切换到上下布局
-        //   if (containerWidth < 1400) {
-        //     orientation.value = 'TB';
-        //     // 等待方向切换完成
-        //     await nextTick();
-        //   }
-        // }
-
         // 重新计算布局
         const newLayoutedNodes = layoutGraph(props.nodes, props.edges);
         // 更新节点位置
@@ -447,9 +417,9 @@ onMounted(() => {
 <template>
   <div
     v-auto-animate
-    class="w-full h-full flex gap-4 p-4"
+    class="w-full h-full flex gap-2"
     :class="{
-      'grid grid-cols-[1fr_1fr]': showAiSidebar,
+      'grid grid-cols-[3fr_2fr]': showAiSidebar,
     }"
   >
     <!-- 思维导图容器 - 独立的最外层边框 -->
@@ -592,53 +562,3 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
-<style scoped>
-/* 可按需微调 */
-</style>
-
-<style>
-/* 默认MiniMap大小 */
-.minimap-container {
-  width: 200px !important;
-  height: 150px !important;
-  transition: all 0.3s ease !important;
-}
-
-/* 展开AI时MiniMap变小 */
-.minimap-small {
-  width: 1px !important;
-  height: 120px !important;
-}
-
-/* MiniMap边框样式 */
-.minimap-container .vue-flow__minimap {
-  border: 2px solid #e5e7eb !important;
-  border-radius: 8px !important;
-  transition: all 0.7s ease !important;
-}
-
-/* 展开AI时边框也相应调整 */
-.minimap-small .vue-flow__minimap {
-  border-width: 1px !important;
-  border-radius: 6px !important;
-  border-color: #eeeeee !important;
-  background-color: rgba(255, 255, 255, 0.9) !important;
-}
-
-/* MiniMap内容缩放 */
-.minimap-container .vue-flow__minimap-content {
-  transform-origin: top left !important;
-  transition: transform 0.3s ease !important;
-}
-
-/* 默认缩放比例 */
-.minimap-container .vue-flow__minimap-content {
-  transform: scale(0.4) !important;
-}
-
-/* 展开AI时的缩放比例 */
-.minimap-small .vue-flow__minimap-content {
-  transform: scale(0.28) !important;
-}
-</style>

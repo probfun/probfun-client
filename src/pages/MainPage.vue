@@ -50,7 +50,7 @@ function updateSubject() {
 <template>
   <div v-auto-animate class="w-screen h-screen flex flex-col p-2 gap-2">
     <NavBar />
-    <div v-if="configStore.currentSubject" class="flex-1 gap-2 flex relative transition-all overflow-y-hidden">
+    <div v-if="configStore.currentSubject" v-auto-animate class="flex-1 gap-2 flex relative transition-all overflow-y-hidden">
       <SideBar v-if="!hideSideBar" />
       <router-view class="flex-1 overflow-y-auto" />
     </div>

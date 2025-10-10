@@ -129,8 +129,8 @@ watch(() => props.aiMessages, () => {
 </script>
 
 <template>
-  <div class="w-full h-full rounded-2xl border bg-background flex flex-col">
-    <div class="p-4 border-b flex items-center gap-2">
+  <div class="w-full h-full rounded-xl border flex flex-col">
+    <div class="p-2.5 border-b flex items-center gap-2">
       <div class="font-semibold">
         AI辅导
       </div>
