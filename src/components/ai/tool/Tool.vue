@@ -41,7 +41,7 @@ function jumpToExperiment(name: string) {
     <div class="w-full min-h-72 border rounded-xl overflow-hidden bg-background hover:border-primary transition-all">
       <BuffonNeedleDisplay v-if="name === 'buffon_needle'" :args="args as BuffonNeedleArgs" />
       <DistributionDiagram
-        v-else-if="name.endsWith('distribution')"
+        v-else-if="name && name.endsWith('distribution')"
         :args="args as DistributionArgs"
       />
       <ThreeDoorsDisplay v-else-if="name === 'three_doors'" :args="args as ThreeDoorsArgs" />
