@@ -12,8 +12,8 @@ import { Label } from '@/components/ui/label';
 import { useConfigStore } from '@/store';
 
 const configStore = useConfigStore();
-const experiments = homeConfigs[configStore.currentSubjectId].experiments;
-const mindMaps = homeConfigs[configStore.currentSubjectId].mindMaps;
+const experiments = configStore.currentSubjectId ? homeConfigs[configStore.currentSubjectId].experiments : null;
+const mindMaps = configStore.currentSubjectId ? homeConfigs[configStore.currentSubjectId].mindMaps : null;
 </script>
 
 <template>

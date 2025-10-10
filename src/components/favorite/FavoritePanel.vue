@@ -63,7 +63,7 @@ async function refreshFavorite() {
             <Button
               variant="ghost"
               class="p-0 h-auto w-full justify-start text-left hover:bg-transparent"
-              @click="router.push(`/dashboard/experiment/${experiment.expId}`)"
+              @click="router.push(`/experiment/${experiment.expId}`)"
             >
               <span class="font-medium truncate text-base group-hover:text-orange-600 transition-colors">
                 {{ experiment.expName }}
@@ -99,7 +99,7 @@ async function refreshFavorite() {
                     size="icon"
                     variant="ghost"
                     class="size-8 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/20"
-                    @click="router.push({ path: '/dashboard/ai', query: { query: `请介绍一下${experiment.expName}` } })"
+                    @click="router.push({ path: '/ai', query: { query: `请介绍一下${experiment.expName}` } })"
                   >
                     <Bot class="size-5 text-blue-600 dark:text-blue-400" />
                   </Button>

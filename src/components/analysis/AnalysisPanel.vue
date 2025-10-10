@@ -503,8 +503,11 @@ const agreed = ref(false);
 const poller = ref<number | null>(null);
 
 async function fetchAnalysisData() {
+  if (!configStore.currentSubject) {
+    return;
+  }
   try {
-    const response = await analysisApi(useConfigStore().currentSubject.id_);
+    const response = await analysisApi(configStore.currentSubject.id_);
     if (response.analysis) {
       response.analysis.objectiveAnalysis.metrics = response.analysis.objectiveAnalysis.metrics.slice(0, 4);
       response.analysis.chapterSummary = response.analysis.chapterSummary.sort((a, b) => Number.parseFloat(a.chapter.name.split(' ')[0]) - Number.parseFloat(b.chapter.name.split(' ')[0]));

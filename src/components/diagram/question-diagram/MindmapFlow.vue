@@ -53,33 +53,6 @@ const levelClasses: Record<Level, string> = {
   3: 'bg-amber-50 border-amber-400 text-amber-900 text-sm',
 };
 
-// AI相关函数
-// AI相关函数
-function _initAiConnection() {
-  const messages: ChatMessage[] = [];
-
-  aiApi(
-    messages,
-    () => {
-      // onOpen回调
-      console.log('AI连接已建立');
-    },
-    (data) => {
-      // onReceive回调
-      console.log('data:', data);
-      if (data) {
-        processReceiveData(data); // 使用统一的数据处理函数
-      }
-    },
-    () => {
-      // onFinish回调
-      aiThinking.value = false;
-      aiState.value = 'idle';
-    },
-    null, // abortController
-  );
-}
-
 // ❗ 关键修复：与AiPanel完全一致的数据处理函数
 function processReceiveData(data: ReceiveData) {
   if (!data)
@@ -190,14 +163,14 @@ async function sendMessage(content?: string, skipUserMessage = false) {
   }
 }
 
-async function quickAsk(content: string) {
+async function quickAsk(messageContent: string) {
   if (aiState.value === 'thinking')
     return;
 
   // ❗ 关键修改：使用新的数据结构
   aiMessages.value.push({
     role: 'user',
-    data: [{ type: 'text', text: content }],
+    data: [{ type: 'text', text: messageContent }],
   });
   aiThinking.value = true;
   aiState.value = 'thinking';
@@ -253,14 +226,6 @@ async function quickAsk(content: string) {
     console.error('Error during quick ask:', error);
     abortController.value = null;
   }
-}
-
-function _clearChat() {
-  if (aiState.value === 'thinking')
-    return;
-
-  aiMessages.value = [];
-  aiState.value = 'idle';
 }
 
 function stopGenerating() {

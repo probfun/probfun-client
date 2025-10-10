@@ -28,15 +28,15 @@ const quickQuestions = ref([
   },
   {
     title: '思路确认',
-    content: '我有几个思路，但不确定对不对',
+    content: '我的思路如下，但不确定对不对：\n',
   },
   {
     title: '结果检查',
-    content: '我觉得我做对了，但结果不对',
+    content: '我觉得我算对了，但结果不对：\n',
   },
   {
     title: '计算帮助',
-    content: '我计算到某一步卡住了',
+    content: '我计算这一步卡住了：\n',
   },
 ]);
 const currentQuestion = computed(() => {
@@ -183,11 +183,11 @@ async function clearChat() {
   <div class="w-full h-full flex justify-center">
     <div
       v-auto-animate
-      class="w-full h-full max-w-5xl p-6 flex flex-col gap-6" :class="{
-        'grid grid-cols-[3fr_2fr] max-w-7xl': showAiSidebar,
+      class="w-full h-full max-w-5xl sm:p-6 flex flex-col gap-6" :class="{
+        'grid sm:grid-cols-[3fr_2fr] max-w-7xl': showAiSidebar,
       }"
     >
-      <div v-auto-animate class="space-y-4 pb-6">
+      <div v-auto-animate class="space-y-4 sm:pb-6">
         <div class="border rounded-2xl shadow-sm p-4 bg-background">
           <div class="font-semibold mb-4">
             题目列表
@@ -367,16 +367,16 @@ async function clearChat() {
                 v-for="question in quickQuestions"
                 :key="question.title"
                 :disabled="aiState !== 'idle'"
-                variant="outline" class="px-2 py-1 border text-xs" @click="() => quickAsk(question.content)"
+                variant="outline" class="px-2 py-1 border text-xs" @click="aiContent = question.content"
               >
                 {{ question.title }}
               </Button>
             </div>
-            <div class="flex gap-2">
-              <Input
+            <div class="flex flex-col gap-2">
+              <Textarea
                 v-model="aiContent"
                 placeholder="向邮小率提问，例如：为什么选 B 而不是 A？"
-                class="flex-1 transition-all border px-3 py-2"
+                class="h-20 resize-none transition-all border px-3 py-2"
                 @keydown="(e: KeyboardEvent) => {
                   if (e.key === 'Enter') {
                     e.preventDefault();
@@ -387,28 +387,29 @@ async function clearChat() {
                   }
                 }"
               />
-              <Button
-                :disabled="aiState === 'thinking' || aiContent.trim() === ''"
-                class="px-3 py-2"
-                @click="() => {
-                  quickAsk(aiContent.trim());
-                  aiContent = '';
-                }"
-              >
-                {{ aiState === 'thinking' ? "思考中…" : "发送" }}
-              </Button>
-
-              <Button
-                :disabled="currentQuestion.chats?.length === 0 || aiState === 'thinking'"
-                class="text-red-500 hover:text-red-600 size-9 p-0"
-                variant="outline"
-                @click="clearChat"
-              >
-                <Icon
-                  class="w-4 h-4"
-                  icon="lucide:trash-2"
-                />
-              </Button>
+              <div class="flex gap-2 ml-auto">
+                <Button
+                  :disabled="currentQuestion.chats?.length === 0 || aiState === 'thinking'"
+                  class="text-red-500 hover:text-red-600 size-9 p-0"
+                  variant="outline"
+                  @click="clearChat"
+                >
+                  <Icon
+                    class="w-4 h-4"
+                    icon="lucide:trash-2"
+                  />
+                </Button>
+                <Button
+                  :disabled="aiState === 'thinking' || aiContent.trim() === ''"
+                  class="px-3 py-2"
+                  @click="() => {
+                    quickAsk(aiContent.trim());
+                    aiContent = '';
+                  }"
+                >
+                  {{ aiState === 'thinking' ? "思考中…" : "发送" }}
+                </Button>
+              </div>
             </div>
           </div>
         </div>

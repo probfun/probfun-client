@@ -1,37 +1,18 @@
 <script setup lang="ts">
 import type { Message } from '@/api/message/messageType';
-import type { User } from '@/api/user/userType';
-import { Bell, Plus, Star } from 'lucide-vue-next';
+import { Bell, Star } from 'lucide-vue-next';
 import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { fetchFavoriteExperimentsApi, toggleFavoriteApi } from '@/api/experiment/experimentApi.ts';
-import { fetchMessagesApi, readMessagesApi } from '@/api/message/messageApi';
-import { putUserApi, putUserAvatarApi, updatePasswordApi } from '@/api/user/userApi';
+import { fetchMessagesApi, readMessagesApi } from '@/api/message/messageApi.ts';
+import AvatarButton from '@/components/navbar/AvatarButton.vue';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
+
 import { Badge } from '@/components/ui/badge';
 
 import { Button } from '@/components/ui/button';
 
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-
 import { Label } from '@/components/ui/label';
-
 import {
   Popover,
   PopoverContent,
@@ -40,121 +21,12 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { useConfigStore, useUserStore } from '@/store';
 import { isVisitor } from '@/utils/auth.ts';
-import { error, success, warning } from '@/utils/toast';
+import { success } from '@/utils/toast.ts';
 
 const userStore = useUserStore();
 const router = useRouter();
 
-const isLoading = ref(false);
-const tempUser = ref<User | null>(null);
-
-async function onSubmit() {
-  if (!tempUser.value || isLoading.value)
-    return;
-  if (tempUser.value.nickname === '') {
-    warning('昵称不能为空');
-  }
-  try {
-    isLoading.value = true;
-    const result = await putUserApi(
-      tempUser.value.nickname,
-      Number.parseInt(tempUser.value.gender),
-      tempUser.value.email,
-      tempUser.value.phone,
-      tempUser.value.major,
-      tempUser.value.school,
-    );
-    result.user.gender = result.user.gender.toString();
-    userStore.user = result.user;
-    tempUser.value = userStore.user;
-    success('个人资料已更新');
-  }
-  catch (e) {
-    console.error('Error during updating user:', e);
-    error('个人资料更新失败，请重试');
-  }
-  isLoading.value = false;
-}
-
-const isOpenPassword = ref(false);
-const oldPassword = ref('');
-const newPassword = ref('');
-const confirmPassword = ref('');
 const isFavorite = ref(false);
-
-async function updatePassword() {
-  if (!tempUser.value)
-    return;
-  if (oldPassword.value === '' || newPassword.value === '' || newPassword.value === '') {
-    warning('密码不能为空');
-  }
-  if (newPassword.value !== confirmPassword.value) {
-    warning('两次输入的密码不一致');
-    return;
-  }
-  if (newPassword.value === oldPassword.value) {
-    warning('新密码不能与旧密码相同');
-    return;
-  }
-  try {
-    await updatePasswordApi(
-      oldPassword.value,
-      newPassword.value,
-    );
-    success('密码已更新');
-    isOpenPassword.value = false;
-    oldPassword.value = '';
-    newPassword.value = '';
-    confirmPassword.value = '';
-  }
-  catch (e: any) {
-    console.error('Error during updating password:', e);
-    if (e.response.status === 400) {
-      warning('旧密码错误');
-    }
-    else {
-      error('密码更新失败，请重试');
-    }
-  }
-}
-
-const fileInput = ref<HTMLInputElement | null>(null);
-
-function triggerFileUpload() {
-  fileInput.value?.click();
-}
-
-async function handleFileUpload(event: Event) {
-  const target = event.target as HTMLInputElement;
-  const files: FileList | null = target.files;
-  if (files && files.length > 0) {
-    const file: File = files[0];
-    try {
-      const result = await putUserAvatarApi(file);
-      userStore.user = result.user;
-      tempUser.value!.avatarUrl = result.user.avatarUrl;
-    }
-    catch {
-      console.error('Error during uploading avatar');
-    }
-  }
-}
-const isOpen = ref(false);
-
-watch(isOpen, () => {
-  if (!tempUser.value) {
-    tempUser.value = userStore.user;
-  }
-});
-
-const subjectNameMap: Record<string, string> = {
-  calculusA: '高等数学上',
-  calculusB: '高等数学下',
-  linearAlgebra: '线性代数',
-  numberTheory: '数论',
-  bayes: '统计决策与贝叶斯分析',
-  probability: '邮趣概率',
-};
 
 const title = ref<string>('');
 const tags = ref<string[]>([]);
@@ -162,14 +34,6 @@ const tags = ref<string[]>([]);
 const route = useRoute();
 
 function updateExperiment() {
-  // 科目优先级：/subject/:subject/* -> 显示科目名；否则按原逻辑
-  if (route.path.startsWith('/subject/')) {
-    const seg = route.path.split('/')[2];
-    title.value = subjectNameMap[seg] || '学科主页';
-    tags.value = [];
-    return;
-  }
-  // 原有 updateExperiment 逻辑
   const path = route.path.split('/').pop();
   if (path === 'buffon') {
     title.value = '蒲丰投针';
@@ -358,7 +222,7 @@ function updateExperiment() {
     title.value = '三元一次方程组';
   }
   else {
-    title.value = useConfigStore().currentSubject.name;
+    title.value = useConfigStore().currentSubject?.name ?? '邮趣数学';
     tags.value = [];
   }
   if (!isVisitor()) {
@@ -441,21 +305,31 @@ async function toggleFavorite() {
   }
 }
 
-function openFeishuDoc() {
-  window.open('https://ecnyphosrl4i.feishu.cn/wiki/VpHuwRJ53iDKIUkhfFVcqX9fnVe?from=from_copylink', '_blank');
+function isInExperimentPage() {
+  return route.path.startsWith('/experiment/');
 }
 
-function isInExperimentPage() {
-  return route.path.startsWith('/dashboard/experiment/');
-}
+const configStore = useConfigStore();
 </script>
 
 <template>
-  <nav class="w-full flex py-2 px-5 z-50 border rounded-xl shadow-md bg-background gap-2">
-    <div class="flex items-center justify-center gap-2 overflow-x-hidden">
-      <Label class="text-lg font-bold shrink-0">
-        {{ title }}
-      </Label>
+  <nav class="w-full flex p-2 pr-3 z-50 border rounded-xl shadow-md bg-background gap-2">
+    <div class="flex items-center justify-center gap-2.5 overflow-x-hidden">
+      <Button
+        variant="ghost"
+        class="flex items-center p-2 pr-2 gap-1.5 h-full" @click="() => {
+          configStore.currentSubjectId = null;
+          router.push('/');
+        }"
+      >
+        <div class="rounded-full size-8 p-0 flex items-center bg-primary justify-center text-primary-foreground">
+          <component :is="configStore.currentSubject.icon" v-if="configStore.currentSubject" class="size-6" />
+          <img v-else src="/logo-math.svg" alt="Logo" class="size-8 rounded-full">
+        </div>
+        <div class="text-base text-primary font-bold shrink-0">
+          {{ useConfigStore().currentSubject?.name ?? '邮趣数学' }}
+        </div>
+      </Button>
       <div class="flex gap-2 overflow-x-auto">
         <Badge v-for="item in tags" :key="item" class="text-sm shrink-0">
           {{ item }}
@@ -474,9 +348,6 @@ function isInExperimentPage() {
       </Button>
     </div>
     <div class="flex items-center gap-4 ml-auto">
-      <Button @click="openFeishuDoc">
-        用户手册
-      </Button>
       <div v-if="!isVisitor()" class="relative flex items-center justify-center ml-auto">
         <Popover>
           <PopoverTrigger>
@@ -521,11 +392,11 @@ function isInExperimentPage() {
                 :class="{ 'opacity-70': item.read }"
                 @click="
                   item.type === 'pin'
-                    ? router.push(`/dashboard/experiment/${item.pinData?.comment.expId}`)
+                    ? router.push(`/experiment/${item.pinData?.comment.expId}`)
                     : item.type === 'reply'
-                      ? router.push(`/dashboard/experiment/${item.replyData?.comment.expId}`)
+                      ? router.push(`/experiment/${item.replyData?.comment.expId}`)
                       : item.type === 'like'
-                        ? router.push(`/dashboard/experiment/${item.likeData?.comment.expId}`)
+                        ? router.push(`/experiment/${item.likeData?.comment.expId}`)
                         : null
                 "
               >
@@ -580,232 +451,11 @@ function isInExperimentPage() {
           </PopoverContent>
         </Popover>
       </div>
-
-      <!--      <Label class="text-base font-bold"> {{ userStore.user?.nickname ?? 'unknown' -->
-      <!--      }}</Label> -->
-      <Button v-if="!isVisitor()" variant="ghost" size="icon" class="rounded-full" @click="isOpen = true">
-        <img :src="userStore.user?.avatarUrl" class="w-8 rounded-full" alt="">
-      </Button>
+      <AvatarButton v-if="!isVisitor()" />
       <Button v-else @click="router.push('/login')">
         登录
       </Button>
     </div>
-    <Dialog v-model:open="isOpen">
-      <DialogContent v-if="tempUser" class="overflow-y-auto p-10 max-w-xl">
-        <DialogHeader>
-          <DialogTitle>个人资料</DialogTitle>
-          <DialogDescription>
-            在此更改您的个人资料。完成后单击“保存”。
-          </DialogDescription>
-        </DialogHeader>
-
-        <div class="flex flex-col md:flex-row gap-10">
-          <div class="space-y-3 max-w-xs">
-            <div class="grid grid-cols-2 gap-4">
-              <div class="grid gap-2">
-                <Label>学工号</Label>
-                <Input v-model="tempUser.username" disabled />
-              </div>
-
-              <div class="grid gap-2">
-                <Label>年级</Label>
-                <Input v-model="tempUser.grade" disabled />
-              </div>
-            </div>
-
-            <div class="grid max-w-xs gap-2">
-              <Label>教学班</Label>
-              <Input v-model="tempUser.classId" disabled />
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-              <FormField v-slot="{ componentField }" name="username">
-                <FormItem>
-                  <FormLabel>昵称</FormLabel>
-                  <FormControl>
-                    <Input
-                      v-bind="componentField" v-model="tempUser.nickname" type="text" placeholder=""
-                      class="transition-all"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              </FormField>
-
-              <FormField v-slot="{ componentField }" name="gender">
-                <FormItem>
-                  <FormLabel>性别</FormLabel>
-                  <FormControl>
-                    <Select v-bind="componentField" v-model="tempUser.gender">
-                      <SelectTrigger>
-                        <SelectValue placeholder="" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectItem value="0">
-                            保密
-                          </SelectItem>
-                          <SelectItem value="1">
-                            男
-                          </SelectItem>
-                          <SelectItem value="2">
-                            女
-                          </SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              </FormField>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-              <FormField v-slot="{ componentField }" name="username">
-                <FormItem>
-                  <FormLabel>学院</FormLabel>
-                  <FormControl>
-                    <Input
-                      v-bind="componentField" v-model="tempUser.school" type="text" placeholder=""
-                      class="transition-all"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              </FormField>
-
-              <FormField v-slot="{ componentField }" name="username">
-                <FormItem>
-                  <FormLabel>专业</FormLabel>
-                  <FormControl>
-                    <Input
-                      v-bind="componentField" v-model="tempUser.major" type="text" placeholder=""
-                      class="transition-all"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              </FormField>
-            </div>
-
-            <FormField v-slot="{ componentField }" name="username">
-              <FormItem>
-                <FormLabel>邮箱</FormLabel>
-                <FormControl>
-                  <Input
-                    v-bind="componentField" v-model="tempUser.email" type="email" placeholder=""
-                    class="transition-all"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-
-            <FormField v-slot="{ componentField }" name="username">
-              <FormItem>
-                <FormLabel>手机号</FormLabel>
-                <FormControl>
-                  <Input
-                    v-bind="componentField" v-model="tempUser.phone" type="text" placeholder=""
-                    class="transition-all"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-          </div>
-
-          <div class="grid gap-2 md:self-start">
-            <Label> 头像 </Label>
-            <div class="flex justify-center items-start">
-              <Avatar class="size-32 relative">
-                <AvatarImage :src="tempUser.avatarUrl" alt="avatar" />
-                <Button
-                  variant="ghost"
-                  class="absolute top-0 left-0 size-32 rounded-full opacity-0 transition-all hover:opacity-100 hover:bg-opacity-30 hover:bg-black"
-                  @click="triggerFileUpload"
-                >
-                  <div class="flex flex-col items-center text-background">
-                    <Plus class="size-6" />
-                    <div class="font-semibold">
-                      上传图片
-                    </div>
-                  </div>
-                </Button>
-              </Avatar>
-            </div>
-          </div>
-          <input ref="fileInput" type="file" class="hidden" accept="image/*" @change="handleFileUpload">
-        </div>
-        <DialogFooter class="md:gap-5">
-          <Dialog v-model:open="isOpenPassword">
-            <DialogTrigger>
-              <Button> 修改密码 </Button>
-            </DialogTrigger>
-            <DialogContent class=" w-auto">
-              <DialogHeader>
-                <DialogTitle> 修改密码 </DialogTitle>
-                <DialogDescription>
-                  在此更改您的密码。完成后单击“保存”。
-                </DialogDescription>
-              </DialogHeader>
-
-              <div class="max-w-sm w-full grid gap-2">
-                <FormField v-slot="{ componentField }" name="username">
-                  <FormItem>
-                    <FormLabel>旧密码</FormLabel>
-                    <FormControl>
-                      <Input
-                        v-bind="componentField" v-model="oldPassword" type="password" placeholder=""
-                        class="transition-all"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                </FormField>
-
-                <FormField v-slot="{ componentField }" name="username">
-                  <FormItem>
-                    <FormLabel>新密码</FormLabel>
-                    <FormControl>
-                      <Input
-                        v-bind="componentField" v-model="newPassword" type="password" placeholder=""
-                        class="transition-all"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                </FormField>
-
-                <FormField v-slot="{ componentField }" name="username">
-                  <FormItem>
-                    <FormLabel>确认密码</FormLabel>
-                    <FormControl>
-                      <Input
-                        v-bind="componentField" v-model="confirmPassword" type="password" placeholder=""
-                        class="transition-all"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                </FormField>
-              </div>
-
-              <DialogFooter>
-                <Button @click="updatePassword">
-                  设置密码
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-          <DialogClose>
-            <Button @click="onSubmit">
-              保存设置
-            </Button>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
   </nav>
 </template>
 

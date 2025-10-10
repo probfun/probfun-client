@@ -1,17 +1,13 @@
 <script setup lang="ts">
 import type { Chapter } from '@/api/do-question/doQuestion.ts';
 
-import type { Feedback } from '@/api/feedback/feedbackType';
 import type { DrawerItem } from '@/components/subject/configs.ts';
 import { Icon } from '@iconify/vue';
-import { Book, Bot, CircleHelp, FlaskConical, Home, LogOut, Star, User, UsersRound } from 'lucide-vue-next';
-import { useToast } from 'primevue/usetoast';
+import { Book, Bot, FlaskConical, Home, Star, User } from 'lucide-vue-next';
 import { TreeItem, TreeRoot } from 'radix-vue';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { fetchChapterListApi, fetchSubjectListApi } from '@/api/do-question/doQuestion.ts';
-import { fetchFeedbackApi, postFeedbackApi } from '@/api/feedback/feedbackApi.ts';
-import { clickApi } from '@/api/track/trackApi.ts';
 import BoxSelector from '@/components/selector/BoxSelector.vue';
 import { experimentConfigs } from '@/components/subject/configs.ts';
 import { Button } from '@/components/ui/button';
@@ -30,11 +26,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { useConfigStore, useUserStore } from '@/store';
-import { isVisitor, logout } from '@/utils/auth.ts';
-
-const toast = useToast();
-const userStore = useUserStore();
+import { useConfigStore } from '@/store';
+import { isVisitor } from '@/utils/auth.ts';
 
 interface SideBarItem {
   label: string;
@@ -44,9 +37,7 @@ interface SideBarItem {
 }
 
 const route = useRoute();
-const seeFeedback = ref(false);
 const openSubjectSelector = ref(false);
-const openFeedback = ref(false);
 const openExperimentDrawer = ref(false);
 const openQuestionDrawer = ref(false);
 const subjectSelector = ref<typeof BoxSelector | null>(null);
@@ -68,112 +59,47 @@ function isActiveRoute(itemRoute: string, restrict = false): boolean {
 const router = useRouter();
 const vistorAllowedItem = [
   '主页',
-  '目录',
+  '实验目录',
+  '做题目录',
 ];
 const sideBarItem = ref<SideBarItem[]>([
   {
     label: '主页',
     icon: Home,
-    route: '/dashboard',
+    route: '/',
   },
   {
     label: '实验目录',
     icon: FlaskConical,
-    route: '/dashboard/experiment',
+    route: '/experiment',
     command: toggleExperimentDrawer,
   },
   {
     label: '做题目录',
     icon: Book,
-    route: '/dashboard/experiment',
+    route: '/question',
     command: toggleQuestionDrawer,
   },
   {
     label: '收藏',
     icon: Star,
-    route: '/dashboard/favorite',
+    route: '/favorite',
   },
   {
     label: '大模型回答',
     icon: Bot,
-    route: '/dashboard/ai',
+    route: '/ai',
   },
   {
-    label: '个人资料',
+    label: '学情面板',
     icon: User,
-    route: '/dashboard/analysis',
+    route: '/analysis',
   },
 ]);
 
-const sideBarBottomItem = ref<SideBarItem[]>([
-  // {
-  //   label: '切换主题',
-  //   icon: Sun,
-  //   command: async () => {
-  //     try {
-  //       await clickApi('CLICK', 'sideBar', '切换主题', window.location.href);
-  //       console.log('切换主题');
-  //     }
-  //     catch (error) {
-  //       console.error('Error tracking button click:', error);
-  //     }
-  //     if (document.documentElement.classList.contains('dark')) {
-  //       document.documentElement.classList.remove('dark');
-  //     }
-  //     else {
-  //       document.documentElement.classList.toggle('dark');
-  //     }
-  //   },
-  // },
-  {
-    label: '关于我们',
-    icon: UsersRound,
-    route: '/dashboard/about',
-  },
-  {
-    label: '问题反馈',
-    icon: CircleHelp,
-    command: () => {
-      openFeedback.value = true;
-    },
-  },
-  {
-    label: '登出',
-    icon: LogOut,
-    command: async () => {
-      try {
-        await clickApi('CLICK', 'sideBar', '登出', window.location.href);
-        console.log('登出');
-      }
-      catch (error) {
-        console.error('Error tracking button click:', error);
-      }
-      logout();
-      await router.push('/login');
-    },
-  },
-]);
-
-const experimentItems = experimentConfigs[useConfigStore().currentSubjectId].experiments;
+const configStore = useConfigStore();
+const experimentItems = configStore.currentSubjectId ? experimentConfigs[configStore.currentSubjectId].experiments : null;
 const questionItems = ref<DrawerItem[]>([]);
-
-const feedback = ref('improvement');
-const content = ref('');
-const feedbackList = ref<Feedback[] | null>(null);
-
-async function refreshFeedback() {
-  if (isVisitor()) {
-    return;
-  }
-  try {
-    const result = await fetchFeedbackApi();
-    feedbackList.value = result.feedback;
-    feedbackList.value.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-  }
-  catch (error) {
-    console.error('Error during fetching feedbacks:', error);
-  }
-}
 
 function toItemTree(root: Chapter): DrawerItem {
   interface AnyNode { id: string; name: string; children?: AnyNode[] }
@@ -211,8 +137,10 @@ function toItemTree(root: Chapter): DrawerItem {
 }
 
 async function refreshQuestionList() {
+  if (!configStore.currentSubject)
+    return;
   try {
-    const response = await fetchChapterListApi(useConfigStore().currentSubject.id_);
+    const response = await fetchChapterListApi(configStore.currentSubject.id_);
     const chapterList = response.chapters;
     questionItems.value = chapterList.map(chapter => toItemTree(chapter));
   }
@@ -223,7 +151,6 @@ async function refreshQuestionList() {
 
 async function refreshSubjectList() {
   try {
-    // TODO: 与页面关联
     await fetchSubjectListApi();
   }
   catch (error) {
@@ -234,34 +161,8 @@ async function refreshSubjectList() {
 onMounted(() => {
   // TODO: 先获取所有subject，根据subjectId获取所有chapter，用chapterId获取章节内所有question
   refreshSubjectList();
-  refreshFeedback();
   refreshQuestionList();
 });
-
-async function sendFeedback() {
-  if (isVisitor()) {
-    toast.add({ severity: 'warn', summary: '提示', detail: '请先登录', life: 3000 });
-    return;
-  }
-  if (content.value === '') {
-    toast.add({ severity: 'warn', summary: '提示', detail: '意见反馈不能为空', life: 3000 });
-    return;
-  }
-  try {
-    await postFeedbackApi(feedback.value, content.value);
-    await refreshFeedback();
-    toast.add({ severity: 'success', summary: '成功', detail: '反馈成功，感谢您的支持！', life: 3000 });
-    content.value = '';
-  }
-  catch (error) {
-    console.error(error);
-    toast.add({ severity: 'error', summary: '错误', detail: error, life: 3000 });
-  }
-}
-
-function goHome() {
-  router.push('/dashboard');
-}
 
 function updateSubject() {
   subjectSelector.value?.updateConfigSubject();
@@ -272,17 +173,19 @@ function updateSubject() {
 <template>
   <div class="relative">
     <aside class="h-full border rounded-xl flex flex-col relative bg-background z-50 items-center gap-4 p-3 shadow-lg">
-      <Button
-        size="icon"
-        class="group rounded-full bg-primary text-lg font-semibold text-primary-foreground size-10 md:text-base"
-        @click="goHome()"
-      >
-        <component
-          :is="useConfigStore().currentSubject.icon" class="size-6 group-hover:scale-110 transition-all" @click="() => {
-            openSubjectSelector = true;
-          }"
-        />
-      </Button>
+      <!--      <Button -->
+      <!--        size="icon" -->
+      <!--        class="group rounded-full bg-primary text-lg font-semibold text-primary-foreground size-10 md:text-base" -->
+      <!--        @click="goHome()" -->
+      <!--      > -->
+      <!--        <component -->
+      <!--          :is="useConfigStore().currentSubject.icon" class="size-6 group-hover:scale-110 transition-all" @click="() => { -->
+      <!--            openSubjectSelector = true; -->
+      <!--          }" -->
+      <!--        /> -->
+      <!--      </Button> -->
+
+      <!--      <img src="/logo-math.svg" alt="" class="size-10"> -->
       <div class="space-y-2 flex flex-col items-center">
         <div v-for="(item, index) in sideBarItem" :key="index">
           <TooltipProvider v-if="!isVisitor() || vistorAllowedItem.includes(item.label)" :delay-duration="0">
@@ -291,7 +194,7 @@ function updateSubject() {
                 <Button
                   size="icon" variant="ghost"
                   class="size-11 rounded-lg text-muted-foreground"
-                  :class="(isActiveRoute(item.route ?? '', true) || (item.label === '实验目录' && isActiveRoute('/dashboard/experiment')) || (item.label === '做题目录' && (isActiveRoute('/dashboard/question') || isActiveRoute('/dashboard/mindmap')))) && '!bg-muted !text-primary'"
+                  :class="(isActiveRoute(item.route ?? '', true) || (item.label === '实验目录' && isActiveRoute('/experiment')) || (item.label === '做题目录' && (isActiveRoute('/question') || isActiveRoute('/mindmap/question')))) && '!bg-muted !text-primary'"
                   @click="() => {
                     if (item.command) item.command();
                     else if (item.route) router.push(item.route);
@@ -309,33 +212,10 @@ function updateSubject() {
           </TooltipProvider>
         </div>
       </div>
-      <div class="mt-auto space-y-2">
-        <div v-for="(item, index) in sideBarBottomItem" :key="index">
-          <TooltipProvider v-if="!isVisitor() || item.label === '切换主题'" :delay-duration="0">
-            <Tooltip>
-              <TooltipTrigger>
-                <Button
-                  size="icon" variant="ghost" class="size-10 text-muted-foreground" @click="() => {
-                    if (item.route) router.push(item.route);
-                    else if (item.command) item.command();
-                    openExperimentDrawer = false;
-                    openQuestionDrawer = false;
-                  }"
-                >
-                  <component :is="item.icon" class="size-6" :stroke-width="2" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <p>{{ item.label }}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      </div>
     </aside>
 
     <!-- experiment drawer -->
-    <div class="absolute left-full ml-2 top-[4rem] z-50 transition-all bottom-0 rounded-xl overflow-y-auto border w-96 bg-background shadow-xl" :class="!openExperimentDrawer && 'opacity-0 pointer-events-none'">
+    <div class="absolute left-full ml-2 top-0 z-50 transition-all bottom-0 rounded-xl overflow-y-auto border w-96 bg-background shadow-xl" :class="!openExperimentDrawer && 'opacity-0 pointer-events-none'">
       <TreeRoot
         v-if="experimentItems && experimentItems.length"
         v-slot="{ flattenItems }"
@@ -392,7 +272,7 @@ function updateSubject() {
     <div v-if="openExperimentDrawer" class="left-full top-0 h-full absolute w-screen z-40" @click="openExperimentDrawer = false" />
 
     <!-- question drawer -->
-    <div class="absolute left-full ml-2 top-[4rem] z-50 transition-all bottom-0 rounded-xl overflow-y-auto border w-96 bg-background shadow-xl" :class="!openQuestionDrawer && 'opacity-0 pointer-events-none'">
+    <div class="absolute left-full ml-2 top-0 z-50 transition-all bottom-0 rounded-xl overflow-y-auto border w-96 bg-background shadow-xl" :class="!openQuestionDrawer && 'opacity-0 pointer-events-none'">
       <TreeRoot
         v-if="questionItems && questionItems.length"
         v-slot="{ flattenItems }"
@@ -449,49 +329,6 @@ function updateSubject() {
       </div>
     </div>
     <div v-if="openQuestionDrawer" class="left-full top-0 h-full absolute w-screen z-40" @click="openQuestionDrawer = false" />
-
-    <Dialog v-model:open="openFeedback" class="overflow-y-auto h-2/3">
-      <DialogContent class="overflow-y-auto h-2/3">
-        <DialogHeader>
-          <DialogTitle>
-            问题反馈
-            <button
-              v-if="userStore.user?.role === 1 && seeFeedback === false" class="mr-5 underline"
-              @click="seeFeedback = true"
-            >
-              (查看所有意见反馈)
-            </button>
-            <button
-              v-if="userStore.user?.role === 1 && seeFeedback === true" class="mr-5 underline"
-              @click="seeFeedback = false"
-            >
-              (返回)
-            </button>
-          </DialogTitle>
-          <DialogDescription v-if="seeFeedback === false">
-            如果您在学习概率论时遇到了任何问题，或者有任何希望改进本软件的建议，请随时告诉我们。
-            课堂上您提出的学习问题会由老师统一答复，而关于软件的反馈，我们的开发团队会及时调整和优化，确保更好地满足您的需求！期待您的宝贵意见！
-          </DialogDescription>
-        </DialogHeader>
-        <FloatLabel v-if="seeFeedback === false">
-          <Textarea v-model="content" class="resize-none" :rows="15" placeholder="请在这里输入您的问题反馈！" />
-        </FloatLabel>
-        <div v-if="seeFeedback === true">
-          <div v-for="feed in feedbackList" :key="feed.feedbackID">
-            <div class="border py-3">
-              {{ feed.content }}
-            </div>
-          </div>
-        </div>
-        <DialogFooter>
-          <DialogClose>
-            <Button v-if="seeFeedback === false" @click="sendFeedback">
-              提交
-            </Button>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
 
     <Dialog v-model:open="openSubjectSelector">
       <DialogContent class="max-w-4xl p-0 overflow-hidden">

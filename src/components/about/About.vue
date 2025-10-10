@@ -7,11 +7,11 @@ import { Separator } from '@/components/ui/separator';
 const contributors = ref([
   '杨羽婕',
   '胡诚成',
+  '赵哲昀',
   '李诗予',
   '吴林涛',
   '时珂熠',
   '梁天星',
-  '赵哲昀',
   '荣梓铭',
   '钟悠豪',
   '董雪瑞',
@@ -26,12 +26,12 @@ const teamShort = '邮趣数学';
 </script>
 
 <template>
-  <div class="p-6 md:p-8 space-y-6 overflow-y-auto max-w-4xl mx-auto">
-    <Card class="transition-all border border-transparent hover:border-primary/30 hover:shadow-md">
+  <div class="space-y-6 overflow-y-auto max-w-4xl mx-auto py-6">
+    <Card class="transition-all border hover:border-primary/50 shadow">
       <CardHeader>
         <CardTitle class="flex items-center gap-2">
           贡献者列表
-          <span class="text-xs rounded-full px-2 py-0.5 bg-primary/10 text-primary border border-primary/20">
+          <span class="text-xs rounded-full px-2 py-0.5 text-primary border border-primary/20">
             {{ contributors.length }}
           </span>
         </CardTitle>
@@ -52,7 +52,7 @@ const teamShort = '邮趣数学';
       </CardContent>
     </Card>
 
-    <Card class="transition-all border border-transparent hover:border-primary/30 hover:shadow-md">
+    <Card class="transition-all border hover:border-primary/50 shadow">
       <CardHeader>
         <CardTitle class="flex items-center gap-2">
           欢迎加入 {{ teamShort }} 开发者团队
@@ -74,7 +74,7 @@ const teamShort = '邮趣数学';
       </CardContent>
     </Card>
 
-    <Card class="transition-all border border-transparent hover:border-primary/30 hover:shadow-md">
+    <Card class="transition-all border hover:border-primary/50 shadow">
       <CardHeader>
         <CardTitle>联系方式</CardTitle>
       </CardHeader>

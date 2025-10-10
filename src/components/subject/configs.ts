@@ -4,8 +4,8 @@ import { homeConfig as advancedMath1HomeConfig } from '@/components/subject/adva
 import { experimentConfig as advancedMath2ExperimentConfig } from '@/components/subject/advanced-math-2/experimentConfig.ts';
 import { homeConfig as advancedMath2HomeConfig } from '@/components/subject/advanced-math-2/homeConfig.ts';
 import { experimentConfig as linearAlgebraExperimentConfig } from '@/components/subject/linear-algebra/experimentConfig.ts';
-import { homeConfig as linearAlgebraHomeConfig } from '@/components/subject/linear-algebra/homeConfig.ts';
 
+import { homeConfig as linearAlgebraHomeConfig } from '@/components/subject/linear-algebra/homeConfig.ts';
 import { experimentConfig as numberTheoryExperimentConfig } from '@/components/subject/number-theory/experimentConfig.ts';
 import { homeConfig as numberTheoryHomeConfig } from '@/components/subject/number-theory/homeConfig.ts';
 import { experimentConfig as probabilityExperimentConfig } from '@/components/subject/probability/experimentConfig.ts';

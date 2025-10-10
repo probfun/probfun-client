@@ -38,17 +38,17 @@ const useAiStore = defineStore('aiStore', () => {
 const useConfigStore = defineStore('configStore', () => {
   const darkMode = ref<boolean>(false);
   const targetNodeId = ref<string | null>(null);
-  const currentSubjectId = ref<SubjectId>('probability');
-  const currentSubject = computed(() => subjectConfig[currentSubjectId.value]);
+  const currentSubjectId = ref<SubjectId | null>(null);
+  const currentSubject = computed(() => currentSubjectId.value ? subjectConfig[currentSubjectId.value] : null);
   const isMoving = ref(false);
   const confirmedAiPolicy = ref(false);
 
-  function updateTheme(subjectId: SubjectId) {
+  function updateTheme(subjectId: SubjectId | null) {
     const el = document.documentElement;
     for (const subject of Object.keys(subjectConfig)) {
       el.classList.remove(`theme-${subject}`);
     }
-    if (subjectId === 'probability')
+    if (subjectId === 'probability' || subjectId === null)
       el.classList.add('theme-probability');
     else if (subjectId === 'advanced-math-1')
       el.classList.add('theme-advanced-math-1');

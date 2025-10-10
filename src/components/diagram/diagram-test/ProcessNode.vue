@@ -77,17 +77,11 @@ const bgColor = computed(() => {
 </script>
 
 <template>
-  <div class="hover:ring-4 transition-all nodrag rounded-lg p-2 flex items-center justify-center" :style="{ backgroundColor: bgColor, boxShadow: data.isRunning ? '0 0 10px rgba(0, 0, 0, 0.5)' : '' }" @click="router.push('/dashboard/experiment/three-doors')">
-    <!--    <Handle v-if="!isSender" type="target" :position="targetPosition"> -->
-    <!--      <span v-if="!data.isRunning && !data.isFinished && !data.isCancelled && !data.isSkipped && !data.hasError">📥 </span> -->
-    <!--    </Handle> -->
-
-    <!--    <Handle v-if="!isReceiver" type="source" :position="sourcePosition" /> -->
-
-    <!--    <div v-if="!isSender && data.isRunning" class="spinner" /> -->
-    <!--    <span v-else> -->
-    <!--      {{ processLabel }} -->
-    <!--    </span> -->
+  <div
+    class="hover:ring-4 transition-all nodrag rounded-lg p-2 flex items-center justify-center"
+    :style="{ backgroundColor: bgColor, boxShadow: data.isRunning ? '0 0 10px rgba(0, 0, 0, 0.5)' : '' }"
+    @click="router.push('/experiment/three-doors')"
+  >
     <Label class="shrink-0 text-primary-foreground">三门问题</Label>
   </div>
 </template>
