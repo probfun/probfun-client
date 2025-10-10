@@ -57,6 +57,11 @@ const isOpen = ref(false);
 
 const isComposing = ref(false);
 
+function isValidChatData(data: ChatData): boolean {
+  return (data.type === 'text' && Boolean(data.text?.trim()))
+    || (data.type === 'tool' && Boolean(data.tool && data.tool.name && data.tool.args));
+}
+
 function scrollToBottom(smooth: boolean = true) {
   if (scrollContainer.value) {
     scrollContainer.value.scrollTo({ top: scrollContainer.value.scrollHeight, behavior: smooth ? 'smooth' : 'instant' });
@@ -124,11 +129,6 @@ async function sendMessages() {
       requestData.conversationId = aiStore.currentChat.conversationId;
     }
 
-    const initialChatData: ChatData = {
-      type: 'text',
-      text: '',
-    };
-    chatBlocks[chatBlocks.length - 1].data.push(initialChatData);
     await aiApi(requestData, () => status.value = 'loading', receiveMessage, finishGenerating, abortController.value);
   }
   catch (error: any) {
@@ -202,7 +202,7 @@ function receiveMessage(data: ReceiveData) {
       if (lastChatData && lastChatData.type === 'text') {
         lastChatData.text += message;
       }
-      else {
+      else if (message.trim()) {
         const newChatData: ChatData = {
           type: 'text',
           text: message,
@@ -402,7 +402,7 @@ function handleCompositionEnd() {
                         </Label>
                       </div>
                       <div v-else class="flex flex-col gap-4 overflow-x-auto">
-                        <div v-for="(data, index_) in block.data" :key="index_">
+                        <div v-for="(data, index_) in block.data.filter(isValidChatData)" :key="index_">
                           <MarkdownDiv v-if="data.type === 'text'" :text="data.text ?? ''" />
                           <Tool v-else-if="data.type === 'tool' && data.tool" :name="data.tool.name" :args="data.tool.args" />
                         </div>
