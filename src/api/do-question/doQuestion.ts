@@ -3,6 +3,8 @@ import type {
   Node,
 } from '@vue-flow/core';
 import { del, get, post } from '@/api/request.ts';
+import { getAuthToken } from '@/utils/auth';
+import { connect } from '@/utils/sse';
 
 interface Subject {
   id: string;
@@ -44,12 +46,14 @@ interface Choice {
   isChosen: boolean | null;
 }
 
-interface Chat {
+export interface Chat {
   id: string;
   role: string;
   content: string;
   createdAt: string;
   status: string;
+  hasReceivedText?: boolean;
+  isUsingTool?: boolean;
 }
 
 interface Question {
@@ -200,17 +204,41 @@ async function clearQuestionChatApi(questionId: string) {
   return result.data;
 }
 
-async function chatWithAiAPi(questionId: string, content: string) {
-  const result = await post<{
-    userMessage: Chat;
-    aiMessage: Chat;
-  }>(`/assessment/question/chat/`, {
-    questionId,
-    content,
-  }, {
-    timeout: 50000,
+async function chatWithAiAPi(
+  questionId: string,
+  content: string,
+  onopen: (response: Response) => Promise<void>,
+  onmessage: (data: any) => void,
+  onclose: () => void,
+  onerror: (ev: Event) => void,
+  controller: AbortController,
+) {
+  await connect({
+    url: '/assessment/question/chat/',
+    method: 'POST',
+    body: {
+      questionId,
+      content,
+    },
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': '*/*',
+      'Authorization': getAuthToken(),
+    },
+    controller,
+    onopen,
+    onmessage: (ev) => {
+      try {
+        const data = JSON.parse(ev.data);
+        onmessage(data);
+      }
+      catch (e) {
+        console.error('Error parsing SSE message:', e);
+      }
+    },
+    onclose,
+    onerror,
   });
-  return result.data;
 }
 
 async function fetchDiagramApi(chapterId: string) {

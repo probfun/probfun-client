@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import type { Edge, Node } from '@vue-flow/core';
-import type { ChatData, ChatMessage, ReceiveData } from '@/api/ai/aiType';
+import type { ReceiveData } from '@/api/ai/aiType.ts';
+import type { Chat } from '@/api/do-question/doQuestion';
 import { layout as dagreLayout, graphlib } from '@dagrejs/dagre';
 import { vAutoAnimate } from '@formkit/auto-animate';
 import { Icon } from '@iconify/vue';
-
 import { Background } from '@vue-flow/background';
 import { Controls } from '@vue-flow/controls';
 import { Handle, MarkerType, Position, useVueFlow, VueFlow } from '@vue-flow/core';
 import { MiniMap } from '@vue-flow/minimap';
-
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { aiApi } from '@/api/ai/aiApi';
+import { ReceiveDataType } from '@/api/ai/aiType.ts';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils.ts';
 import MindmapAiSidebar from './MindmapAiSidebar.vue';
@@ -39,10 +39,7 @@ const openId = ref<string | null>(null);
 const showAiSidebar = ref(false);
 const currentKnowledgePoint = ref('');
 
-const aiMessages = ref<Array<{
-  role: 'user' | 'ai';
-  data: ChatData[]; // 改为支持多种数据类型
-}>>([]);
+const aiMessages = ref<Chat[]>([]);
 const aiThinking = ref(false);
 const aiState = ref<'idle' | 'thinking' | 'error'>('idle');
 const abortController = ref<AbortController | null>(null);
@@ -53,22 +50,21 @@ const levelClasses: Record<Level, string> = {
   3: 'bg-amber-50 border-amber-400 text-amber-900 text-sm',
 };
 
-// AI相关函数
-// AI相关函数
 function _initAiConnection() {
-  const messages: ChatMessage[] = [];
+  const requestData: any = {
+    messages: [],
+  };
 
   aiApi(
-    messages,
+    requestData,
     () => {
-      // onOpen回调
       console.log('AI连接已建立');
     },
     (data) => {
       // onReceive回调
       console.log('data:', data);
       if (data) {
-        processReceiveData(data); // 使用统一的数据处理函数
+        processReceiveData(data);
       }
     },
     () => {
@@ -80,41 +76,35 @@ function _initAiConnection() {
   );
 }
 
-// ❗ 关键修复：与AiPanel完全一致的数据处理函数
+// 处理流式消息，按照 aiApi.ts 的处理方式
 function processReceiveData(data: ReceiveData) {
-  if (!data)
-    return;
-  console.log('datasend:', data);
+  const lastMessage = aiMessages.value[aiMessages.value.length - 1] as Chat;
 
-  // 确保存在AI消息块，如果不存在则创建
-  let lastMessage = aiMessages.value[aiMessages.value.length - 1];
-  if (!lastMessage || lastMessage.role !== 'ai') {
-    aiMessages.value.push({
-      role: 'ai',
-      data: [],
-    });
-    lastMessage = aiMessages.value[aiMessages.value.length - 1];
-  }
-
-  // 处理文本消息 - 与AiPanel完全一致
-  if (data.message) {
-    const chatData: ChatData = {
-      type: 'text',
-      text: data.message,
-    };
-    lastMessage.data.push(chatData);
-  }
-
-  // 处理工具调用 - 与AiPanel完全一致
-  if (data.tool) {
-    const chatData: ChatData = {
-      type: 'tool',
-      tool: {
-        name: data.tool.name,
-        args: JSON.parse(data.tool.args) as any,
-      },
-    };
-    lastMessage.data.push(chatData);
+  switch (data.type) {
+    case ReceiveDataType.TEXT: {
+      if (lastMessage && lastMessage.role === 'assistant' && data.content) {
+        lastMessage.content += data.content;
+        lastMessage.hasReceivedText = true;
+      }
+      break;
+    }
+    case ReceiveDataType.TOOL: {
+      if (lastMessage && lastMessage.role === 'assistant') {
+        lastMessage.isUsingTool = true;
+      }
+      break;
+    }
+    case ReceiveDataType.ERROR: {
+      if (lastMessage && lastMessage.role === 'assistant') {
+        lastMessage.status = 'error';
+        lastMessage.content += `\n\n[错误] ${data.content}`;
+      }
+      aiState.value = 'error';
+      break;
+    }
+    default: {
+      break;
+    }
   }
 }
 
@@ -122,70 +112,68 @@ async function sendMessage(content?: string, skipUserMessage = false) {
   if (!content || aiState.value === 'thinking')
     return;
 
-  // ❗ 关键修改：使用新的数据结构，如果skipUserMessage为true则跳过添加用户消息
-  if (!skipUserMessage) {
-    aiMessages.value.push({
-      role: 'user',
-      data: [{ type: 'text', text: content }],
-    });
-  }
-  aiThinking.value = true;
-  aiState.value = 'thinking';
-
-  // ❗ 关键修复：立即创建AI消息块，与AiPanel保持一致
-  aiMessages.value.push({ role: 'ai', data: [] });
-
-  // 检查内容是否已经包含了知识点信息，避免重复添加
-  const messageContent = !content.includes(`我正在学习"${currentKnowledgePoint.value}"这个知识点`)
-    ? `我正在学习"${currentKnowledgePoint.value}"这个知识点，${content}`
-    : content;
-
-  // ❗ 关键修复：构建完整的对话历史，与AiPanel保持一致
-  const chatMessages: ChatMessage[] = [];
-
-  // 添加系统消息（模拟START_BLOCK）
-  chatMessages.push({
-    role: 'assistant',
-    content: '我是"邮小率"，你的智能助手，专门帮助学生解决概率论实验相关的问题。如果你有关于概率论的概念、实验步骤或者具体问题需要解答，随时告诉我，我会尽力帮助你！',
-  });
-
-  // 添加对话历史
-  for (let i = 0; i < aiMessages.value.length; i++) {
-    const message = aiMessages.value[i];
-    for (const data of message.data) {
-      if (data.type === 'text') {
-        // 对于最后一条用户消息，使用处理后的messageContent
-        const content = (message.role === 'user' && i === aiMessages.value.length - 2)
-          ? messageContent
-          : data.text as string;
-        chatMessages.push({
-          role: message.role === 'ai' ? 'assistant' : 'user',
-          content,
-        });
-      }
-    }
+  if (abortController.value) {
+    abortController.value.abort();
   }
 
-  // 使用aiApi函数发送消息，传递完整的对话历史
+  const controller = new AbortController();
+  abortController.value = controller;
+
   try {
-    abortController.value = new AbortController();
+    aiState.value = 'thinking';
+
+    if (!skipUserMessage) {
+      const userMessage: Chat = {
+        id: Date.now().toString(),
+        role: 'user',
+        content,
+        createdAt: new Date().toISOString(),
+        status: 'sent',
+      };
+      aiMessages.value.push(userMessage);
+    }
+
+    const aiMessage: Chat = {
+      id: (Date.now() + 1).toString(),
+      role: 'assistant',
+      content: '',
+      createdAt: new Date().toISOString(),
+      status: 'streaming',
+      hasReceivedText: false,
+      isUsingTool: false,
+    };
+    aiMessages.value.push(aiMessage);
+
+    const messageContent = !content.includes(`我正在学习"${currentKnowledgePoint.value}"这个知识点`)
+      ? `我正在学习"${currentKnowledgePoint.value}"这个知识点，${content}`
+      : content;
+
+    const requestData: any = {
+      messages: [{ role: 'user' as const, content: messageContent }],
+    };
+
     await aiApi(
-      chatMessages,
+      requestData,
       () => {
         console.log('AI连接已建立，开始发送消息');
       },
-      processReceiveData, // 使用统一的数据处理函数
+      processReceiveData,
       () => {
-        aiThinking.value = false;
+        console.log('AI连接关闭');
+        const lastMessage = aiMessages.value[aiMessages.value.length - 1];
+        if (lastMessage && lastMessage.role === 'assistant') {
+          lastMessage.status = 'completed';
+        }
         aiState.value = 'idle';
-        abortController.value = null;
       },
-      abortController.value,
+      controller,
     );
   }
-  catch (error: any) {
+  catch (error) {
+    console.error('发送消息失败:', error);
     aiState.value = 'error';
-    console.error('Error during AI chat:', error);
+  }
+  finally {
     abortController.value = null;
   }
 }
@@ -194,63 +182,62 @@ async function quickAsk(content: string) {
   if (aiState.value === 'thinking')
     return;
 
-  // ❗ 关键修改：使用新的数据结构
-  aiMessages.value.push({
-    role: 'user',
-    data: [{ type: 'text', text: content }],
-  });
-  aiThinking.value = true;
-  aiState.value = 'thinking';
-
-  // ❗ 关键修复：立即创建AI消息块，与AiPanel保持一致
-  aiMessages.value.push({ role: 'ai', data: [] });
-
-  // ❗ 关键修复：构建完整的对话历史，与AiPanel保持一致
-  const chatMessages: ChatMessage[] = [];
-
-  // 添加系统消息（模拟START_BLOCK）
-  chatMessages.push({
-    role: 'assistant',
-    content: '我是"邮小率"，你的智能助手，专门帮助学生解决概率论实验相关的问题。如果你有关于概率论的概念、实验步骤或者具体问题需要解答，随时告诉我，我会尽力帮助你！',
-  });
-
-  // 添加对话历史
-  for (let i = 0; i < aiMessages.value.length; i++) {
-    const message = aiMessages.value[i];
-    for (const data of message.data) {
-      if (data.type === 'text') {
-        // 对于最后一条用户消息，使用处理后的messageContent
-        const content = (message.role === 'user' && i === aiMessages.value.length - 2)
-          ? messageContent
-          : data.text as string;
-        chatMessages.push({
-          role: message.role === 'ai' ? 'assistant' : 'user',
-          content,
-        });
-      }
-    }
+  if (abortController.value) {
+    abortController.value.abort();
   }
 
-  // 使用aiApi函数发送消息，传递完整的对话历史
+  const controller = new AbortController();
+  abortController.value = controller;
+
   try {
-    abortController.value = new AbortController();
+    aiState.value = 'thinking';
+
+    const userMessage: Chat = {
+      id: Date.now().toString(),
+      role: 'user',
+      content,
+      createdAt: new Date().toISOString(),
+      status: 'sent',
+    };
+    aiMessages.value.push(userMessage);
+
+    const aiMessage: Chat = {
+      id: (Date.now() + 1).toString(),
+      role: 'assistant',
+      content: '',
+      createdAt: new Date().toISOString(),
+      status: 'streaming',
+      hasReceivedText: false,
+      isUsingTool: false,
+    };
+    aiMessages.value.push(aiMessage);
+
+    const requestData: any = {
+      messages: [{ role: 'user' as const, content }],
+    };
+
     await aiApi(
-      chatMessages,
+      requestData,
       () => {
         console.log('AI连接已建立，开始发送快速提问');
       },
-      processReceiveData, // 使用统一的数据处理函数
+      processReceiveData,
       () => {
-        aiThinking.value = false;
+        console.log('AI连接关闭');
+        const lastMessage = aiMessages.value[aiMessages.value.length - 1];
+        if (lastMessage && lastMessage.role === 'assistant') {
+          lastMessage.status = 'completed';
+        }
         aiState.value = 'idle';
-        abortController.value = null;
       },
-      abortController.value,
+      controller,
     );
   }
-  catch (error: any) {
+  catch (error) {
+    console.error('快速提问失败:', error);
     aiState.value = 'error';
-    console.error('Error during quick ask:', error);
+  }
+  finally {
     abortController.value = null;
   }
 }
@@ -289,27 +276,18 @@ function openAiSidebar(knowledgePoint: string) {
   currentKnowledgePoint.value = knowledgePoint;
   showAiSidebar.value = true;
 
-  // 清空之前的对话，创建新对话
   aiMessages.value = [];
 
-  // 立即发送第一条消息，说明用户对这个知识点有疑问
   const firstMessage = `我在学习"${knowledgePoint}"这个知识点时遇到了一些问题，能帮我解答吗？`;
-  // 直接添加到消息列表，避免重复添加知识点信息
-  aiMessages.value.push({
-    role: 'user',
-    data: [{ type: 'text', text: firstMessage }],
-  });
 
-  // 然后调用sendMessage处理AI回复，跳过添加用户消息
   sendMessage(firstMessage, true);
 }
 
 // 动态计算布局参数
 function getDynamicLayoutParams() {
-  // 根据是否有AI侧边栏调整布局参数
   const baseParams = {
-    ranksep: showAiSidebar.value ? 72 : 96, // 有侧边栏时减小层级间距
-    nodesep: showAiSidebar.value ? 40 : 56, // 有侧边栏时减小节点间距
+    ranksep: showAiSidebar.value ? 72 : 96,
+    nodesep: showAiSidebar.value ? 40 : 56,
     edgesep: 8,
     marginx: 16,
     marginy: 16,
@@ -333,7 +311,6 @@ function getDynamicNodeSize(_level: number) {
   const baseSize = { width: 220, height: 72 };
 
   if (showAiSidebar.value) {
-    // 有侧边栏时减小节点尺寸
     return {
       width: Math.max(180, baseSize.width * 0.85),
       height: Math.max(60, baseSize.height * 0.85),

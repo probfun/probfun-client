@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import type { Question } from '@/api/do-question/doQuestion.ts';
+import type { ReceiveData } from '@/api/ai/aiType';
+import type { Chat, Question } from '@/api/do-question/doQuestion.ts';
 import { Icon } from '@iconify/vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { ReceiveDataType } from '@/api/ai/aiType';
 import { answerQuestionApi, chatWithAiAPi, clearQuestionChatApi, draftQuestionApi, fetchQuestionChatsApi, fetchQuestionListApi } from '@/api/do-question/doQuestion.ts';
 
 import MarkdownDiv from '@/components/markdown-div/MarkdownDiv.vue';
@@ -17,6 +19,7 @@ const showAiSidebar = ref(false);
 const showAnalytics = ref(false);
 const aiState = ref('idle');
 const aiContent = ref('');
+const abortController = ref<AbortController | null>(null);
 const quickQuestions = ref([
   {
     title: '理解题意',
@@ -62,7 +65,19 @@ async function loadQuestionList() {
       })), // .sort(() => Math.random() - 0.5),
       content: question.content.replace(/^\d+\.\s*/, ''),
     }));
-    gotoQuestion(0);
+
+    if (route.query.questionIndex) {
+      const index = Number.parseInt(route.query.questionIndex as string, 10);
+      if (!Number.isNaN(index) && index >= 0 && index < questionList.value.length) {
+        questionIndex.value = index;
+      }
+      else {
+        gotoQuestion(0);
+      }
+    }
+    else {
+      gotoQuestion(0);
+    }
   }
   catch (error) {
     console.error('Error fetching question list:', error);
@@ -146,23 +161,105 @@ async function quickAsk(content: string) {
   if (currentQuestion.value === null || currentQuestion.value.chats === null)
     return;
   const chats = currentQuestion.value.chats;
+
+  if (abortController.value) {
+    abortController.value.abort();
+  }
+
+  const controller = new AbortController();
+  abortController.value = controller;
+
   try {
     aiState.value = 'thinking';
-    chats.push({
-      id: '-1',
+
+    const userMessage: Chat = {
+      id: Date.now().toString(),
       role: 'user',
       content,
-      createdAt: '-1',
-      status: '-1',
-    });
-    const response = await chatWithAiAPi(currentQuestion.value.id, content);
-    chats[chats.length - 1] = response.userMessage;
-    chats.push(response.aiMessage);
-    aiState.value = 'idle';
+      createdAt: new Date().toISOString(),
+      status: 'sent',
+    };
+    chats.push(userMessage);
+
+    const aiMessage: Chat = {
+      id: (Date.now() + 1).toString(),
+      role: 'assistant',
+      content: '',
+      createdAt: new Date().toISOString(),
+      status: 'streaming',
+      hasReceivedText: false,
+      isUsingTool: false,
+    };
+    chats.push(aiMessage);
+
+    await chatWithAiAPi(
+      currentQuestion.value.id,
+      content,
+      async () => {
+        console.log('SSE connection established');
+      },
+      (data: ReceiveData) => {
+        const lastMessage = chats[chats.length - 1] as Chat;
+        switch (data.type) {
+          case ReceiveDataType.TEXT: {
+            if (lastMessage && lastMessage.role === 'assistant' && data.content) {
+              lastMessage.content += data.content;
+              lastMessage.hasReceivedText = true;
+            }
+            break;
+          }
+          case ReceiveDataType.TOOL: {
+            if (lastMessage && lastMessage.role === 'assistant') {
+              lastMessage.isUsingTool = true;
+            }
+            break;
+          }
+          case ReceiveDataType.ERROR: {
+            if (lastMessage && lastMessage.role === 'assistant') {
+              lastMessage.status = 'error';
+              lastMessage.content += `\n\n[错误] ${data.content}`;
+            }
+            aiState.value = 'error';
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+      },
+      () => {
+        console.log('SSE connection closed');
+        const lastMessage = chats[chats.length - 1];
+        if (lastMessage && lastMessage.role === 'assistant') {
+          lastMessage.status = 'completed';
+        }
+        aiState.value = 'idle';
+      },
+      (ev) => {
+        console.error('SSE error:', ev);
+        const lastMessage = chats[chats.length - 1];
+        if (lastMessage && lastMessage.role === 'assistant') {
+          lastMessage.status = 'error';
+        }
+        aiState.value = 'error';
+      },
+      controller,
+    );
   }
   catch (error) {
     aiState.value = 'error';
     console.error('Error quickAsk:', error);
+  }
+  finally {
+    abortController.value = null;
+  }
+}
+
+function stopGenerating() {
+  if (abortController.value) {
+    abortController.value.abort();
+    abortController.value = null;
+    aiState.value = 'idle';
   }
 }
 
@@ -340,7 +437,7 @@ async function clearChat() {
             <div v-if="currentQuestion?.chats?.length === 0" class="text-xs text-muted-foreground">
               开始提问吧：可以描述你卡住的步骤或贴出你的推导。
             </div>
-            <div v-for="(chat, index) in currentQuestion.chats" v-else :key="index">
+            <div v-for="(chat, index) in (currentQuestion.chats as Chat[])" v-else :key="index">
               <div class="text-xs ml-1 mb-1 opacity-60">
                 {{ chat.role === 'user' ? useUserStore().user?.username : '邮小率' }}
               </div>
@@ -350,12 +447,25 @@ async function clearChat() {
                   'bg-secondary text-secondary-foreground': chat.role === 'assistant',
                 }"
               >
+                <div v-if="chat.role === 'assistant'">
+                  <div v-if="!chat.hasReceivedText && chat.status === 'streaming'" class="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div class="animate-spin rounded-full h-3 w-3 border-b-2 border-current" />
+                    <span>{{ chat.isUsingTool ? 'AI 正在获取题目信息' : 'AI 正在思考中...' }}</span>
+                  </div>
+                  <MarkdownDiv
+                    v-else
+                    class="text-sm text-secondary-foreground"
+                    :text="chat.content"
+                  />
+                </div>
                 <MarkdownDiv
+                  v-else
                   class="text-sm"
                   :class="{
                     'text-primary-foreground': chat.role === 'user',
                     'text-secondary-foreground': chat.role === 'assistant',
-                  }" :text="chat.content"
+                  }"
+                  :text="chat.content"
                 />
               </div>
             </div>
@@ -388,14 +498,23 @@ async function clearChat() {
                 }"
               />
               <Button
-                :disabled="aiState === 'thinking' || aiContent.trim() === ''"
+                v-if="aiState === 'thinking'"
+                variant="outline"
+                class="px-3 py-2"
+                @click="stopGenerating"
+              >
+                停止生成
+              </Button>
+              <Button
+                v-else
+                :disabled="aiContent.trim() === ''"
                 class="px-3 py-2"
                 @click="() => {
                   quickAsk(aiContent.trim());
                   aiContent = '';
                 }"
               >
-                {{ aiState === 'thinking' ? "思考中…" : "发送" }}
+                发送
               </Button>
 
               <Button

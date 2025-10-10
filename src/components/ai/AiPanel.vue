@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ChatBlock, ChatData, ReceiveData, ToolArgs } from '@/api/ai/aiType';
+import type { ChatBlock, ChatData, ReceiveData, Tool as ToolType } from '@/api/ai/aiType.ts';
 import type { Textarea } from '@/components/ui/textarea';
 import { vAutoAnimate } from '@formkit/auto-animate';
 import { DotLottieVue } from '@lottiefiles/dotlottie-vue';
@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { nextTick, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { aiApi, generateTitleApi } from '@/api/ai/aiApi';
+import { ReceiveDataType } from '@/api/ai/aiType.ts';
 import AiSidebar from '@/components/ai/AiSidebar.vue';
 import Tool from '@/components/ai/tool/Tool.vue';
 import MarkdownDiv from '@/components/markdown-div/MarkdownDiv.vue';
@@ -23,7 +24,8 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ContextMenuTrigger } from '@/components/ui/context-menu';
+import { ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
+import ContextMenu from '@/components/ui/context-menu/ContextMenu.vue';
 import { Label } from '@/components/ui/label';
 import { useAiStore } from '@/store';
 import {
@@ -42,6 +44,7 @@ const aiStore = useAiStore();
 const scrollContainer = ref<HTMLDivElement | null>(null);
 const status = ref<'idle' | 'connecting' | 'generating' | 'loading' | 'aborted' | 'error'>('idle');
 const abortController = ref<AbortController | null>(null);
+const hasReceivedFirstMessage = ref(false);
 // const messageQueue = ref<string[]>([]);
 // const messageInterval = ref<number | null>(null);
 const tx = ref<typeof Textarea | null>(null);
@@ -104,14 +107,29 @@ async function sendMessages() {
     };
     chatBlocks.push(newAiBlock);
     status.value = 'connecting';
+    hasReceivedFirstMessage.value = false;
+    autoScroll.value = true;
     await nextTick(() => {
       scrollToBottom();
       resetTextareaHeight();
     });
 
     abortController.value = new AbortController();
-    const chatMessages = getChatMessages();
-    await aiApi(chatMessages, () => status.value = 'loading', receiveMessage, finishGenerating, abortController.value);
+
+    const requestData: any = {
+      messages: [{ role: 'user' as const, content: getLastUserMessage() }],
+    };
+
+    if (aiStore.currentChat?.conversationId) {
+      requestData.conversationId = aiStore.currentChat.conversationId;
+    }
+
+    const initialChatData: ChatData = {
+      type: 'text',
+      text: '',
+    };
+    chatBlocks[chatBlocks.length - 1].data.push(initialChatData);
+    await aiApi(requestData, () => status.value = 'loading', receiveMessage, finishGenerating, abortController.value);
   }
   catch (error: any) {
     status.value = 'error';
@@ -122,6 +140,24 @@ async function sendMessages() {
 function getRouteQuery() {
   const route = useRoute();
   return route.query.query as string | undefined;
+}
+
+function getLastUserMessage(): string {
+  const chat = aiStore.currentChat;
+  if (!chat)
+    return '';
+
+  for (let i = chat.chatBlocks.length - 1; i >= 0; i--) {
+    const block = chat.chatBlocks[i];
+    if (block.role === 'user') {
+      for (const data of block.data) {
+        if (data.type === 'text' && data.text) {
+          return data.text;
+        }
+      }
+    }
+  }
+  return '';
 }
 
 function stopGenerating() {
@@ -151,30 +187,60 @@ async function finishGenerating() {
 }
 
 function receiveMessage(data: ReceiveData) {
-  if (status.value === 'loading') {
-    status.value = 'generating';
-  }
   const chat = aiStore.currentChat;
-  if (data?.message) {
-    const message = data.message;
 
-    const chatData: ChatData = {
-      type: 'text',
-      text: message,
-    };
-    chat?.chatBlocks[chat.chatBlocks.length - 1].data.push(chatData);
+  switch (data.type) {
+    case ReceiveDataType.TEXT: {
+      if (status.value === 'loading') {
+        status.value = 'generating';
+      }
+      hasReceivedFirstMessage.value = true;
+      const message = data.content;
+      const lastBlock = chat?.chatBlocks[chat.chatBlocks.length - 1];
+      const lastChatData = lastBlock?.data[lastBlock.data.length - 1];
+
+      if (lastChatData && lastChatData.type === 'text') {
+        lastChatData.text += message;
+      }
+      else {
+        const newChatData: ChatData = {
+          type: 'text',
+          text: message,
+        };
+        lastBlock?.data.push(newChatData);
+      }
+      break;
+    }
+    case ReceiveDataType.TOOL:{
+      const tool = JSON.parse(data.content) as ToolType;
+      const chatData: ChatData = {
+        type: 'tool',
+        tool,
+      };
+      chat?.chatBlocks[chat.chatBlocks.length - 1].data.push(chatData);
+      break;
+    }
+    case ReceiveDataType.ERROR:
+      break;
+    case ReceiveDataType.CONVERSATION_INFO:
+      console.log('conversation info:', data);
+      if (aiStore.currentChat) {
+        aiStore.currentChat.conversationId = data.content;
+      }
+      break;
+    case ReceiveDataType.TITLE_GENERATION:
+      if (aiStore.currentChat) {
+        aiStore.currentChat.chatTitle += data.content;
+      }
+      break;
+    case ReceiveDataType.THINKING:
+      break;
+    default:
+      break;
   }
-  if (data?.tool) {
-    const chatData: ChatData = {
-      type: 'tool',
-      tool: {
-        name: data.tool.name,
-        args: JSON.parse(data.tool.args) as ToolArgs,
-      },
-    };
-    chat?.chatBlocks[chat.chatBlocks.length - 1].data.push(chatData);
+  if (autoScroll.value) {
+    scrollToBottom();
   }
-  scrollToBottom();
 }
 
 watch(status, () => {
@@ -264,20 +330,6 @@ function handleCompositionEnd() {
       </CardHeader>
       <CardContent class="overflow-y-hidden border-t flex pb-0 px-0 relative flex-1">
         <div class="grid grid-cols-[1fr_3fr]1 w-full">
-          <!--          <div class="flex items-center justify-center border-r"> -->
-          <!--            <video -->
-          <!--              width="60%" -->
-          <!--              class="select-none" -->
-          <!--              :draggable="false" -->
-          <!--              height="auto" -->
-          <!--              autoplay -->
-          <!--              loop -->
-          <!--              muted -->
-          <!--            > -->
-          <!--              <source src="/src/assets/ai-robot.webm" type="video/webm"> -->
-          <!--              <p>您的浏览器不支持 WebM 格式。</p> -->
-          <!--            </video> -->
-          <!--          </div> -->
           <div ref="scrollContainer" class="flex w-full flex-col items-center gap-3 overflow-y-auto pt-4 px-6 pb-24">
             <div v-for="(block, index) in aiStore.currentChat?.chatBlocks ?? [START_BLOCK]" :key="block.blockId" v-auto-animate class="flex w-full max-w-screen-md">
               <div v-if="block.role === 'user'" class="ml-auto">
@@ -294,7 +346,6 @@ function handleCompositionEnd() {
                       }"
                     >
                       <Label class="text-base whitespace-pre-line">{{ block.data[0].text }}</Label>
-                      <!--                  <Input v-model="msg.content" class="p-0 text-base min-w-none w-auto h-auto py-1" /> -->
                     </div>
                   </ContextMenuTrigger>
                   <ContextMenuContent>
@@ -344,7 +395,7 @@ function handleCompositionEnd() {
                 <ContextMenu>
                   <ContextMenuTrigger :disabled="status !== 'idle' && aiStore.currentChat !== null && index === aiStore.currentChat.chatBlocks.length - 1">
                     <div v-auto-animate class="rounded-lg bg-muted text-foreground p-3 w-full border">
-                      <div v-if="status === 'loading' && aiStore.currentChat && index === aiStore.currentChat.chatBlocks.length - 1" class="flex flex-col items-center justify-center">
+                      <div v-if="status === 'loading' && !hasReceivedFirstMessage && aiStore.currentChat && index === aiStore.currentChat.chatBlocks.length - 1" class="flex flex-col items-center justify-center">
                         <DotLottieVue class="size-32 mb-4" autoplay loop src="https://lottie.host/54344590-688a-4a46-970b-f8dbea72f5d1/3CdMHIQhDO.lottie" />
                         <Label class="mb-6 text-base">
                           AI 正在生成中 ...
@@ -353,7 +404,7 @@ function handleCompositionEnd() {
                       <div v-else class="flex flex-col gap-4 overflow-x-auto">
                         <div v-for="(data, index_) in block.data" :key="index_">
                           <MarkdownDiv v-if="data.type === 'text'" :text="data.text ?? ''" />
-                          <Tool v-else-if="data.type === 'tool'" :name="data.tool!.name" :args="data.tool!.args" />
+                          <Tool v-else-if="data.type === 'tool' && data.tool" :name="data.tool.name" :args="data.tool.args" />
                         </div>
                       </div>
                     </div>
@@ -393,7 +444,8 @@ function handleCompositionEnd() {
           <Textarea
             ref="tx"
             v-model="message"
-            :rows="1" class="resize-none transition-all min-h-0 overflow-hidden"
+            :rows="1"
+            class="resize-none transition-all min-h-0 overflow-hidden"
             placeholder="请输入您的问题"
             @keydown.enter.exact="(event: KeyboardEvent) => {
               if (!event.shiftKey) {
@@ -428,14 +480,6 @@ function handleCompositionEnd() {
           </Button>
         </div>
       </CardFooter>
-    </Card>
-    <Card v-if="false" class="w-72">
-      <CardHeader class="p-4">
-        <CardTitle>
-          实验面板
-        </CardTitle>
-      </CardHeader>
-      <CardContent class="border-t" />
     </Card>
 
     <AlertDialog v-model:open="isOpen">

@@ -11,3 +11,7 @@ export function setLocalToken(token: string) {
 export function isVisitor() {
   return useUserStore().user?.role === -1;
 }
+
+export function getAuthToken() {
+  return `Bearer ${localStorage.getItem('token')}`;
+}
