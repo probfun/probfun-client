@@ -302,6 +302,18 @@ const router = createRouter({
           component: () => import('@/components/experiment/chapter1/SpamFiltering.vue'),
         },
         {
+          path: '/dashboard/experiment/height-stats',
+          component: () => import('@/components/experiment/chapter2/HeightStats.vue'),
+        },
+        {
+          path: '/dashboard/experiment/double-integral',
+          component: () => import('@/components/experiment/calculusB/DoubleIntegral.vue'),
+        },
+        {
+          path: '/dashboard/experiment/space-curve',
+          component: () => import('@/components/experiment/calculusB/SpaceCurve.vue'),
+        },
+        {
           path: '/dashboard/analysis',
           component: AnalysisPanel,
         },

@@ -23,6 +23,7 @@ const experiments: DrawerItem[] = [
     children: [
       { title: '离散型随机变量的PMF', icon: 'lucide:flask-conical', route: '/dashboard/experiment/discrete-pmf' },
       { title: '概率密度函数与分布函数', icon: 'lucide:flask-conical', route: '/dashboard/experiment/pdf-cdf' },
+      { title: '身高数据分析', icon: 'lucide:flask-conical', route: '/dashboard/experiment/height-stats' },
       { title: '二项分布', icon: 'lucide:flask-conical', route: '/dashboard/experiment/binomial-distribution' },
       { title: '泊松分布', icon: 'lucide:flask-conical', route: '/dashboard/experiment/poisson-distribution' },
       { title: '几何分布', icon: 'lucide:flask-conical', route: '/dashboard/experiment/geometric-distribution' },

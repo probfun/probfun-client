@@ -357,6 +357,15 @@ function updateExperiment() {
   else if (path === 'linear-equation-3') {
     title.value = '三元一次方程组';
   }
+  else if (path === 'height-stats') {
+    title.value = '身高数据分析';
+  }
+  else if (path === 'double-integral') {
+    title.value = '二重积分';
+  }
+  else if (path === 'space-curve') {
+    title.value = '空间曲线弧长';
+  }
   else {
     title.value = useConfigStore().currentSubject.name;
     tags.value = [];
