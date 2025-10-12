@@ -10,7 +10,7 @@ const content = ref(`
 ### **一、定义**
 若在弧 $\\overset{\\frown}{AB}$ 上任意作内接折线，当折线段的最大边长 $\\lambda \\to 0$ 时，若折线的长度趋向于一个确定的极限，则称此极限为曲线弧 $\\overset{\\frown}{AB}$ 的弧长，即
 $$
-s = \\lim_{\\lambda \\to 0} \\sum_{i=1}^{n} |M_{i-1}M_i| =: \\int_{\\overset{\\frown}{AB}} ds
+s = \\lim_{\\lambda \\to 0} \\sum_{i=1}^{n} |M_{i-1}M_i| = \\int_{\\overset{\\frown}{AB}} ds
 $$
 
 ### **二、参数方程形式的弧长公式**
@@ -20,7 +20,7 @@ s = \\int_{\\alpha}^{\\beta} \\sqrt{x'(t)^2 + y'(t)^2 + z'(t)^2} dt
 $$
 
 ### **三、示例：计算螺旋线弧长**
-计算螺旋线 $x = \\sin(t), y = \\cos(t), z = t$ 在 $t \\in [0, 2\pi]$ 的弧长：
+计算螺旋线 $x = \\sin(t), y = \\cos(t), z = t$ 在 $t \\in [0, 2\\pi]$ 的弧长：
 $$
 s = \\int_{0}^{2\\pi} \\sqrt{(-\\sin(t))^2 + \\cos(t)^2 + 1^2} dt \\\\
 = \\int_{0}^{2\\pi} \\sqrt{2} dt = 2\\sqrt{2}\\pi
@@ -36,7 +36,7 @@ $$
 
 4.计算弧长：根据弧长公式计算螺旋线的实际弧长 $c$
 
-5.比较分析：观察差值 $(c - s)$ 随 $n$ 变化的趋势
+5.比较分析：观察差值 $c - s$ 随 $n$ 变化的趋势
 `);
 </script>
 

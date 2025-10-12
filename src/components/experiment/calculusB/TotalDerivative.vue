@@ -5,7 +5,7 @@ import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { renderLatex, toMarkdown } from '@/utils/markdown';
 
 const content = ref(`
-## **全微分的概念与几何意义**
+## **全微分的几何意义**
 全微分是多元函数微积分中的核心概念，它从局部线性近似的角度描述了多元函数的变化特性
 
 ### **一、全微分的定义**

@@ -5,7 +5,7 @@ import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { toMarkdown } from '@/utils/markdown';
 
 const conclusionContent = `
-### **函数可积条件实验**
+## **函数可积条件实验**
 
 本实验通过可视化达布大和与达布小和的收敛过程，直观展示了函数可积的充要条件：当分割无限加细时，上和与下和的差趋于零。
 
