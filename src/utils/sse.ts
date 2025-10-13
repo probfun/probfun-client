@@ -16,6 +16,7 @@ export async function connect(data: {
 }) {
   await fetchEventSource(`${BASE_URL}${data.url}`, {
     ...data,
+    openWhenHidden: true,
     body: JSON.stringify(data.body),
     signal: data.controller.signal,
   });
