@@ -21,13 +21,13 @@ export async function loginApi(username: string, password: string) {
   return result.data;
 }
 
-export async function signupApi(username: string, password: string, nickname: string, gender: number, email: string, phone: string, major: string, school: string) {
+export async function signupApi(username: string, password: string, realName: string, gender: number, email: string, phone: string, major: string, school: string) {
   const result = await post<{
     user: User;
   }>('/auth/register/', {
     username,
     password,
-    nickname,
+    realName,
     gender,
     email,
     phone,

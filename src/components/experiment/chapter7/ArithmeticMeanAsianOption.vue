@@ -106,14 +106,14 @@ document.querySelectorAll('input[type="range"], select').forEach((element) => {
     params[id] = value;
     if (this.type === 'range') {
       document.getElementById(`${id}-value`).textContent
-          = ['r', 'sigma'].includes(id) ? value.toFixed(2) : value;
+        = ['r', 'sigma'].includes(id) ? value.toFixed(2) : value;
     }
 
     // 显示/隐藏固定执行价格滑块
     if (id === 'option-type') {
       const showFixed = value.startsWith('fixed');
       document.getElementById('fixed-strike-container').style.display
-          = showFixed ? 'block' : 'none';
+        = showFixed ? 'block' : 'none';
     }
   });
 });

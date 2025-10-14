@@ -163,7 +163,6 @@ const collapse = ref(false);
                   duration: 1000, // use this if you want a smooth transition to the node
                   padding: 10,
                   minZoom: 0.5,
-                  offset: { x: 0, y: 800 },
                 });
               }
               else {

@@ -5,10 +5,11 @@ import { Icon } from '@iconify/vue';
 import { computed, onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { loginApi, signupApi } from '@/api/user/userApi.ts';
+import CnUniversityCombobox from '@/components/auth/CnUniversityCombobox.vue';
+
 import { Button } from '@/components/ui/button';
 
 import { Label } from '@/components/ui/label';
-
 import { useConfigStore, useUserStore } from '@/store';
 import { setLocalToken } from '@/utils/auth.ts';
 import { error, success, warning } from '@/utils/toast.ts';
@@ -33,6 +34,7 @@ const signupForm = reactive({
   account: '',
   nickname: '',
   password: '',
+  school: '',
   confirmPassword: '',
 });
 
@@ -62,15 +64,19 @@ async function login() {
 
 async function signup() {
   if (!signupForm.account) {
-    warning('请填写账号');
+    warning('账号不能为空');
     return;
   }
   if (!signupForm.nickname) {
-    warning('请填写昵称');
+    warning('昵称不能为空');
+    return;
+  }
+  if (!signupForm.school) {
+    warning('学校不能为空');
     return;
   }
   if (!signupForm.password) {
-    warning('请填写密码');
+    warning('密码不能为空');
     return;
   }
   if (signupForm.password !== signupForm.confirmPassword) {
@@ -79,7 +85,7 @@ async function signup() {
   }
 
   try {
-    await signupApi(signupForm.account, signupForm.password, signupForm.nickname, 0, '', '', '', '');
+    await signupApi(signupForm.account, signupForm.password, signupForm.nickname, 0, '', '', '', signupForm.school);
     const data = await loginApi(signupForm.account, signupForm.password);
     const { token, user } = data;
     setLocalToken(token);
@@ -124,7 +130,7 @@ const isLogin = computed(() => {
         </h1>
 
         <div class="text-base text-gray-600 mb-6">
-          登录以解锁个人学情、AI对话等功能
+          欢迎来到邮趣数学，让我们从这里开始你的数学之旅吧！
         </div>
 
         <div v-auto-animate class="space-y-5 mb-3">
@@ -156,7 +162,7 @@ const isLogin = computed(() => {
                 type="password"
                 autocomplete="password"
                 placeholder="密码"
-                class="peer h-12 w-full pt-4 !placeholder-transparent rounded-xl"
+                class="peer h-12 w-full pt-2 !placeholder-transparent rounded-xl"
               />
               <Label
                 for="password"
@@ -211,7 +217,7 @@ const isLogin = computed(() => {
                 v-model="signupForm.nickname"
                 :disabled="isLoading"
                 placeholder="昵称"
-                class="peer h-12 w-full pt-4 !placeholder-transparent rounded-xl"
+                class="peer h-12 w-full pt-2 !placeholder-transparent rounded-xl"
               />
               <Label
                 for="nickname"
@@ -223,6 +229,8 @@ const isLogin = computed(() => {
               </Label>
             </div>
 
+            <CnUniversityCombobox v-model="signupForm.school" src="/china_universities.json" placeholder="选择大学" />
+
             <div class="relative">
               <Input
                 id="passwordSignup"
@@ -230,7 +238,7 @@ const isLogin = computed(() => {
                 :disabled="isLoading"
                 type="password"
                 placeholder="密码"
-                class="peer h-12 w-full pt-4 !placeholder-transparent rounded-xl"
+                class="peer h-12 w-full pt-2 !placeholder-transparent rounded-xl"
               />
               <Label
                 for="passwordSignup"
@@ -249,7 +257,7 @@ const isLogin = computed(() => {
                 :disabled="isLoading"
                 type="password"
                 placeholder="密码"
-                class="peer h-12 w-full pt-4 !placeholder-transparent rounded-xl"
+                class="peer h-12 w-full pt-2 !placeholder-transparent rounded-xl"
               />
               <Label
                 for="confirmPassword"

@@ -119,10 +119,10 @@ function updatePortfolio() {
 
   // 计算期望收益
   const expectedReturn
-      = normalizedWeights.stock * assets.value.stock.return
-        + normalizedWeights.bond * assets.value.bond.return
-        + normalizedWeights.gold * assets.value.gold.return
-        + normalizedWeights.cash * assets.value.cash.return;
+    = normalizedWeights.stock * assets.value.stock.return
+      + normalizedWeights.bond * assets.value.bond.return
+      + normalizedWeights.gold * assets.value.gold.return
+      + normalizedWeights.cash * assets.value.cash.return;
 
   // 计算组合方差
   const stockVar = (assets.value.stock.risk / 100) ** 2;
@@ -131,13 +131,13 @@ function updatePortfolio() {
   const cashVar = (assets.value.cash.risk / 100) ** 2;
 
   const portfolioVariance
-      = normalizedWeights.stock ** 2 * stockVar
-        + normalizedWeights.bond ** 2 * bondVar
-        + normalizedWeights.gold ** 2 * goldVar
-        + normalizedWeights.cash ** 2 * cashVar
-        + 2 * normalizedWeights.stock * normalizedWeights.bond * covMatrix.value.stockBond
-        + 2 * normalizedWeights.stock * normalizedWeights.gold * covMatrix.value.stockGold
-        + 2 * normalizedWeights.bond * normalizedWeights.gold * covMatrix.value.bondGold;
+    = normalizedWeights.stock ** 2 * stockVar
+      + normalizedWeights.bond ** 2 * bondVar
+      + normalizedWeights.gold ** 2 * goldVar
+      + normalizedWeights.cash ** 2 * cashVar
+      + 2 * normalizedWeights.stock * normalizedWeights.bond * covMatrix.value.stockBond
+      + 2 * normalizedWeights.stock * normalizedWeights.gold * covMatrix.value.stockGold
+      + 2 * normalizedWeights.bond * normalizedWeights.gold * covMatrix.value.bondGold;
 
   const portfolioRisk = Math.sqrt(portfolioVariance) * 100;
 
