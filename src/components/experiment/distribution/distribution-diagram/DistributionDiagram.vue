@@ -9,7 +9,7 @@ import type {
   TwoDNormalDistributionArgs,
   TwoDUniformDistributionArgs,
   UniformDistributionArgs,
-} from '@/api/ai/aiType';
+} from '@/api/ai/aiType.ts';
 import ThreeNormalDiagram from '@/components/experiment/chapter3/normal-distribution/threeNormalDiagram.vue';
 import ThreeUniformDiagram from '@/components/experiment/chapter3/uniform-distribution/threeUniformDiagram.vue';
 import BinomialDiagram from '@/components/experiment/distribution/BinomialDiagram.vue';

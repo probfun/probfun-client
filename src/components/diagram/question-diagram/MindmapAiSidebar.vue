@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import type { ChatData } from '@/api/ai/aiType';
+import type { Chat } from '@/api/do-question/doQuestion';
 import { Icon } from '@iconify/vue';
-import { DotLottieVue } from '@lottiefiles/dotlottie-vue';
 import { ArrowDownToLine, Bot, CircleStop, Clipboard, PencilLine, RotateCcw, Send, Trash2 } from 'lucide-vue-next';
 import { nextTick, onMounted, ref, watch } from 'vue';
-import Tool from '@/components/ai/tool/Tool.vue';
 import MarkdownDiv from '@/components/markdown-div/MarkdownDiv.vue';
 import { Button } from '@/components/ui/button';
 import { CardFooter } from '@/components/ui/card';
@@ -13,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 
 interface Props {
   currentKnowledgePoint: string;
-  aiMessages: Array<{ role: 'user' | 'ai'; data: ChatData[] }>;
+  aiMessages: Chat[];
   aiState: 'idle' | 'thinking' | 'error';
 }
 
@@ -66,8 +64,7 @@ function handleSendMessage() {
 
 function copyMessageAt(index: number) {
   const msg = props.aiMessages[index];
-  const text = msg.data.map((d: any) => d.type === 'text' ? (d.text || '') : '').join('\n');
-  navigator.clipboard.writeText(text);
+  navigator.clipboard.writeText(msg.content);
 }
 
 function deleteMessageAt(index: number) {
@@ -84,7 +81,7 @@ function handleCompositionEnd() {
 }
 
 function resetTextareaHeight() {
-  if (tx.value?.root) {
+  if (tx.value) {
     tx.value.root.style.height = 'auto';
     tx.value.root.style.height = `${tx.value.root.scrollHeight}px`;
   }
@@ -113,14 +110,12 @@ function handleScroll() {
 }
 
 onMounted(() => {
-  nextTick(() => {
-    resetTextareaHeight();
-    scrollToBottom(false);
-    scrollContainer.value?.addEventListener('scroll', handleScroll);
-  });
+  scrollContainer.value?.addEventListener('scroll', handleScroll);
+  scrollToBottom(false);
+  resetTextareaHeight();
+  tx.value?.root.addEventListener('input', resetTextareaHeight, false);
 });
 
-// 监听消息变化，自动滚动到底部
 watch(() => props.aiMessages, () => {
   nextTick(() => {
     scrollToBottom();
@@ -156,7 +151,7 @@ watch(() => props.aiMessages, () => {
           class="flex w-full"
           :class="message.role === 'user' ? 'justify-end' : 'justify-start'"
         >
-          <div v-if="message.role === 'ai'" class="flex flex-col gap-2 w-full max-w-screen-md">
+          <div v-if="message.role === 'assistant'" class="flex flex-col gap-2 w-full max-w-screen-md">
             <div class="flex gap-2 items-center">
               <div class="rounded-full p-1 bg-primary flex items-center justify-center text-primary-foreground">
                 <Bot class="size-5" />
@@ -168,18 +163,16 @@ watch(() => props.aiMessages, () => {
             <ContextMenu>
               <ContextMenuTrigger>
                 <div class="relative rounded-lg bg-muted text-foreground p-3 w-full border group">
-                  <!-- 加载状态显示在最后一个AI消息块内部 -->
-                  <div v-if="aiState === 'thinking' && index === aiMessages.length - 1" class="flex flex-col items-center justify-center">
-                    <DotLottieVue class="size-32 mb-4" autoplay loop src="https://lottie.host/54344590-688a-4a46-970b-f8dbea72f5d1/3CdMHIQhDO.lottie" />
-                    <div class="text-base mb-6">
-                      AI 正在生成中 ...
+                  <div v-if="message.role === 'assistant'">
+                    <div v-if="!message.hasReceivedText && message.status === 'streaming'" class="flex items-center gap-2 text-sm text-muted-foreground">
+                      <div class="animate-spin rounded-full h-3 w-3 border-b-2 border-current" />
+                      <span>{{ message.isUsingTool ? 'AI 正在获取题目信息' : 'AI 正在思考中...' }}</span>
                     </div>
-                  </div>
-                  <div v-else class="flex flex-col gap-4 overflow-x-auto">
-                    <div v-for="(content, contentIndex) in message.data" :key="contentIndex">
-                      <MarkdownDiv v-if="content.type === 'text'" :text="content.text || ''" />
-                      <Tool v-else-if="content.type === 'tool'" :name="content.tool!.name" :args="content.tool!.args" />
-                    </div>
+                    <MarkdownDiv
+                      v-else
+                      class="text-sm"
+                      :text="message.content"
+                    />
                   </div>
                   <Button size="icon" variant="ghost" class="opacity-0 group-hover:opacity-100 transition-opacity absolute top-1 right-1 size-6" @click="() => copyMessageAt(index)">
                     <Clipboard class="size-4" />
@@ -191,11 +184,11 @@ watch(() => props.aiMessages, () => {
                   <Clipboard class="size-4" />
                   复制
                 </ContextMenuItem>
-                <ContextMenuItem class="flex gap-2" @click="() => setMessage(message.data.map(d => d.type === 'text' ? (d.text || '') : '').join('\n'))">
+                <ContextMenuItem class="flex gap-2" @click="() => setMessage(message.content)">
                   <PencilLine class="size-4" />
                   设为输入
                 </ContextMenuItem>
-                <ContextMenuItem class="flex gap-2" @click="() => emit('retryFrom', message.data.map(d => d.type === 'text' ? (d.text || '') : '').join('\n'))">
+                <ContextMenuItem class="flex gap-2" @click="() => emit('retryFrom', message.content)">
                   <RotateCcw class="size-4" />
                   重新生成
                 </ContextMenuItem>
@@ -212,16 +205,12 @@ watch(() => props.aiMessages, () => {
                 <div
                   class="rounded-lg bg-primary text-primary-foreground p-2"
                   @dblclick="() => {
-                    const text = message.data.map(d => d.type === 'text' ? (d.text || '') : '').join('\n');
-                    setMessage(text);
+                    setMessage(message.content);
                     emit('deleteMessage', index);
                   }"
                 >
-                  <div v-for="(content, contentIndex) in message.data" :key="contentIndex">
-                    <div v-if="content.type === 'text'" class="text-base whitespace-pre-line">
-                      {{ content.text || '' }}
-                    </div>
-                    <Tool v-else-if="content.type === 'tool'" :name="content.tool!.name" :args="content.tool!.args" />
+                  <div class="text-base whitespace-pre-line">
+                    {{ message.content }}
                   </div>
                 </div>
               </ContextMenuTrigger>
@@ -230,11 +219,11 @@ watch(() => props.aiMessages, () => {
                   <Clipboard class="size-4" />
                   复制
                 </ContextMenuItem>
-                <ContextMenuItem class="flex gap-2" @click="() => setMessage(message.data.map(d => d.type === 'text' ? (d.text || '') : '').join('\n'))">
+                <ContextMenuItem class="flex gap-2" @click="() => setMessage(message.content)">
                   <PencilLine class="size-4" />
                   设为输入
                 </ContextMenuItem>
-                <ContextMenuItem class="flex gap-2" @click="() => emit('retryFrom', message.data.map(d => d.type === 'text' ? (d.text || '') : '').join('\n'))">
+                <ContextMenuItem class="flex gap-2" @click="() => emit('retryFrom', message.content)">
                   <RotateCcw class="size-4" />
                   重新发送
                 </ContextMenuItem>
@@ -254,7 +243,6 @@ watch(() => props.aiMessages, () => {
 
     <CardFooter class="p-2 border-t flex justify-center">
       <div class="max-w-screen-md flex w-full flex-col gap-2">
-        <!-- 快捷问题：单行水平并列，可横向滚动 -->
         <div class="w-full flex gap-2 overflow-x-auto whitespace-nowrap">
           <Button
             v-for="question in quickQuestions"
@@ -269,7 +257,6 @@ watch(() => props.aiMessages, () => {
           </Button>
         </div>
 
-        <!-- 输入区域：单独占一行，整行铺满（对齐 AiPanel） -->
         <div class="w-full min-w-0 flex items-end gap-2">
           <Textarea
             ref="tx"
@@ -286,7 +273,6 @@ watch(() => props.aiMessages, () => {
             }"
             @compositionstart="handleCompositionStart"
             @compositionend="handleCompositionEnd"
-            @input="resetTextareaHeight"
           />
           <Button
             size="icon"

@@ -1,64 +1,56 @@
-import type { ChatMessage, ReceiveChunk, ReceiveData } from '@/api/ai/aiType';
+import type { ChatMessage, ReceiveData } from '@/api/ai/aiType';
+import { getAuthToken } from '@/utils/auth';
+import { connect } from '@/utils/sse';
 import { error } from '@/utils/toast';
 import { postRaw } from '../request';
 
+interface ChatRequest extends Record<string, unknown> {
+  messages: ChatMessage[];
+  conversationId?: string;
+}
+
 export async function aiApi(
-  messages: ChatMessage[],
+  requestData: ChatRequest,
   open: () => void,
   receive: (data: ReceiveData) => void,
   finish: () => void,
   abortController: AbortController | null = null,
 ) {
-  const head = window.location.protocol === 'https:' ? 'wss' : 'ws';
-  console.log('WebSocket URL:', head);
-  const wsUrl = `${head}://${location.host}/backend-api/ai/chat`;
-  let websocket: WebSocket | null = null;
-
+  const controller = abortController || new AbortController();
   try {
-    websocket = new WebSocket(wsUrl);
-
-    // WebSocket连接成功
-    websocket.onopen = () => {
-      console.log('WebSocket connection established');
-      open();
-      console.log(messages);
-      websocket?.send(JSON.stringify({ messages }));
-    };
-
-    // 监听连接关闭
-    websocket.onclose = () => {
-      console.log('WebSocket connection closed');
-      // finish(); // 调用连接结束回调
-    };
-
-    // 监听错误
-    websocket.onerror = (error) => {
-      console.error('WebSocket error:', error);
-      finish();
-    };
-
-    // 如果提供了 AbortController，监听中断信号
-    if (abortController) {
-      abortController.signal.addEventListener('abort', () => {
-        console.log('Connection aborted by AbortController');
-        websocket?.close(); // 关闭 WebSocket 连接
-      });
-    }
-
-    // 接收服务端消息
-    websocket.onmessage = (event) => {
-      const { data, done } = JSON.parse(event.data) as ReceiveChunk;
-      if (done) {
+    await connect({
+      url: '/langchain/chat/',
+      method: 'POST',
+      body: requestData,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': '*/*',
+        'Authorization': getAuthToken(),
+      },
+      controller,
+      onopen: async (_response) => {
+        console.log('SSE connection established');
+        open();
+      },
+      onmessage: (ev) => {
+        const data = JSON.parse(ev.data);
+        receive(data);
+      },
+      onclose: () => {
+        console.log('SSE connection closed');
         finish();
-        websocket?.close();
-      }
-      receive(data);
-    };
+      },
+      onerror: (ev) => {
+        console.error('SSE error:', ev);
+        error('连接发生错误');
+        finish();
+      },
+    });
   }
   catch (e) {
-    error('连接发生错误：');
-    console.error('Error during WebSocket connection:', e);
-    websocket?.close(); // 确保 WebSocket 被关闭
+    error('连接发生错误');
+    console.error('Error during SSE connection:', e);
+    finish();
   }
 }
 
@@ -78,3 +70,11 @@ export async function generateDistributionFunctionApi(distribution: string) {
     timeout: 20000,
   });
 }
+
+// export async function getConversationApi(conversationId: string) {
+//   return await get<{
+//     conversation: {
+//       messages: ChatMessage[];
+//     };
+//   }>(`/langchain/conversation/${conversationId}/`);
+// }

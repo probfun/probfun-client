@@ -21,6 +21,7 @@ export interface Chat {
   chatId: string;
   chatTitle: string;
   lastChatTime: string;
+  conversationId?: string;
 }
 
 export interface NormalDistributionArgs {
@@ -69,7 +70,7 @@ export interface PoissonDistributionArgs {
   lambda: number;
 }
 
-interface ThreeDoorsArgs {
+export interface ThreeDoorsArgs {
   selectedStrategy: 'never' | 'always' | 'random';
 }
 
@@ -91,13 +92,45 @@ export interface Tool {
   args: ToolArgs;
 }
 
-export type ReceiveData = {
-  message?: string;
-  tool?: {
-    name: string;
-    args: string;
-  };
-} | null;
+export enum ReceiveDataType {
+  TEXT = 'text',
+  CONVERSATION_INFO = 'conversation_info',
+  TITLE_GENERATION = 'title_generation',
+  THINKING = 'thinking',
+  TOOL = 'tool',
+  ERROR = 'error',
+}
+
+interface BaseReceiveData {
+  type: ReceiveDataType;
+  content: string;
+}
+
+export interface TextReceiveData extends BaseReceiveData {
+  type: ReceiveDataType.TEXT;
+}
+
+export interface ConversationInfoReceiveData extends BaseReceiveData {
+  type: ReceiveDataType.CONVERSATION_INFO;
+}
+
+export interface TitleGenerationReceiveData extends BaseReceiveData {
+  type: ReceiveDataType.TITLE_GENERATION;
+}
+
+export interface ThinkingReceiveData extends BaseReceiveData {
+  type: ReceiveDataType.THINKING;
+}
+
+export interface ToolReceiveData extends BaseReceiveData {
+  type: ReceiveDataType.TOOL;
+}
+
+export interface ErrorReceiveData extends BaseReceiveData {
+  type: ReceiveDataType.ERROR;
+}
+
+export type ReceiveData = TextReceiveData | ConversationInfoReceiveData | TitleGenerationReceiveData | ThinkingReceiveData | ToolReceiveData | ErrorReceiveData;
 
 export interface ReceiveChunk {
   data: ReceiveData;
