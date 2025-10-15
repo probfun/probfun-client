@@ -38,12 +38,12 @@ const isOpen = ref(false);
     <div class="pt-2 px-4 transition-all hover:bg-secondary/50 flex gap-2" @click="isOpen = !isOpen">
       <Avatar class="mt-1 size-7">
         <AvatarImage :src="comment.user.avatarUrl" alt="" />
-        <AvatarFallback>{{ comment.user.nickname }}</AvatarFallback>
+        <AvatarFallback>{{ comment.user.realName }}</AvatarFallback>
       </Avatar>
       <div class="flex flex-col gap-1 w-full">
         <div class="space-x-2 flex items-center">
           <span class=" font-bold text-[15px] cursor-pointer select-none hover:underline underline-offset-4 transition-all">
-            {{ comment.user.nickname }}
+            {{ comment.user.realName }}
           </span>
           <span class="text-sm text-muted-foreground">
             {{ comment.user.username }} · {{ format(comment.timestamp, 'zh_CN') }}
@@ -52,16 +52,12 @@ const isOpen = ref(false);
             <Badge> 置顶 </Badge>
           </div>
         </div>
-        <div class="text-sm whitespace-pre-line leading-tight flex items-center gap-1">
-          <div v-if="comment.parentComment" class="flex items-center gap-0.5">
+        <p class="text-sm leading-tight">
+          <template v-if="comment.parentComment">
             回复
-            <div class="hover:underline underline-offset-4 cursor-pointer">
-              {{ comment.parentComment.user.nickname }}
-            </div>
-            :
-          </div>
-          {{ comment.content }}
-        </div>
+            <span class="hover:underline underline-offset-4 cursor-pointer">{{ comment.parentComment.user.realName }}</span>：
+          </template><span class="whitespace-pre-line">{{ comment.content }}</span>
+        </p>
 
         <div class="py-1 flex text-muted-foreground gap-2 -mx-1">
           <div class="flex items-center -space-x-0.5 mr-2">
@@ -76,7 +72,7 @@ const isOpen = ref(false);
             </Button>
             <Label :for="`reply-${comment.commentId}`"> 回复 </Label>
           </div>
-          <div v-if="comment.user.uid === useUserStore().user?.uid || useUserStore().user?.role !== '0'" class="flex items-center -space-x-0.5">
+          <div v-if="comment.user.id === useUserStore().user?.id || (useUserStore().user?.role ?? 0) > 1" class="flex items-center -space-x-0.5">
             <Button variant="ghost" size="icon" class="rounded-full size-8 hover:text-destructive" @click.stop="emit('delete', comment)">
               <Trash2 class="size-4" />
             </Button>

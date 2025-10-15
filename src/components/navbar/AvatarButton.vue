@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import type { Feedback } from '@/api/feedback/feedbackType';
-import type { User } from '@/api/user/userType';
 import { Icon } from '@iconify/vue';
 import { Plus } from 'lucide-vue-next';
-import { onMounted, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { fetchFeedbackApi, postFeedbackApi } from '@/api/feedback/feedbackApi.ts';
 import { putUserApi, putUserAvatarApi, updatePasswordApi } from '@/api/user/userApi.ts';
 import About from '@/components/about/About.vue';
+import CnUniversityCombobox from '@/components/auth/CnUniversityCombobox.vue';
+import ClassDialog from '@/components/class/ClassDialog.vue';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,79 +37,83 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import { useConfigStore, useUserStore } from '@/store';
 import { isVisitor, logout } from '@/utils/auth.ts';
 import { error, success, warning } from '@/utils/toast.ts';
 
-const isOpen = ref(false);
 const userStore = useUserStore();
 
 const isLoading = ref(false);
-const tempUser = ref<User | null>(null);
-
-const isOpenPassword = ref(false);
-const oldPassword = ref('');
-const newPassword = ref('');
-const confirmPassword = ref('');
+const updateForm = reactive({
+  account: '',
+  nickname: '',
+  oldPassword: '',
+  password: '',
+  confirmPassword: '',
+  school: '',
+  avatarUrl: '',
+});
 
 const router = useRouter();
 
 const fileInput = ref<HTMLInputElement | null>(null);
 
 async function onSubmit() {
-  if (!tempUser.value || isLoading.value)
-    return;
-  if (tempUser.value.nickname === '') {
+  if (updateForm.nickname === '') {
     warning('昵称不能为空');
+    return false;
+  }
+  if (updateForm.school === '') {
+    warning('学校不能为空');
+    return false;
   }
   try {
     isLoading.value = true;
     const result = await putUserApi(
-      tempUser.value.nickname,
-      Number.parseInt(tempUser.value.gender),
-      tempUser.value.email,
-      tempUser.value.phone,
-      tempUser.value.major,
-      tempUser.value.school,
+      updateForm.nickname,
+      0,
+      '1@1.com',
+      '1',
+      '1',
+      updateForm.school,
     );
-    result.user.gender = result.user.gender.toString();
     userStore.user = result.user;
-    tempUser.value = userStore.user;
     success('个人资料已更新');
+    return true;
   }
   catch (e) {
     console.error('Error during updating user:', e);
     error('个人资料更新失败，请重试');
   }
   isLoading.value = false;
+  return false;
 }
 
 async function updatePassword() {
-  if (!tempUser.value)
-    return;
-  if (oldPassword.value === '' || newPassword.value === '' || newPassword.value === '') {
-    warning('密码不能为空');
+  if (updateForm.oldPassword === '') {
+    warning('旧密码不能为空');
+    return false;
   }
-  if (newPassword.value !== confirmPassword.value) {
+  if (updateForm.password === '') {
+    warning('新密码不能为空');
+    return false;
+  }
+  if (updateForm.password !== updateForm.confirmPassword) {
     warning('两次输入的密码不一致');
-    return;
+    return false;
   }
-  if (newPassword.value === oldPassword.value) {
+  if (updateForm.oldPassword === updateForm.confirmPassword) {
     warning('新密码不能与旧密码相同');
-    return;
+    return false;
   }
   try {
     await updatePasswordApi(
-      oldPassword.value,
-      newPassword.value,
+      updateForm.oldPassword,
+      updateForm.password,
     );
     success('密码已更新');
-    isOpenPassword.value = false;
-    oldPassword.value = '';
-    newPassword.value = '';
-    confirmPassword.value = '';
+    return true;
   }
   catch (e: any) {
     console.error('Error during updating password:', e);
@@ -119,6 +124,7 @@ async function updatePassword() {
       error('密码更新失败，请重试');
     }
   }
+  return false;
 }
 
 function triggerFileUpload() {
@@ -133,7 +139,7 @@ async function handleFileUpload(event: Event) {
     try {
       const result = await putUserAvatarApi(file);
       userStore.user = result.user;
-      tempUser.value!.avatarUrl = result.user.avatarUrl;
+      updateForm.avatarUrl = result.user.avatarUrl;
     }
     catch {
       console.error('Error during uploading avatar');
@@ -145,6 +151,8 @@ function openFeishuDoc() {
   window.open('https://ecnyphosrl4i.feishu.cn/wiki/VpHuwRJ53iDKIUkhfFVcqX9fnVe?from=from_copylink', '_blank');
 }
 
+const classOpen = ref(false);
+const infoOpen = ref(false);
 const aboutOpen = ref(false);
 const logoutOpen = ref(false);
 const feedbackOpen = ref(false);
@@ -187,6 +195,24 @@ async function sendFeedback() {
   }
 }
 
+async function handleSave() {
+  if (
+    updateForm.oldPassword !== ''
+    || updateForm.password !== ''
+    || updateForm.confirmPassword !== ''
+  ) {
+    const ok = await updatePassword();
+    if (!ok)
+      return;
+  }
+
+  const ok2 = await onSubmit();
+  if (!ok2)
+    return;
+
+  infoOpen.value = false;
+}
+
 onMounted(() => {
   refreshFeedback();
 });
@@ -202,7 +228,7 @@ onMounted(() => {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent class="w-64">
-        <div class="flex gap-2 p-2 cursor-pointer items-center">
+        <div class="flex gap-2 p-2 items-center">
           <Avatar class="size-12 border-2">
             <AvatarImage :src="userStore.user.avatarUrl" />
             <AvatarFallback>userStore.user.username</AvatarFallback>
@@ -217,11 +243,23 @@ onMounted(() => {
           </div>
         </div>
         <DropdownMenuSeparator />
-        <DropdownMenuItem class="p-2 cursor-pointer">
+        <DropdownMenuItem
+          class="p-2 cursor-pointer" @click="() => {
+            if (!userStore.user) return;
+            updateForm.avatarUrl = userStore.user.avatarUrl;
+            updateForm.account = userStore.user.username;
+            updateForm.nickname = userStore.user.realName;
+            updateForm.school = userStore.user.school;
+            updateForm.oldPassword = '';
+            updateForm.password = '';
+            updateForm.confirmPassword = '';
+            infoOpen = true;
+          }"
+        >
           <Icon icon="lucide:user" class="size-4" />
           个人信息
         </DropdownMenuItem>
-        <DropdownMenuItem class="p-2 cursor-pointer">
+        <DropdownMenuItem class="p-2 cursor-pointer" @click="classOpen = true">
           <Icon icon="lucide:users" class="size-4" />
           班级管理
         </DropdownMenuItem>
@@ -260,139 +298,127 @@ onMounted(() => {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-    <Dialog v-model:open="isOpen">
-      <DialogContent v-if="tempUser" class="overflow-y-auto p-10 max-w-xl">
+
+    <Dialog v-model:open="infoOpen">
+      <DialogContent class="overflow-y-auto p-8 max-w-2xl">
         <DialogHeader>
           <DialogTitle>个人资料</DialogTitle>
           <DialogDescription>
-            在此更改您的个人资料。完成后单击“保存”。
+            在此更改您的个人资料与密码。完成后单击“保存设置”。
           </DialogDescription>
         </DialogHeader>
 
-        <div class="flex flex-col md:flex-row gap-10">
-          <div class="space-y-3 max-w-xs">
-            <div class="grid grid-cols-2 gap-4">
-              <div class="grid gap-2">
-                <Label>学工号</Label>
-                <Input v-model="tempUser.username" disabled />
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div class="space-y-5">
+            <div class="relative">
+              <Input
+                id="username"
+                :model-value="updateForm.account"
+                disabled
+                class="peer h-12 w-full pt-2 !placeholder-transparent rounded-xl"
+              />
+              <Label
+                for="username"
+                class="pointer-events-none absolute left-3 top-0 text-muted-foreground transition-all
+            peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm
+            -translate-y-1/2 text-sm bg-background px-1 peer-focus:text-primary peer-focus:top-0"
+              >
+                账号
+              </Label>
+            </div>
+
+            <div class="relative">
+              <Input
+                id="nickname"
+                v-model="updateForm.nickname"
+                type="text"
+                placeholder="昵称"
+                class="peer h-12 w-full pt-2 !placeholder-transparent rounded-xl"
+              />
+              <Label
+                for="nickname"
+                class="pointer-events-none absolute left-3 top-0 text-muted-foreground transition-all
+            peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm
+            -translate-y-1/2 text-sm bg-background px-1 peer-focus:text-primary peer-focus:top-0"
+              >
+                昵称
+              </Label>
+            </div>
+
+            <CnUniversityCombobox v-model="updateForm.school" src="/china_universities.json" placeholder="就读学校" />
+
+            <div class="pt-2">
+              <div class="text-sm font-medium mb-2">
+                安全设置
               </div>
 
-              <div class="grid gap-2">
-                <Label>年级</Label>
-                <Input v-model="tempUser.grade" disabled />
+              <div class="relative mb-4">
+                <Input
+                  id="oldPassword"
+                  v-model="updateForm.oldPassword"
+                  type="password"
+                  autocomplete="off"
+                  placeholder="旧密码"
+                  class="peer h-12 w-full pt-2 !placeholder-transparent rounded-xl"
+                />
+                <Label
+                  for="oldPassword"
+                  class="pointer-events-none absolute left-3 top-0 text-muted-foreground transition-all
+              peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm
+              -translate-y-1/2 text-sm bg-background px-1 peer-focus:text-primary peer-focus:top-0"
+                >
+                  旧密码
+                </Label>
+              </div>
+
+              <div class="relative mb-4">
+                <Input
+                  id="newPassword"
+                  v-model="updateForm.password"
+                  type="password"
+                  autocomplete="new-password"
+                  placeholder="新密码"
+                  class="peer h-12 w-full pt-2 !placeholder-transparent rounded-xl"
+                />
+                <Label
+                  for="newPassword"
+                  class="pointer-events-none absolute left-3 top-0 text-muted-foreground transition-all
+              peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm
+              -translate-y-1/2 text-sm bg-background px-1 peer-focus:text-primary peer-focus:top-0"
+                >
+                  新密码
+                </Label>
+              </div>
+
+              <div class="relative">
+                <Input
+                  id="confirmPassword"
+                  v-model="updateForm.confirmPassword"
+                  type="password"
+                  autocomplete="new-password"
+                  placeholder="确认密码"
+                  class="peer h-12 w-full pt-2 !placeholder-transparent rounded-xl"
+                />
+                <Label
+                  for="confirmPassword"
+                  class="pointer-events-none absolute left-3 top-0 text-muted-foreground transition-all
+              peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm
+              -translate-y-1/2 text-sm bg-background px-1 peer-focus:text-primary peer-focus:top-0"
+                >
+                  确认密码
+                </Label>
               </div>
             </div>
-
-            <div class="grid max-w-xs gap-2">
-              <Label>教学班</Label>
-              <Input v-model="tempUser.classId" disabled />
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-              <FormField v-slot="{ componentField }" name="username">
-                <FormItem>
-                  <FormLabel>昵称</FormLabel>
-                  <FormControl>
-                    <Input
-                      v-bind="componentField" v-model="tempUser.nickname" type="text" placeholder=""
-                      class="transition-all"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              </FormField>
-
-              <FormField v-slot="{ componentField }" name="gender">
-                <FormItem>
-                  <FormLabel>性别</FormLabel>
-                  <FormControl>
-                    <Select v-bind="componentField" v-model="tempUser.gender">
-                      <SelectTrigger>
-                        <SelectValue placeholder="" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectItem value="0">
-                            保密
-                          </SelectItem>
-                          <SelectItem value="1">
-                            男
-                          </SelectItem>
-                          <SelectItem value="2">
-                            女
-                          </SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              </FormField>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-              <FormField v-slot="{ componentField }" name="username">
-                <FormItem>
-                  <FormLabel>学院</FormLabel>
-                  <FormControl>
-                    <Input
-                      v-bind="componentField" v-model="tempUser.school" type="text" placeholder=""
-                      class="transition-all"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              </FormField>
-
-              <FormField v-slot="{ componentField }" name="username">
-                <FormItem>
-                  <FormLabel>专业</FormLabel>
-                  <FormControl>
-                    <Input
-                      v-bind="componentField" v-model="tempUser.major" type="text" placeholder=""
-                      class="transition-all"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              </FormField>
-            </div>
-
-            <FormField v-slot="{ componentField }" name="username">
-              <FormItem>
-                <FormLabel>邮箱</FormLabel>
-                <FormControl>
-                  <Input
-                    v-bind="componentField" v-model="tempUser.email" type="email" placeholder=""
-                    class="transition-all"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-
-            <FormField v-slot="{ componentField }" name="username">
-              <FormItem>
-                <FormLabel>手机号</FormLabel>
-                <FormControl>
-                  <Input
-                    v-bind="componentField" v-model="tempUser.phone" type="text" placeholder=""
-                    class="transition-all"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
           </div>
 
-          <div class="grid gap-2 md:self-start">
-            <Label> 头像 </Label>
+          <div class="grid gap-3 md:self-start">
+            <Label>头像</Label>
             <div class="flex justify-center items-start">
-              <Avatar class="size-32 relative">
-                <AvatarImage :src="tempUser.avatarUrl" alt="avatar" />
+              <Avatar class="size-64 relative">
+                <AvatarImage :src="updateForm.avatarUrl" alt="avatar" />
                 <Button
                   variant="ghost"
-                  class="absolute top-0 left-0 size-32 rounded-full opacity-0 transition-all hover:opacity-100 hover:bg-opacity-30 hover:bg-black"
+                  class="absolute top-0 left-0 size-64 rounded-full opacity-0 transition-all hover:opacity-100 hover:bg-black/70"
                   @click="triggerFileUpload"
                 >
                   <div class="flex flex-col items-center text-background">
@@ -404,75 +430,14 @@ onMounted(() => {
                 </Button>
               </Avatar>
             </div>
+            <input ref="fileInput" type="file" class="hidden" accept="image/*" @change="handleFileUpload">
           </div>
-          <input ref="fileInput" type="file" class="hidden" accept="image/*" @change="handleFileUpload">
         </div>
+
         <DialogFooter class="md:gap-5">
-          <Dialog v-model:open="isOpenPassword">
-            <DialogTrigger>
-              <Button> 修改密码 </Button>
-            </DialogTrigger>
-            <DialogContent class=" w-auto">
-              <DialogHeader>
-                <DialogTitle> 修改密码 </DialogTitle>
-                <DialogDescription>
-                  在此更改您的密码。完成后单击“保存”。
-                </DialogDescription>
-              </DialogHeader>
-
-              <div class="max-w-sm w-full grid gap-2">
-                <FormField v-slot="{ componentField }" name="username">
-                  <FormItem>
-                    <FormLabel>旧密码</FormLabel>
-                    <FormControl>
-                      <Input
-                        v-bind="componentField" v-model="oldPassword" type="password" placeholder=""
-                        class="transition-all"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                </FormField>
-
-                <FormField v-slot="{ componentField }" name="username">
-                  <FormItem>
-                    <FormLabel>新密码</FormLabel>
-                    <FormControl>
-                      <Input
-                        v-bind="componentField" v-model="newPassword" type="password" placeholder=""
-                        class="transition-all"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                </FormField>
-
-                <FormField v-slot="{ componentField }" name="username">
-                  <FormItem>
-                    <FormLabel>确认密码</FormLabel>
-                    <FormControl>
-                      <Input
-                        v-bind="componentField" v-model="confirmPassword" type="password" placeholder=""
-                        class="transition-all"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                </FormField>
-              </div>
-
-              <DialogFooter>
-                <Button @click="updatePassword">
-                  设置密码
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-          <DialogClose>
-            <Button @click="onSubmit">
-              保存设置
-            </Button>
-          </DialogClose>
+          <Button @click="handleSave">
+            保存设置
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -553,6 +518,8 @@ onMounted(() => {
         <About />
       </DialogContent>
     </Dialog>
+
+    <ClassDialog v-model:open="classOpen" />
   </div>
 </template>
 

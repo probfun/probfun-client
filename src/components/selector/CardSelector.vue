@@ -52,8 +52,8 @@ defineExpose({
 </script>
 
 <template>
-  <div class="w-full max-w-6xl mx-auto px-4 py-8">
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-10">
+  <div class="min-h-full flex items-center p-8 pl-10 justify-center">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
       <div
         v-for="(subject, i) in subjectList"
         :key="subject.id"
@@ -63,14 +63,17 @@ defineExpose({
         @click="selectSubject(i)"
       >
         <!-- Logo圆圈 -->
-        <div class="absolute -top-4 -left-4 w-16 h-16 rounded-full bg-white/95 shadow-lg flex items-center justify-center z-10 transition-transform duration-300 group-hover:scale-110">
-          <component :is="subject.icon" class="w-12 h-12" :style="{ color: subject.color }" />
+        <div
+          class="absolute -top-4 -left-4 size-12 rounded-full bg-white/95 border shadow-lg flex items-center justify-center z-10 transition-transform duration-300 group-hover:scale-110"
+          :class="{ 'scale-110': currentIndex === i }"
+        >
+          <component :is="subject.icon" class="size-8" :style="{ color: subject.color }" />
         </div>
 
         <!-- 选中标记 -->
         <div
           v-if="currentIndex === i"
-          class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center shadow-md z-10"
+          class="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center shadow-md z-10 bg-white"
         >
           <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -78,9 +81,9 @@ defineExpose({
         </div>
 
         <!-- 内容区域 -->
-        <div class="relative pt-14 pb-6 px-6 text-white">
+        <div class="relative pt-10 pb-6 px-6 text-white h-full flex flex-col">
           <!-- 学科名称 -->
-          <h3 class="text-3xl font-bold mb-3 text-shadow-lg whitespace-nowrap">
+          <h3 class="text-2xl font-bold mb-3 text-shadow-lg whitespace-nowrap">
             {{ subject.name }}
           </h3>
 
@@ -122,7 +125,7 @@ defineExpose({
 }
 
 .subject-card {
-    min-height: 240px;
+    min-height: 160px;
 }
 
 .hint-fade {

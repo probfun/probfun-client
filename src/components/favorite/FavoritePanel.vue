@@ -43,7 +43,7 @@ async function refreshFavorite() {
           我的收藏
         </h1>
         <p class="text-sm text-muted-foreground mt-1">
-          {{ userStore.user?.nickname }} · 收藏了 {{ userStore.favoriteExperiments.length }} 个实验
+          {{ userStore.user?.realName }} · 收藏了 {{ userStore.favoriteExperiments.length }} 个实验
         </p>
       </div>
     </div>

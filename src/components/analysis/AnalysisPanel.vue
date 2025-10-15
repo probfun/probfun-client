@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import type { Analysis } from '@/api/do-question/doQuestion.ts';
 import { DotLottieVue } from '@lottiefiles/dotlottie-vue';
-
 import { onBeforeUnmount, onMounted, ref } from 'vue';
+
 import { useRouter } from 'vue-router';
-import { analysisApi } from '@/api/do-question/doQuestion.ts';
+import { analysisApi, fetchAnalysisStatusApi } from '@/api/do-question/doQuestion.ts';
+
 import TestPanel from '@/components/analysis/TestPanel.vue';
 import { useConfigStore } from '@/store';
 
@@ -502,31 +503,42 @@ const configStore = useConfigStore();
 const agreed = ref(false);
 const poller = ref<number | null>(null);
 
-async function fetchAnalysisData() {
+async function fetchAnalysisData(generate: boolean) {
   if (!configStore.currentSubject) {
     return;
   }
-  try {
-    const response = await analysisApi(configStore.currentSubject.id_);
-    if (response.analysis) {
-      response.analysis.objectiveAnalysis.metrics = response.analysis.objectiveAnalysis.metrics.slice(0, 4);
-      response.analysis.chapterSummary = response.analysis.chapterSummary.sort((a, b) => Number.parseFloat(a.chapter.name.split(' ')[0]) - Number.parseFloat(b.chapter.name.split(' ')[0]));
-      data.value = response.analysis;
+  if (generate) {
+    try {
+      await analysisApi(configStore.currentSubject.id_);
+      startGeneration();
+    }
+    catch (error) {
+      console.error('Error triggering analysis generation:', error);
       isGenerating.value = false;
       isOpen.value = false;
-      if (poller.value !== null) {
-        clearInterval(poller.value);
-        poller.value = null;
-      }
-    }
-    else {
-      if (!isGenerating.value) {
-        startGeneration();
-      }
     }
   }
-  catch (error) {
-    console.error('Error during analysis analysis:', error);
+  else {
+    try {
+      const response = await fetchAnalysisStatusApi(configStore.currentSubject.id_);
+      if (response.analysis) {
+        response.analysis.objectiveAnalysis.metrics = response.analysis.objectiveAnalysis.metrics.slice(0, 4);
+        response.analysis.chapterSummary = response.analysis.chapterSummary.sort((a, b) => Number.parseFloat(a.chapter.name.split(' ')[0]) - Number.parseFloat(b.chapter.name.split(' ')[0]));
+        data.value = response.analysis;
+        isGenerating.value = false;
+        isOpen.value = false;
+        if (poller.value !== null) {
+          clearInterval(poller.value);
+          poller.value = null;
+        }
+      }
+      else {
+        isOpen.value = true;
+      }
+    }
+    catch (error) {
+      console.error('Error during analysis analysis:', error);
+    }
   }
 }
 
@@ -535,16 +547,16 @@ function startGeneration() {
     return;
   isOpen.value = true;
   isGenerating.value = true;
-  fetchAnalysisData();
+  fetchAnalysisData(true);
   poller.value = window.setInterval(() => {
-    fetchAnalysisData();
+    fetchAnalysisData(false);
   }, 10000);
 }
 
 onMounted(() => {
   if (configStore.confirmedAiPolicy) {
     isOpen.value = false;
-    fetchAnalysisData();
+    fetchAnalysisData(false);
   }
 });
 

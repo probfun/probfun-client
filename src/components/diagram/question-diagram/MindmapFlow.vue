@@ -22,6 +22,12 @@ type Level = 1 | 2 | 3;
 export interface MindNodeData {
   label: string;
   level: Level;
+  masteryStats?: {
+    firstAttemptRate: number | null;
+    firstAttemptTotal: number;
+    retryAttemptRate: number | null;
+    retryAttemptTotal: number;
+  };
   [k: string]: any;
 }
 
@@ -40,7 +46,6 @@ const showAiSidebar = ref(false);
 const currentKnowledgePoint = ref('');
 
 const aiMessages = ref<Chat[]>([]);
-const aiThinking = ref(false);
 const aiState = ref<'idle' | 'thinking' | 'error'>('idle');
 const abortController = ref<AbortController | null>(null);
 
@@ -49,32 +54,6 @@ const levelClasses: Record<Level, string> = {
   2: 'bg-sky-50 border-sky-400 text-sky-900 text-base',
   3: 'bg-amber-50 border-amber-400 text-amber-900 text-sm',
 };
-
-function _initAiConnection() {
-  const requestData: any = {
-    messages: [],
-  };
-
-  aiApi(
-    requestData,
-    () => {
-      console.log('AI连接已建立');
-    },
-    (data) => {
-      // onReceive回调
-      console.log('data:', data);
-      if (data) {
-        processReceiveData(data);
-      }
-    },
-    () => {
-      // onFinish回调
-      aiThinking.value = false;
-      aiState.value = 'idle';
-    },
-    null, // abortController
-  );
-}
 
 // 处理流式消息，按照 aiApi.ts 的处理方式
 function processReceiveData(data: ReceiveData) {
@@ -242,18 +221,9 @@ async function quickAsk(content: string) {
   }
 }
 
-function _clearChat() {
-  if (aiState.value === 'thinking')
-    return;
-
-  aiMessages.value = [];
-  aiState.value = 'idle';
-}
-
 function stopGenerating() {
   if (aiState.value === 'thinking') {
     aiState.value = 'idle';
-    aiThinking.value = false;
     abortController.value?.abort();
     abortController.value = null;
   }
@@ -411,8 +381,7 @@ watch(
 );
 
 onMounted(() => {
-  // 组件挂载时的逻辑
-  // 根据初始状态调整布局
+  console.log(props.nodes);
   nextTick(() => {
     setTimeout(async () => {
       if (showAiSidebar.value) {
@@ -519,6 +488,25 @@ onMounted(() => {
                 <p v-if="data?.description" class="mt-1 md:mt-2 text-xs/4 md:text-xs/5 opacity-70">
                   {{ data.description }}
                 </p>
+
+                <!-- 添加 masteryStats 显示 -->
+                <div v-if="data?.masteryStats && data.masteryStats.firstAttemptRate !== null && data.masteryStats.retryAttemptRate !== null" class="mt-2 space-y-1">
+                  <div class="flex items-center gap-2 text-xs">
+                    <span class="opacity-70">首次通过率:</span>
+                    <span class="font-medium">{{ (data.masteryStats.firstAttemptRate * 100).toFixed(1) }}%</span>
+                    <span class="opacity-50">({{ data.masteryStats.firstAttemptTotal }}次)</span>
+                  </div>
+                  <div class="flex items-center gap-2 text-xs">
+                    <span class="opacity-70">重试通过率:</span>
+                    <span class="font-medium">{{ (data.masteryStats.retryAttemptRate * 100).toFixed(1) }}%</span>
+                    <span class="opacity-50">({{ data.masteryStats.retryAttemptTotal }}次)</span>
+                  </div>
+                </div>
+                <div v-else-if="data?.masteryStats">
+                  <div class="mt-2 text-xs italic opacity-50">
+                    你还没有尝试过相关试题，快去练习吧！
+                  </div>
+                </div>
               </div>
 
               <div
@@ -549,6 +537,7 @@ onMounted(() => {
               </div>
             </div>
           </template>
+
           <Background pattern-color="#e5e7eb" :gap="16" />
           <MiniMap
             class="minimap-container" :class="[{ 'minimap-small': showAiSidebar }]"

@@ -1,10 +1,11 @@
 import type { Class, Post } from './classType';
-import { get, post } from '../request';
+import type { User } from '@/api/user/userType';
+import { del, get, post } from '../request';
 
-export async function postPostApi(title: string, content: string, classes: string[]) {
+async function postPostApi(title: string, content: string, classes: string[]) {
   const result = await post<{
     post: Post;
-  }>(`/api/classes/post`, {
+  }>(`/class/post/`, {
     title,
     content,
     classes,
@@ -12,16 +13,78 @@ export async function postPostApi(title: string, content: string, classes: strin
   return result.data;
 }
 
-export async function fetchPostApi(classId: string) {
+async function fetchPostApi(classId: string) {
   const result = await get<{
     posts: Post[];
-  }>(`/api/classes/${classId}/post`);
+  }>(`/class/post/list/`, {
+    classIds: [classId],
+  });
   return result.data;
 }
 
-export async function fetchClassListApi() {
+async function fetchStudentClassListApi() {
   const result = await get<{
-    classes: Class[];
-  }>(`/class/list/`);
+    teachingClasses: Class[];
+  }>(`/class/student/teaching-class/list/`);
   return result.data;
 }
+
+async function joinClassApi(code: string) {
+  const result = await post<null>(`/class/student/join/`, {
+    code,
+  });
+  return result.data;
+}
+
+async function quitClassApi(classId: string) {
+  const result = await post<null>(`/class/student/exit/`, {
+    classId,
+  });
+  return result.data;
+}
+
+async function createClassApi(name: string) {
+  const result = await post<{
+    teaching_class_id: string;
+    name: string;
+    code: string;
+  }>(`/class/teacher/create/`, {
+    name,
+  });
+  return result.data;
+}
+
+async function fetchTeacherClassListApi() {
+  const result = await get<{
+    teachingClasses: Class[];
+  }>(`/class/teacher/teaching-class/list/`);
+  return result.data;
+}
+
+async function deleteClassApi(classId: string) {
+  const result = await del<null>(`/class/teacher/delete/${classId}/`, {
+    classId,
+  });
+  return result.data;
+}
+
+async function fetchStudentListApi(classId: string) {
+  const result = await get<{
+    students: User[];
+  }>(`/class/teacher/student/list/`, {
+    classId,
+  });
+  return result.data;
+}
+
+export {
+  createClassApi,
+  deleteClassApi,
+  fetchPostApi,
+  fetchStudentClassListApi,
+  fetchStudentListApi,
+  fetchTeacherClassListApi,
+  joinClassApi,
+  postPostApi,
+  quitClassApi,
+};

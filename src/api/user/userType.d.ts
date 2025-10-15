@@ -1,8 +1,7 @@
 export interface User {
-  uid: string;
+  id: string;
   username: string;
   classId: string;
-  nickname: string;
   realName: string;
   gender: string;
   email: string;
@@ -11,12 +10,12 @@ export interface User {
   major: string;
   grade: number;
   avatarUrl: string;
-  role: integer;
+  role: number;
 }
 
 export interface UserPublic {
-  uid: string;
-  nickname: string;
+  id: string;
+  realName: string;
   avatarUrl: string;
   username: string;
 }

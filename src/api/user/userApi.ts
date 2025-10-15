@@ -45,7 +45,7 @@ export async function fetchUserApi() {
 }
 
 export async function putUserApi(
-  nickname: string,
+  realName: string,
   gender: number,
   email: string,
   phone: string,
@@ -55,7 +55,7 @@ export async function putUserApi(
   const result = await put<{
     user: User;
   }>('/user/', {
-    nickname,
+    realName,
     gender,
     email,
     phone,

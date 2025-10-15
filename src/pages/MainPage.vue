@@ -55,11 +55,11 @@ function updateSubject() {
       <SideBar v-if="!hideSideBar" />
       <router-view class="flex-1 overflow-y-auto" />
     </div>
-    <div v-else class="flex-1 grid grid-cols-[2fr_1fr] overflow-hidden gap-6 p-6 items-center justify-center border rounded-xl shadow-md">
-      <div class="pr-6 border-r flex items-center overflow-y-auto overflow-x-hidden h-full">
+    <div v-else class="flex-1 grid grid-cols-[2fr_1fr] overflow-hidden items-center justify-center border rounded-xl shadow-md">
+      <div class="border-r overflow-y-auto overflow-x-hidden h-full">
         <CardSelector ref="subjectSelector" :immediate="false" hint-color="text-muted-foreground" />
       </div>
-      <div class="flex flex-col items-center justify-center gap-4 h-full">
+      <div class="flex flex-col items-center justify-center p-6 gap-4 h-full">
         <div
           v-auto-animate
           class="w-full h-full rounded-xl border bg-muted/40 p-4 flex flex-col"

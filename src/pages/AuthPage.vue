@@ -229,7 +229,7 @@ const isLogin = computed(() => {
               </Label>
             </div>
 
-            <CnUniversityCombobox v-model="signupForm.school" src="/china_universities.json" placeholder="选择大学" />
+            <CnUniversityCombobox v-model="signupForm.school" src="/china_universities.json" placeholder="就读学校" />
 
             <div class="relative">
               <Input

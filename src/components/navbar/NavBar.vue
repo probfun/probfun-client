@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Message } from '@/api/message/messageType';
+import { Icon } from '@iconify/vue';
 import { Bell, Star } from 'lucide-vue-next';
 import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -316,17 +317,19 @@ const configStore = useConfigStore();
   <nav class="w-full flex p-2 pr-3 z-50 border rounded-xl shadow-md bg-background gap-2">
     <div class="flex items-center justify-center gap-2.5 overflow-x-hidden">
       <Button
+        v-auto-animate
         variant="ghost"
-        class="flex items-center p-2 pr-2 gap-1.5 h-full" @click="() => {
+        class="flex items-center p-2 pr-2 h-full" @click="() => {
           configStore.currentSubjectId = null;
           router.push('/');
         }"
       >
-        <div class="rounded-full size-8 p-0 flex items-center bg-primary justify-center text-primary-foreground">
+        <Icon v-if="configStore.currentSubject" icon="lucide:chevron-left" class="size-6 text-gray-500 mr-1" />
+        <div class="rounded-full size-8 p-0 flex items-center bg-primary justify-center text-primary-foreground mr-1.5">
           <component :is="configStore.currentSubject.icon" v-if="configStore.currentSubject" class="size-6" />
           <img v-else src="/logo-math.svg" alt="Logo" class="size-8 rounded-full">
         </div>
-        <div class="text-base text-primary font-bold shrink-0">
+        <div class="text-base text-primary font-bold shrink-0 mr-1.5">
           {{ useConfigStore().currentSubject?.name ?? '邮趣数学' }}
         </div>
       </Button>
@@ -402,20 +405,20 @@ const configStore = useConfigStore();
               >
                 <Avatar class="shrink-0 mt-0.5">
                   <template v-if="item.type === 'post'">
-                    <AvatarImage :src="item.postData?.post.user.avatarUrl || ''" />
-                    <AvatarFallback>{{ item.postData?.post.user.nickname }}</AvatarFallback>
+                    <AvatarImage :src="item.postData?.post.author.avatarUrl || ''" />
+                    <AvatarFallback>{{ item.postData?.post.author.realName }}</AvatarFallback>
                   </template>
                   <template v-else-if="item.type === 'pin'">
                     <AvatarImage :src="item.pinData?.user.avatarUrl || ''" />
-                    <AvatarFallback>{{ item.pinData?.user.nickname }}</AvatarFallback>
+                    <AvatarFallback>{{ item.pinData?.user.realName }}</AvatarFallback>
                   </template>
                   <template v-else-if="item.type === 'reply'">
                     <AvatarImage :src="item.replyData?.reply.user.avatarUrl || ''" />
-                    <AvatarFallback>{{ item.replyData?.reply.user.nickname }}</AvatarFallback>
+                    <AvatarFallback>{{ item.replyData?.reply.user.realName }}</AvatarFallback>
                   </template>
                   <template v-else-if="item.type === 'like'">
                     <AvatarImage :src="item.likeData?.user.avatarUrl || ''" />
-                    <AvatarFallback>{{ item.likeData?.user.nickname }}</AvatarFallback>
+                    <AvatarFallback>{{ item.likeData?.user.realName }}</AvatarFallback>
                   </template>
                   <template v-else-if="item.type === 'delete'">
                     <AvatarImage :src="item.likeData?.user?.avatarUrl || ''" />
@@ -425,10 +428,10 @@ const configStore = useConfigStore();
 
                 <div class="flex flex-col min-w-0">
                   <span class="text-sm font-medium truncate">
-                    <template v-if="item.type === 'post'">{{ item.postData?.post.user.nickname }}</template>
-                    <template v-else-if="item.type === 'pin'">{{ item.pinData?.user.nickname }}</template>
-                    <template v-else-if="item.type === 'reply'">{{ item.replyData?.reply.user.nickname }}</template>
-                    <template v-else-if="item.type === 'like'">{{ item.likeData?.user.nickname }}</template>
+                    <template v-if="item.type === 'post'">{{ item.postData?.post.author.realName }}</template>
+                    <template v-else-if="item.type === 'pin'">{{ item.pinData?.user.realName }}</template>
+                    <template v-else-if="item.type === 'reply'">{{ item.replyData?.reply.user.realName }}</template>
+                    <template v-else-if="item.type === 'like'">{{ item.likeData?.user.realName }}</template>
                     <template v-else-if="item.type === 'delete'">管理员</template>
                   </span>
                   <span

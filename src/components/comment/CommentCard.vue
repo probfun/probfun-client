@@ -40,12 +40,12 @@ const isOpen = ref(false);
     <div class="pt-4 px-6 transition-all hover:bg-secondary/50 flex gap-2 cursor-pointer" @click="isOpen = !isOpen">
       <Avatar class="mt-1">
         <AvatarImage :src="comment.user.avatarUrl" alt="" />
-        <AvatarFallback>{{ comment.user.nickname }}</AvatarFallback>
+        <AvatarFallback>{{ comment.user.realName }}</AvatarFallback>
       </Avatar>
       <div class="flex flex-col gap-1 w-full">
         <div class="flex items-center w-full">
           <div class=" font-bold text-[15px] hover:underline underline-offset-4 transition-all">
-            {{ comment.user.nickname }}
+            {{ comment.user.realName }}
           </div>
           <div class="text-sm text-muted-foreground ml-3">
             {{ comment.user.username }} · {{ format(comment.timestamp, 'zh_CN') }}
@@ -71,12 +71,12 @@ const isOpen = ref(false);
             </Button>
             <Label :for="`reply-${comment.commentId}`"> {{ comment.childComments.length > 99 ? '99+' : comment.childComments.length }} </Label>
           </div>
-          <div v-if="comment.user.uid === useUserStore().user?.uid || useUserStore().user?.role !== '0'" class="flex items-center -space-x-0.5">
+          <div v-if="comment.user.id === useUserStore().user?.id || (useUserStore().user?.role ?? 0) > 1" class="flex items-center -space-x-0.5">
             <Button variant="ghost" size="icon" class="rounded-full size-8 hover:text-destructive" @click.stop="emit('delete', comment)">
               <Trash2 class="size-4" />
             </Button>
           </div>
-          <div v-if="(useUserStore().user?.role ?? 0) !== 0" class="flex items-center">
+          <div v-if="(useUserStore().user?.role ?? 0) > 1" class="flex items-center">
             <Button variant="ghost" size="icon" :class="cn('rounded-full size-8 hover:text-green-500', comment.pinned && '!text-green-500')" @click.stop="emit('pin', comment)">
               <ArrowUpFromLine class="size-4" />
             </Button>

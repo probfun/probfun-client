@@ -85,6 +85,7 @@ function handleClickOutside(e: MouseEvent) {
 }
 
 onMounted(() => {
+  query.value = props.modelValue || '';
   document.addEventListener('click', handleClickOutside);
 });
 

@@ -5,12 +5,14 @@ export interface Post {
   title: string;
   content: string;
   timestamp: string;
-  user: UserPublic;
+  author: UserPublic;
 }
 
 export interface Class {
-  classId: string;
-  className: string;
+  id: string;
+  name: string;
+  code: string;
+  createAt: string;
 }
 
 export interface ClickCount {

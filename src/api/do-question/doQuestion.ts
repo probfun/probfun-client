@@ -257,6 +257,15 @@ async function analysisApi(subjectId: string) {
   return result.data;
 }
 
+async function fetchAnalysisStatusApi(subjectId: string) {
+  const result = await get<{
+    status: 'pending' | 'success' | 'fail' | 'not_found';
+    hasReport: boolean;
+    analysis?: Analysis;
+  }>(`/assessment/analysis/status/`, { subjectId });
+  return result.data;
+}
+
 export type {
   Chapter,
   Choice,
@@ -275,6 +284,7 @@ export {
   chatWithAiAPi,
   clearQuestionChatApi,
   draftQuestionApi,
+  fetchAnalysisStatusApi,
   fetchChapterListApi,
   fetchDiagramApi,
   fetchQuestionChatsApi,

@@ -199,7 +199,7 @@ async function send() {
     <div class="bottom-0 sticky w-full border-y p-2 space-y-2">
       <div v-if="replyComment" class="text-muted-foreground flex items-center gap-1 border-primary p-1 rounded-lg">
         <Label class="line-clamp-1">
-          回复 {{ replyComment.user.nickname }}：{{ replyComment.content }}
+          回复 {{ replyComment.user.realName }}：{{ replyComment.content }}
         </Label>
         <Button variant="ghost" size="icon" class="ml-auto rounded-full size-5 text-muted-foreground" @click="replyComment = null">
           <X class="size-4" />
