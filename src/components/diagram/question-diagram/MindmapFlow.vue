@@ -493,12 +493,12 @@ onMounted(() => {
                 <div v-if="data?.masteryStats && data.masteryStats.firstAttemptRate !== null && data.masteryStats.retryAttemptRate !== null" class="mt-2 space-y-1">
                   <div class="flex items-center gap-2 text-xs">
                     <span class="opacity-70">首次通过率:</span>
-                    <span class="font-medium">{{ (data.masteryStats.firstAttemptRate * 100).toFixed(1) }}%</span>
+                    <span class="font-medium">{{ (data.masteryStats.firstAttemptRate).toFixed(1) }}%</span>
                     <span class="opacity-50">({{ data.masteryStats.firstAttemptTotal }}次)</span>
                   </div>
                   <div class="flex items-center gap-2 text-xs">
                     <span class="opacity-70">重试通过率:</span>
-                    <span class="font-medium">{{ (data.masteryStats.retryAttemptRate * 100).toFixed(1) }}%</span>
+                    <span class="font-medium">{{ (data.masteryStats.retryAttemptRate).toFixed(1) }}%</span>
                     <span class="opacity-50">({{ data.masteryStats.retryAttemptTotal }}次)</span>
                   </div>
                 </div>
