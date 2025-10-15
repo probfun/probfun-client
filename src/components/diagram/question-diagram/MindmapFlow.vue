@@ -250,7 +250,7 @@ function openAiSidebar(knowledgePoint: string) {
 
   const firstMessage = `请给我讲讲"${knowledgePoint}"这个知识点`;
 
-  sendMessage(firstMessage, true);
+  sendMessage(firstMessage, false);
 }
 
 // 动态计算布局参数

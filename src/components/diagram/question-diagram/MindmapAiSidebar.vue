@@ -236,7 +236,7 @@ watch(() => props.aiMessages, () => {
           </div>
         </div>
       </template>
-      <Button v-if="showScrollToBottom" class="rounded-full absolute bottom-2 size-8 left-1/2 -translate-x-1/2 !text-primary" size="icon" variant="outline">
+      <Button v-if="showScrollToBottom" class="rounded-full sticky bottom-2 size-8 left-1/2 -translate-x-1/2 !text-primary" size="icon" variant="outline">
         <ArrowDownToLine class="size-6" @click="scrollToBottom(true)" />
       </Button>
     </div>
