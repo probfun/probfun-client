@@ -4,11 +4,10 @@ import type { NodeOptions } from '@/api/distribution/distributionType';
 import { vAutoAnimate } from '@formkit/auto-animate';
 import { Handle, Position, useVueFlow } from '@vue-flow/core';
 import { Bot, Check, ChevronsLeftRightEllipsis, CircuitBoard, RectangleEllipsis } from 'lucide-vue-next';
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { generateDistributionDescriptionApi } from '@/api/distribution/distributionApi.ts';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu } from '@/components/ui/dropdown-menu';
-import { HoverCard } from '@/components/ui/hover-card';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { useConfigStore, useDistributionStore } from '@/store';
@@ -24,6 +23,8 @@ const configStore = useConfigStore();
 const isHighlight = ref(false);
 const nodeDataRef = ref<NodeOptions | undefined>(undefined);
 const customSubject = ref('');
+
+const isOpen = computed(() => configStore.targetNodeId === props.id);
 
 function updateEdgeStyle() {
   const connectedEdges = getConnectedEdges(props.id);
@@ -80,16 +81,15 @@ function replaceKeywords(text: string): string {
 }
 
 async function generateDescription(subject: string = 'default') {
-  console.log('Generating description');
-  if (generating.value) {
+  if (generating.value)
     return;
-  }
+
   const distribution = props.data.chineseTranslation;
   generating.value = true;
   isError.value = false;
-  if (nodeDataRef.value === undefined) {
+  if (nodeDataRef.value === undefined)
     return;
-  }
+
   nodeDataRef.value.description = undefined;
   try {
     const response = await generateDistributionDescriptionApi(distribution, subject);
@@ -113,6 +113,12 @@ onMounted(() => {
   }
 });
 
+watch(isOpen, (open) => {
+  if (open && nodeDataRef.value?.description === undefined) {
+    generateDescription();
+  }
+});
+
 function getDescriptionTitle(description: string) {
   return description?.split('\n\n')[0].split(':')[1].replace(/&/g, '');
 }
@@ -123,128 +129,109 @@ function getDescriptionBody(description: string) {
 </script>
 
 <template>
-  <HoverCard
-    :open="configStore.targetNodeId === id && !configStore.isMoving" @update:open="(isOpen) => {
-      if (isOpen) {
-        if (nodeDataRef?.description === undefined) {
-          generateDescription();
-        }
-      }
-    }"
-  >
-    <HoverCardTrigger>
-      <div
-        :class="cn('border-1 rounded-lg p-3 bg-blue-500 text-white transition-all border-primary', isHighlight && 'border-destructive border-4')"
-        @click="onSelect"
-      >
-        <div class="text-xl whitespace-pre text-center">
-          {{ data.label }}
+  <div class="relative inline-block">
+    <div
+      :class="cn('border-1 rounded-lg p-3 bg-blue-500 text-white transition-all border-primary cursor-pointer', isHighlight && 'border-destructive border-4')"
+      @click="onSelect"
+    >
+      <div class="text-xl whitespace-pre text-center">
+        {{ data.label }}
+      </div>
+
+      <Handle id="a" type="source" :position="Position.Top" />
+      <Handle id="b" type="source" :position="Position.Bottom" />
+    </div>
+
+    <div
+      v-show="isOpen"
+      class="absolute z-50 mt-2 left-1/2 -translate-x-1/2 w-auto min-w-80 max-w-[32rem]"
+    >
+      <div class="rounded-md border bg-popover text-popover-foreground shadow-md p-4">
+        <div v-if="data.pdf">
+          <Label class="text-base font-bold select-none"> 概率密度函数（PDF） </Label>
+          <div class="w-full flex items-center justify-center pt-3 select-none">
+            <div class="prose" v-html="toMarkdown(data.pdf)" />
+          </div>
+        </div>
+        <div v-else-if="data.pmf">
+          <Label class="text-base font-bold select-none"> 概率质量函数（PMF） </Label>
+          <div class="w-full flex items-center justify-center pt-3 select-none">
+            <div class="prose" v-html="toMarkdown(data.pmf)" />
+          </div>
         </div>
 
-        <Handle id="a" type="source" :position="Position.Top" />
-        <Handle id="b" type="source" :position="Position.Bottom" />
-      </div>
-    </HoverCardTrigger>
-    <HoverCardContent class="w-auto z-20">
-      <div v-if="data.pdf">
-        <Label class="text-base font-bold select-none"> 概率密度函数（PDF） </Label>
+        <Label class="text-base font-bold select-none"> 函数图像展示 </Label>
         <div class="w-full flex items-center justify-center pt-3 select-none">
-          <div class="prose" v-html="toMarkdown(data.pdf)" />
+          <img class="h-64" :src="data.imgPath" alt="">
         </div>
-      </div>
-      <div v-else-if="data.pmf">
-        <Label class="text-base font-bold select-none"> 概率质量函数（PMF） </Label>
-        <div class="w-full flex items-center justify-center pt-3 select-none">
-          <div class="prose" v-html="toMarkdown(data.pmf)" />
-        </div>
-      </div>
-      <Label class="text-base font-bold select-none"> 函数图像展示 </Label>
-      <div class="w-full flex items-center justify-center pt-3 select-none">
-        <img class="h-64" :src="data.imgPath" alt="">
-      </div>
-      <!--      <div v-else class=""> -->
-      <!--        <Label> -->
-      <!--          这个分布的函数图像暂未收录 -->
-      <!--        </Label> -->
-      <!--      </div> -->
-      <div v-auto-animate :class="cn('mt-3')">
-        <div v-if="nodeDataRef?.description" class="p-0">
-          <div class="p-2">
-            <Label class="text-base font-bold select-none"> 应用案例： {{ getDescriptionTitle(nodeDataRef.description) }} </Label>
-            <div class="w-full flex items-center justify-center select-none">
-              <div class="prose" v-html="toMarkdown(getDescriptionBody(nodeDataRef.description))" />
+
+        <div v-auto-animate :class="cn('mt-3')">
+          <div v-if="nodeDataRef?.description" class="p-0">
+            <div class="p-2">
+              <Label class="text-base font-bold select-none"> 应用案例： {{ getDescriptionTitle(nodeDataRef.description) }} </Label>
+              <div class="w-full flex items-center justify-center select-none">
+                <div class="prose" v-html="toMarkdown(getDescriptionBody(nodeDataRef.description))" />
+              </div>
+            </div>
+
+            <div class="flex items-center justify-end mr-2 text-muted-foreground">
+              <Label> 该内容由 AI 提供，</Label>
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                  <Button variant="link" class="p-0">
+                    想要探索更多应用领域？
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent side="right" align="start">
+                  <DropdownMenuItem @click="generateDescription('人工智能')">
+                    <Bot class="mr-1 h-4 w-4" />人工智能
+                  </DropdownMenuItem>
+                  <DropdownMenuItem @click="generateDescription('通信工程')">
+                    <ChevronsLeftRightEllipsis class="mr-1 h-4 w-4" />
+                    通信工程
+                  </DropdownMenuItem>
+                  <DropdownMenuItem @click="generateDescription('电子信息工程')">
+                    <CircuitBoard class="mr-1 h-4 w-4" />
+                    电子信息工程
+                  </DropdownMenuItem>
+                  <DropdownMenuLabel class="flex items-center gap-2 hover:bg-secondary transition-all">
+                    <RectangleEllipsis class="mr-1 h-4 w-4" />
+                    <Input v-model="customSubject" class="flex-1 max-w-20 h-6" />
+                    <Button size="icon" class="size-5" variant="outline" @click="generateDescription(customSubject)">
+                      <Check class="size-4" />
+                    </Button>
+                  </DropdownMenuLabel>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
 
-          <div class="flex items-center justify-end mr-2 text-muted-foreground">
-            <Label> 该内容由 AI 提供，</Label>
-            <!--            <Popover> -->
-            <!--              <PopoverTrigger> -->
+          <div v-else-if="generating" class="w-full p-0">
+            <Label class="text-base font-bold select-none"> 应用案例：</Label>
+            <Label>AI 生成中...</Label>
+          </div>
 
-            <!--              </PopoverTrigger> -->
-            <!--              <PopoverContent> -->
-            <!--                <Button @click="generateDescription('人工智能')"> 人工智能 </Button> -->
-            <!--                <Button @click="generateDescription('通信工程')"> 通信工程 </Button> -->
-            <!--                <Button @click="generateDescription('电子信息工程')"> 电子信息工程 </Button> -->
-            <!--              </PopoverContent> -->
-            <!--            </Popover> -->
-            <DropdownMenu>
-              <DropdownMenuTrigger>
-                <Button variant="link" class="p-0">
-                  想要探索更多应用领域？
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent side="right" align="start">
-                <DropdownMenuItem @click="generateDescription('人工智能')">
-                  <Bot class="mr-1 h-4 w-4" />人工智能
-                </DropdownMenuItem>
-                <DropdownMenuItem @click="generateDescription('通信工程')">
-                  <ChevronsLeftRightEllipsis class="mr-1 h-4 w-4" />
-                  通信工程
-                </DropdownMenuItem>
-                <DropdownMenuItem @click="generateDescription('电子信息工程')">
-                  <CircuitBoard class="mr-1 h-4 w-4" />
-                  电子信息工程
-                </DropdownMenuItem>
-                <DropdownMenuLabel class="flex items-center gap-2 hover:bg-secondary transition-all">
-                  <RectangleEllipsis class="mr-1 h-4 w-4" />
-                  <Input v-model="customSubject" class="flex-1 max-w-20 h-6" />
-                  <Button size="icon" class="size-5" variant="outline" @click="generateDescription(customSubject)">
-                    <Check class="size-4" />
-                  </Button>
-                </DropdownMenuLabel>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          <div v-else-if="isError" class="w-full text-destructive">
+            <Label class="text-base font-bold select-none"> 应用案例：</Label>
+            <Label>生成遇到了一些问题，请</Label>
+            <Button variant="link" class="p-0" @click="generateDescription()">
+              重试
+            </Button>
           </div>
         </div>
-        <div v-else-if="generating" class="w-full p-0">
-          <Label class="text-base font-bold select-none"> 应用案例：</Label>
-          <Label>
-            AI 生成中...
-          </Label>
-        </div>
-        <div v-else-if="isError" class="w-full text-destructive">
-          <Label class="text-base font-bold select-none"> 应用案例：</Label>
-          <Label>
-            生成遇到了一些问题，请
-          </Label>
-          <Button variant="link" class="p-0" @click="generateDescription()">
-            重试
-          </Button>
-        </div>
-      </div>
 
-      <div v-if="data.expId">
-        <div class="w-full flex items-center justify-center pt-3">
-          <Button>
-            <router-link :to="`/experiment/${data.expId}`">
-              进入实验
-            </router-link>
-          </Button>
+        <div v-if="data.expId">
+          <div class="w-full flex items-center justify-center pt-3">
+            <Button>
+              <router-link :to="`/experiment/${data.expId}`">
+                进入实验
+              </router-link>
+            </Button>
+          </div>
         </div>
       </div>
-    </HoverCardContent>
-  </HoverCard>
+    </div>
+  </div>
 </template>
 
 <style scoped></style>

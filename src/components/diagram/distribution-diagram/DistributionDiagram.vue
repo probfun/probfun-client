@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import type { GraphEdge, NodeDragEvent } from '@vue-flow/core';
+import type { LayoutOptions } from 'cytoscape';
 import { vAutoAnimate } from '@formkit/auto-animate'; // 引入 dagre
 import { Background } from '@vue-flow/background';
 import { Controls } from '@vue-flow/controls';
 import { useVueFlow, VueFlow } from '@vue-flow/core';
 import { MiniMap } from '@vue-flow/minimap';
-import dagre from 'dagre';
+import cytoscape from 'cytoscape';
+import fcose from 'cytoscape-fcose';
 import { ChevronRight } from 'lucide-vue-next';
-import { nextTick, onMounted, ref, watch } from 'vue';
+import { markRaw, nextTick, onMounted, ref, watch } from 'vue';
 import DistributionNode from '@/components/diagram/distribution-diagram/DistributionNode.vue';
+import FloatingEdge from '@/components/diagram/distribution-diagram/FloatingEdge.vue';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils.ts';
 import { useConfigStore } from '@/store';
@@ -27,9 +30,9 @@ const searchQuery = ref('');
 const configStore = useConfigStore();
 
 const customViewport = {
-  x: -1500, // 初始 X 坐标
-  y: -300, // 初始 Y 坐标
-  zoom: 0.65, // 初始缩放比例
+  x: 800, // 初始 X 坐标
+  y: 500, // 初始 Y 坐标
+  zoom: 0.5, // 初始缩放比例
 };
 
 function moveToNode(nodeId: string) {
@@ -55,35 +58,64 @@ function searchNode() {
 
 // 自动布局 (使用 dagre)
 function applyAutoLayout() {
-  const dagreGraph = new dagre.graphlib.Graph();
-  dagreGraph.setDefaultEdgeLabel(() => ({}));
-  dagreGraph.setGraph({ rankdir: 'LR', nodesep: 50, edgesep: 10, ranksep: 100 });
+  cytoscape.use(fcose);
 
-  // 添加节点到 dagre 图
-  nodes.value.forEach((node) => {
-    dagreGraph.setNode(node.id, { width: 200, height: 100 });
-  });
-
-  // 添加边到 dagre 图
-  edges.value.forEach((edge: any) => {
-    dagreGraph.setEdge(edge.source, edge.target);
-  });
-
-  // 运行布局计算
-  dagre.layout(dagreGraph);
-
-  // 更新节点位置
-  nodes.value = nodes.value.map((node) => {
-    const dagreNode = dagreGraph.node(node.id);
-    return {
-      ...node,
-      position: {
-        x: dagreNode.x,
-        y: dagreNode.y,
+  // 1) 构造 elements，并把“节点尺寸”带进 data
+  const elements = [
+    ...nodes.value.map(n => ({
+      data: {
+        id: n.id,
+        width: 250,
+        height: 150,
+        label: '',
       },
-      dragging: false,
-    };
+    })),
+    ...edges.value.map((e: any, i: number) => ({
+      data: { id: e.id ?? `e-${i}`, source: e.source, target: e.target },
+    })),
+  ];
+
+  // 2) headless 实例，给出样式让布局读取到真实宽高/标签
+  const cy = cytoscape({
+    headless: true,
+    elements,
+    style: [
+      { selector: 'node', style: {
+        'width': 'data(width)',
+        'height': 'data(height)',
+        'label': 'data(label)',
+        'font-size': 12,
+      } },
+    ],
   });
+
+  const layout = cy.layout({
+    name: 'fcose',
+    quality: 'proof',
+    randomize: true,
+    animate: false,
+    nodeDimensionsIncludeLabels: true,
+    nodeSeparation: 600,
+    nodeRepulsion: () => 500000,
+    idealEdgeLength: () => 500,
+    edgeElasticity: () => 0.1,
+    gravity: 0.02,
+    packComponents: true,
+    tile: true,
+    padding: 0,
+  } as LayoutOptions);
+  layout.run();
+
+  nodes.value = nodes.value.map((n) => {
+    const p = cy.getElementById(n.id).position();
+    return { ...n, position: { x: p.x, y: p.y }, dragging: false };
+  });
+
+  edges.value = edges.value.map((n) => {
+    return { ...n, type: 'floating' };
+  });
+
+  cy.destroy();
 }
 
 function resetEdges() {
@@ -138,6 +170,9 @@ function toggleTooltip() {
 }
 
 const collapse = ref(false);
+const edgeTypes = {
+  floating: markRaw(FloatingEdge),
+};
 </script>
 
 <template>
@@ -187,7 +222,8 @@ const collapse = ref(false);
     <div class="relative flex-1">
       <VueFlow
         :nodes="nodes" :edges="edges" :class="{ dark }" class="basic-flow" :default-viewport="{ zoom: 1.5 }"
-        :min-zoom="0.2" :max-zoom="4" @node-drag-stop="handleNodeDragStop"
+        :min-zoom="0.2" :max-zoom="4" :edge-types="edgeTypes"
+        @node-drag-stop="handleNodeDragStop"
       >
         <Background pattern-color="#aaa" :gap="16" />
         <template #node-distribution="props">

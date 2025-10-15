@@ -22,11 +22,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { useAiStore } from '@/store';
 
 defineProps <{
   disabled: boolean;
+  wordCloud: string;
 }>();
 
 const emit = defineEmits<{
@@ -64,7 +66,7 @@ function handleCompositionEnd() {
 </script>
 
 <template>
-  <div class="sticky left-0 h-full w-72 grid grid-rows-2 gap-2">
+  <div class="sticky left-0 h-full w-72 flex flex-col gap-2">
     <Card class="overflow-y-hidden flex flex-col hover:border-primary transition-all flex-shrink-0">
       <CardHeader class="px-4 py-2">
         <CardTitle class="flex items-center">
@@ -126,6 +128,19 @@ function handleCompositionEnd() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+        </div>
+      </CardContent>
+    </Card>
+    <Card class="overflow-y-hidden flex flex-col hover:border-primary transition-all flex-shrink-0">
+      <CardHeader class="px-4 py-3">
+        <CardTitle class="flex items-center">
+          热门词云
+        </CardTitle>
+      </CardHeader>
+      <CardContent class="p-0 border-t flex flex-col gap-1 overflow-y-auto h-full">
+        <img v-if="wordCloud !== ''" :src="wordCloud" alt="" class="w-full h-40 object-cover">
+        <div v-else class="w-full h-40 object-cover p-2">
+          <Skeleton class="w-full h-full" />
         </div>
       </CardContent>
     </Card>

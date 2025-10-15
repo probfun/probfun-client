@@ -3,16 +3,16 @@ import type { HomeConfig } from '@/components/subject/configs.ts';
 const homeConfig: HomeConfig = {
   experiments: [
     {
-      title: '正态分布',
-      description: '正态分布是一种常见的分布。在正态分布中，大多数数据集中在平均值附近，这种分布经常出现在自然现象和日常生活中。',
-      img: '/homePage/normalDistribution.png',
-      path: '/experiment/normal-distribution',
+      title: '均匀分布',
+      description: '均匀分布是一种概率分布，表示在一个区间内所有结果出现的可能性相等，常用于模拟随机事件。',
+      img: '/homePage/img_5.png',
+      path: '/experiment/uniform-distribution',
     },
     {
-      title: '泊松分布',
-      description: '泊松分布是一种预测在一定时间或空间内随机事件发生次数的统计方法，它基于一个参数λ，这个参数表示平均发生次数。',
-      img: '/homePage/poissonDistribution.png',
-      path: '/experiment/poisson-distribution',
+      title: '蒙特卡洛计算π值',
+      description: '蒙特卡洛方法是一种通过随机采样来解决数学问题的统计技术，常用于估算复杂函数的值或模拟物理系统。',
+      img: '/homePage/img_6.png',
+      path: '/experiment/EstimationOfPai',
     },
     {
       title: '三门问题',
@@ -21,10 +21,10 @@ const homeConfig: HomeConfig = {
       path: '/experiment/three-doors',
     },
     {
-      title: 'Buffon投针',
-      description: 'Buffon投针问题是一个通过随机投掷针到平行线板上，通过针与线的相交数量来估算圆周率π的几何概率实验。',
-      img: '/homePage/buffonNeedle.png',
-      path: '/experiment/buffon',
+      title: '分组检测',
+      description: '分组检测是一种统计检测策略，通过将多个样本合并检测来提高检测效率，在阳性率较低的情况下可以显著降低检测成本。',
+      img: '/homePage/img_7.png',
+      path: '/experiment/group-detection',
     },
   ],
   mindMaps: [
@@ -37,7 +37,7 @@ const homeConfig: HomeConfig = {
     {
       title: '分布关系',
       description: '分布关系是概率论中的重要概念，描述了不同概率分布之间的联系和转换。理解这些关系有助于更好地应用统计方法进行数据分析和建模。',
-      img: '/homePage/distribution.png',
+      img: '/homePage/img_9.png',
       path: '/mindmap/distribution',
     },
     // {

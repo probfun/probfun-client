@@ -7,7 +7,7 @@ import { ArrowDownToLine, Bot, CircleStop, Clipboard, PencilLine, RotateCcw, Sen
 import { v4 as uuidv4 } from 'uuid';
 import { nextTick, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { aiApi, generateTitleApi } from '@/api/ai/aiApi';
+import { aiApi, fetchWordCloudApi, generateTitleApi } from '@/api/ai/aiApi';
 import { ReceiveDataType } from '@/api/ai/aiType.ts';
 import AiSidebar from '@/components/ai/AiSidebar.vue';
 import Tool from '@/components/ai/tool/Tool.vue';
@@ -254,7 +254,9 @@ function resetTextareaHeight() {
   }
 }
 
-onMounted(() => {
+const wordCloudUrl = ref('');
+
+onMounted(async () => {
   scrollContainer.value?.addEventListener('scroll', handleScroll);
   scrollToBottom(false);
   resetTextareaHeight();
@@ -265,6 +267,13 @@ onMounted(() => {
     send(query);
     const router = useRouter();
     router.push({ query: undefined });
+  }
+  try {
+    const response = await fetchWordCloudApi();
+    wordCloudUrl.value = response.imageUrl;
+  }
+  catch (e: any) {
+    console.error('Error during fetching word cloud:', e);
   }
 });
 
@@ -287,7 +296,7 @@ function handleCompositionEnd() {
 
 <template>
   <div v-if="!isVisitor()" class="flex p-2 gap-2">
-    <AiSidebar :disabled="status !== 'idle'" @send="(question) => send(question)" />
+    <AiSidebar :word-cloud="wordCloudUrl" :disabled="status !== 'idle'" @send="(question) => send(question)" />
     <Card class="flex-1 flex hover:border-primary flex-col transition-all duration-300">
       <CardHeader v-auto-animate class="py-2 px-4 flex flex-row items-center h-10">
         <CardTitle v-if="!aiStore.currentChat || !isEditChatTitle">

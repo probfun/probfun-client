@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type BoxSelector from '@/components/selector/BoxSelector.vue';
 import { vAutoAnimate } from '@formkit/auto-animate';
-import { computed, onMounted, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { fetchFavoriteExperimentsApi } from '@/api/experiment/experimentApi.ts';
 import { fetchUserApi } from '@/api/user/userApi';
 import NavBar from '@/components/navbar/NavBar.vue';
@@ -13,8 +13,6 @@ import { useConfigStore, useUserStore } from '@/store';
 import { isVisitor } from '@/utils/auth.ts';
 
 const router = useRouter();
-const route = useRoute();
-const hideSideBar = computed(() => route.path.startsWith('/subjects'));
 const userStore = useUserStore();
 
 const subjectSelector = ref<typeof BoxSelector | null>(null);
@@ -24,8 +22,6 @@ onMounted(async () => {
   }
   try {
     const result = await fetchUserApi();
-    result.user.gender = result.user.gender.toString();
-    console.log('User:', result.user);
     userStore.user = result.user;
   }
   catch (error) {
@@ -52,7 +48,7 @@ function updateSubject() {
   <div v-auto-animate class="w-screen h-screen flex flex-col p-2 gap-2">
     <NavBar />
     <div v-if="configStore.currentSubject" v-auto-animate class="flex-1 gap-2 flex relative transition-all overflow-hidden">
-      <SideBar v-if="!hideSideBar" />
+      <SideBar />
       <router-view class="flex-1 overflow-y-auto" />
     </div>
     <div v-else class="flex-1 grid grid-cols-[2fr_1fr] overflow-hidden items-center justify-center border rounded-xl shadow-md">

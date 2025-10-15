@@ -2,14 +2,14 @@ import type { ChatMessage, ReceiveData } from '@/api/ai/aiType';
 import { getAuthToken } from '@/utils/auth';
 import { connect } from '@/utils/sse';
 import { error } from '@/utils/toast';
-import { postRaw } from '../request';
+import { get, post, postRaw } from '../request';
 
 interface ChatRequest extends Record<string, unknown> {
   messages: ChatMessage[];
   conversationId?: string;
 }
 
-export async function aiApi(
+async function aiApi(
   requestData: ChatRequest,
   open: () => void,
   receive: (data: ReceiveData) => void,
@@ -54,13 +54,13 @@ export async function aiApi(
   }
 }
 
-export async function generateTitleApi(messages: ChatMessage[]) {
+async function generateTitleApi(messages: ChatMessage[]) {
   return await postRaw<{
     title: string;
   }>('/ai/title', { messages });
 }
 
-export async function generateDistributionFunctionApi(distribution: string) {
+async function generateDistributionFunctionApi(distribution: string) {
   return await postRaw<{
     function: string;
     latex: string;
@@ -71,6 +71,27 @@ export async function generateDistributionFunctionApi(distribution: string) {
   });
 }
 
+async function fetchQuestionsApi() {
+  const result = await get<{
+    questions: string[];
+  }>(`/langchain/questions/`);
+  return result.data;
+}
+
+async function fetchWordCloudApi() {
+  const result = await post<{
+    wordsData: {
+      words: string[];
+      total_words: number;
+      frequencies: number[];
+    }[];
+    wordCount: number;
+    imageUrl: string;
+    id: string;
+  }>(`/langchain/wordcloud/`);
+  return result.data;
+}
+
 // export async function getConversationApi(conversationId: string) {
 //   return await get<{
 //     conversation: {
@@ -78,3 +99,11 @@ export async function generateDistributionFunctionApi(distribution: string) {
 //     };
 //   }>(`/langchain/conversation/${conversationId}/`);
 // }
+
+export {
+  aiApi,
+  fetchQuestionsApi,
+  fetchWordCloudApi,
+  generateDistributionFunctionApi,
+  generateTitleApi,
+};
