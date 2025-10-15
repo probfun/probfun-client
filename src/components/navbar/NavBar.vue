@@ -1,25 +1,15 @@
 <script setup lang="ts">
-import type { Message } from '@/api/message/messageType';
 import { Icon } from '@iconify/vue';
-import { Bell, Star } from 'lucide-vue-next';
+import { Star } from 'lucide-vue-next';
 import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { fetchFavoriteExperimentsApi, toggleFavoriteApi } from '@/api/experiment/experimentApi.ts';
-import { fetchMessagesApi, readMessagesApi } from '@/api/message/messageApi.ts';
 import AvatarButton from '@/components/navbar/AvatarButton.vue';
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
 
 import { Badge } from '@/components/ui/badge';
 
 import { Button } from '@/components/ui/button';
 
-import { Label } from '@/components/ui/label';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { Separator } from '@/components/ui/separator';
 import { useConfigStore, useUserStore } from '@/store';
 import { isVisitor } from '@/utils/auth.ts';
 import { success } from '@/utils/toast.ts';
@@ -243,50 +233,50 @@ function updateExperiment() {
 
 onMounted(() => {
   updateExperiment();
-  if (!isVisitor()) {
-    getMessage();
-  }
+  // if (!isVisitor()) {
+  //   getMessage();
+  // }
 });
 
 watch(() => route.path, () => {
   updateExperiment();
 });
 
-const messageList = ref<Message[]>([]);
-const messageNumber = ref(0);
+// const messageList = ref<Message[]>([]);
+// const messageNumber = ref(0);
+//
+// async function getMessage() {
+//   try {
+//     const result = await fetchMessagesApi();
+//     messageNumber.value = result.messages.length;
+//     console.log(result.messages);
+//
+//     for (let i = 0; i < result.messages.length; i++) {
+//       if (!result.messages[i].read) {
+//         messageList.value.push(result.messages[i]);
+//         console.log(result.messages[i]);
+//       }
+//       else {
+//         messageList.value.push(result.messages[i]);
+//         messageNumber.value -= 1;
+//       }
+//     }
+//     console.log('消息', messageList.value);
+//   }
+//   catch (error) {
+//     console.error('Error during fetching messages:', error);
+//   }
+// }
 
-async function getMessage() {
-  try {
-    const result = await fetchMessagesApi();
-    messageNumber.value = result.messages.length;
-    console.log(result.messages);
-
-    for (let i = 0; i < result.messages.length; i++) {
-      if (!result.messages[i].read) {
-        messageList.value.push(result.messages[i]);
-        console.log(result.messages[i]);
-      }
-      else {
-        messageList.value.push(result.messages[i]);
-        messageNumber.value -= 1;
-      }
-    }
-    console.log('消息', messageList.value);
-  }
-  catch (error) {
-    console.error('Error during fetching messages:', error);
-  }
-}
-
-async function readMessage() {
-  try {
-    await readMessagesApi();
-    messageNumber.value = 0;
-  }
-  catch (error) {
-    console.error('Error during read messages: ', error);
-  }
-}
+// async function readMessage() {
+//   try {
+//     await readMessagesApi();
+//     messageNumber.value = 0;
+//   }
+//   catch (error) {
+//     console.error('Error during read messages: ', error);
+//   }
+// }
 
 async function refreshFavorite() {
   try {
@@ -360,109 +350,109 @@ const configStore = useConfigStore();
       </Button>
     </div>
     <div class="flex items-center gap-4 ml-auto">
-      <div v-if="!isVisitor()" class="relative flex items-center justify-center ml-auto">
-        <Popover>
-          <PopoverTrigger>
-            <Button size="icon" class="size-8 relative text-muted-foreground" variant="ghost">
-              <Bell :stroke-width="2" class="size-6" />
-              <Badge
-                v-if="messageNumber !== 0"
-                class="absolute right-1.5 top-0 translate-x-1/2 rounded-full min-w-4 h-4 p-0 flex items-center justify-center"
-                variant="destructive"
-              >
-                {{ messageNumber <= 99 ? messageNumber : '99+' }}
-              </Badge>
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent class="w-96 p-0">
-            <div class="flex items-center px-4 py-3">
-              <Label class="font-bold text-base"> 我的消息 </Label>
-              <button
-                class="ml-auto text-xs text-blue-600 hover:underline disabled:opacity-50"
-                :disabled="!messageList.length || messageNumber === 0"
-                @click="readMessage()"
-              >
-                全部已读
-              </button>
-            </div>
-            <Separator />
-            <div
-              class="max-h-96 overflow-y-auto custom-scrollbar px-2 py-2 flex flex-col gap-1"
-              :class="{ 'items-center justify-center': !messageList.length }"
-            >
-              <div
-                v-if="!messageList.length"
-                class="text-sm text-muted-foreground py-10 select-none"
-              >
-                暂无消息
-              </div>
+      <!--      <div v-if="!isVisitor()" class="relative flex items-center justify-center ml-auto"> -->
+      <!--        <Popover> -->
+      <!--          <PopoverTrigger> -->
+      <!--            <Button size="icon" class="size-8 relative text-muted-foreground" variant="ghost"> -->
+      <!--              <Bell :stroke-width="2" class="size-6" /> -->
+      <!--              <Badge -->
+      <!--                v-if="messageNumber !== 0" -->
+      <!--                class="absolute right-1.5 top-0 translate-x-1/2 rounded-full min-w-4 h-4 p-0 flex items-center justify-center" -->
+      <!--                variant="destructive" -->
+      <!--              > -->
+      <!--                {{ messageNumber <= 99 ? messageNumber : '99+' }} -->
+      <!--              </Badge> -->
+      <!--            </Button> -->
+      <!--          </PopoverTrigger> -->
+      <!--          <PopoverContent class="w-96 p-0"> -->
+      <!--            <div class="flex items-center px-4 py-3"> -->
+      <!--              <Label class="font-bold text-base"> 我的消息 </Label> -->
+      <!--              <button -->
+      <!--                class="ml-auto text-xs text-blue-600 hover:underline disabled:opacity-50" -->
+      <!--                :disabled="!messageList.length || messageNumber === 0" -->
+      <!--                @click="readMessage()" -->
+      <!--              > -->
+      <!--                全部已读 -->
+      <!--              </button> -->
+      <!--            </div> -->
+      <!--            <Separator /> -->
+      <!--            <div -->
+      <!--              class="max-h-96 overflow-y-auto custom-scrollbar px-2 py-2 flex flex-col gap-1" -->
+      <!--              :class="{ 'items-center justify-center': !messageList.length }" -->
+      <!--            > -->
+      <!--              <div -->
+      <!--                v-if="!messageList.length" -->
+      <!--                class="text-sm text-muted-foreground py-10 select-none" -->
+      <!--              > -->
+      <!--                暂无消息 -->
+      <!--              </div> -->
 
-              <div
-                v-for="item in messageList"
-                :key="item.messageId"
-                class="group flex gap-3 rounded-md px-3 py-2 relative hover:bg-muted cursor-pointer transition"
-                :class="{ 'opacity-70': item.read }"
-                @click="
-                  item.type === 'pin'
-                    ? router.push(`/experiment/${item.pinData?.comment.expId}`)
-                    : item.type === 'reply'
-                      ? router.push(`/experiment/${item.replyData?.comment.expId}`)
-                      : item.type === 'like'
-                        ? router.push(`/experiment/${item.likeData?.comment.expId}`)
-                        : null
-                "
-              >
-                <Avatar class="shrink-0 mt-0.5">
-                  <template v-if="item.type === 'post'">
-                    <AvatarImage :src="item.postData?.post.author.avatarUrl || ''" />
-                    <AvatarFallback>{{ item.postData?.post.author.realName }}</AvatarFallback>
-                  </template>
-                  <template v-else-if="item.type === 'pin'">
-                    <AvatarImage :src="item.pinData?.user.avatarUrl || ''" />
-                    <AvatarFallback>{{ item.pinData?.user.realName }}</AvatarFallback>
-                  </template>
-                  <template v-else-if="item.type === 'reply'">
-                    <AvatarImage :src="item.replyData?.reply.user.avatarUrl || ''" />
-                    <AvatarFallback>{{ item.replyData?.reply.user.realName }}</AvatarFallback>
-                  </template>
-                  <template v-else-if="item.type === 'like'">
-                    <AvatarImage :src="item.likeData?.user.avatarUrl || ''" />
-                    <AvatarFallback>{{ item.likeData?.user.realName }}</AvatarFallback>
-                  </template>
-                  <template v-else-if="item.type === 'delete'">
-                    <AvatarImage :src="item.likeData?.user?.avatarUrl || ''" />
-                    <AvatarFallback>管理员</AvatarFallback>
-                  </template>
-                </Avatar>
+      <!--              <div -->
+      <!--                v-for="item in messageList" -->
+      <!--                :key="item.messageId" -->
+      <!--                class="group flex gap-3 rounded-md px-3 py-2 relative hover:bg-muted cursor-pointer transition" -->
+      <!--                :class="{ 'opacity-70': item.read }" -->
+      <!--                @click=" -->
+      <!--                  item.type === 'pin' -->
+      <!--                    ? router.push(`/experiment/${item.pinData?.comment.expId}`) -->
+      <!--                    : item.type === 'reply' -->
+      <!--                      ? router.push(`/experiment/${item.replyData?.comment.expId}`) -->
+      <!--                      : item.type === 'like' -->
+      <!--                        ? router.push(`/experiment/${item.likeData?.comment.expId}`) -->
+      <!--                        : null -->
+      <!--                " -->
+      <!--              > -->
+      <!--                <Avatar class="shrink-0 mt-0.5"> -->
+      <!--                  <template v-if="item.type === 'post'"> -->
+      <!--                    <AvatarImage :src="item.postData?.post.author.avatarUrl || ''" /> -->
+      <!--                    <AvatarFallback>{{ item.postData?.post.author.realName }}</AvatarFallback> -->
+      <!--                  </template> -->
+      <!--                  <template v-else-if="item.type === 'pin'"> -->
+      <!--                    <AvatarImage :src="item.pinData?.user.avatarUrl || ''" /> -->
+      <!--                    <AvatarFallback>{{ item.pinData?.user.realName }}</AvatarFallback> -->
+      <!--                  </template> -->
+      <!--                  <template v-else-if="item.type === 'reply'"> -->
+      <!--                    <AvatarImage :src="item.replyData?.reply.user.avatarUrl || ''" /> -->
+      <!--                    <AvatarFallback>{{ item.replyData?.reply.user.realName }}</AvatarFallback> -->
+      <!--                  </template> -->
+      <!--                  <template v-else-if="item.type === 'like'"> -->
+      <!--                    <AvatarImage :src="item.likeData?.user.avatarUrl || ''" /> -->
+      <!--                    <AvatarFallback>{{ item.likeData?.user.realName }}</AvatarFallback> -->
+      <!--                  </template> -->
+      <!--                  <template v-else-if="item.type === 'delete'"> -->
+      <!--                    <AvatarImage :src="item.likeData?.user?.avatarUrl || ''" /> -->
+      <!--                    <AvatarFallback>管理员</AvatarFallback> -->
+      <!--                  </template> -->
+      <!--                </Avatar> -->
 
-                <div class="flex flex-col min-w-0">
-                  <span class="text-sm font-medium truncate">
-                    <template v-if="item.type === 'post'">{{ item.postData?.post.author.realName }}</template>
-                    <template v-else-if="item.type === 'pin'">{{ item.pinData?.user.realName }}</template>
-                    <template v-else-if="item.type === 'reply'">{{ item.replyData?.reply.user.realName }}</template>
-                    <template v-else-if="item.type === 'like'">{{ item.likeData?.user.realName }}</template>
-                    <template v-else-if="item.type === 'delete'">管理员</template>
-                  </span>
-                  <span
-                    class="text-xs text-muted-foreground leading-snug mt-0.5 line-clamp-2"
-                  >
-                    <template v-if="item.type === 'post'">老师发布了新的班级公告</template>
-                    <template v-else-if="item.type === 'pin'">老师置顶了你的评论</template>
-                    <template v-else-if="item.type === 'reply'">回复了你的评论</template>
-                    <template v-else-if="item.type === 'like'">赞了你的评论</template>
-                    <template v-else-if="item.type === 'delete'">管理员删除了你的评论</template>
-                  </span>
-                </div>
+      <!--                <div class="flex flex-col min-w-0"> -->
+      <!--                  <span class="text-sm font-medium truncate"> -->
+      <!--                    <template v-if="item.type === 'post'">{{ item.postData?.post.author.realName }}</template> -->
+      <!--                    <template v-else-if="item.type === 'pin'">{{ item.pinData?.user.realName }}</template> -->
+      <!--                    <template v-else-if="item.type === 'reply'">{{ item.replyData?.reply.user.realName }}</template> -->
+      <!--                    <template v-else-if="item.type === 'like'">{{ item.likeData?.user.realName }}</template> -->
+      <!--                    <template v-else-if="item.type === 'delete'">管理员</template> -->
+      <!--                  </span> -->
+      <!--                  <span -->
+      <!--                    class="text-xs text-muted-foreground leading-snug mt-0.5 line-clamp-2" -->
+      <!--                  > -->
+      <!--                    <template v-if="item.type === 'post'">老师发布了新的班级公告</template> -->
+      <!--                    <template v-else-if="item.type === 'pin'">老师置顶了你的评论</template> -->
+      <!--                    <template v-else-if="item.type === 'reply'">回复了你的评论</template> -->
+      <!--                    <template v-else-if="item.type === 'like'">赞了你的评论</template> -->
+      <!--                    <template v-else-if="item.type === 'delete'">管理员删除了你的评论</template> -->
+      <!--                  </span> -->
+      <!--                </div> -->
 
-                <span
-                  v-if="!item.read"
-                  class="absolute right-2 top-2 inline-block w-2 h-2 rounded-full bg-red-500"
-                />
-              </div>
-            </div>
-          </PopoverContent>
-        </Popover>
-      </div>
+      <!--                <span -->
+      <!--                  v-if="!item.read" -->
+      <!--                  class="absolute right-2 top-2 inline-block w-2 h-2 rounded-full bg-red-500" -->
+      <!--                /> -->
+      <!--              </div> -->
+      <!--            </div> -->
+      <!--          </PopoverContent> -->
+      <!--        </Popover> -->
+      <!--      </div> -->
       <AvatarButton v-if="!isVisitor()" />
       <Button v-else @click="router.push('/login')">
         登录

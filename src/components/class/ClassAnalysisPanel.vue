@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type {
   ActivityDistributionEntry,
+  ChapterOverview,
   ChatKeyword,
   Class,
   ClassAnalytics,
   FrequentMistake,
-  KnowledgePointOverview,
   StudentDetail,
   StudentPerformance,
 } from '@/api/class/classType';
@@ -74,7 +74,7 @@ onMounted(async () => {
 // 计算指标
 const overview = computed(() => analytics.value?.classOverview);
 const students = computed<StudentPerformance[]>(() => overview.value?.studentPerformance ?? []);
-const kps = computed<KnowledgePointOverview[]>(() => overview.value?.knowledgePoints ?? []);
+const kps = computed<ChapterOverview[]>(() => overview.value?.chapters ?? []);
 const activities = computed<ActivityDistributionEntry[]>(() => overview.value?.activityDistribution ?? []);
 const studentDetails = computed<StudentDetail[]>(() => analytics.value?.studentDetails ?? []);
 const insights = computed(() => analytics.value?.insights);
@@ -469,10 +469,10 @@ defineExpose({ refresh: load });
                 <CardTitle>知识点掌握详情</CardTitle>
               </CardHeader>
               <CardContent>
-                <div v-if="selectedStudent.knowledgeDetails?.length > 0" class="space-y-4">
-                  <div v-for="kp in selectedStudent.knowledgeDetails" :key="kp.knowledgePointId" class="space-y-2">
+                <div v-if="selectedStudent.chapterDetails?.length > 0" class="space-y-4">
+                  <div v-for="kp in selectedStudent.chapterDetails" :key="kp.chapterId" class="space-y-2">
                     <div class="flex items-center justify-between">
-                      <span class="font-medium">{{ kp.knowledgePointName }}</span>
+                      <span class="font-medium">{{ kp.chapterName }}</span>
                       <span class="text-sm text-neutral-600">{{ fmtPct(kp.accuracy) }}</span>
                     </div>
                     <div class="h-2 w-full overflow-hidden rounded-full bg-neutral-100">
@@ -504,9 +504,9 @@ defineExpose({ refresh: load });
               </CardHeader>
               <CardContent class="space-y-4">
                 <div v-if="topStrongKps.length > 0" class="space-y-4">
-                  <div v-for="kp in topStrongKps" :key="kp.knowledgePointId" class="space-y-2">
+                  <div v-for="kp in topStrongKps" :key="kp.chapterId" class="space-y-2">
                     <div class="flex items-center justify-between">
-                      <span class="font-medium">{{ kp.knowledgePointName }}</span>
+                      <span class="font-medium">{{ kp.chapterName }}</span>
                       <span class="text-sm font-semibold text-emerald-600">{{ fmtPct(kp.averageAccuracy) }}</span>
                     </div>
                     <div class="h-2 w-full overflow-hidden rounded-full bg-neutral-100">
@@ -533,9 +533,9 @@ defineExpose({ refresh: load });
               </CardHeader>
               <CardContent class="space-y-4">
                 <div v-if="topWeakKps.length > 0" class="space-y-4">
-                  <div v-for="kp in topWeakKps" :key="kp.knowledgePointId" class="space-y-2">
+                  <div v-for="kp in topWeakKps" :key="kp.chapterId" class="space-y-2">
                     <div class="flex items-center justify-between">
-                      <span class="font-medium">{{ kp.knowledgePointName }}</span>
+                      <span class="font-medium">{{ kp.chapterName }}</span>
                       <span class="text-sm font-semibold text-red-600">{{ fmtPct(kp.averageAccuracy) }}</span>
                     </div>
                     <div class="h-2 w-full overflow-hidden rounded-full bg-neutral-100">
@@ -562,10 +562,10 @@ defineExpose({ refresh: load });
             </CardHeader>
             <CardContent>
               <div v-if="kps.length > 0" class="space-y-3">
-                <div v-for="kp in kps" :key="kp.knowledgePointId" class="flex items-center justify-between rounded-lg border p-4">
+                <div v-for="kp in kps" :key="kp.chapterId" class="flex items-center justify-between rounded-lg border p-4">
                   <div class="flex-1">
                     <div class="font-medium">
-                      {{ kp.knowledgePointName }}
+                      {{ kp.chapterName }}
                     </div>
                     <div class="mt-2 flex items-center gap-4 text-sm text-neutral-600">
                       <span>{{ kp.studentCount }} 名学生</span>
@@ -607,7 +607,7 @@ defineExpose({ refresh: load });
                         {{ m.questionContent }}
                       </div>
                       <div class="mt-2 flex items-center gap-4 text-sm text-neutral-600">
-                        <span v-if="m.knowledgePoint" class="rounded-full bg-neutral-100 px-2 py-1">{{ m.knowledgePoint }} </span>
+                        <span v-if="m.chapter" class="rounded-full bg-neutral-100 px-2 py-1">{{ m.chapter }} </span>
                         <span>{{ m.studentCount }} 名学生出错</span>
                         <span>共 {{ m.mistakeCount }} 次</span>
                       </div>

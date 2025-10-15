@@ -168,7 +168,7 @@ async function refreshFeedback() {
   try {
     const result = await fetchFeedbackApi();
     feedbackList.value = result.feedback;
-    feedbackList.value.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    // feedbackList.value.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   }
   catch (error) {
     console.error('Error during fetching feedbacks:', error);

@@ -65,14 +65,14 @@ export interface ClassAnalytics {
 export interface ClassOverview {
   totalStudents: number;
   teachingClassName: string;
-  knowledgePoints: KnowledgePointOverview[];
+  chapters: ChapterOverview[];
   studentPerformance: StudentPerformance[];
   activityDistribution: ActivityDistributionEntry[];
 }
 
-export interface KnowledgePointOverview {
-  knowledgePointId: number;
-  knowledgePointName: string;
+export interface ChapterOverview {
+  chapterId: number;
+  chapterName: string;
   averageAccuracy: number;
   averageAttempts: number;
   totalAttempts: number;
@@ -106,7 +106,7 @@ export interface StudentDetail {
   studentId: number;
   studentName: string;
   learningTrajectory: LearningTrajectoryEntry[];
-  knowledgeDetails: KnowledgeDetailEntry[];
+  chapterDetails: ChapterDetailEntry[];
 }
 
 export interface LearningTrajectoryEntry {
@@ -116,9 +116,9 @@ export interface LearningTrajectoryEntry {
   totalAttempts: number;
 }
 
-export interface KnowledgeDetailEntry {
-  knowledgePointId: number;
-  knowledgePointName: string;
+export interface ChapterDetailEntry {
+  chapterId: number;
+  chapterName: string;
   accuracy: number;
   averageAttempts: number;
   totalAttempts: number;
@@ -132,7 +132,7 @@ export interface Insights {
 export interface FrequentMistake {
   questionId: number;
   questionContent: string;
-  knowledgePoint: string;
+  chapter: string;
   mistakeCount: number;
   studentCount: number;
 }
