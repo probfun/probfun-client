@@ -1,77 +1,35 @@
 <script setup lang="ts">
-import type { Tab } from '@/components/Container.vue';
-import { Brain, MessagesSquare } from 'lucide-vue-next';
-import { onMounted, ref } from 'vue';
-import Container from '@/components/Container.vue';
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from '@/components/ui/resizable';
+import CommentPanel from '@/components/comment/CommentPanel.vue';
+import { homeConfigs } from '@/components/subject/configs.ts';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import ThinkingBoard from '@/components/week-thinking/ThinkingBoard.vue';
+import { useConfigStore } from '@/store';
 
-const args = withDefaults(defineProps<{
-  discussTabList?: Tab[];
-  panelSize?: number;
-  layout?: number;
-  showParameterPanel?: boolean;
-}>(), {
-  discussTabList: () => [
-    {
-      id: 0,
-      label: '讨论区',
-      name: 'comment',
-      icon: MessagesSquare,
-    },
-  ],
-  panelSize: 40,
-  layout: 0,
-  showParameterPanel: true,
-});
-
-const displayTabList = ref([{
-  id: 0,
-  label: '每周一思',
-  icon: Brain,
-}]);
-
-onMounted(() => {
-  console.log(args.layout);
-});
+const configStore = useConfigStore();
+const weeklyThoughts = configStore.currentSubjectId ? homeConfigs[configStore.currentSubjectId].thinking : null;
 </script>
 
 <template>
-  <div class="w-full flex gap-2">
-    <ResizablePanelGroup
-      id="demo-group-1"
-      direction="horizontal"
-      class="rounded-lg"
-    >
-      <ResizablePanel id="demo-panel-2" :default-size="70" :min-size="20" :max-size="80">
-        <ResizablePanelGroup id="demo-group-2" :direction="layout === 1 ? 'horizontal' : 'vertical'">
-          <ResizablePanel id="demo-panel-3" :default-size="panelSize">
-            <div class="flex h-full items-center justify-center">
-              <Container class="h-full w-full" :tabs="displayTabList">
-                <slot name="thinking" />
-              </Container>
+  <ThinkingBoard v-if="weeklyThoughts" :show-parameter-panel="false">
+    <template #thinking>
+      <div class="flex items-center pb-32 h-full">
+        <Card class="max-w-5xl border-none shadow-none">
+          <CardHeader>
+            <CardTitle class="text-3xl font-bold">
+              {{ weeklyThoughts[0].title }}
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-4">
+            <div v-for="(item, idx) in weeklyThoughts[0].description" :key="idx">
+              <Label class="block text-base leading-relaxed">{{ item }}</Label>
             </div>
-          </ResizablePanel>
-          <ResizableHandle id="demo-handle-2" class="bg-transparent p-1" />
-        </ResizablePanelGroup>
-      </ResizablePanel>
-      <ResizableHandle id="demo-handle-1" class="bg-transparent p-1" />
-      <ResizablePanel id="demo-panel-1" :default-size="30">
-        <div class="flex h-full items-center justify-center">
-          <Container class="flex-1 h-full" :tabs="discussTabList">
-            <template #default="{ activeTab }">
-              <slot :name="activeTab.name" />
-            </template>
-          </Container>
-        </div>
-      </ResizablePanel>
-    </ResizablePanelGroup>
-  </div>
+          </CardContent>
+        </Card>
+      </div>
+    </template>
+    <template #comment>
+      <CommentPanel exp-id="week-thinking" />
+    </template>
+  </ThinkingBoard>
 </template>
-
-<style scoped>
-
-</style>

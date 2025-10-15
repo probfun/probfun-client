@@ -62,7 +62,6 @@ function convertToCommentWithChild(comments: CommentWithParent[]): CommentWithCh
   for (const comment of validComments) {
     if (comment.parentId) {
       let parent = commentMap[comment.parentId];
-      console.log(comment.parentId, parent);
       while (parent.parentId) {
         parent = commentMap[parent.parentId];
       }

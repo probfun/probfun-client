@@ -543,8 +543,6 @@ async function fetchAnalysisData(generate: boolean) {
 }
 
 function startGeneration() {
-  if (isGenerating.value)
-    return;
   isOpen.value = true;
   isGenerating.value = true;
   fetchAnalysisData(true);
@@ -555,7 +553,8 @@ function startGeneration() {
 
 onMounted(() => {
   if (configStore.confirmedAiPolicy) {
-    isOpen.value = false;
+    isOpen.value = true;
+    isGenerating.value = true;
     fetchAnalysisData(false);
   }
 });

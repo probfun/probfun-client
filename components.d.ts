@@ -248,6 +248,7 @@ declare module 'vue' {
     TeacherClassPanel: typeof import('./src/components/class/TeacherClassPanel.vue')['default']
     TestPanel: typeof import('./src/components/analysis/TestPanel.vue')['default']
     Textarea: typeof import('./src/components/ui/textarea/Textarea.vue')['default']
+    ThinkingBoard: typeof import('./src/components/week-thinking/ThinkingBoard.vue')['default']
     ThreeDoors: typeof import('./src/components/experiment/chapter1/ThreeDoors.vue')['default']
     ThreeDoorsDisplay: typeof import('./src/components/experiment/chapter1/three-doors/ThreeDoorsDisplay.vue')['default']
     ThreeNormalDiagram: typeof import('./src/components/experiment/chapter3/normal-distribution/threeNormalDiagram.vue')['default']
