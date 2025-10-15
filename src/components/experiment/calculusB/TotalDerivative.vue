@@ -5,7 +5,7 @@ import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { renderLatex, toMarkdown } from '@/utils/markdown';
 
 const content = ref(`
-## **全微分的概念与几何意义**
+## **全微分的几何意义**
 全微分是多元函数微积分中的核心概念，它从局部线性近似的角度描述了多元函数的变化特性
 
 ### **一、全微分的定义**
@@ -22,15 +22,20 @@ dz = \\frac{\\partial z}{\\partial x}dx + \\frac{\\partial z}{\\partial y}dy
 $$
 
 对于曲面 $ z = f(x, y) $，在点 $ (x_0, y_0) $ 处可微时：曲面在该点有不平行于 $ z $ 轴的切平面
-- 切平面的法向量是 $ \\vec{n} = (z_x(P), z_y(P), -1) $
-- 切平面方程为：$ z - z_0 = f_x(x_0, y_0)(x - x_0) + f_y(x_0, y_0)(y - y_0) $
-- 全微分 $ dz $ 恰好等于切平面上点的竖坐标增量
+
+1.切平面的法向量是 $ \\vec{n} = (z_x(P), z_y(P), -1) $
+
+2.切平面方程为：$ z - z_0 = f_x(x_0, y_0)(x - x_0) + f_y(x_0, y_0)(y - y_0) $
+
+3.全微分 $ dz $ 恰好等于切平面上点的竖坐标增量
 
 ### **三、可视化理解与示例**
-- 通过曲面上一点 $ P $ 分别作平行于 $ xOz $ 和 $ yOz $ 的平面，
-- 与曲面相交得到两条空间曲线
-- 这两条曲线的切线斜率分别对应于函数在 $ x $ 和 $ y $ 方向的偏导数
-- 由这两条切线确定的平面就是切平面
+
+1.通过曲面上一点 $ P $ 分别作平行于 $ xOz $ 和 $ yOz $ 的平面，与曲面相交得到两条空间曲线
+
+2.这两条曲线的切线斜率分别对应于函数在 $ x $ 和 $ y $ 方向的偏导数
+
+3.这两条曲线的切线确定的平面就是切平面
 `);
 </script>
 
@@ -39,7 +44,7 @@ $$
     <template #experiment>
       <div class="flex w-full h-full">
         <iframe
-          src="https://www.geogebra.org/calculator/cdfabne2?embed" width="1180" height="750" allowfullscreen
+          src="https://www.geogebra.org/calculator/cdfabne2?embed" width="100%" height="100%" allowfullscreen
           style="border: 1px solid #e4e4e4;border-radius: 4px;" frameborder="0"
         />
       </div>

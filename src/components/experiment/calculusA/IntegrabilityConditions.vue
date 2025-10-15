@@ -5,7 +5,7 @@ import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
 import { toMarkdown } from '@/utils/markdown';
 
 const conclusionContent = `
-### **函数可积条件实验**
+## **函数可积条件实验**
 
 本实验通过可视化达布大和与达布小和的收敛过程，直观展示了函数可积的充要条件：当分割无限加细时，上和与下和的差趋于零。
 
@@ -39,7 +39,7 @@ onMounted(() => {
         <iframe
           src="/calculus/integrability-conditions.html"
           width="100%"
-          height="800px"
+          height="100%"
           frameborder="0"
           class="integration-iframe"
           @load="onHtmlLoad"

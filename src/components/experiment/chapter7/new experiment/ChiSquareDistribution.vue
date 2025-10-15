@@ -55,7 +55,7 @@ onMounted(() => {
         <iframe
           src="/chapter7/chi-square-distribution.html"
           width="100%"
-          height="800px"
+          height="100%"
           frameborder="0"
           class="rounded-lg shadow-lg"
           @load="onHtmlLoad"

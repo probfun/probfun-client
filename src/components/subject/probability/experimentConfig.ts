@@ -10,7 +10,7 @@ const experiments: DrawerItem[] = [
       { title: '生日问题', icon: 'lucide:flask-conical', route: '/experiment/birthday-problem' },
       { title: '蒲丰投针', icon: 'lucide:flask-conical', route: '/experiment/buffon' },
       { title: '贝特朗悖论', icon: 'lucide:flask-conical', route: '/experiment/bertrand' },
-      { title: '阳性检测', icon: 'lucide:flask-conical', route: '/experiment/positive-test' },
+      // { title: '阳性检测', icon: 'lucide:flask-conical', route: '/experiment/positive-test' },
       { title: '三门问题', icon: 'lucide:flask-conical', route: '/experiment/three-doors' },
       { title: '假阳性问题', icon: 'lucide:flask-conical', route: '/experiment/false-positive' },
       { title: '垃圾邮件过滤', icon: 'lucide:flask-conical', route: '/experiment/spam-filtering',
@@ -23,6 +23,7 @@ const experiments: DrawerItem[] = [
     children: [
       { title: '离散型随机变量的PMF', icon: 'lucide:flask-conical', route: '/experiment/discrete-pmf' },
       { title: '概率密度函数与分布函数', icon: 'lucide:flask-conical', route: '/experiment/pdf-cdf' },
+      { title: '身高数据分析', icon: 'lucide:flask-conical', route: '/experiment/height-stats' },
       { title: '二项分布', icon: 'lucide:flask-conical', route: '/experiment/binomial-distribution' },
       { title: '泊松分布', icon: 'lucide:flask-conical', route: '/experiment/poisson-distribution' },
       { title: '几何分布', icon: 'lucide:flask-conical', route: '/experiment/geometric-distribution' },

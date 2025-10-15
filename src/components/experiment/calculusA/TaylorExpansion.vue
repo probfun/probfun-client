@@ -44,27 +44,27 @@ $$f(x) = \\sum_{k=0}^{n} \\frac{f^{(k)}(0)}{k!} x^k + R_n(x)$$
     <template #experiment>
       <iframe
         v-if="select === 'sin'"
-        src="https://www.geogebra.org/calculator/vj86stas?embed" width="1180" height="700" allowfullscreen
+        src="https://www.geogebra.org/calculator/vj86stas?embed" width="100%" height="93%" allowfullscreen
         style="border: 1px solid #e4e4e4;border-radius: 4px;" frameborder="0"
       />
       <iframe
         v-if="select === 'cos'"
-        src="https://www.geogebra.org/calculator/cuzz5rje?embed" width="1180" height="700" allowfullscreen
+        src="https://www.geogebra.org/calculator/cuzz5rje?embed" width="100%" height="93%" allowfullscreen
         style="border: 1px solid #e4e4e4;border-radius: 4px;" frameborder="0"
       />
       <iframe
         v-if="select === 'exp'"
-        src="https://www.geogebra.org/calculator/bhg3tau9?embed" width="1180" height="700" allowfullscreen
+        src="https://www.geogebra.org/calculator/bhg3tau9?embed" width="100%" height="93%" allowfullscreen
         style="border: 1px solid #e4e4e4;border-radius: 4px;" frameborder="0"
       />
       <iframe
         v-if="select === 'ln'"
-        src="https://www.geogebra.org/calculator/rtxrsvnp?embed" width="1180" height="700" allowfullscreen
+        src="https://www.geogebra.org/calculator/rtxrsvnp?embed" width="100%" height="93%" allowfullscreen
         style="border: 1px solid #e4e4e4;border-radius: 4px;" frameborder="0"
       />
       <iframe
         v-if="select === 'pow'"
-        src="https://www.geogebra.org/calculator/uczthqbc?embed" width="1180" height="700" allowfullscreen
+        src="https://www.geogebra.org/calculator/uczthqbc?embed" width="100%" height="93%" allowfullscreen
         style="border: 1px solid #e4e4e4;border-radius: 4px;" frameborder="0"
       />
       <div class="flex items-center mb-1 mt-3">

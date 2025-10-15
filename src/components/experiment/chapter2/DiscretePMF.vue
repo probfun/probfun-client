@@ -45,7 +45,7 @@ onMounted(() => {
         <iframe
           src="/chapter2/discrete-pmf.html"
           width="100%"
-          height="900px"
+          height="100%"
           frameborder="0"
           class="integration-iframe"
           @load="onHtmlLoad"

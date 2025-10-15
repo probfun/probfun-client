@@ -48,7 +48,7 @@ onMounted(() => {
         <iframe
           src="/chapter2/pdf-cdf.html"
           width="100%"
-          height="800px"
+          height="100%"
           frameborder="0"
           class="integration-iframe"
           @load="onHtmlLoad"
