@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import AiPanel from '@/components/ai/AiPanel.vue';
 import AnalysisPanel from '@/components/analysis/AnalysisPanel.vue';
 import Callback from '@/components/auth/Callback.vue';
+import ClassAnalysisPanel from '@/components/class/ClassAnalysisPanel.vue';
 import DashBoard from '@/components/dashboard/DashBoard.vue';
 import Chatper1Diagram from '@/components/diagram/chapter-1/Chapter1Diagram.vue';
 import Chatper4Diagram from '@/components/diagram/chapter-4/Chapter4Diagram.vue';
@@ -10,12 +11,12 @@ import QuestionDiagram from '@/components/diagram/question-diagram/QuestionDiagr
 import DoQuestionPanel from '@/components/do-question/DoQuestionPanel.vue';
 import BirthdayProblem from '@/components/experiment/chapter1/birthday-problem/BirthdayProblem.vue';
 import BirthdayAttack from '@/components/experiment/chapter1/BirthdayAttack.vue';
-import BuffonNeedle from '@/components/experiment/chapter1/buffon-needle/BuffonNeedle.vue';
 
+import BuffonNeedle from '@/components/experiment/chapter1/buffon-needle/BuffonNeedle.vue';
 import PositiveTest from '@/components/experiment/chapter1/PositiveTest.vue';
 import ThreeDoors from '@/components/experiment/chapter1/three-doors/ThreeDoors.vue';
-import threeNormalDistribution from '@/components/experiment/chapter3/normal-distribution/threeNormalDistribution.vue';
 
+import threeNormalDistribution from '@/components/experiment/chapter3/normal-distribution/threeNormalDistribution.vue';
 import GeometricDistribution from '@/components/experiment/distribution/geometric-distribution/GeometricDistribution.vue';
 import NormalDistribution from '@/components/experiment/distribution/normal-distribution/NormalDistribution.vue';
 import PoissonDistribution from '@/components/experiment/distribution/poisson-distribution/PoissonDistribution.vue';
@@ -24,6 +25,7 @@ import FavoritePanel from '@/components/favorite/FavoritePanel.vue';
 import WeekThinkingPanel from '@/components/week-thinking/WeekThinkingPanel.vue';
 import AuthPage from '@/pages/AuthPage.vue';
 import MainPage from '@/pages/MainPage.vue';
+import { useUserStore } from '@/store';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -316,6 +318,10 @@ const router = createRouter({
           component: WeekThinkingPanel,
         },
         {
+          path: '/class-analysis',
+          component: ClassAnalysisPanel,
+        },
+        {
           path: '/mindmap/distribution',
           component: DistributionDiagram,
         },
@@ -357,6 +363,14 @@ router.beforeEach((to, from, next) => {
       next('/login');
     }
     return;
+  }
+  else if (to.path === '/class-analysis') {
+    if ((useUserStore().user?.role ?? 0) <= 1) {
+      next('/');
+    }
+    else {
+      next();
+    }
   }
   next();
 });

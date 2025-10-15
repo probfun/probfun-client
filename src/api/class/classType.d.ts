@@ -55,3 +55,89 @@ export interface Mydata {
   personalExperimentData: PersonalExperimentData;
   classExperimentData: ClassExperimentData;
 }
+
+export interface ClassAnalytics {
+  classOverview: ClassOverview;
+  studentDetails: StudentDetail[];
+  insights: Insights;
+}
+
+export interface ClassOverview {
+  totalStudents: number;
+  teachingClassName: string;
+  knowledgePoints: KnowledgePointOverview[];
+  studentPerformance: StudentPerformance[];
+  activityDistribution: ActivityDistributionEntry[];
+}
+
+export interface KnowledgePointOverview {
+  knowledgePointId: number;
+  knowledgePointName: string;
+  averageAccuracy: number;
+  averageAttempts: number;
+  totalAttempts: number;
+  studentCount: number;
+}
+
+export interface StudentPerformance {
+  studentId: number;
+  studentName: string;
+  completedQuestions: number;
+  accuracy: number;
+  studyDuration: number;
+}
+
+export interface ActivityDistributionEntry {
+  studentId: number;
+  studentName: string;
+  timeDistribution: TimeDistribution;
+  totalTime: number;
+  dominantActivity: string;
+}
+
+export interface TimeDistribution {
+  answerQuestions: number;
+  aiChat: number;
+  browseResources: number;
+  discussion: number;
+}
+
+export interface StudentDetail {
+  studentId: number;
+  studentName: string;
+  learningTrajectory: LearningTrajectoryEntry[];
+  knowledgeDetails: KnowledgeDetailEntry[];
+}
+
+export interface LearningTrajectoryEntry {
+  date: string;
+  completedQuestions: number;
+  accuracy: number;
+  totalAttempts: number;
+}
+
+export interface KnowledgeDetailEntry {
+  knowledgePointId: number;
+  knowledgePointName: string;
+  accuracy: number;
+  averageAttempts: number;
+  totalAttempts: number;
+}
+
+export interface Insights {
+  frequentMistakes: FrequentMistake[];
+  chatKeywords: ChatKeyword[];
+}
+
+export interface FrequentMistake {
+  questionId: number;
+  questionContent: string;
+  knowledgePoint: string;
+  mistakeCount: number;
+  studentCount: number;
+}
+
+export interface ChatKeyword {
+  keyword: string;
+  frequency: number;
+}

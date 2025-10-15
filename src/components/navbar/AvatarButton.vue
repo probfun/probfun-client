@@ -196,11 +196,7 @@ async function sendFeedback() {
 }
 
 async function handleSave() {
-  if (
-    updateForm.oldPassword !== ''
-    || updateForm.password !== ''
-    || updateForm.confirmPassword !== ''
-  ) {
+  if ((updateForm.oldPassword !== '' || updateForm.password !== '' || updateForm.confirmPassword !== '') && userStore.user?.source !== 0) {
     const ok = await updatePassword();
     if (!ok)
       return;
@@ -347,7 +343,7 @@ onMounted(() => {
 
             <CnUniversityCombobox v-model="updateForm.school" src="/china_universities.json" placeholder="就读学校" />
 
-            <div class="pt-2">
+            <div v-if="userStore.user?.source !== 0" class="pt-2">
               <div class="text-sm font-medium mb-2">
                 安全设置
               </div>

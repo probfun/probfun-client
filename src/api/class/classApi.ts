@@ -1,4 +1,4 @@
-import type { Class, Post } from './classType';
+import type { Class, ClassAnalytics, Post } from './classType';
 import type { User } from '@/api/user/userType';
 import { del, get, post } from '../request';
 
@@ -77,9 +77,15 @@ async function fetchStudentListApi(classId: string) {
   return result.data;
 }
 
+async function fetchClassAnalyticsApi(teachingClassId: string) {
+  const result = await get<ClassAnalytics>(`/assessment/class/${teachingClassId}/analysis/`);
+  return result.data;
+}
+
 export {
   createClassApi,
   deleteClassApi,
+  fetchClassAnalyticsApi,
   fetchPostApi,
   fetchStudentClassListApi,
   fetchStudentListApi,

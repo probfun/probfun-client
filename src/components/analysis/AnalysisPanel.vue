@@ -534,6 +534,7 @@ async function fetchAnalysisData(generate: boolean) {
       }
       else {
         isOpen.value = true;
+        isGenerating.value = false;
       }
     }
     catch (error) {

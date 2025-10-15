@@ -3,7 +3,7 @@ import type { Chapter } from '@/api/do-question/doQuestion.ts';
 
 import type { DrawerItem } from '@/components/subject/configs.ts';
 import { Icon } from '@iconify/vue';
-import { Book, Bot, FlaskConical, Home, Star, User } from 'lucide-vue-next';
+import { Book, Bot, Codepen, FlaskConical, Home, Star, User } from 'lucide-vue-next';
 import { TreeItem, TreeRoot } from 'radix-vue';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -26,7 +26,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { useConfigStore } from '@/store';
+import { useConfigStore, useUserStore } from '@/store';
 import { isVisitor } from '@/utils/auth.ts';
 
 interface SideBarItem {
@@ -89,11 +89,6 @@ const sideBarItem = ref<SideBarItem[]>([
     label: '大模型回答',
     icon: Bot,
     route: '/ai',
-  },
-  {
-    label: '学情面板',
-    icon: User,
-    route: '/analysis',
   },
 ]);
 
@@ -162,6 +157,22 @@ onMounted(() => {
   // TODO: 先获取所有subject，根据subjectId获取所有chapter，用chapterId获取章节内所有question
   refreshSubjectList();
   refreshQuestionList();
+
+  const role = useUserStore().user?.role ?? 0;
+  if (role > 1) {
+    sideBarItem.value.push({
+      label: '班级学情',
+      icon: Codepen,
+      route: '/class-analysis',
+    });
+  }
+  else if (role === 1) {
+    sideBarItem.value.push({
+      label: '学情面板',
+      icon: User,
+      route: '/analysis',
+    });
+  }
 });
 
 function updateSubject() {

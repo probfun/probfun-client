@@ -9,6 +9,7 @@ export interface User {
   school: string;
   major: string;
   grade: number;
+  source: number;
   avatarUrl: string;
   role: number;
 }
