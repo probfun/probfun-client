@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import katex from 'katex';
-import MarkdownIt from 'markdown-it';
 import { computed, onMounted, ref, watch } from 'vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
+import MarkdownDiv from '@/components/markdown-div/MarkdownDiv.vue'; // 引入 KaTeX CSS
+import { CardHeader, CardTitle } from '@/components/ui/card';
 import { toMarkdown } from '@/utils/markdown';
-import 'katex/dist/katex.min.css'; // 引入 KaTeX CSS
+import 'katex/dist/katex.min.css';
 
 // 定义公式
 
@@ -28,8 +29,6 @@ const truePositiveRate = computed(() => {
 
   return totalPositiveTests ? truePositives / totalPositiveTests : 0; // 真实阳性概率
 });
-
-const md = new MarkdownIt();
 
 // 示例 Markdown 内容
 const markdownContent = ref(`
@@ -61,12 +60,6 @@ const katexFormula = computed(() => `
       &= ${truePositiveRate.value.toFixed(3)}
   \\end{aligned}
 `);
-
-// 渲染 Markdown 内容
-const renderedMarkdown = computed(() => {
-  return md.render(markdownContent.value, markdownContent0.value);
-  // return md.render(markdownContent1.value, markdownContent2.value);
-});
 
 const katexContainer = ref<HTMLElement | null>(null);
 
@@ -311,12 +304,12 @@ $$
                 <!-- 第一个输入框组 -->
                 <div class="flex space-x-10 justify-center items-center">
                   <div class="flex flex-col  space-x-5 flex-1 items-center space-y-3">
-                    <div ref="mdContainer" class="markdown-body" v-html="renderedMarkdown" />
+                    <MarkdownDiv text="特异度(a) = \frac{真实阳性}{(真实阴性 + 假阳性)}" />
                     <Input v-model="specificity[0]" type="number" :min="0.1" :max="1.0" :step="0.01" placeholder="0.1~1.0" />
                     <Slider v-model="specificity" :min="0.1" :max="1.0" :step="0.01" class="w-full" />
                   </div>
                   <div class="flex flex-col flex-1 items-center space-y-3">
-                    <div ref="mdContainer0" class="markdown-body" v-html="renderedMarkdown" />
+                    <MarkdownDiv text="灵敏度(b) = \frac{真实阴性}{(真实阳性 + 假阴性)}" />
                     <Input v-model="sensitivity[0]" type="number" :min="2" placeholder="0.1~1.0" />
                     <Slider v-model="sensitivity" :min="0.1" :max="1.0" :step="0.01" class="w-full" />
                   </div>
@@ -325,12 +318,12 @@ $$
                 <!-- 第二个输入框组 -->
                 <div class="flex space-x-10 justify-center items-center">
                   <div class="flex flex-col flex-1 items-center space-y-3">
-                    <div ref="mdContainer1" class="markdown-body" v-html="renderedMarkdown" />
+                    <MarkdownDiv text="感染率(c) = \frac{感染人数}{总人数}" />
                     <Input v-model="infectionRate[0]" type="number" :min="2" placeholder="0~1.0" />
                     <Slider v-model="infectionRate" :min="0.0" :max="1.0" :step="0.001" class="w-full" />
                   </div>
                   <div class="flex flex-col flex-1 items-center space-y-3">
-                    <div ref="mdContainer2" class="markdown-body" v-html="renderedMarkdown" />
+                    <MarkdownDiv text="总人数(d)" />
                     <Input v-model="population[0]" type="number" placeholder="1000~1000000" />
                     <Slider v-model="population" :min="1000" :max="1000000" :step="1000" class="w-full" />
                   </div>

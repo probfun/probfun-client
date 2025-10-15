@@ -1,5 +1,4 @@
 import typography from '@tailwindcss/typography';
-import daisyui from 'daisyui';
 import animate from 'tailwindcss-animate';
 
 function round(num) {
@@ -157,24 +156,5 @@ export default {
       }),
     },
   },
-  plugins: [animate, typography, daisyui],
-  daisyui: {
-    themes: [
-      {
-        mytheme: {
-          'primary': '#2148C0',
-          'secondary': '#93c5fd',
-          'accent': '#00ffff',
-          'neutral': '#e5e7eb',
-          'base-100': '#ffffff',
-          'info': '#0000ff',
-          'success': '#4ade80',
-          'warning': '#facc15',
-          'error': '#ef4444',
-        },
-      },
-      'light',
-      'dark',
-    ],
-  },
+  plugins: [animate, typography],
 };
