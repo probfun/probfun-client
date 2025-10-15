@@ -128,7 +128,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="px-6 pb-6 h-[720px]">
+  <div class="px-6 h-[720px] overflow-y-auto pb-6">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
       <!-- 左侧：创建 + 班级列表 -->
       <div class="flex flex-col gap-4">

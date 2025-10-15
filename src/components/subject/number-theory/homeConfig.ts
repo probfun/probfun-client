@@ -7,6 +7,8 @@ const homeConfig: HomeConfig = {
   mindMaps: [
 
   ],
+  thinking: [
+  ],
 };
 
 export { homeConfig };

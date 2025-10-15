@@ -2,13 +2,13 @@ import type { Class, Post } from './classType';
 import type { User } from '@/api/user/userType';
 import { del, get, post } from '../request';
 
-async function postPostApi(title: string, content: string, classes: string[]) {
+async function postPostApi(title: string, content: string, teachingClassIds: string[]) {
   const result = await post<{
     post: Post;
   }>(`/class/post/`, {
     title,
     content,
-    classes,
+    teachingClassIds,
   });
   return result.data;
 }
@@ -17,7 +17,7 @@ async function fetchPostApi(classId: string) {
   const result = await get<{
     posts: Post[];
   }>(`/class/post/list/`, {
-    classIds: [classId],
+    teachingClassIds: [classId],
   });
   return result.data;
 }

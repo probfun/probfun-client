@@ -95,6 +95,10 @@ interface HomeConfig {
     img: string;
     path: string;
   }[];
+  thinking: {
+    title: string;
+    description: string[];
+  }[];
 }
 
 interface DrawerItem {

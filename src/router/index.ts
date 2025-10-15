@@ -21,6 +21,7 @@ import NormalDistribution from '@/components/experiment/distribution/normal-dist
 import PoissonDistribution from '@/components/experiment/distribution/poisson-distribution/PoissonDistribution.vue';
 import UniformDistribution from '@/components/experiment/distribution/UniformDistribution.vue';
 import FavoritePanel from '@/components/favorite/FavoritePanel.vue';
+import WeekThinkingPanel from '@/components/week-thinking/WeekThinkingPanel.vue';
 import AuthPage from '@/pages/AuthPage.vue';
 import MainPage from '@/pages/MainPage.vue';
 
@@ -309,6 +310,10 @@ const router = createRouter({
         {
           path: '/favorite',
           component: FavoritePanel,
+        },
+        {
+          path: '/week-thinking',
+          component: WeekThinkingPanel,
         },
         {
           path: '/mindmap/distribution',
