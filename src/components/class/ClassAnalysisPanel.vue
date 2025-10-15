@@ -27,9 +27,13 @@ const currentClassId = ref<string>('');
 async function loadClassList() {
   try {
     const res = await fetchTeacherClassListApi();
-    classList.value = res.teachingClasses;
+    classList.value = res.teachingClasses.map(c => ({
+      ...c,
+      id: String(c.id),
+    }));
     if (!currentClassId.value && classList.value.length > 0) {
       currentClassId.value = classList.value[0].id;
+      await load();
     }
   }
   catch (e) {
@@ -175,8 +179,20 @@ defineExpose({ refresh: load });
 
 <template>
   <div class="relative h-full bg-neutral-50 p-6">
-    <!-- Header with Class Selector -->
-    <div class="rounded-2xl bg-primary p-6 text-primary-foreground shadow-lg mb-6">
+    <div v-if="!loading && classList.length === 0" class="flex flex-col items-center justify-center py-20">
+      <Icon icon="lucide:users-x" class="size-16 text-neutral-400 mb-4" />
+      <h2 class="text-xl font-semibold text-neutral-700 mb-2">
+        暂无班级
+      </h2>
+      <p class="text-neutral-500 text-sm mb-6">
+        请先前往“班级管理”创建班级
+      </p>
+      <Button @click="loadClassList">
+        <Icon icon="lucide:refresh-cw" class="mr-2 size-4" />
+        刷新
+      </Button>
+    </div>
+    <div v-else class="rounded-2xl bg-primary p-6 text-primary-foreground shadow-lg mb-6">
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-3xl font-bold">
