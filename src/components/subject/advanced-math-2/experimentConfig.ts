@@ -14,8 +14,8 @@ const experiments: DrawerItem[] = [
     title: '第六章 多元函数积分学及其应用',
     icon: 'lucide:folder',
     children: [
-      { title: '二重积分', icon: 'lucide:flask-conical', route: `/dashboard/experiment/double-integral` },
-      { title: '空间曲线弧长', icon: 'lucide:flask-conical', route: `/dashboard/experiment/space-curve` },
+      { title: '二重积分', icon: 'lucide:flask-conical', route: `/experiment/double-integral` },
+      { title: '空间曲线弧长', icon: 'lucide:flask-conical', route: `/experiment/space-curve` },
     ],
   },
 ];
