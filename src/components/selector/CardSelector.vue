@@ -30,9 +30,6 @@ onMounted(() => {
       currentIndex.value = i;
     }
   }
-  if (props.immediate) {
-    updateConfigSubject();
-  }
 });
 
 function selectSubject(i: number) {
@@ -52,27 +49,27 @@ defineExpose({
 </script>
 
 <template>
-  <div class="min-h-full flex items-center p-8 pl-10 justify-center">
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+  <div class="min-h-full flex items-center p-8 pl-10 justify-center w-full">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-10 w-full">
       <div
         v-for="(subject, i) in subjectList"
         :key="subject.id"
-        class="subject-card group relative rounded-2xl cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl"
-        :class="{ 'ring-4 ring-white/50 scale-105': currentIndex === i }"
+        class="subject-card group relative rounded-2xl cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl"
+        :class="{ 'ring-4 ring-white/50 scale-105': currentIndex === i && !immediate }"
         :style="{ background: subject.color }"
         @click="selectSubject(i)"
       >
         <!-- Logo圆圈 -->
         <div
-          class="absolute -top-4 -left-4 size-12 rounded-full bg-white/95 border shadow-lg flex items-center justify-center z-10 transition-transform duration-300 group-hover:scale-110"
-          :class="{ 'scale-110': currentIndex === i }"
+          class="absolute -top-6 -left-6 size-16 rounded-full bg-white/95 border shadow-lg flex items-center justify-center z-10 transition-transform duration-300 group-hover:scale-110"
+          :class="{ 'scale-110': currentIndex === i && !immediate }"
         >
-          <component :is="subject.icon" class="size-8" :style="{ color: subject.color }" />
+          <component :is="subject.icon" class="size-10" :style="{ color: subject.color }" />
         </div>
 
         <!-- 选中标记 -->
         <div
-          v-if="currentIndex === i"
+          v-if="currentIndex === i && !immediate"
           class="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center shadow-md z-10 bg-white"
         >
           <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">

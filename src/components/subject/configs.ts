@@ -26,15 +26,6 @@ interface Subject {
 type SubjectId = 'probability' | 'advanced-math-1' | 'advanced-math-2' | 'linear-algebra' | 'number-theory' | 'statistics';
 
 const subjectConfig: Record<SubjectId, Subject> = {
-  'linear-algebra': {
-    id: 'linear-algebra',
-    id_: '7',
-    name: '邮趣线代',
-    description: '空间与向量的语言，适合喜欢抽象思维和结构分析的你',
-    color: 'rgba(124,58,237,0.85)',
-    teacher: '仝辉',
-    icon: MoveUpRight,
-  },
   'advanced-math-1': {
     id: 'advanced-math-1',
     id_: '2',
@@ -43,6 +34,15 @@ const subjectConfig: Record<SubjectId, Subject> = {
     color: 'rgba(22,163,74,0.85)',
     teacher: '鞠红杰',
     icon: InfinityIcon,
+  },
+  'linear-algebra': {
+    id: 'linear-algebra',
+    id_: '7',
+    name: '邮趣线代',
+    description: '空间与向量的语言，适合喜欢抽象思维和结构分析的你',
+    color: 'rgba(124,58,237,0.85)',
+    teacher: '仝辉',
+    icon: MoveUpRight,
   },
   'advanced-math-2': {
     id: 'advanced-math-2',
@@ -74,8 +74,8 @@ const subjectConfig: Record<SubjectId, Subject> = {
   'statistics': {
     id: 'statistics',
     id_: '9',
-    name: '邮趣统计',
-    description: '数据分析与推断，适合喜欢实用和应用的你',
+    name: '邮趣贝叶斯统计',
+    description: '数据分析与推断的科学，适合喜欢实用和应用的你',
     color: 'rgba(225,29,72,0.85)',
     teacher: '待定',
     icon: ChartLine,

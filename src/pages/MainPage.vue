@@ -51,11 +51,20 @@ function updateSubject() {
       <SideBar />
       <router-view class="flex-1 overflow-y-auto" />
     </div>
-    <div v-else class="flex-1 grid grid-cols-[2fr_1fr] overflow-hidden items-center justify-center border rounded-xl shadow-md">
-      <div class="border-r overflow-y-auto overflow-x-hidden h-full">
-        <CardSelector ref="subjectSelector" :immediate="false" hint-color="text-muted-foreground" />
+    <div v-else class="flex-1 flex flex-col overflow-hidden items-center justify-center border rounded-xl shadow-md relative">
+      <!--      <DotLottieVue class="size-[1000px] absolute left-1/2 -translate-x-1/2" autoplay loop src="https://lottie.host/4fe11b55-cdf6-4ffd-b1cd-a16e1c0ad703/0udH4dSti0.lottie" /> -->
+      <img src="/img_2.png" class="absolute left-1/2 -translate-x-1/2 w-full h-full object-cover opacity-100 blur-sm select-none pointer-events-none" alt="">
+      <img src="/bupt.png" alt="" class="absolute right-5 top-5 w-60">
+      <div class="z-10 flex items-center justify-center w-full font-bold text-[3rem]">
+        收集智慧，邮递快乐
       </div>
-      <div class="flex flex-col items-center justify-center p-6 gap-4 h-full">
+      <div class="z-10 text-lg text-semibold text-muted-foreground mb-5">
+        请选择你感兴趣的科目，开始探索吧！
+      </div>
+      <div class="overflow-y-auto overflow-x-hidden w-full max-w-screen-xl">
+        <CardSelector ref="subjectSelector" :immediate="true" hint-color="text-muted-foreground" />
+      </div>
+      <div v-if="false" class="flex flex-col items-center justify-center border-l p-6 gap-4 h-full">
         <div
           v-auto-animate
           class="w-full h-full rounded-xl border bg-muted/40 p-4 flex flex-col"
