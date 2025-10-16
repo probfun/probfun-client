@@ -280,7 +280,7 @@ function updateSubject() {
         </div>
       </div>
     </div>
-    <div v-if="openExperimentDrawer" class="left-full top-0 h-full absolute z-40" @click="openExperimentDrawer = false" />
+    <div v-if="openExperimentDrawer" class="left-full top-0 h-full absolute z-40 w-screen" @click="openExperimentDrawer = false" />
 
     <!-- question drawer -->
     <div class="absolute left-full ml-2 top-0 z-50 transition-all bottom-0 rounded-xl overflow-y-auto border w-96 bg-background shadow-xl" :class="!openQuestionDrawer && 'opacity-0 pointer-events-none'">
