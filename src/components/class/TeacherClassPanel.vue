@@ -1,4 +1,3 @@
-<!-- 'src/components/class/TeacherClassDialog.vue' -->
 <script setup lang="ts">
 import type { Class } from '@/api/class/classType';
 import type { User } from '@/api/user/userType';
@@ -6,10 +5,21 @@ import { format } from 'timeago.js';
 import { computed, onMounted, ref, watch } from 'vue';
 import {
   createClassApi,
+  deleteClassApi,
   fetchStudentListApi,
   fetchTeacherClassListApi,
   postPostApi,
 } from '@/api/class/classApi';
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { error, success } from '@/utils/toast.ts';
 
@@ -26,6 +36,14 @@ const creating = ref(false);
 const annTitle = ref('');
 const annContent = ref('');
 const posting = ref(false);
+
+// 删除相关
+const confirmDeleteOpen = ref(false);
+const pendingDeleteId = ref<string | null>(null);
+const deleting = ref(false);
+const pendingDeleteClass = computed(
+  () => classes.value.find(c => c.id === pendingDeleteId.value) ?? null,
+);
 
 // 加载教师班级列表
 async function loadClasses() {
@@ -116,6 +134,39 @@ function selectClass(id: string) {
   selectedClassId.value = id;
 }
 
+// 触发删除确认
+function askDelete(id: string) {
+  pendingDeleteId.value = id;
+  confirmDeleteOpen.value = true;
+}
+
+// 确认删除
+async function confirmDelete() {
+  const id = pendingDeleteId.value;
+  if (!id || deleting.value)
+    return;
+  deleting.value = true;
+  try {
+    await deleteClassApi(id);
+    success('删除成功');
+    // 若删除的是当前选中班级，清空后让 loadClasses 重新选中
+    if (selectedClassId.value === id) {
+      selectedClassId.value = null;
+    }
+    confirmDeleteOpen.value = false;
+    pendingDeleteId.value = null;
+    await loadClasses();
+    await loadStudents();
+  }
+  catch (e) {
+    console.error('删除班级失败', e);
+    error('删除班级失败，请稍后再试。');
+  }
+  finally {
+    deleting.value = false;
+  }
+}
+
 const selectedClass = computed(() => classes.value.find(c => c.id === selectedClassId.value) ?? null);
 
 watch(selectedClassId, () => {
@@ -187,10 +238,20 @@ onMounted(() => {
                 <div class="font-medium truncate">
                   {{ c.name }}
                 </div>
-                <div class="mb-1 ml-auto">
-                  <span class="inline-flex items-center gap-1 bg-primary text-primary-foreground px-1.5 py-0.5 text-xs rounded-full ">
+                <div class="mb-1 ml-auto flex items-center gap-2">
+                  <span class="inline-flex items-center gap-1 bg-primary text-primary-foreground px-1.5 py-0.5 text-xs rounded-full">
                     {{ c.code }}
                   </span>
+                  <Button
+                    class="h-5 px-2"
+                    variant="destructive"
+                    :disabled="deleting"
+                    aria-label="删除班级"
+                    title="删除班级"
+                    @click.stop="askDelete(c.id)"
+                  >
+                    删除
+                  </Button>
                 </div>
               </div>
               <div class="mt-1 text-xs text-neutral-500">
@@ -281,6 +342,30 @@ onMounted(() => {
         </div>
       </div>
     </div>
+
+    <!-- 删除确认对话框 -->
+    <AlertDialog v-model:open="confirmDeleteOpen">
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>确认删除班级</AlertDialogTitle>
+          <AlertDialogDescription>
+            确定删除
+            <span class="font-medium">
+              {{ pendingDeleteClass ? pendingDeleteClass.name : '' }}
+            </span>
+            吗？该操作不可恢复。
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel :disabled="deleting">
+            取消
+          </AlertDialogCancel>
+          <Button variant="destructive" :disabled="deleting" @click="confirmDelete">
+            {{ deleting ? '删除中...' : '删除' }}
+          </Button>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   </div>
 </template>
 
