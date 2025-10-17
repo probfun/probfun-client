@@ -56,7 +56,7 @@ function updateSubject() {
       <img src="/img_2.png" class="absolute left-1/2 -translate-x-1/2 w-full h-full object-cover opacity-100 blur-sm select-none pointer-events-none" alt="">
       <img src="/bupt.png" alt="" class="absolute right-5 top-5 w-60">
       <div class="z-10 flex items-center justify-center w-full font-bold text-[3rem]">
-        收集智慧，邮递快乐
+        邮你探索，数趣无穷
       </div>
       <div class="z-10 text-lg text-semibold text-muted-foreground mb-5">
         请选择你感兴趣的科目，开始探索吧！
