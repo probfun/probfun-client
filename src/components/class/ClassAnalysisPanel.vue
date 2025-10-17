@@ -91,10 +91,10 @@ const avgAccuracy = computed(() => {
 });
 
 const avgStudyDuration = computed(() => {
-  if (!students.value.length)
+  if (!activities.value.length)
     return 0;
-  const s = students.value.reduce((acc, s) => acc + (s.studyDuration || 0), 0);
-  return s / students.value.length;
+  const a = activities.value.reduce((acc, a) => acc + (a.totalTime || 0), 0);
+  return a / activities.value.length;
 });
 
 const totalAttempts = computed(() => {
