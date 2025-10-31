@@ -302,6 +302,14 @@ const router = createRouter({
           component: () => import('@/components/experiment/calculusB/SpaceCurve.vue'),
         },
         {
+          path: '/experiment/linear-combination',
+          component: () => import('@/components/experiment/linearAlgebra/LinearCombination.vue'),
+        },
+        {
+          path: '/experiment/matrix-eigen',
+          component: () => import('@/components/experiment/linearAlgebra/MatrixEigen.vue'),
+        },
+        {
           path: '/analysis',
           component: AnalysisPanel,
         },

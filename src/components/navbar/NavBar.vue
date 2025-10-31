@@ -221,6 +221,12 @@ function updateExperiment() {
   else if (path === 'space-curve') {
     title.value = '空间曲线弧长';
   }
+  else if (path === 'linear-combination') {
+    title.value = '二维平面向量的线性组合';
+  }
+  else if (path === 'matrix-eigen') {
+    title.value = '二阶矩阵的特征值与特征向量';
+  }
   else {
     title.value = useConfigStore().currentSubject?.name ?? '邮趣数学';
     tags.value = [];

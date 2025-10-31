@@ -2,13 +2,14 @@
 import type { ReceiveData } from '@/api/ai/aiType';
 import type { Chat, Question } from '@/api/do-question/doQuestion.ts';
 import { Icon } from '@iconify/vue';
+import { FileText, Image, UploadCloud, X } from 'lucide-vue-next';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ReceiveDataType } from '@/api/ai/aiType';
 import { answerQuestionApi, chatWithAiAPi, clearQuestionChatApi, draftQuestionApi, fetchQuestionChatsApi, fetchQuestionListApi } from '@/api/do-question/doQuestion.ts';
-
 import MarkdownDiv from '@/components/markdown-div/MarkdownDiv.vue';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+
 import { useUserStore } from '@/store';
 
 const route = useRoute();
@@ -20,6 +21,7 @@ const showAnalytics = ref(false);
 const aiState = ref('idle');
 const aiContent = ref('');
 const abortController = ref<AbortController | null>(null);
+const subjectiveAnswer = ref('');
 const quickQuestions = ref([
   {
     title: '理解题意',
@@ -42,6 +44,7 @@ const quickQuestions = ref([
     content: '我计算这一步卡住了：\n',
   },
 ]);
+
 const currentQuestion = computed(() => {
   if (questionIndex.value < 0 || questionIndex.value >= questionList.value.length) {
     return null;
@@ -56,13 +59,14 @@ async function loadQuestionList() {
       router.go(-1);
       return;
     }
+
     const response = await fetchQuestionListApi(chapterId);
     questionList.value = response.questions.map(question => ({
       ...question,
-      choices: question.choices!.map(choice => ({
+      choices: (question.choices || []).map(choice => ({
         ...choice,
         content: choice.content.replace(/^[A-Z]\.\s*/, ''),
-      })), // .sort(() => Math.random() - 0.5),
+      })),
       content: question.content.replace(/^\d+\.\s*/, ''),
     }));
 
@@ -110,15 +114,40 @@ function gotoQuestion(index: number) {
 async function answerQuestion() {
   if (currentQuestion.value === null)
     return;
-  const optionIds = currentQuestion.value.choices?.filter(choice => choice.isChosen).map(choice => choice.id) || [];
-  const questionId = currentQuestion.value.id;
+  const q = currentQuestion.value;
+  let optionIds: string[] = [];
+  let subjective = '';
+  if (q.questionType === 'SC') {
+    optionIds = q.choices?.filter(choice => choice.isChosen).map(choice => choice.id) || [];
+  }
+  else if (q.questionType === 'SA') {
+    subjective = subjectiveAnswer.value;
+  }
+  const questionId = q.id;
+
   try {
-    const response = await answerQuestionApi(questionId, optionIds, '');
-    questionList.value[questionIndex.value].answerRecords = response.question.answerRecords;
+    const response = await answerQuestionApi(questionId, optionIds, subjective);
+
+    if (response && response.question && response.question.answerRecords && response.question.answerRecords.length > 0) {
+      questionList.value[questionIndex.value].answerRecords = response.question.answerRecords;
+    }
+    else if (q.questionType === 'SA') {
+      const now = new Date().toISOString();
+      const localAnswer = { id: Date.now().toString(), isCorrect: false, answeredAt: now, selectedOptionIds: [] };
+      questionList.value[questionIndex.value].answerRecords = [localAnswer];
+    }
+
     showAnalytics.value = true;
   }
   catch (error) {
     console.error('Error answering question:', error);
+
+    if (q.questionType === 'SA') {
+      const now = new Date().toISOString();
+      const localAnswer = { id: Date.now().toString(), isCorrect: false, answeredAt: now, selectedOptionIds: [] };
+      questionList.value[questionIndex.value].answerRecords = [localAnswer];
+      showAnalytics.value = true;
+    }
   }
 }
 
@@ -274,6 +303,84 @@ async function clearChat() {
     console.error('Error clearChat:', error);
   }
 }
+
+interface LocalAttachment { id: string; name: string; url: string; size: number; type: string }
+
+const attachmentsMap = ref<Record<string, LocalAttachment[]>>({});
+
+function handleFileChange(e: Event) {
+  const input = e.target as HTMLInputElement;
+  if (!input?.files || !currentQuestion.value)
+    return;
+  const files = Array.from(input.files);
+  const list = attachmentsMap.value[currentQuestion.value.id] ?? [];
+  files.forEach((file) => {
+    const url = URL.createObjectURL(file);
+    list.push({
+      id: Date.now().toString() + Math.random().toString(36).slice(2),
+      name: file.name,
+      url,
+      size: file.size,
+      type: file.type,
+    });
+  });
+  attachmentsMap.value[currentQuestion.value.id] = list;
+  // reset input
+  input.value = '';
+}
+
+function removeAttachment(attId: string) {
+  if (!currentQuestion.value)
+    return;
+  const list = attachmentsMap.value[currentQuestion.value.id] ?? [];
+  const idx = list.findIndex(a => a.id === attId);
+  if (idx >= 0) {
+    try {
+      URL.revokeObjectURL(list[idx].url);
+    }
+    catch (_) { /* ignore */ }
+    list.splice(idx, 1);
+    attachmentsMap.value[currentQuestion.value.id] = list;
+  }
+}
+
+watch(currentQuestion, (q) => {
+  if (!q)
+    return;
+  if (!attachmentsMap.value[q.id])
+    attachmentsMap.value[q.id] = [];
+  subjectiveAnswer.value = '';
+  showAnalytics.value = false;
+});
+
+const canSubmit = computed(() => {
+  const q = currentQuestion.value;
+  if (!q)
+    return false;
+  if (q.answerRecords && q.answerRecords.length > 0)
+    return true;
+  if (q.questionType === 'SC') {
+    return (q.choices?.some(c => c.isChosen)) ?? false;
+  }
+  if (q.questionType === 'SA') {
+    return subjectiveAnswer.value.trim() !== '';
+  }
+  return false;
+});
+
+function handleConfirmOrRetry() {
+  if (!currentQuestion.value)
+    return;
+  if (currentQuestion.value.answerRecords && currentQuestion.value.answerRecords.length > 0) {
+    showAnalytics.value = false;
+    currentQuestion.value.answerRecords = [];
+    currentQuestion.value.choices?.forEach(choice => (choice.isChosen = false));
+  }
+  else {
+    draftQuestion();
+    answerQuestion();
+  }
+}
 </script>
 
 <template>
@@ -299,9 +406,10 @@ async function clearChat() {
               :key="item.id"
               class="text-xs font-medium transition-all border"
               :class="{
-                'border-red-500 !bg-red-50': item.answerRecords.length > 0 && !item.answerRecords[0].isCorrect,
-                'border-green-500 !bg-green-50': item.answerRecords.length > 0 && item.answerRecords[0].isCorrect,
-                'border-orange-500': !(item.answerRecords.length > 0) && item.choices.some(c => c.isChosen),
+                'border-green-500 !bg-green-50': item.questionType === 'SC' && item.answerRecords.length > 0 && item.answerRecords[0].isCorrect,
+                'border-red-500 !bg-red-50': item.questionType === 'SC' && item.answerRecords.length > 0 && !item.answerRecords[0].isCorrect,
+                'border-blue-500 !bg-blue-50': item.questionType === 'SA' && item.answerRecords.length > 0,
+                'border-orange-500': item.questionType === 'SC' && !(item.answerRecords.length > 0) && item.choices.some(c => c.isChosen),
                 'ring-2 border-none ring-primary': index === questionIndex,
               }"
               variant="outline"
@@ -320,7 +428,7 @@ async function clearChat() {
           </div>
           <div class="mt-4 grid gap-2">
             <RadioGroup
-              v-if="currentQuestion?.choices"
+              v-if="currentQuestion?.questionType === 'SC' && currentQuestion?.choices"
               orientation="vertical"
               :model-value="(currentQuestion.choices.find(c => c.isChosen) || {}).id ?? null"
               @update:model-value="id => {
@@ -351,30 +459,57 @@ async function clearChat() {
                 <MarkdownDiv class="" :text="choice.content" />
               </label>
             </RadioGroup>
+            <div v-else-if="currentQuestion?.questionType === 'SA'">
+              <Textarea
+                v-model="subjectiveAnswer"
+                rows="8"
+                class="w-full p-3 border rounded-lg resize-vertical"
+                placeholder="在此输入你的解答"
+              />
+              <div class="mt-3">
+                <div class="mt-2">
+                  <input id="file-upload" type="file" multiple class="hidden" @change="handleFileChange">
+                  <label
+                    for="file-upload"
+                    class="inline-flex items-center gap-2 px-3 py-1 bg-primary text-primary-foreground rounded-md cursor-pointer hover:bg-primary/90 transition"
+                  >
+                    <UploadCloud class="w-4 h-4" />
+                    添加附件
+                  </label>
+                  <div class="flex flex-wrap gap-2 mt-2">
+                    <div
+                      v-for="att in attachmentsMap[currentQuestion.id] || []"
+                      :key="att.id"
+                      class="inline-flex items-center gap-2 px-2 py-1 border rounded text-xs"
+                    >
+                      <span class="flex items-center gap-2">
+                        <span class="inline-flex items-center justify-center w-5 h-5">
+                          <Image v-if="att.type && att.type.startsWith('image/')" class="w-4 h-4" />
+                          <FileText v-else class="w-4 h-4" />
+                        </span>
+                        <a :href="att.url" target="_blank" class="truncate max-w-xs" :title="att.name">{{ att.name }}</a>
+                      </span>
+                      <button class="flex items-center text-red-500 text-xs ml-2" aria-label="删除附件" @click.prevent="removeAttachment(att.id)">
+                        <X class="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="mt-4 flex flex-wrap gap-2 items-center">
             <Button
-              :disabled="currentQuestion.answerRecords.length === 0 && !currentQuestion.choices.some(c => c.isChosen)"
+              :disabled="!canSubmit"
               class="transition-all"
-              @click="() => {
-                if (!currentQuestion)
-                  return;
-                if (currentQuestion.answerRecords.length > 0) {
-                  showAnalytics = false;
-                  currentQuestion.answerRecords = [];
-                  currentQuestion.choices.forEach(choice => choice.isChosen = false);
-                }
-                else {
-                  draftQuestion();
-                  answerQuestion();
-                }
-              }"
+              @click="handleConfirmOrRetry"
             >
               {{ currentQuestion.answerRecords.length === 0 ? '确认作答' : '重新作答' }}
             </Button>
             <Button
-              :disabled="currentQuestion.answerRecords.length === 0" variant="outline"
+              :disabled="!(currentQuestion && currentQuestion.answerRecords && currentQuestion.answerRecords.length > 0)"
+              variant="outline"
               class="transition-all"
               @click="showAnalytics = !showAnalytics"
             >
