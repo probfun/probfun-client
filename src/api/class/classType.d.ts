@@ -71,24 +71,27 @@ export interface ClassOverview {
 }
 
 export interface ChapterOverview {
-  chapterId: number;
+  chapterId: string;
   chapterName: string;
   averageAccuracy: number;
   averageAttempts: number;
   totalAttempts: number;
   studentCount: number;
+  completionRate: number;
+  children?: ChapterOverview[];
 }
 
 export interface StudentPerformance {
-  studentId: number;
+  studentId: string;
   studentName: string;
   completedQuestions: number;
   accuracy: number;
   studyDuration: number;
+  chapters: ChapterOverview[];
 }
 
 export interface ActivityDistributionEntry {
-  studentId: number;
+  studentId: string;
   studentName: string;
   timeDistribution: TimeDistribution;
   totalTime: number;
@@ -103,7 +106,7 @@ export interface TimeDistribution {
 }
 
 export interface StudentDetail {
-  studentId: number;
+  studentId: string;
   studentName: string;
   learningTrajectory: LearningTrajectoryEntry[];
   chapterDetails: ChapterDetailEntry[];
@@ -117,7 +120,7 @@ export interface LearningTrajectoryEntry {
 }
 
 export interface ChapterDetailEntry {
-  chapterId: number;
+  chapterId: string;
   chapterName: string;
   accuracy: number;
   averageAttempts: number;
@@ -126,11 +129,15 @@ export interface ChapterDetailEntry {
 
 export interface Insights {
   frequentMistakes: FrequentMistake[];
-  chatKeywords: ChatKeyword[];
+  chatKeywords: {
+    subjectName: string;
+    totalCount: number;
+    keywords: ChatKeyword[];
+  }[];
 }
 
 export interface FrequentMistake {
-  questionId: number;
+  questionId: string;
   questionContent: string;
   chapter: string;
   mistakeCount: number;

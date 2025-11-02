@@ -82,6 +82,14 @@ async function fetchClassAnalyticsApi(teachingClassId: string) {
   return result.data;
 }
 
+async function removeStudentApi(teachingClassId: string, studentId: string) {
+  const result = await del<null>(`/class/teacher/student/remove/`, {
+    teachingClassId,
+    studentId,
+  });
+  return result.data;
+}
+
 export {
   createClassApi,
   deleteClassApi,
@@ -93,4 +101,5 @@ export {
   joinClassApi,
   postPostApi,
   quitClassApi,
+  removeStudentApi,
 };

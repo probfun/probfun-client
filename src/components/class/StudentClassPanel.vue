@@ -2,7 +2,7 @@
 import type { Class, Post } from '@/api/class/classType';
 import { format } from 'timeago.js';
 import { computed, onMounted, ref, watch } from 'vue';
-import { fetchPostApi, fetchStudentClassListApi, joinClassApi, quitClassApi } from '@/api/class/classApi';
+import { fetchPostApi, fetchStudentClassListApi, joinClassApi } from '@/api/class/classApi';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { error, success } from '@/utils/toast.ts';
@@ -16,7 +16,7 @@ const loadingPosts = ref(false);
 
 const joinCode = ref('');
 const joining = ref(false);
-const quittingId = ref<string>('');
+// const quittingId = ref<string>('');
 
 // 加载班级列表
 async function loadClasses() {
@@ -75,19 +75,19 @@ async function handleJoin() {
 }
 
 // 退出班级
-async function handleQuit(cls: Class) {
-  if (quittingId.value)
-    return;
-  quittingId.value = cls.id;
-  try {
-    await quitClassApi(cls.id);
-    await loadClasses();
-    await loadPosts();
-  }
-  finally {
-    quittingId.value = '';
-  }
-}
+// async function handleQuit(cls: Class) {
+//   if (quittingId.value)
+//     return;
+//   quittingId.value = cls.id;
+//   try {
+//     await quitClassApi(cls.id);
+//     await loadClasses();
+//     await loadPosts();
+//   }
+//   finally {
+//     quittingId.value = '';
+//   }
+// }
 
 function selectClass(id: string) {
   selectedClassId.value = id;
@@ -213,14 +213,14 @@ onMounted(() => {
                 </button>
               </div>
             </div>
-            <Button
-              v-if="selectedClass"
-              variant="destructive"
-              class="h-8 px-3"
-              @click.stop="handleQuit(selectedClass)"
-            >
-              退出班级
-            </Button>
+            <!--            <Button -->
+            <!--              v-if="selectedClass" -->
+            <!--              variant="destructive" -->
+            <!--              class="h-8 px-3" -->
+            <!--              @click.stop="handleQuit(selectedClass)" -->
+            <!--            > -->
+            <!--              退出班级 -->
+            <!--            </Button> -->
           </div>
         </div>
 

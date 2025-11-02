@@ -3,14 +3,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { useAiStore } from '@/store';
 import { error, success } from '@/utils/toast';
 
-export const DEFAULT_CHAT_TITLE = '概率论实验';
+export const DEFAULT_CHAT_TITLE = '新聊天';
 
 export const START_BLOCK: ChatBlock = {
   role: 'ai',
   data: [
     {
       type: 'text',
-      text: '我是“邮小率”，你的智能助手，专门帮助学生解决概率论实验相关的问题。如果你有关于概率论的概念、实验步骤或者具体问题需要解答，随时告诉我，我会尽力帮助你！',
+      text: '我是“邮小率”，你的智能助手。如果你有关于本门课程的概念、实验步骤或者具体问题需要解答，随时告诉我，我会尽力帮助你！',
     },
   ],
   blockId: uuidv4(),

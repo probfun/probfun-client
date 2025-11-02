@@ -78,8 +78,7 @@ export async function postRaw<T>(url: string, data?: any, config?: any): Promise
 
 // 封装DELETE请求，带类型定义
 export async function del<T>(url: string, params?: any): Promise<ResponseData<T>> {
-  // return service.delete(url, { params }).then(response => response.data);
-  const response = await service.delete(url, { params });
+  const response = await service.delete(url, { data: params });
   if (response.status === 200) {
     return response.data;
   }

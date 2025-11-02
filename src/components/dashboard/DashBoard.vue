@@ -185,7 +185,7 @@ function formatLifespan(m: Mathematician): string {
           <span class="ml-3 h-px flex-1 bg-gradient-to-r from-primary/40 to-transparent" />
         </div>
 
-        <template v-if="weeklyThoughts && weeklyThoughts.length">
+        <template v-if="mathematicians.length > 0">
           <Card class="flex flex-1 flex-col transition-all hover:shadow-md hover:border-primary">
             <CardContent class="p-0 space-y-3 flex-1">
               <div v-if="mathematicians.length > 0" class="w-full overflow-hidden rounded-md flex h-full">
@@ -274,12 +274,6 @@ function formatLifespan(m: Mathematician): string {
               :description="weeklyThoughts[0].description"
               :docx-url="weeklyThoughts[0].docxUrl"
             />
-            <div class="mt-2 text-right group-hover:opacity-100 opacity-100 transition-all">
-              <span class="inline-flex items-center gap-1 text-sm text-primary">
-                查看详情
-                <Icon icon="lucide:arrow-right" class="h-4 w-4" />
-              </span>
-            </div>
           </router-link>
         </template>
         <template v-else>

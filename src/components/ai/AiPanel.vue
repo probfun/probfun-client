@@ -27,7 +27,7 @@ import { CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/
 import { ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
 import ContextMenu from '@/components/ui/context-menu/ContextMenu.vue';
 import { Label } from '@/components/ui/label';
-import { useAiStore } from '@/store';
+import { useAiStore, useConfigStore } from '@/store';
 import {
   copyMessage,
   createChat,
@@ -128,6 +128,8 @@ async function sendMessages() {
     if (aiStore.currentChat?.conversationId) {
       requestData.conversationId = aiStore.currentChat.conversationId;
     }
+
+    requestData.subjectId = useConfigStore().currentSubject?.id_;
 
     await aiApi(requestData, () => status.value = 'loading', receiveMessage, finishGenerating, abortController.value);
   }

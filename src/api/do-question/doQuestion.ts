@@ -155,6 +155,13 @@ async function fetchSubjectListApi() {
   return result.data;
 }
 
+async function fetchQuestionApi(questionId: string) {
+  const result = await get<{
+    question: Question;
+  }>(`/assessment/question/${questionId}/`);
+  return result.data;
+}
+
 async function fetchQuestionListApi(chapterId: string) {
   const result = await get<{
     questions: Question[];
@@ -287,6 +294,7 @@ export {
   fetchAnalysisStatusApi,
   fetchChapterListApi,
   fetchDiagramApi,
+  fetchQuestionApi,
   fetchQuestionChatsApi,
   fetchQuestionListApi,
   fetchSubjectListApi,

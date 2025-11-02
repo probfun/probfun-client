@@ -9,6 +9,7 @@ import {
   fetchStudentListApi,
   fetchTeacherClassListApi,
   postPostApi,
+  removeStudentApi,
 } from '@/api/class/classApi';
 import {
   AlertDialog,
@@ -38,11 +39,16 @@ const annContent = ref('');
 const posting = ref(false);
 
 // 删除相关
-const confirmDeleteOpen = ref(false);
-const pendingDeleteId = ref<string | null>(null);
+const confirmDeleteClassOpen = ref(false);
+const pendingDeleteClassId = ref<string | null>(null);
 const deleting = ref(false);
 const pendingDeleteClass = computed(
-  () => classes.value.find(c => c.id === pendingDeleteId.value) ?? null,
+  () => classes.value.find(c => c.id === pendingDeleteClassId.value) ?? null,
+);
+const confirmRemoveStudentOpen = ref(false);
+const pendingRemoveStudentId = ref<string | null>(null);
+const pendingRemoveStudent = computed(
+  () => students.value.find(s => s.id === pendingRemoveStudentId.value) ?? null,
 );
 
 // 加载教师班级列表
@@ -135,14 +141,14 @@ function selectClass(id: string) {
 }
 
 // 触发删除确认
-function askDelete(id: string) {
-  pendingDeleteId.value = id;
-  confirmDeleteOpen.value = true;
+function askDeleteClass(id: string) {
+  pendingDeleteClassId.value = id;
+  confirmDeleteClassOpen.value = true;
 }
 
 // 确认删除
-async function confirmDelete() {
-  const id = pendingDeleteId.value;
+async function confirmDeleteClass() {
+  const id = pendingDeleteClassId.value;
   if (!id || deleting.value)
     return;
   deleting.value = true;
@@ -153,14 +159,41 @@ async function confirmDelete() {
     if (selectedClassId.value === id) {
       selectedClassId.value = null;
     }
-    confirmDeleteOpen.value = false;
-    pendingDeleteId.value = null;
+    confirmDeleteClassOpen.value = false;
+    pendingDeleteClassId.value = null;
     await loadClasses();
     await loadStudents();
   }
   catch (e) {
     console.error('删除班级失败', e);
     error('删除班级失败，请稍后再试。');
+  }
+  finally {
+    deleting.value = false;
+  }
+}
+
+function askRemoveStudent(id: string) {
+  pendingRemoveStudentId.value = id;
+  confirmRemoveStudentOpen.value = true;
+}
+
+async function confirmRemoveStudent() {
+  const id = pendingRemoveStudentId.value;
+  if (!id || deleting.value || selectedClassId.value === null)
+    return;
+  deleting.value = true;
+  try {
+    await removeStudentApi(selectedClassId.value, id);
+    success('移出学生成功');
+    confirmRemoveStudentOpen.value = false;
+    pendingRemoveStudentId.value = null;
+    await loadClasses();
+    await loadStudents();
+  }
+  catch (e) {
+    console.error('移出学生失败', e);
+    error('移出学生失败，请稍后再试。');
   }
   finally {
     deleting.value = false;
@@ -248,7 +281,7 @@ onMounted(() => {
                     :disabled="deleting"
                     aria-label="删除班级"
                     title="删除班级"
-                    @click.stop="askDelete(c.id)"
+                    @click.stop="askDeleteClass(c.id)"
                   >
                     删除
                   </Button>
@@ -322,11 +355,11 @@ onMounted(() => {
             <div v-else-if="!students.length" class="p-4 text-sm text-neutral-500">
               暂无学生。
             </div>
-            <div v-else class="space-y-2">
+            <div v-else>
               <div
                 v-for="s in students"
                 :key="s.id ?? s.username"
-                class="flex items-center justify-between border-b p-4 hover:bg-muted transition-all"
+                class="flex items-center justify-between border-b p-4"
               >
                 <div>
                   <div class="font-medium">
@@ -336,6 +369,10 @@ onMounted(() => {
                     {{ s.username ?? '' }}
                   </div>
                 </div>
+
+                <Button variant="destructive" class="h-8 px-3" @click="askRemoveStudent(s.id)">
+                  移出班级
+                </Button>
               </div>
             </div>
           </div>
@@ -343,8 +380,7 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- 删除确认对话框 -->
-    <AlertDialog v-model:open="confirmDeleteOpen">
+    <AlertDialog v-model:open="confirmDeleteClassOpen">
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>确认删除班级</AlertDialogTitle>
@@ -360,8 +396,31 @@ onMounted(() => {
           <AlertDialogCancel :disabled="deleting">
             取消
           </AlertDialogCancel>
-          <Button variant="destructive" :disabled="deleting" @click="confirmDelete">
+          <Button variant="destructive" :disabled="deleting" @click="confirmDeleteClass">
             {{ deleting ? '删除中...' : '删除' }}
+          </Button>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+
+    <AlertDialog v-model:open="confirmRemoveStudentOpen">
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>确认移出班级？</AlertDialogTitle>
+          <AlertDialogDescription>
+            确定将
+            <span class="font-medium">
+              {{ pendingRemoveStudent ? pendingRemoveStudent.realName : '' }}
+            </span>
+            移出班级吗？该操作不可恢复。
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel :disabled="deleting">
+            取消
+          </AlertDialogCancel>
+          <Button variant="destructive" :disabled="deleting" @click="confirmRemoveStudent">
+            {{ deleting ? '移出中...' : '删除' }}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

@@ -143,6 +143,7 @@ const isLogin = computed(() => {
                 autocomplete="username"
                 placeholder="账号"
                 class="peer h-12 w-full pt-2 !placeholder-transparent rounded-xl"
+                @keydown.enter.prevent="login"
               />
               <Label
                 for="account"
@@ -163,6 +164,7 @@ const isLogin = computed(() => {
                 autocomplete="password"
                 placeholder="密码"
                 class="peer h-12 w-full pt-2 !placeholder-transparent rounded-xl"
+                @keydown.enter.prevent="login"
               />
               <Label
                 for="password"

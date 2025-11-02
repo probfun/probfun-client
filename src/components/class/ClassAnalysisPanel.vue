@@ -9,13 +9,20 @@ import type {
   StudentDetail,
   StudentPerformance,
 } from '@/api/class/classType';
+import type { Question } from '@/api/do-question/doQuestion.ts';
 import { Icon } from '@iconify/vue';
 import { computed, onMounted, ref } from 'vue';
+import { Bar, Radar } from 'vue-chartjs';
 import { fetchClassAnalyticsApi, fetchTeacherClassListApi } from '@/api/class/classApi';
+import { fetchQuestionApi } from '@/api/do-question/doQuestion.ts';
+import MarkdownDiv from '@/components/markdown-div/MarkdownDiv.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { DialogHeader } from '@/components/ui/dialog';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import 'chart.js/auto';
 
 const loading = ref(false);
 const error = ref<string | null>(null);
@@ -75,6 +82,70 @@ onMounted(async () => {
 const overview = computed(() => analytics.value?.classOverview);
 const students = computed<StudentPerformance[]>(() => overview.value?.studentPerformance ?? []);
 const kps = computed<ChapterOverview[]>(() => overview.value?.chapters ?? []);
+const kpsTotal = computed<ChapterOverview[]>(() => {
+  const chapters = [
+    { id: '65', name: '第一章 概率论的基本概念' },
+    { id: '101', name: '第二章 一维随机变量' },
+    { id: '118', name: '第三章 多维随机变量' },
+    { id: '112', name: '第四章 数字特征' },
+    { id: '108', name: '第五章 极限定理' },
+    { id: '70', name: '第六章 随机过程' },
+    { id: '68', name: '第七章 泊松过程' },
+    { id: '69', name: '第八章 平稳过程' },
+    { id: '67', name: '第九章 离散时间马氏链' },
+  ];
+
+  const agg = chapters.map(ch => ({
+    chapterId: ch.id,
+    chapterName: ch.name,
+    studentCount: 0,
+    averageAttempts: 0,
+    totalAttempts: 0,
+    averageAccuracy: 0,
+    completionRate: 0,
+    children: [] as ChapterOverview[],
+  } as ChapterOverview));
+
+  const correctSums = Array.from({ length: 9 }).fill(0) as number[];
+  const avgAttemptsNum = Array.from({ length: 9 }).fill(0) as number[];
+  const avgAttemptsDen = Array.from({ length: 9 }).fill(0) as number[];
+
+  function getChapterIndex(name?: string): number | null {
+    if (!name)
+      return null;
+    const m = name.match(/^(\d+)/);
+    if (!m)
+      return null;
+    const n = Number.parseInt(m[1], 10);
+    return n >= 1 && n <= 9 ? n - 1 : null;
+  }
+
+  for (const kp of overview.value?.chapters || []) {
+    const idx = getChapterIndex(kp.chapterName);
+    if (idx == null)
+      continue;
+
+    const total = kp.totalAttempts ?? 0;
+    const acc = kp.averageAccuracy ?? 0;
+    const sc = kp.studentCount ?? 0;
+    const avgAtt = kp.averageAttempts ?? 0;
+
+    agg[idx].children?.push(kp);
+    agg[idx].totalAttempts += total;
+    agg[idx].studentCount += sc;
+
+    correctSums[idx] += total * acc;
+    avgAttemptsNum[idx] += avgAtt * sc;
+    avgAttemptsDen[idx] += sc;
+  }
+
+  for (let i = 0; i < agg.length; i++) {
+    agg[i].averageAccuracy = agg[i].totalAttempts > 0 ? correctSums[i] / agg[i].totalAttempts : 0;
+    agg[i].averageAttempts = avgAttemptsDen[i] > 0 ? avgAttemptsNum[i] / avgAttemptsDen[i] : 0;
+  }
+
+  return agg;
+});
 const activities = computed<ActivityDistributionEntry[]>(() => overview.value?.activityDistribution ?? []);
 const studentDetails = computed<StudentDetail[]>(() => analytics.value?.studentDetails ?? []);
 const insights = computed(() => analytics.value?.insights);
@@ -126,7 +197,8 @@ const frequentMistakes = computed<FrequentMistake[]>(() => insights.value?.frequ
 const topMistakes = computed(() => frequentMistakes.value.slice(0, 10));
 
 // 聊天关键词
-const chatKeywords = computed<ChatKeyword[]>(() => insights.value?.chatKeywords ?? []);
+const chatKeywords = computed<ChatKeyword[]>(() => insights.value?.chatKeywords.find(c => c.subjectName === '概率论')?.keywords ?? []);
+console.log(chatKeywords.value);
 const topKeywords = computed(() => chatKeywords.value.slice(0, 20));
 
 // 活动分布
@@ -143,6 +215,105 @@ const activityLabels: Record<(typeof activityKeys)[number], string> = {
   aiChat: 'AI对话',
   browseResources: '浏览资源',
   discussion: '讨论',
+};
+
+const radarTop5 = computed<ChapterOverview[]>(() =>
+  [...kpsTotal.value].slice(0, 5),
+);
+
+const radarBottom4 = computed<ChapterOverview[]>(() =>
+  [...kpsTotal.value].slice(5, 9),
+);
+
+const barChapter = ref<ChapterOverview[]>([]);
+
+function buildRadarData(items: ChapterOverview[]) {
+  return {
+    labels: items.map(kp => kp.chapterName),
+    datasets: [
+      {
+        label: '平均正确率',
+        data: items.map(kp => kp.averageAccuracy ?? 0),
+        backgroundColor: 'rgba(99,102,241,0.2)',
+        borderColor: 'rgb(99,102,241)',
+        pointBackgroundColor: 'rgb(99,102,241)',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgb(99,102,241)',
+      },
+    ],
+  };
+}
+
+function buildBarData(items: ChapterOverview[]) {
+  return {
+    labels: items.map(kp => kp.chapterName),
+    datasets: [
+      {
+        label: '平均正确率',
+        data: items.map(kp => kp.averageAccuracy ?? 0),
+        backgroundColor: 'rgba(99,102,241,0.7)',
+      },
+    ],
+  };
+}
+
+const radarDataTop5 = computed(() => buildRadarData(radarTop5.value));
+const radarDataBottom2 = computed(() => buildRadarData(radarBottom4.value));
+const barDataChapter = computed(() => buildBarData(barChapter.value));
+
+const radarOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      display: true,
+    },
+    tooltip: { enabled: true },
+  },
+  scales: {
+    r: {
+      suggestedMin: 0,
+      suggestedMax: 1,
+      grid: { color: 'rgba(0,0,0,0.05)' },
+      angleLines: { color: 'rgba(0,0,0,0.05)' },
+      ticks: {
+        backdropColor: 'transparent',
+        showLabelBackdrop: false,
+        callback: (val: any) => `${Number(val) * 100}%`,
+      },
+    },
+  },
+};
+
+const barOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { display: false },
+    tooltip: {
+      enabled: true,
+      callbacks: {
+        label: (ctx: any) =>
+          `${(Number((ctx.parsed as any)?.y ?? ctx.parsed ?? 0) * 100).toFixed(0)}%`,
+      },
+    },
+  },
+  scales: {
+    x: {
+      grid: { display: false, color: 'rgba(0,0,0,0.05)' },
+      ticks: { color: '#6b7280' },
+    },
+    y: {
+      suggestedMin: 0,
+      suggestedMax: 1,
+      grid: { color: 'rgba(0,0,0,0.05)' },
+      ticks: {
+        color: '#6b7280',
+        callback: (val: any) => `${Number(val) * 100}%`,
+      },
+    },
+  },
 };
 
 function fmtPct(x: number, digits = 0) {
@@ -165,13 +336,65 @@ function fmtMin(x: number) {
   return `${h}小时${m}分钟`;
 }
 
-function selectStudent(studentId: number) {
+function selectStudent(studentId: string) {
   tabValue.value = 'students';
   selectedStudent.value = studentDetails.value.find(s => s.studentId === studentId) || null;
 }
 
 function clearSelection() {
   selectedStudent.value = null;
+}
+
+const selectedQuestion = ref<Question | null>(null);
+const isQuestionDialogOpen = ref<boolean>(false);
+
+async function clickQuestion(questionId: string) {
+  try {
+    const response = await fetchQuestionApi(questionId);
+    const question = response.question;
+    selectedQuestion.value = {
+      ...question,
+      choices: (question.choices || []).map(choice => ({
+        ...choice,
+        content: choice.content.replace(/^[A-Z]\.\s*/, ''),
+      })),
+      content: question.content.replace(/^\d+\.\s*/, ''),
+    };
+  }
+  catch (error) {
+    console.error('Error fetching question:', error);
+  }
+  isQuestionDialogOpen.value = true;
+}
+
+function textColor(accuracy: number) {
+  if (accuracy >= 0.9)
+    return 'text-green-500';
+  if (accuracy >= 0.75)
+    return 'text-yellow-500';
+  if (accuracy >= 0.5)
+    return 'text-orange-500';
+  return 'text-red-600';
+}
+
+function bgColor(accuracy: number, heavy: boolean) {
+  if (accuracy >= 0.9)
+    return heavy ? 'bg-green-500' : 'bg-green-100';
+  if (accuracy >= 0.75)
+    return heavy ? 'bg-yellow-500' : 'bg-yellow-100';
+  if (accuracy >= 0.5)
+    return heavy ? 'bg-orange-500' : 'bg-orange-100';
+  return heavy ? 'bg-red-500' : 'bg-red-100';
+}
+
+function borderColor(accuracy: number) {
+  if (accuracy >= 0.9)
+    return 'border-green-500';
+  if (accuracy >= 0.75)
+    return 'border-yellow-500';
+  if (accuracy >= 0.5)
+    return 'border-orange-500';
+  return 'border-red-500';
 }
 
 defineExpose({ refresh: load });
@@ -298,12 +521,77 @@ defineExpose({ refresh: load });
             </Card>
           </div>
 
-          <!-- 学生表现 -->
           <div class="grid gap-6 md:grid-cols-2">
             <Card>
               <CardHeader>
-                <CardTitle>优秀学生 Top 10</CardTitle>
-                <CardDescription>按正确率排序</CardDescription>
+                <CardTitle>章节正确率</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Tabs default-value="1">
+                  <TabsList class="w-full grid grid-cols-2 mb-4">
+                    <TabsTrigger value="1">
+                      概率论
+                    </TabsTrigger>
+                    <TabsTrigger value="2">
+                      随机过程
+                    </TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="1">
+                    <div v-if="radarTop5.length > 0" class="h-72">
+                      <Radar :data="radarDataTop5" :options="radarOptions" />
+                    </div>
+                    <div v-else class="py-8 text-center text-neutral-400">
+                      暂无知识点数据
+                    </div>
+                  </TabsContent>
+                  <TabsContent value="2">
+                    <div v-if="radarBottom4.length > 0" class="h-72">
+                      <Radar :data="radarDataBottom2" :options="radarOptions" />
+                    </div>
+                    <div v-else class="py-8 text-center text-neutral-400">
+                      暂无知识点数据
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>章节知识点正确率</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Select
+                  @update:model-value="(value) => {
+                    barChapter = kpsTotal.find(kp => kp.chapterId === value)?.children ?? [];
+                  }"
+                >
+                  <SelectTrigger class="mb-4">
+                    <SelectValue placeholder="选择一个章节" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem v-for="chapter in kpsTotal" :key="chapter.chapterId" :value="chapter.chapterId">
+                        {{ chapter.chapterName }}
+                      </SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <div v-if="barChapter.length > 0" class="h-72">
+                  <Bar :data="barDataChapter" :options="barOptions" />
+                </div>
+                <div v-else class="py-8 text-center text-neutral-400">
+                  暂无知识点数据
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <!-- 学生表现 -->
+          <div class="grid gap-6 md:grid-cols-3">
+            <Card>
+              <CardHeader>
+                <CardTitle>优秀学生</CardTitle>
+                <CardDescription>按正确率降序排序</CardDescription>
               </CardHeader>
               <CardContent class="space-y-3">
                 <div v-if="topStudents.length > 0" class="space-y-3">
@@ -335,8 +623,8 @@ defineExpose({ refresh: load });
 
             <Card>
               <CardHeader>
-                <CardTitle>待提升学生 Top 10</CardTitle>
-                <CardDescription>按正确率排序</CardDescription>
+                <CardTitle>待提升学生</CardTitle>
+                <CardDescription>按正确率升序排序</CardDescription>
               </CardHeader>
               <CardContent class="space-y-3">
                 <div v-if="bottomStudents.length > 0" class="space-y-3">
@@ -360,44 +648,45 @@ defineExpose({ refresh: load });
                 </div>
               </CardContent>
             </Card>
-          </div>
 
-          <!-- 活动分布 -->
-          <Card>
-            <CardHeader>
-              <CardTitle>学习活动分布</CardTitle>
-              <CardDescription>各类学习活动的时间占比</CardDescription>
-            </CardHeader>
-            <CardContent class="space-y-4">
-              <div v-if="activities.length > 0" class="space-y-4">
-                <div v-for="act in activities.slice(0, 10)" :key="act.studentId" class="space-y-2">
-                  <div class="flex items-center justify-between text-sm">
-                    <span class="font-medium">{{ act.studentName }}</span>
-                    <span class="text-neutral-500">{{ fmtMin(act.totalTime) }}</span>
-                  </div>
-                  <div class="flex h-3 w-full overflow-hidden rounded-full bg-neutral-100">
-                    <div v-for="key in activityKeys" :key="key" :class="activityColors[key]" :style="{ width: fmtPct(act.timeDistribution[key]) }" class="transition-all" />
-                  </div>
-                  <div class="flex gap-4 text-xs text-neutral-600">
-                    <div v-for="key in activityKeys" :key="key" class="flex items-center gap-1">
-                      <div :class="activityColors[key]" class="size-2 rounded-full" />
-                      {{ activityLabels[key] }}
+            <Card>
+              <CardHeader>
+                <CardTitle>学习活动分布</CardTitle>
+                <CardDescription>各类学习活动的时间占比</CardDescription>
+              </CardHeader>
+              <CardContent class="space-y-4">
+                <div v-if="activities.length > 0" class="space-y-4">
+                  <div v-for="act in activities.slice(0, 10)" :key="act.studentId" class="space-y-2">
+                    <div class="flex items-center justify-between text-sm">
+                      <span class="font-medium">{{ act.studentName }}</span>
+                      <span class="text-neutral-500">{{ fmtMin(act.totalTime) }}</span>
+                    </div>
+                    <div class="flex h-3 w-full overflow-hidden rounded-full bg-neutral-100">
+                      <div v-for="key in activityKeys" :key="key" :class="activityColors[key]" :style="{ width: fmtPct(act.timeDistribution[key]) }" class="transition-all" />
+                    </div>
+                    <div class="flex gap-4 text-xs text-neutral-600">
+                      <div v-for="key in activityKeys" :key="key" class="flex items-center gap-1">
+                        <div :class="activityColors[key]" class="size-2 rounded-full" />
+                        {{ activityLabels[key] }}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div v-else class="flex flex-col items-center justify-center py-8 text-neutral-400">
-                <Icon icon="lucide:activity" class="size-12 mb-2" />
-                <p class="text-sm">
-                  暂无活动数据
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+                <div v-else class="flex flex-col items-center justify-center py-8 text-neutral-400">
+                  <Icon icon="lucide:activity" class="size-12 mb-2" />
+                  <p class="text-sm">
+                    暂无活动数据
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <!-- 活动分布 -->
         </TabsContent>
 
         <!-- 学生详情 -->
-        <TabsContent value="students" class="space-y-6">
+        <TabsContent v-auto-animate value="students" class="space-y-6">
           <div v-if="!selectedStudent">
             <Card>
               <CardHeader>
@@ -405,13 +694,18 @@ defineExpose({ refresh: load });
                 <CardDescription>点击学生姓名查看其学习轨迹和知识点掌握详情</CardDescription>
               </CardHeader>
               <CardContent>
-                <div v-if="students.length > 0" class="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                  <div v-for="s in students" :key="s.studentId" class="cursor-pointer rounded-lg border border-neutral-200 p-4 transition-all hover:border-indigo-500 hover:shadow-md" @click="selectStudent(s.studentId)">
-                    <div class="font-medium">
+                <div v-if="students.length > 0" class="grid gap-3 grid-cols-[repeat(auto-fit,minmax(250px,1fr))]">
+                  <div
+                    v-for="s in students" :key="s.studentId"
+                    class="cursor-pointer flex items-center rounded-lg border border-neutral-200 px-4 py-6 transition-all hover:border-indigo-500 hover:shadow-md"
+                    :class="[borderColor(s.accuracy), bgColor(s.accuracy, false), textColor(s.accuracy)]"
+                    @click="selectStudent(s.studentId)"
+                  >
+                    <div class="font-medium text-foreground">
                       {{ s.studentName }}
                     </div>
-                    <div class="mt-2 text-sm text-neutral-600">
-                      正确率: {{ fmtPct(s.accuracy) }}
+                    <div class="ml-auto text-md font-bold">
+                      正确率：{{ fmtPct(s.accuracy) }}
                     </div>
                   </div>
                 </div>
@@ -432,65 +726,65 @@ defineExpose({ refresh: load });
                 返回
               </Button>
             </div>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>学习轨迹</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div v-if="selectedStudent.learningTrajectory?.length > 0" class="space-y-3">
-                  <div v-for="entry in selectedStudent.learningTrajectory" :key="entry.date" class="flex items-center justify-between rounded-lg border p-4">
-                    <div>
-                      <div class="font-medium">
-                        {{ entry.date }}
+            <div class="grid grid-cols-2 gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>学习轨迹</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div v-if="selectedStudent.learningTrajectory?.length > 0" class="space-y-3">
+                    <div v-for="entry in selectedStudent.learningTrajectory" :key="entry.date" class="flex items-center justify-between rounded-lg border p-4">
+                      <div>
+                        <div class="font-medium">
+                          {{ entry.date }}
+                        </div>
+                        <div class="mt-1 text-sm text-neutral-600">
+                          完成 {{ entry.completedQuestions }} 题 · {{ entry.totalAttempts }} 次尝试
+                        </div>
                       </div>
-                      <div class="mt-1 text-sm text-neutral-600">
-                        完成 {{ entry.completedQuestions }} 题 · {{ entry.totalAttempts }} 次尝试
-                      </div>
-                    </div>
-                    <div class="text-right">
-                      <div class="text-lg font-semibold" :class="entry.accuracy >= 0.6 ? 'text-emerald-600' : 'text-red-600'">
-                        {{ fmtPct(entry.accuracy) }}
+                      <div class="text-right">
+                        <div class="text-lg font-semibold" :class="textColor(entry.accuracy)">
+                          {{ fmtPct(entry.accuracy) }}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div v-else class="flex flex-col items-center justify-center py-8 text-neutral-400">
-                  <Icon icon="lucide:calendar-off" class="size-12 mb-2" />
-                  <p class="text-sm">
-                    暂无学习轨迹
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>知识点掌握详情</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div v-if="selectedStudent.chapterDetails?.length > 0" class="space-y-4">
-                  <div v-for="kp in selectedStudent.chapterDetails" :key="kp.chapterId" class="space-y-2">
-                    <div class="flex items-center justify-between">
-                      <span class="font-medium">{{ kp.chapterName }}</span>
-                      <span class="text-sm text-neutral-600">{{ fmtPct(kp.accuracy) }}</span>
-                    </div>
-                    <div class="h-2 w-full overflow-hidden rounded-full bg-neutral-100">
-                      <div class="h-full transition-all" :class="kp.accuracy >= 0.6 ? 'bg-emerald-500' : 'bg-red-500'" :style="{ width: fmtPct(kp.accuracy) }" />
-                    </div>
-                    <div class="text-xs text-neutral-500">
-                      平均尝试 {{ kp.averageAttempts.toFixed(1) }} 次 · 共 {{ kp.totalAttempts }} 次
+                  <div v-else class="flex flex-col items-center justify-center py-8 text-neutral-400">
+                    <Icon icon="lucide:calendar-off" class="size-12 mb-2" />
+                    <p class="text-sm">
+                      暂无学习轨迹
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>知识点掌握详情</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div v-if="selectedStudent.chapterDetails?.length > 0" class="space-y-4">
+                    <div v-for="kp in selectedStudent.chapterDetails" :key="kp.chapterId" class="space-y-2">
+                      <div class="flex items-center justify-between">
+                        <span class="font-medium">{{ kp.chapterName }}</span>
+                        <span class="text-sm text-neutral-600">{{ fmtPct(kp.accuracy) }}</span>
+                      </div>
+                      <div class="h-2 w-full overflow-hidden rounded-full bg-neutral-100">
+                        <div class="h-full transition-all" :class="bgColor(kp.accuracy, true)" :style="{ width: fmtPct(kp.accuracy) }" />
+                      </div>
+                      <div class="text-xs text-neutral-500">
+                        平均尝试 {{ kp.averageAttempts.toFixed(1) }} 次 · 共 {{ kp.totalAttempts }} 次
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div v-else class="flex flex-col items-center justify-center py-8 text-neutral-400">
-                  <Icon icon="lucide:book-open" class="size-12 mb-2" />
-                  <p class="text-sm">
-                    暂无知识点数据
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+                  <div v-else class="flex flex-col items-center justify-center py-8 text-neutral-400">
+                    <Icon icon="lucide:book-open" class="size-12 mb-2" />
+                    <p class="text-sm">
+                      暂无知识点数据
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </TabsContent>
 
@@ -507,10 +801,10 @@ defineExpose({ refresh: load });
                   <div v-for="kp in topStrongKps" :key="kp.chapterId" class="space-y-2">
                     <div class="flex items-center justify-between">
                       <span class="font-medium">{{ kp.chapterName }}</span>
-                      <span class="text-sm font-semibold text-emerald-600">{{ fmtPct(kp.averageAccuracy) }}</span>
+                      <span class="text-sm font-semibold" :class="textColor(kp.averageAccuracy)">{{ fmtPct(kp.averageAccuracy) }}</span>
                     </div>
                     <div class="h-2 w-full overflow-hidden rounded-full bg-neutral-100">
-                      <div class="h-full bg-emerald-500 transition-all" :style="{ width: fmtPct(kp.averageAccuracy) }" />
+                      <div class="h-full transition-all" :class="bgColor(kp.averageAccuracy, true)" :style="{ width: fmtPct(kp.averageAccuracy) }" />
                     </div>
                     <div class="text-xs text-neutral-500">
                       {{ kp.studentCount }} 名学生 · 共 {{ kp.totalAttempts }} 次尝试
@@ -536,10 +830,10 @@ defineExpose({ refresh: load });
                   <div v-for="kp in topWeakKps" :key="kp.chapterId" class="space-y-2">
                     <div class="flex items-center justify-between">
                       <span class="font-medium">{{ kp.chapterName }}</span>
-                      <span class="text-sm font-semibold text-red-600">{{ fmtPct(kp.averageAccuracy) }}</span>
+                      <span class="text-sm font-semibold" :class="textColor(kp.averageAccuracy)">{{ fmtPct(kp.averageAccuracy) }}</span>
                     </div>
                     <div class="h-2 w-full overflow-hidden rounded-full bg-neutral-100">
-                      <div class="h-full bg-red-500 transition-all" :style="{ width: fmtPct(kp.averageAccuracy) }" />
+                      <div class="h-full transition-all" :class="bgColor(kp.averageAccuracy, true)" :style="{ width: fmtPct(kp.averageAccuracy) }" />
                     </div>
                     <div class="text-xs text-neutral-500">
                       {{ kp.studentCount }} 名学生 · 共 {{ kp.totalAttempts }} 次尝试
@@ -574,7 +868,7 @@ defineExpose({ refresh: load });
                     </div>
                   </div>
                   <div class="ml-4 text-right">
-                    <div class="text-lg font-semibold" :class="kp.averageAccuracy >= 0.6 ? 'text-emerald-600' : 'text-red-600'">
+                    <div class="text-lg font-semibold" :class="textColor(kp.averageAccuracy)">
                       {{ fmtPct(kp.averageAccuracy) }}
                     </div>
                   </div>
@@ -597,21 +891,20 @@ defineExpose({ refresh: load });
             </CardHeader>
             <CardContent>
               <div v-if="topMistakes.length > 0" class="space-y-4">
-                <div v-for="(m, i) in topMistakes" :key="m.questionId" class="rounded-lg border p-4">
+                <div v-for="(m, i) in topMistakes" :key="m.questionId" class="rounded-lg border p-4 cursor-pointer hover:bg-muted transition-all group" @click="clickQuestion(m.questionId)">
                   <div class="flex items-start gap-4">
-                    <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-red-100 text-sm font-bold text-red-600">
+                    <div class="flex size-8 mt-1.5 shrink-0 items-center justify-center rounded-full bg-red-100 text-sm font-bold text-red-600">
                       {{ i + 1 }}
                     </div>
                     <div class="flex-1">
-                      <div class="font-medium line-clamp-2">
-                        {{ m.questionContent }}
-                      </div>
+                      <MarkdownDiv :text="m.questionContent" />
                       <div class="mt-2 flex items-center gap-4 text-sm text-neutral-600">
                         <span v-if="m.chapter" class="rounded-full bg-neutral-100 px-2 py-1">{{ m.chapter }} </span>
                         <span>{{ m.studentCount }} 名学生出错</span>
                         <span>共 {{ m.mistakeCount }} 次</span>
                       </div>
                     </div>
+                    <Icon icon="lucide:chevron-right" class="size-5 text-muted-foreground group-hover:opacity-100 opacity-0 transition-all my-auto" />
                   </div>
                 </div>
               </div>
@@ -643,5 +936,52 @@ defineExpose({ refresh: load });
         </TabsContent>
       </Tabs>
     </div>
+
+    <Dialog v-model:open="isQuestionDialogOpen">
+      <DialogContent class="max-w-4xl w-full">
+        <DialogHeader>
+          <DialogTitle>题目详情</DialogTitle>
+        </DialogHeader>
+        <div v-if="selectedQuestion" class="">
+          <div class="flex items-start gap-3">
+            <MarkdownDiv :text="selectedQuestion.content" />
+          </div>
+          <div class="mt-4 grid gap-2">
+            <RadioGroup
+              v-if="selectedQuestion?.questionType === 'SC' && selectedQuestion?.choices"
+              orientation="vertical"
+              :model-value="(selectedQuestion.choices.find(c => c.isCorrect) || {}).id ?? null"
+            >
+              <label
+                v-for="(choice, index) in selectedQuestion.choices"
+                :key="choice.id"
+                :for="choice.id"
+                class="group border rounded-xl p-3 flex items-center justify-start transition-all h-auto cursor-pointer"
+                :class="{
+                  'border-green-500 bg-green-50': choice.isCorrect,
+                }"
+              >
+                <RadioGroupItem
+                  :id="choice.id.toString()"
+                  v-auto-animate="{ duration: 100 }"
+                  :value="choice.id"
+                  class="mr-3 text-foreground"
+                  :disabled="selectedQuestion.answerRecords.length > 0"
+                  @click="choice.isChosen && selectedQuestion.choices.forEach(c => (c.isChosen = false))"
+                />
+                <label class="mr-2"> {{ String.fromCharCode(65 + index) }}. </label>
+                <MarkdownDiv class="" :text="choice.content" />
+              </label>
+            </RadioGroup>
+          </div>
+        </div>
+        <div v-if="selectedQuestion" class="rounded-xl border p-4 transition-all">
+          <div class="font-semibold mb-1">
+            答案解析
+          </div>
+          <MarkdownDiv :text="selectedQuestion.fullAnswer" />
+        </div>
+      </DialogContent>
+    </Dialog>
   </div>
 </template>
