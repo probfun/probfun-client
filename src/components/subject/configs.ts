@@ -98,6 +98,7 @@ interface HomeConfig {
   thinking: {
     title: string;
     description: string[];
+    docxUrl?: string;
   }[];
 }
 

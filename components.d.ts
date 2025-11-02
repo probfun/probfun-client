@@ -277,6 +277,7 @@ declare module 'vue' {
     UniformDiagram: typeof import('./src/components/experiment/distribution/UniformDiagram.vue')['default']
     UniformDistribution: typeof import('./src/components/experiment/distribution/UniformDistribution.vue')['default']
     Vector: typeof import('./src/components/experiment/chapter6/Vector.vue')['default']
+    WeeklyThoughtCard: typeof import('./src/components/home/WeeklyThoughtCard.vue')['default']
     WeekThinkingPanel: typeof import('./src/components/week-thinking/WeekThinkingPanel.vue')['default']
   }
 }

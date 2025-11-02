@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { Mathematician } from '@/api/trand/trand.ts';
 import { Icon } from '@iconify/vue';
-import { DotLottieVue } from '@lottiefiles/dotlottie-vue';
 import { FlaskConical, Lightbulb, SearchCheck } from 'lucide-vue-next';
 import { computed, onMounted, ref } from 'vue';
 import { fetchMathematicianList } from '@/api/trand/trand.ts';
+import WeeklyThoughtCard from '@/components/home/WeeklyThoughtCard.vue';
 import { homeConfigs } from '@/components/subject/configs.ts';
 // import { mathematicians } from '@/components/subject/mathematician.ts';
 import {
@@ -268,27 +268,18 @@ function formatLifespan(m: Mathematician): string {
         </div>
         <template v-if="weeklyThoughts && weeklyThoughts.length">
           <router-link to="/week-thinking" class="block flex-1">
-            <Card class="h-full flex flex-col transition-all hover:shadow-md hover:border-primary group">
-              <CardHeader class="p-4 pb-2">
-                <CardTitle class="text-base">
-                  {{ weeklyThoughts[0].title }}
-                </CardTitle>
-              </CardHeader>
-              <CardContent class="px-4 pb-4 flex-1 flex flex-col gap-3">
-                <div class="w-full h-48 overflow-hidden rounded-md border border-primary/40 flex items-center justify-center relative">
-                  <DotLottieVue class="size-60 absolute" autoplay loop src="https://lottie.host/ae840978-a346-4c94-afb6-c075ba15c698/AVmhf9qq3G.lottie" />
-                </div>
-                <div class="items-start flex flex-col">
-                  <Label v-for="(item, i) in weeklyThoughts[0].description?.slice(0, 4)" :key="i" class="leading-relaxed line-clamp-2 font-normal text-muted-foreground cursor-auto">{{ item }}</Label>
-                </div>
-                <div class="mt-auto text-right group-hover:opacity-100 opacity-0 transition-all">
-                  <span class="inline-flex items-center gap-1 text-sm text-primary">
-                    查看详情
-                    <Icon icon="lucide:arrow-right" class="h-4 w-4" />
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
+            <WeeklyThoughtCard
+              class="h-full transition-all hover:shadow-md hover:border-primary group [&_.prose]:max-h-48 [&_.prose]:overflow-hidden"
+              :title="weeklyThoughts[0].title"
+              :description="weeklyThoughts[0].description"
+              :docx-url="weeklyThoughts[0].docxUrl"
+            />
+            <div class="mt-2 text-right group-hover:opacity-100 opacity-100 transition-all">
+              <span class="inline-flex items-center gap-1 text-sm text-primary">
+                查看详情
+                <Icon icon="lucide:arrow-right" class="h-4 w-4" />
+              </span>
+            </div>
           </router-link>
         </template>
         <template v-else>
