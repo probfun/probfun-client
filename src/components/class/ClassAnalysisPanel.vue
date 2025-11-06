@@ -415,11 +415,18 @@ defineExpose({ refresh: load });
               <CardContent>
                 <div v-if="students.length > 0" class="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                   <div v-for="s in students" :key="s.studentId" class="cursor-pointer rounded-lg border border-neutral-200 p-4 transition-all hover:border-indigo-500 hover:shadow-md" @click="selectStudent(s.studentId)">
-                    <div class="font-medium">
-                      {{ formatStudentName(s) }}
-                    </div>
-                    <div class="mt-2 text-sm text-neutral-600">
-                      正确率: {{ fmtPct(s.accuracy) }}
+                    <div class="flex items-center justify-between">
+                      <div class="font-medium pr-3">
+                        {{ formatStudentName(s) }}
+                      </div>
+                      <div class="flex flex-col items-center text-sm text-neutral-600">
+                        <div>
+                          做题总量: {{ s.completedQuestions }}题
+                        </div>
+                        <div class="mt-1">
+                          正确率: {{ fmtPct(s.accuracy) }}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
