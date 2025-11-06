@@ -17,9 +17,10 @@ import { Label } from '@/components/ui/label';
 import { useConfigStore } from '@/store';
 
 const configStore = useConfigStore();
-const experiments = configStore.currentSubjectId ? homeConfigs[configStore.currentSubjectId].experiments : null;
-const mindMaps = configStore.currentSubjectId ? homeConfigs[configStore.currentSubjectId].mindMaps : null;
-const weeklyThoughts = configStore.currentSubjectId ? homeConfigs[configStore.currentSubjectId].thinking : null;
+// 使用 computed 确保切换学科时自动更新，不需要刷新
+const experiments = computed(() => configStore.currentSubjectId ? homeConfigs[configStore.currentSubjectId].experiments : null);
+const mindMaps = computed(() => configStore.currentSubjectId ? homeConfigs[configStore.currentSubjectId].mindMaps : null);
+const weeklyThoughts = computed(() => configStore.currentSubjectId ? homeConfigs[configStore.currentSubjectId].thinking : null);
 
 const mathematicians = ref<Mathematician[]>([]);
 
@@ -267,12 +268,19 @@ function formatLifespan(m: Mathematician): string {
           <span class="ml-3 h-px flex-1 bg-gradient-to-r from-primary/40 to-transparent" />
         </div>
         <template v-if="weeklyThoughts && weeklyThoughts.length">
-          <router-link to="/week-thinking" class="block flex-1">
+          <router-link
+            :key="weeklyThoughts[0].docxUrl || weeklyThoughts[0].pdfUrl || weeklyThoughts[0].title"
+            to="/week-thinking"
+            class="block flex-1"
+          >
             <WeeklyThoughtCard
+              :key="weeklyThoughts[0].docxUrl || weeklyThoughts[0].pdfUrl || weeklyThoughts[0].title"
               class="h-full transition-all hover:shadow-md hover:border-primary group [&_.prose]:max-h-48 [&_.prose]:overflow-hidden"
               :title="weeklyThoughts[0].title"
               :description="weeklyThoughts[0].description"
               :docx-url="weeklyThoughts[0].docxUrl"
+              :pdf-url="weeklyThoughts[0].pdfUrl"
+              :preview-only="true"
             />
           </router-link>
         </template>

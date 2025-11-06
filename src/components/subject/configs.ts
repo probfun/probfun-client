@@ -99,6 +99,7 @@ interface HomeConfig {
     title: string;
     description: string[];
     docxUrl?: string;
+    pdfUrl?: string;
   }[];
 }
 

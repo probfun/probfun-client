@@ -31,6 +31,13 @@ const homeConfig: HomeConfig = {
 
   ],
   thinking: [
+    {
+      title: '第1周 每周一思',
+      description: [
+        '以 WeekQuiz 题目为引导，结合多元微积分知识进行思考与推导。',
+      ],
+      pdfUrl: '/WeekQuiz.pdf',
+    },
   ],
 };
 

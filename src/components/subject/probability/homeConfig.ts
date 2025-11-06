@@ -49,12 +49,18 @@ const homeConfig: HomeConfig = {
   ],
   thinking: [
     {
-      title: '第1周 每周一思',
+      title: '第1周 挑战1',
       description: [
-        '1）柯尔莫哥洛夫的公理化体系将概率定义为满足非负性、规范性和可列可加性的测度，现实中的不确定性是否都可以用这一框架描述？',
-        '2）概率是客观存在还是主观建构？',
+        '点击进入查看第1周挑战（PDF）',
       ],
-      docxUrl: '/每周一思10.18.docx',
+      pdfUrl: '/挑战1 - 答案.pdf',
+    },
+    {
+      title: '第2周 挑战2',
+      description: [
+        '点击进入查看第2周挑战（PDF）',
+      ],
+      pdfUrl: '/挑战2 - 题目.pdf',
     },
   ],
 };
