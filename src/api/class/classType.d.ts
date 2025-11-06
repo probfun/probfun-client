@@ -82,6 +82,7 @@ export interface ChapterOverview {
 export interface StudentPerformance {
   studentId: number;
   studentName: string;
+  studentUsername: string;
   completedQuestions: number;
   accuracy: number;
   studyDuration: number;
@@ -90,6 +91,7 @@ export interface StudentPerformance {
 export interface ActivityDistributionEntry {
   studentId: number;
   studentName: string;
+  studentUsername: string;
   timeDistribution: TimeDistribution;
   totalTime: number;
   dominantActivity: string;
@@ -105,6 +107,7 @@ export interface TimeDistribution {
 export interface StudentDetail {
   studentId: number;
   studentName: string;
+  studentUsername: string;
   learningTrajectory: LearningTrajectoryEntry[];
   chapterDetails: ChapterDetailEntry[];
 }

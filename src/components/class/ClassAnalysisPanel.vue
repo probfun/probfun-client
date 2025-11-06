@@ -174,6 +174,14 @@ function clearSelection() {
   selectedStudent.value = null;
 }
 
+// 格式化学生显示名称：学号 - 姓名
+function formatStudentName(student: { studentName: string; studentUsername?: string }) {
+  if (student.studentUsername) {
+    return `${student.studentUsername} - ${student.studentName}`;
+  }
+  return student.studentName;
+}
+
 defineExpose({ refresh: load });
 </script>
 
@@ -312,7 +320,7 @@ defineExpose({ refresh: load });
                       <div class="flex size-8 items-center justify-center rounded-full bg-amber-500 text-sm font-bold text-white">
                         {{ i + 1 }}
                       </div>
-                      <span class="font-medium">{{ s.studentName }}</span>
+                      <span class="font-medium">{{ formatStudentName(s) }}</span>
                     </div>
                     <div class="text-right">
                       <div class="font-semibold text-emerald-600">
@@ -341,7 +349,7 @@ defineExpose({ refresh: load });
               <CardContent class="space-y-3">
                 <div v-if="bottomStudents.length > 0" class="space-y-3">
                   <div v-for="s in bottomStudents" :key="s.studentId" class="flex items-center justify-between p-3 rounded-lg bg-neutral-50 hover:bg-neutral-100 transition-colors cursor-pointer" @click="selectStudent(s.studentId)">
-                    <span class="font-medium">{{ s.studentName }}</span>
+                    <span class="font-medium">{{ formatStudentName(s) }}</span>
                     <div class="text-right">
                       <div class="font-semibold text-red-600">
                         {{ fmtPct(s.accuracy) }}
@@ -372,7 +380,7 @@ defineExpose({ refresh: load });
               <div v-if="activities.length > 0" class="space-y-4">
                 <div v-for="act in activities.slice(0, 10)" :key="act.studentId" class="space-y-2">
                   <div class="flex items-center justify-between text-sm">
-                    <span class="font-medium">{{ act.studentName }}</span>
+                    <span class="font-medium">{{ formatStudentName(act) }}</span>
                     <span class="text-neutral-500">{{ fmtMin(act.totalTime) }}</span>
                   </div>
                   <div class="flex h-3 w-full overflow-hidden rounded-full bg-neutral-100">
@@ -408,7 +416,7 @@ defineExpose({ refresh: load });
                 <div v-if="students.length > 0" class="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                   <div v-for="s in students" :key="s.studentId" class="cursor-pointer rounded-lg border border-neutral-200 p-4 transition-all hover:border-indigo-500 hover:shadow-md" @click="selectStudent(s.studentId)">
                     <div class="font-medium">
-                      {{ s.studentName }}
+                      {{ formatStudentName(s) }}
                     </div>
                     <div class="mt-2 text-sm text-neutral-600">
                       正确率: {{ fmtPct(s.accuracy) }}
@@ -425,7 +433,7 @@ defineExpose({ refresh: load });
           <div v-else class="space-y-6">
             <div class="flex items-center justify-between">
               <h2 class="text-2xl font-bold">
-                {{ selectedStudent.studentName }} 的学习详情
+                {{ formatStudentName(selectedStudent) }} 的学习详情
               </h2>
               <Button variant="outline" @click="clearSelection">
                 <Icon icon="lucide:arrow-left" class="mr-2 size-4" />
