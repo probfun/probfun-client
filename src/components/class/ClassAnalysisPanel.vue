@@ -702,7 +702,7 @@ defineExpose({ refresh: load });
                 <CardDescription>点击学生姓名查看其学习轨迹和知识点掌握详情</CardDescription>
               </CardHeader>
               <CardContent>
-                <div v-if="students.length > 0" class="grid gap-3 grid-cols-[repeat(auto-fit,minmax(250px,1fr))]">
+                <div v-if="students.length > 0" class="grid gap-3 grid-cols-[repeat(auto-fit,minmax(320px,1fr))]">
                   <div
                     v-for="s in students" :key="s.studentId"
                     class="cursor-pointer flex items-center rounded-lg border border-neutral-200 px-4 py-6 transition-all hover:border-indigo-500 hover:shadow-md"
