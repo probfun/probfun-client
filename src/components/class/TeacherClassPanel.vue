@@ -363,7 +363,7 @@ onMounted(() => {
               >
                 <div>
                   <div class="font-medium">
-                    {{ s.realName ?? s.username ?? '未命名' }}
+                    {{ s.username ? `${s.username} - ${s.realName ?? s.username ?? '未命名'}` : (s.realName ?? s.username ?? '未命名') }}
                   </div>
                   <div class="text-xs text-neutral-500">
                     {{ s.username ?? '' }}
