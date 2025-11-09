@@ -109,7 +109,7 @@ export interface StudentDetail {
   studentId: string;
   studentName: string;
   learningTrajectory: LearningTrajectoryEntry[];
-  chapterDetails: ChapterDetailEntry[];
+  chapters: ChapterDetailEntry[];
 }
 
 export interface LearningTrajectoryEntry {

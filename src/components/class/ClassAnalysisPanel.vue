@@ -762,8 +762,8 @@ defineExpose({ refresh: load });
                   <CardTitle>知识点掌握详情</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div v-if="selectedStudent.chapterDetails?.length > 0" class="space-y-4">
-                    <div v-for="kp in selectedStudent.chapterDetails" :key="kp.chapterId" class="space-y-2">
+                  <div v-if="selectedStudent.chapters?.length > 0" class="space-y-4">
+                    <div v-for="kp in selectedStudent.chapters" :key="kp.chapterId" class="space-y-2">
                       <div class="flex items-center justify-between">
                         <span class="font-medium">{{ kp.chapterName }}</span>
                         <span class="text-sm text-neutral-600">{{ fmtPct(kp.accuracy) }}</span>
