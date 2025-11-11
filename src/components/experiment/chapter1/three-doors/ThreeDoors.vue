@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { GraduationCap, Lightbulb, MessagesSquare } from 'lucide-vue-next';
+import { Bot, GraduationCap, Lightbulb, MessagesSquare } from 'lucide-vue-next';
 import { onMounted, ref, watch } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ThreeDoorsDisplay from '@/components/experiment/chapter1/three-doors/ThreeDoorsDisplay.vue';
@@ -141,6 +141,12 @@ const discussTabList = [
     label: '讨论区',
     name: 'comment',
     icon: MessagesSquare,
+  },
+  {
+    id: 3,
+    label: 'AI帮助',
+    name: 'aihelp',
+    icon: Bot,
   },
 ];
 </script>

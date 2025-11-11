@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Book, GraduationCap, MessagesSquare } from 'lucide-vue-next';
+import { Book, Bot, GraduationCap, MessagesSquare } from 'lucide-vue-next';
 import { onMounted } from 'vue';
 import CommentPanel from '@/components/comment/CommentPanel.vue';
 import ExperimentBoard from '@/components/experiment/ExperimentBoard.vue';
@@ -314,7 +314,12 @@ const discussTabList = [
     name: 'comment',
     icon: MessagesSquare,
   },
-
+  {
+    id: 3,
+    label: 'AI帮助',
+    name: 'aihelp',
+    icon: Bot,
+  },
 ];
 
 function onHtmlLoad() {

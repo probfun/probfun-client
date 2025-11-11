@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Tab } from '@/components/Container.vue';
-import { ChartColumnIncreasing, GraduationCap, MessagesSquare, Presentation } from 'lucide-vue-next';
+import { Bot, ChartColumnIncreasing, GraduationCap, MessagesSquare, Presentation } from 'lucide-vue-next';
 import { onMounted, ref } from 'vue';
 import Container from '@/components/Container.vue';
 import {
@@ -27,6 +27,12 @@ const args = withDefaults(defineProps<{
       label: '讨论区',
       name: 'comment',
       icon: MessagesSquare,
+    },
+    {
+      id: 2,
+      label: 'AI帮助',
+      name: 'aihelp',
+      icon: Bot,
     },
   ],
   panelSize: 40,

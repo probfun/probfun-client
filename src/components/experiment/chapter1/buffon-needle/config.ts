@@ -1,4 +1,4 @@
-import { GraduationCap, Lightbulb, MessagesSquare, NotebookPen } from 'lucide-vue-next';
+import { Bot, GraduationCap, Lightbulb, MessagesSquare, NotebookPen } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { hslToHex } from '@/utils/color';
 
@@ -18,7 +18,6 @@ const discussTabList = [
     name: 'discuss',
     icon: Lightbulb,
   },
-
   {
     id: 2,
     label: '讨论区',
@@ -31,7 +30,12 @@ const discussTabList = [
     name: 'exercise',
     icon: NotebookPen,
   },
-
+  {
+    id: 4,
+    label: 'AI帮助',
+    name: 'aihelp',
+    icon: Bot,
+  },
 ];
 
 const chartOptions = computed(() => {
